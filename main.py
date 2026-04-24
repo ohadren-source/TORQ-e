@@ -11,8 +11,10 @@ Card 5 (UBADA): Data Analyst & Fraud Investigation [Planned]
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import logging
+import os
 
 from config import settings
 from database import init_db
@@ -58,9 +60,19 @@ app.include_router(card2_router)
 # Include Chat router (Claude API integration)
 app.include_router(chat_router)
 
-# Root endpoint
-@app.get("/")
+# Mount static files (HTML, CSS, images, etc.)
+# Serve from the project root directory where landing.html, login-*.html, etc. are located
+static_dir = os.path.dirname(os.path.abspath(__file__))
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+# Root endpoint - serve landing.html
+@app.get("/", include_in_schema=False)
 async def root():
+    """Serve the landing page"""
+    landing_path = os.path.join(static_dir, "landing.html")
+    if os.path.exists(landing_path):
+        return FileResponse(landing_path, media_type="text/html")
+    # Fallback to JSON if landing.html not found
     return {
         "message": "TORQ-e: Medicaid Clarity System",
         "version": settings.api_version,
