@@ -562,6 +562,234 @@ But the River Path you see here? That's what you get.
 
 ---
 
+## PART 4: UPID PROVIDER ENROLLMENT ARCHITECTURE (Added April 24, 2026)
+
+### The Problem: Provider Entity Confusion
+
+Providers are called by dozens of names across systems:
+- "Provider" (federal)
+- "Supplier" (DME)
+- "Practitioner" (individual)
+- "Entity" (corporation)
+- "Facility" (institution)
+
+Meanwhile, services offered by a single entity are treated as separate provider types:
+- Specialty drugs (not a separate entity—a service)
+- Compounding (not a separate entity—a service)
+- Home infusion (not a separate entity—a service)
+- IV therapy (not a separate entity—a service)
+
+**Result:** eMedNY documentation conflates entity types with service offerings. Providers apply for the wrong enrollment. Systems ask for credentials that don't apply. Database records duplicate.
+
+### The Solution: DOH-Recognized Provider Entities
+
+**Definition:** A provider entity is any organization or individual recognized by the NY Department of Health as a distinct health care/well-being service provider eligible for Medicaid enrollment.
+
+This is NOT about what services they offer. It's about what the Department of Health recognizes as a distinct entity for regulatory and payment purposes.
+
+### The 14 DOH-Recognized Provider Entities
+
+**Individual Practitioners (5):**
+1. Physician (MD/DO)
+2. Nurse Practitioner (NP)
+3. Registered Nurse (RN)
+4. Clinical Social Worker (LCSW)
+5. Psychologist (PhD/PsyD)
+
+**Pharmacy (3 entities only):**
+6. Community Pharmacy (retail)
+7. Hospital Pharmacy (inpatient)
+8. Long-Term Care Pharmacy (institutional)
+
+**Facilities (2):**
+9. Hospital / Acute Care Facility
+10. Long-Term Care Facility (nursing home)
+
+**Services & Equipment (4):**
+11. Durable Medical Equipment (DME) Supplier
+12. Clinical Laboratory (CLIA-licensed)
+13. Vision Care Provider (Optometrist)
+14. Non-Emergency Medical Transportation (NEMT)
+
+### Critical Architectural Principle
+
+**Pharmacy Subcategories are NOT Separate Entities:**
+
+❌ WRONG: "Specialty Pharmacy" (separate entity)  
+✅ RIGHT: Community Pharmacy that offers specialty drug services
+
+❌ WRONG: "Compounding Pharmacy" (separate entity)  
+✅ RIGHT: Any of the 3 pharmacy entities that offers compounding services
+
+❌ WRONG: "Home Infusion Pharmacy" (separate entity)  
+✅ RIGHT: Any of the 3 pharmacy entities with home infusion capability
+
+This distinction is critical because:
+- Each pharmacy entity type has distinct enrollment requirements
+- Services expand the scope of what an entity can offer
+- A single entity may offer multiple services
+- Conflating entities and services creates duplicate records and impossible enrollment rules
+
+### The UPID River Path: Provider Enrollment Lookup
+
+**Question: "How do I get Medicaid enrollment?"**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ PROVIDER IDENTIFIES: "I am a [entity type]"              │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ SOURCE 1: UPID Entity Registry                           │
+│ Query: "What are this entity type's requirements?"       │
+│ Return: Core requirements + enrollment options           │
+│ Confidence: 0.98 (authoritative DOH definition)          │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ SOURCE 2: Service Offerings (Entity Capability)          │
+│ Query: "Can this entity type offer [service X]?"         │
+│ Return: Yes/No + additional requirements if yes          │
+│ Confidence: 0.95 (service scope documentation)           │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ SOURCE 3: eMedNY Enrollment Guidance                     │
+│ Query: "What's the actual enrollment path?"              │
+│ Return: FFS/MCO/Network options + timeline               │
+│ Confidence: 0.90 (enrollment process may vary)           │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ RESULT: Provider understands                             │
+│ ✓ Exactly which entity type they are                     │
+│ ✓ What credentials they need                             │
+│ ✓ What services they can offer                           │
+│ ✓ What enrollment path to take                           │
+│ ✓ Why they might be denied (specific reason)             │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Enrollment Flow for Each Entity Type
+
+#### Individual Practitioners (Physician, NP, RN, LCSW, Psychologist)
+
+```
+Entity Type: [Practitioner]
+↓
+Credentials: License (current) + NPI (active) + OIG check
+↓
+Enrollment Options:
+  • FFS: Direct Medicaid billing (30-45 days)
+  • MCO Network: Specific MCO network (20-35 days)
+  • Multiple: Both simultaneously (allowed)
+↓
+Services: Determined by license scope + specialization
+↓
+Success: Medicaid Provider ID issued
+```
+
+#### Pharmacies (3 entity types)
+
+```
+Entity Type: Community | Hospital | LTC
+↓
+Credentials: Pharmacy License + Pharmacist + NPI/NCPDP + OIG check
+↓
+Enrollment Options:
+  Community: FFS or MCO preferred network
+  Hospital: Tied to hospital facility enrollment
+  LTC: Tied to nursing home contracts
+↓
+Services Offered:
+  • Standard: Prescription dispensing
+  • Optional: Compounding, Specialty drugs, Home infusion (if equipped/licensed)
+↓
+Success: Medicaid Pharmacy Provider ID issued
+```
+
+#### Facilities (Hospital, Nursing Home)
+
+```
+Entity Type: Hospital | LTC Facility
+↓
+Credentials: License + Medicare cert + Accreditation + Director credentials + NPI
+↓
+Enrollment Options:
+  Hospital: FFS inpatient/ED services (45-90 days)
+  LTC: FFS per-bed-day billing (45-60 days)
+↓
+Services: Determined by facility type + department
+↓
+Success: Medicaid Facility ID issued
+```
+
+#### Services & Equipment (DME, Lab, Vision, NEMT)
+
+```
+Entity Type: DME | Lab | Vision | NEMT
+↓
+Credentials: Licenses + Accreditations + Director/Staff credentials + OIG check
+↓
+Enrollment Options:
+  DME: FFS or MCO network
+  Lab: FFS (CLIA required)
+  Vision: FFS
+  NEMT: FFS per-trip or per-mile
+↓
+Services: Service-specific offerings
+↓
+Success: Medicaid Supplier/Provider ID issued
+```
+
+### How This Fixes Provider Confusion
+
+**Before UPID Clarity:**
+- Provider applies for "Specialty Pharmacy" (doesn't exist as entity type)
+- Application rejected: "Not a valid provider type"
+- Provider confused: "But I dispense specialty drugs!"
+
+**After UPID Clarity:**
+- Provider identifies: "I'm a Community Pharmacy that offers specialty drug services"
+- UPID shows: Requirements for Community Pharmacy + additional requirements for specialty drugs
+- Provider applies as Community Pharmacy
+- Application approved: Provider enrolls as Community Pharmacy + adds specialty scope
+
+### Integration with River Path
+
+The UPID system follows the River Path principle:
+1. **Primary:** Provider identifies their entity type → Look up requirements
+2. **Secondary:** Provider identifies services they offer → Look up additional requirements
+3. **Tertiary:** Provider reviews eMedNY enrollment rules → Confirm enrollment path
+4. **Escalation:** Provider contacts eMedNY if any step unclear → Manual support
+
+Every step acknowledges:
+- What entity type is being enrolled
+- What requirements apply
+- What services are included
+- What the timeline is
+- How to get help if stuck
+
+### Monitoring & Observability
+
+For UPID enrollments, track:
+- Entity type distribution (% of each type enrolling)
+- Denial rate per entity type (identify problem types)
+- Credential gaps (which requirements cause most denials)
+- Service scope additions (% of entities adding optional services)
+- Successful vs. unsuccessful paths (FFS vs. MCO timelines)
+
+Alert thresholds:
+- If denial rate per entity type >20%, something's broken
+- If credential requirements change, update UPID immediately
+- If enrollment timeline exceeds typical, escalate
+
+---
+
 **Last Updated:** April 24, 2026  
 **Status:** LIVE. This document governs all TORQ-e development.  
 **Authority:** Architecture, implementation, testing, deployment.
