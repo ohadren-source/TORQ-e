@@ -1,0 +1,511 @@
+================================================================================
+UPID JOURNEY BLUEPRINT
+Provider/Facility/Organization Card
+================================================================================
+
+ROLE: Provider (Healthcare provider/facility enrolling in Medicaid)
+IDENTIFIER: UPID (Universal Provider Identifier)
+PRIMARY QUESTION: "How do I enroll in Medicaid?"
+SECONDARY QUESTION: "How do I send in a claim?"
+
+================================================================================
+1. ENTRY POINT
+================================================================================
+
+Card 1: Role Selection Screen
+  ┌─────────────────────────────────┐
+  │ Select Your Role                │
+  │                                 │
+  │ [Provider Card]                 │
+  │ Enroll and get paid             │
+  │ Manage your claims              │
+  │                                 │
+  │ [Other role cards...]           │
+  └─────────────────────────────────┘
+
+User clicks: "Provider" card
+↓ Routes to Provider UPID Card
+
+================================================================================
+2. PROVIDER UPID ENTRY CARD
+================================================================================
+
+Card 2: UPID Entry / Provider Login
+  ┌──────────────────────────────────────────┐
+  │ TORQ-e Medicaid - Provider               │
+  │                                          │
+  │ Enter Your UPID                          │
+  │ [____________________________]           │
+  │                                          │
+  │ [Continue →]                             │
+  │                                          │
+  │ ──────────────────────────────────      │
+  │ Forgot your UPID?                        │
+  │ [Recover via 2FA]                        │
+  │                                          │
+  │ Don't have a UPID yet?                   │
+  │ [Enroll as New Provider]                 │
+  └──────────────────────────────────────────┘
+
+Three Paths:
+
+PATH A: Existing Provider with UPID
+  - Enter UPID
+  - 2FA verification
+  - Redirects to Provider Dashboard
+
+PATH B: Forgot UPID
+  - Enter NPI or Tax ID
+  - 2FA verification
+  - UPID retrieved and displayed
+  - Redirects to Provider Dashboard
+
+PATH C: New Provider - Enroll
+  - Click "Enroll as New Provider"
+  - Proceed to: Tier 1A (NPI), Tier 1B (EIN), or Tier 2 (Manual)
+
+================================================================================
+3. NEW PROVIDER: VERIFICATION TIER SELECTION
+================================================================================
+
+Card 3: How would you like to verify your credentials?
+
+  ┌──────────────────────────────────────────┐
+  │ Provider Verification                    │
+  │                                          │
+  │ □ Tier 1A: Individual Licensed Provider  │
+  │   Have an NPI number? (Physicians, etc.) │
+  │   [Proceed with NPI Verification]        │
+  │                                          │
+  │ □ Tier 1B: Organization/Facility         │
+  │   Have a Tax ID/EIN? (Hospitals, etc.)   │
+  │   [Proceed with EIN Verification]        │
+  │                                          │
+  │ □ Tier 2: Manual Verification            │
+  │   New provider or no credentials yet?    │
+  │   [Schedule In-Person Verification]      │
+  └──────────────────────────────────────────┘
+
+================================================================================
+4A. TIER 1A FLOW: NPI VERIFICATION (Individual Provider)
+================================================================================
+
+Card 4A: NPI Verification Entry
+
+  ┌──────────────────────────────────────────┐
+  │ Individual Licensed Provider             │
+  │                                          │
+  │ National Provider Identifier (NPI):      │
+  │ [____________________________]           │
+  │ (10-digit number)                        │
+  │                                          │
+  │ Last Name:                               │
+  │ [____________________________]           │
+  │                                          │
+  │ Date of Birth (MM/DD/YYYY):              │
+  │ [____________________________]           │
+  │                                          │
+  │ State License Number:                    │
+  │ [____________________________]           │
+  │ (optional, but recommended)              │
+  │                                          │
+  │ [Verify Credentials →]                   │
+  └──────────────────────────────────────────┘
+
+Reading Engine Action:
+  - Cross-reference NPI against CMS NPPES database
+  - Verify name and DOB match
+  - Check state licensing board (active license)
+  - Check for DEA number (if prescriber)
+  - Check OIG Exclusions List (not sanctioned)
+  - Verify no malpractice/disciplinary actions
+
+If Verified ✓:
+  → Proceed to Tax ID Entry
+
+If Not Verified ✗:
+  → Display error with reason
+  → Offer Tier 2 (manual verification) as alternative
+
+================================================================================
+4B. TIER 1B FLOW: EIN VERIFICATION (Organization)
+================================================================================
+
+Card 4B: Tax ID/EIN Verification Entry
+
+  ┌──────────────────────────────────────────┐
+  │ Healthcare Organization/Facility         │
+  │                                          │
+  │ Legal Business Name:                     │
+  │ [____________________________]           │
+  │                                          │
+  │ Tax ID (EIN):                            │
+  │ [____________________________]           │
+  │ (9-digit XX-XXXXXXX format)              │
+  │                                          │
+  │ Organization Type:                       │
+  │ ○ Hospital                               │
+  │ ○ Clinic                                 │
+  │ ○ Group Practice                         │
+  │ ○ Pharmacy                               │
+  │ ○ Nursing Home                           │
+  │ ○ Other [specify]                        │
+  │                                          │
+  │ Primary Business Address:                │
+  │ [____________________________]           │
+  │                                          │
+  │ [Verify Organization →]                  │
+  └──────────────────────────────────────────┘
+
+Reading Engine Action:
+  - Cross-reference EIN against IRS database
+  - Verify business name matches
+  - Check state Business Entity Search
+  - Verify address is valid/exists
+  - Check organizational status (not delinquent)
+  - Verify organization type matches healthcare
+
+If Verified ✓:
+  → Proceed to Authorized Representative Entry
+
+If Not Verified ✗:
+  → Display error with reason
+  → Offer Tier 2 (manual verification) as alternative
+
+---
+
+Card 4B-continued: Authorized Representative
+
+  ┌──────────────────────────────────────────┐
+  │ Authorized Representative                │
+  │                                          │
+  │ Name of Authorized Signatory:            │
+  │ [____________________________]           │
+  │                                          │
+  │ Title:                                   │
+  │ [____________________________]           │
+  │ (CEO, CFO, Compliance Officer, etc.)    │
+  │                                          │
+  │ Email:                                   │
+  │ [____________________________]           │
+  │                                          │
+  │ Phone:                                   │
+  │ [____________________________]           │
+  │                                          │
+  │ [Continue →]                             │
+  └──────────────────────────────────────────┘
+
+================================================================================
+4C. TIER 2 FLOW: MANUAL VERIFICATION
+================================================================================
+
+Card 4C: Schedule In-Person Provider Verification
+
+  ┌──────────────────────────────────────────┐
+  │ Schedule In-Person Verification          │
+  │                                          │
+  │ We'll help you verify your provider      │
+  │ credentials in person.                   │
+  │                                          │
+  │ Select your county:                      │
+  │ [New York County v]                      │
+  │                                          │
+  │ Available appointments:                  │
+  │ □ Tuesday, April 29, 10:00 AM            │
+  │ □ Wednesday, April 30, 3:00 PM           │
+  │ □ Thursday, May 1, 1:00 PM               │
+  │                                          │
+  │ [Schedule Appointment →]                 │
+  │                                          │
+  │ What to bring:                           │
+  │ • State medical/professional license    │
+  │ • Photo ID                               │
+  │ • Tax ID/EIN documentation (if org)     │
+  │ • Business registration documents       │
+  └──────────────────────────────────────────┘
+
+After In-Person Verification:
+  - Medicaid verifies all credentials
+  - Takes photos of documents for records
+  - Provides verification attestation
+  - Sends confirmation code
+
+================================================================================
+5. 2FA ENROLLMENT
+================================================================================
+
+Card 5: Enroll in 2FA (Two-Factor Authentication)
+
+  ┌──────────────────────────────────────────┐
+  │ Secure Your Provider Account             │
+  │                                          │
+  │ Step 1: Download Authenticator App       │
+  │ [→ Download on App Store / Play Store]   │
+  │                                          │
+  │ Step 2: Scan QR Code                     │
+  │ [QR CODE DISPLAY]                        │
+  │                                          │
+  │ Step 3: Verify Phone Number              │
+  │ [____________________________]           │
+  │ [Send SMS Code]                          │
+  │                                          │
+  │ Enter SMS Code:                          │
+  │ [______]                                 │
+  │                                          │
+  │ [Complete 2FA Setup →]                   │
+  └──────────────────────────────────────────┘
+
+After 2FA Enrollment ✓:
+  → UPID Generated
+  → Provider receives UPID confirmation
+  → Enrollment credentials issued
+  → Redirects to Provider Dashboard
+
+================================================================================
+6. PROVIDER DASHBOARD (AFTER UPID)
+================================================================================
+
+Card 6: Provider Dashboard
+
+  ┌──────────────────────────────────────────┐
+  │ Welcome to Your Medicaid Provider Account│
+  │ UPID: 660f9500-f40c-52e5-b827-557766...  │
+  │                                          │
+  │ ┌─ Your Questions ──────────────────────┐│
+  │ │                                       ││
+  │ │ Ask about enrollment, claims, etc:    ││
+  │ │ [____________________________] [Ask →] ││
+  │ │                                       ││
+  │ │ ─────────────────────────────────     ││
+  │ │ Popular Questions:                    ││
+  │ │                                       ││
+  │ │ FAQ 1: Which services require prior   ││
+  │ │        approval before I bill?        ││
+  │ │ [View Answer]                         ││
+  │ │                                       ││
+  │ │ FAQ 2: How do I verify Medicaid is    ││
+  │ │        the primary payer?             ││
+  │ │ [View Answer]                         ││
+  │ │                                       ││
+  │ │ FAQ 3: How long does it take to get   ││
+  │ │        paid after submitting a claim? ││
+  │ │ [View Answer]                         ││
+  │ │                                       ││
+  │ └───────────────────────────────────────┘│
+  │                                          │
+  │ [Submit Claim] [Check Status]            │
+  │ [Network Info] [Settings]                │
+  └──────────────────────────────────────────┘
+
+================================================================================
+7. PROVIDER JOURNEY - MAIN QUESTIONS
+================================================================================
+
+PRIMARY QUESTION: "How do I enroll in Medicaid?"
+
+User Types This Into Text Box:
+  "How do I enroll in Medicaid?"
+
+Reading Engine Process:
+  1. Identify provider type (individual, organization, facility)
+  2. Retrieve enrollment status from TORQ-e database
+  3. If not enrolled: Provide enrollment steps + requirements
+  4. If enrolled: Confirm enrollment and provide next steps
+  5. Claude AI synthesizes response
+
+Example Response:
+  "You're already enrolled in Medicaid! Your UPID is active.
+
+   Your Enrollment Details:
+   • Organization: XYZ Healthcare Clinic
+   • Tax ID: 12-3456789
+   • Status: Active
+   • Enrollment Date: January 15, 2024
+   • Networks: Fidelis Care, Anthem, EmblemHealth
+
+   Next steps:
+   • Submit your first claim using EMEDNY portal
+   • Verify network status with your plans
+   • Get help: [Contact Support]"
+
+---
+
+SECONDARY QUESTION: "How do I send in a claim?"
+
+User Types This Into Text Box:
+  "How do I send in a claim?"
+
+Reading Engine Process:
+  1. Check if provider is enrolled
+  2. Retrieve claims submission requirements
+  3. Verify provider is not in claims suspension
+  4. Provide step-by-step claim submission guide
+  5. Claude AI explains process
+
+Example Response:
+  "Here's how to submit a Medicaid claim:
+
+   STEP 1: Verify Patient Eligibility
+   • Go to EMEDNY portal
+   • Search patient by name/Medicaid ID
+   • Confirm Medicaid is active
+
+   STEP 2: Gather Required Documentation
+   • Service date
+   • Patient Medicaid ID
+   • Procedure codes (CPT/HCPCS)
+   • Diagnosis codes (ICD-10)
+   • Units of service
+
+   STEP 3: Submit Claim
+   • Use EMEDNY electronic claims portal
+   • OR send paper form CMS-1500
+   • Include all supporting documentation
+
+   STEP 4: Track Claim Status
+   • Claims typically process in 15-30 days
+   • Check status in EMEDNY portal
+   • Request denied claims review if needed
+
+   [Access EMEDNY] [Download Form] [Get Help]"
+
+================================================================================
+8. PROVIDER FAQ RESPONSES
+================================================================================
+
+FAQ 1: "Which services require prior approval before I bill?"
+
+Claude Response + Reading Engine:
+  - Retrieve prior approval list from Medicaid policies
+  - Filter by provider specialty and service type
+  - Show: High-cost services, experimental treatments, etc.
+
+Display Format:
+  "These services require PRIOR APPROVAL before billing:
+
+   HIGH-COST PROCEDURES:
+   ✓ Imaging (MRI, CT beyond 2/year)
+   ✓ Joint Replacement Surgery
+   ✓ Certain Medications (specialty pharma)
+   ✓ Home Health (more than X visits)
+
+   SPECIALIZED SERVICES:
+   ✓ Behavioral Health Programs
+   ✓ Dialysis
+   ✓ Durable Medical Equipment (high-value)
+   ✓ Out-of-State Treatment
+
+   HOW TO REQUEST PRIOR APPROVAL:
+   1. Go to EMEDNY portal
+   2. Submit Prior Authorization request
+   3. Wait for approval (typically 5 business days)
+   4. Once approved, submit claim
+
+   [Submit Prior Auth Request] [Check Status]"
+
+---
+
+FAQ 2: "How do I verify that Medicaid is the primary payer?"
+
+Claude Response + Reading Engine:
+  - Explain primary/secondary insurance rules
+  - Provide verification steps
+  - Show coordination of benefits rules
+
+Display Format:
+  "Medicaid is the PRIMARY payer if:
+   • Patient has Medicaid only
+   • Patient is over 65 with Medicare + Medicaid (Dual-eligible)
+   • Patient has COBRA or other employer coverage (Medicaid 2ndary)
+
+   TO VERIFY MEDICAID AS PRIMARY:
+   1. Go to EMEDNY portal
+   2. Search patient by Medicaid ID
+   3. Check 'Insurance Status' section
+   4. Confirm 'Primary Insurance: Medicaid'
+
+   If patient has OTHER insurance:
+   • Bill other insurance FIRST
+   • Bill Medicaid for remaining balance
+   • This is Coordination of Benefits (COB)
+
+   COORDINATION OF BENEFITS (COB) Steps:
+   1. Collect patient's other insurance info
+   2. Bill other insurance first
+   3. Get Explanation of Benefits (EOB)
+   4. Bill Medicaid for remaining balance
+   5. Medicaid pays up to their allowed amount
+
+   [Check Patient Eligibility] [Submit Coordination Claim]"
+
+---
+
+FAQ 3: "How long does it take to get paid after submitting a claim?"
+
+Claude Response + Reading Engine:
+  - Retrieve average claim processing times
+  - Explain clean vs. problematic claims
+  - Show claim status tracking
+
+Display Format:
+  "Standard Claim Processing Timeline:
+
+   CLEAN CLAIMS (no issues):
+   • Electronic submission: 15-30 days
+   • Paper submission: 20-35 days
+   • Payment method: Direct deposit or check
+
+   PROBLEMATIC CLAIMS (missing info, errors):
+   • Initial review: 5 days
+   • Notification to provider: 10 days
+   • Corrected claim processing: Additional 15-30 days
+
+   HOW TO TRACK YOUR CLAIM:
+   1. Go to EMEDNY portal
+   2. Select 'Claim Status'
+   3. Search by claim number or date range
+   4. View status: Received, Approved, Denied, Paid
+
+   TO SPEED UP PAYMENT:
+   ✓ Submit electronically (faster than paper)
+   ✓ Verify patient eligibility before billing
+   ✓ Use correct procedure/diagnosis codes
+   ✓ Include all required documentation
+   ✓ Submit within 30 days of service
+
+   AVERAGE PAYMENT AMOUNT: $[varies by service]
+   PAYMENT METHOD: Direct Deposit (recommended)
+
+   [Track My Claims] [Update Banking Info] [Request Payment Status]"
+
+================================================================================
+9. PROVIDER JOURNEY END STATE
+================================================================================
+
+Provider Successfully Completes Journey When:
+  ✓ UPID created and verified
+  ✓ 2FA enrolled and active
+  ✓ Provider credentials confirmed (NPI/EIN verified)
+  ✓ Enrolled in Medicaid networks (or process started)
+  ✓ Understood claim submission process
+  ✓ Can log back in anytime with UPID + 2FA
+
+Ongoing Access:
+  - Provider can return to dashboard anytime
+  - Ask enrollment/claims questions
+  - Submit claims through EMEDNY integration
+  - Check claim status in real-time
+  - Update provider information
+  - Manage team member access
+
+Support Escalation:
+  - If provider needs additional help
+  - [Contact Provider Support]
+  - Routes to dedicated provider support team
+  - High-priority for claims issues
+
+================================================================================
+
+END OF JOURNEY BLUEPRINT
+
+================================================================================

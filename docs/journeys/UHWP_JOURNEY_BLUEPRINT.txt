@@ -1,0 +1,314 @@
+================================================================================
+UHWP JOURNEY BLUEPRINT
+Plan/HMO/Managed Care Card
+================================================================================
+
+ROLE: Plan Administrator (Managed Care Organization managing benefits)
+IDENTIFIER: UHWP (Universal Health+Wellness Program)
+PRIMARY QUESTION: "Is this provider in my network? Out of network?"
+SECONDARY QUESTIONS: "What's covered? What's exclusionary?" / "How do I assign beneficiaries?"
+
+================================================================================
+1. ENTRY POINT → UHWP ENTRY CARD
+================================================================================
+
+Card 1-2: Role Selection → UHWP Login
+  ┌──────────────────────────────────────────┐
+  │ TORQ-e Medicaid - Managed Care Plan      │
+  │                                          │
+  │ Enter Your UHWP                          │
+  │ [____________________________]           │
+  │                                          │
+  │ [Continue →]                             │
+  │                                          │
+  │ Don't have a UHWP yet?                   │
+  │ [Enroll Your Plan]                       │
+  └──────────────────────────────────────────┘
+
+PATH A: Existing Plan → 2FA → Dashboard
+PATH B: New Plan → Tier 1 Verification → Dashboard
+
+================================================================================
+2. PLAN DASHBOARD
+================================================================================
+
+Card 3: Plan Management Dashboard
+
+  ┌──────────────────────────────────────────┐
+  │ Plan Dashboard: Fidelis Care             │
+  │ UHWP: 770g0611-h51d-63f6-c938-668877... │
+  │                                          │
+  │ ┌─ Your Questions ──────────────────────┐│
+  │ │ Ask about network, coverage, etc:     ││
+  │ │ [____________________________] [Ask →] ││
+  │ │                                       ││
+  │ │ ─────────────────────────────────     ││
+  │ │ Popular Questions:                    ││
+  │ │                                       ││
+  │ │ FAQ 1: Is this provider in-network?   ││
+  │ │ FAQ 2: What are out-of-pocket costs?  ││
+  │ │ FAQ 3: How do I assign beneficiaries? ││
+  │ │                                       ││
+  │ └───────────────────────────────────────┘│
+  │                                          │
+  │ [Network Directory] [Enrollment]         │
+  │ [Coverage Details] [Settings]            │
+  └──────────────────────────────────────────┘
+
+================================================================================
+3. PLAN JOURNEY - MAIN QUESTIONS
+================================================================================
+
+PRIMARY QUESTION: "Is this provider in my network? Out of network?"
+
+User (Member or Plan Staff) Types:
+  "Is Dr. Jane Smith in my network?"
+  OR "Is this address in-network?"
+  OR "Check provider network status"
+
+Reading Engine Process:
+  1. Parse provider name/NPI/address from question
+  2. Retrieve plan's current network directory
+  3. Cross-reference provider against in-network list
+  4. Check provider credentials (UPID verification)
+  5. Determine contract status and copay difference
+  6. Claude AI synthesizes response
+
+Example Response:
+  "DR. JANE SMITH - PEDIATRICIAN
+
+   ✓ IN NETWORK
+   • Location: 123 Main St, New York, NY
+   • Specialty: Pediatrics
+   • Accepting new patients: Yes
+   • Copay: $0 (preventive), $15 (visit)
+
+   WHAT THIS MEANS:
+   • No prior authorization needed
+   • Use your member copay ($0-15)
+   • Bill goes to our plan directly
+   • You can schedule appointment
+
+   [Call Provider] [Schedule Appointment]
+   [View Other Pediatricians in Area]"
+
+---
+
+SECONDARY QUESTION 1: "What are the out-of-pocket costs (copayments, deductibles)?"
+
+User Types:
+  "What are my copayments?"
+  OR "Do I have a deductible?"
+  OR "How much does a doctor visit cost?"
+
+Reading Engine Process:
+  1. Retrieve plan's benefit structure
+  2. Identify member's eligibility category
+  3. Pull copay/deductible schedule
+  4. Categorize by service type
+  5. Claude AI explains cost-sharing
+
+Example Response:
+  "YOUR OUT-OF-POCKET COSTS (2026):
+
+   PRIMARY CARE:
+   • Doctor visit: $15 copay
+   • Preventive care: $0 copay
+   • Behavioral health: $15 copay
+
+   SPECIALIST CARE:
+   • Specialist visit (with referral): $25 copay
+   • Specialist visit (without referral): 40% coinsurance
+
+   HOSPITAL & ER:
+   • Emergency room: $250 copay (waived if admitted)
+   • Hospital stay: $0 copay
+   • Urgent care: $50 copay
+
+   PRESCRIPTIONS:
+   • Generic drugs: $1 copay
+   • Brand drugs: $15 copay
+   • Specialty drugs: 25% coinsurance
+
+   DEDUCTIBLE:
+   • Individual: $0 (this plan has no deductible)
+   • Family: N/A
+
+   OUT-OF-POCKET MAXIMUM:
+   • Individual: $5,000/year
+   • Family: $10,000/year
+
+   [See Full Coverage Details] [Download Benefits Card]"
+
+---
+
+SECONDARY QUESTION 2: "How do I assign beneficiaries? Make changes? See current plan details?"
+
+User Types:
+  "How do I add a family member?"
+  OR "Change my plan"
+  OR "See my current coverage"
+
+Reading Engine Process:
+  1. Identify if user is plan admin or member
+  2. If member: Show personal enrollment status
+  3. If plan admin: Show bulk assignment tools
+  4. Provide step-by-step for changes
+  5. Claude AI guides through process
+
+Example Response (Member):
+  "YOUR PLAN DETAILS:
+
+   Current Plan: Fidelis Care HMO
+   Member ID: FIDELIS-ABC123456
+   Group Number: NYS-2024-001
+   Effective Date: January 1, 2026
+   Renewal Date: December 31, 2026
+
+   YOUR COVERAGE:
+   ✓ Self (Jane Smith)
+   ✓ Spouse (John Smith)
+   ✓ Child (Emma Smith, age 7)
+   ✓ Child (Michael Smith, age 4)
+
+   ADD NEW FAMILY MEMBER:
+   (e.g., newborn, adoption, marriage)
+   [Report Life Event] [Enroll New Member]
+
+   MAKE CHANGES:
+   • Update address: [Edit Address]
+   • Change plan: [Switch Plan] (annual or life event)
+   • Update contact info: [Edit Contact]
+   • Add/remove family: [Manage Family]
+
+   [Download Member Card] [Contact Plan] [See Full Coverage]"
+
+================================================================================
+4. PLAN BENEFITS STRUCTURE
+================================================================================
+
+The reading engine retrieves and displays:
+
+NETWORK INFORMATION:
+  - Total in-network providers
+  - Provider by specialty
+  - Geographic coverage (counties)
+  - Hospital/facility network
+  - Behavioral health providers
+  - Pharmacy network (PBM)
+
+COVERAGE DETAILS:
+  - Covered services
+  - Exclusions (not covered)
+  - Prior authorization requirements
+  - Referral requirements
+  - Waiting periods
+
+COST SHARING:
+  - Copayments by service
+  - Deductibles
+  - Coinsurance percentages
+  - Out-of-pocket maximums
+  - Preventive care (covered at no cost)
+
+ENROLLMENT INFORMATION:
+  - Current members (aggregate count)
+  - Service areas (counties/regions)
+  - Plan type (HMO, PPO, MLTC)
+  - Open enrollment dates
+  - Special enrollment periods
+
+================================================================================
+5. PLAN FAQ RESPONSES
+================================================================================
+
+FAQ 1: "Do beneficiaries need a referral from their primary care physician to see a specialist?"
+
+Claude Response:
+  "REFERRAL REQUIREMENTS:
+
+   IF YOU'RE AN HMO MEMBER:
+   ✓ YES - You need a referral for specialists
+
+   HOW IT WORKS:
+   1. Choose a primary care doctor (PCP)
+   2. Call PCP's office to schedule
+   3. Tell PCP you need to see a specialist
+   4. PCP submits referral to us
+   5. We send referral to specialist
+   6. You can then schedule with specialist
+
+   TIME FOR REFERRAL: 1-2 business days
+
+   WITHOUT REFERRAL:
+   × You'll pay 40% coinsurance instead of $25 copay
+   × May not be covered at all
+
+   EXCEPTIONS (No referral needed):
+   ✓ Pediatricians (if you have kids)
+   ✓ OB/GYN (women can self-refer)
+   ✓ Emergency services
+   ✓ Out-of-network (emergency)
+
+   [Request Referral] [Find PCP] [Contact Plan]"
+
+---
+
+FAQ 2: "What are the out-of-pocket costs (copayments, deductibles)?"
+
+[See SECONDARY QUESTION 1 above for detailed response]
+
+---
+
+FAQ 3: "Can beneficiaries switch plans or change providers mid-year?"
+
+Claude Response:
+  "SWITCHING PLANS:
+
+   DURING ANNUAL OPEN ENROLLMENT (Oct 15 - Dec 7):
+   ✓ You can switch to any plan
+   ✓ New coverage starts January 1
+   ✓ No restrictions
+
+   OUTSIDE OPEN ENROLLMENT:
+   ✗ Cannot switch (with rare exceptions)
+
+   LIFE EVENTS (Allowed mid-year):
+   ✓ Marriage/domestic partnership
+   ✓ Divorce
+   ✓ Birth/adoption
+   ✓ Job loss (COBRA loss)
+   ✓ Loss of other coverage
+   ✓ Death in family
+   ✓ Relocation (moving out of service area)
+
+   HOW TO SWITCH:
+   1. Report life event to NY State of Health
+   2. You'll get 60 days to choose new plan
+   3. New coverage starts within 1-2 months
+
+   CHANGING DOCTORS WITHIN YOUR PLAN:
+   ✓ You can change your PCP anytime
+   ✓ Most specialists can be changed with referral
+   ✓ Call your plan to request change
+   ✓ Effective immediately for new care
+
+   [Report Life Event] [Switch Plan] [Change PCP]"
+
+================================================================================
+6. PLAN JOURNEY END STATE
+================================================================================
+
+Plan User Successfully Completes Journey When:
+  ✓ UHWP verified and authenticated
+  ✓ 2FA enrolled and active
+  ✓ Understands network and coverage
+  ✓ Can answer member questions about benefits
+  ✓ Can assign/manage beneficiaries
+  ✓ Access to network directory and enrollment tools
+
+================================================================================
+
+END OF JOURNEY BLUEPRINT
+
+================================================================================

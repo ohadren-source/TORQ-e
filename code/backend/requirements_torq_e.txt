@@ -1,0 +1,31 @@
+# TORQ-e Backend Requirements
+
+# Core
+Flask==3.0.0
+requests==2.31.0
+psycopg2-binary==2.9.9
+
+# PDF Processing
+PyPDF2==4.0.1
+
+# GitHub API
+PyGithub==2.1.1
+
+# Web Scraping
+beautifulsoup4==4.12.2
+
+# Browser Automation
+playwright==1.40.0
+
+# Google Cloud
+google-cloud-vision==3.5.0
+
+# Environment
+python-dotenv==1.0.0
+
+# Logging & Monitoring
+python-json-logger==2.0.7
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1

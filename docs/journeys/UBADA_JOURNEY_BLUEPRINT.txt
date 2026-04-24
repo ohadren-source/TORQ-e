@@ -1,0 +1,402 @@
+================================================================================
+UBADA JOURNEY BLUEPRINT
+Data Analyst/Business Analyst Card
+================================================================================
+
+ROLE: Data/Business Analyst (Fraud detection, program analysis, research)
+IDENTIFIER: UBADA (Universal Business Analyst and Data Analyst)
+PRIMARY QUESTION: "Is this fraud? Is this provider real?"
+SECONDARY QUESTIONS: "What data quality checks should I do?" / "Which billing patterns indicate fraud?"
+
+================================================================================
+1. ENTRY POINT → UBADA ENTRY CARD
+================================================================================
+
+Card 1-2: Role Selection → UBADA Login
+  ┌──────────────────────────────────────────┐
+  │ TORQ-e Medicaid - Data Analyst          │
+  │                                          │
+  │ Enter Your UBADA                         │
+  │ [____________________________]           │
+  │                                          │
+  │ [Continue →]                             │
+  │                                          │
+  │ Forgot your UBADA?                       │
+  │ [Recover via 2FA]                        │
+  │                                          │
+  │ Don't have a UBADA yet?                  │
+  │ [Request Access]                         │
+  └──────────────────────────────────────────┘
+
+PATH A: Existing Analyst → 2FA → Analysis Dashboard
+PATH B: New Analyst → Authorization/Cert Review → Access
+
+================================================================================
+2. ANALYST DASHBOARD
+================================================================================
+
+Card 3: Data Analysis Dashboard
+
+  ┌──────────────────────────────────────────┐
+  │ TORQ-e Data Analysis - Fraud Detection   │
+  │ UBADA: 990i2833-j73f-85h8-e150-880099.. │
+  │ Type: FRAUD | Skill: SENIOR              │
+  │                                          │
+  │ ┌─ Your Analyses ────────────────────────┐│
+  │ │ Ask about fraud, anomalies, patterns:  ││
+  │ │ [____________________________] [Go →]   ││
+  │ │                                       ││
+  │ │ ─────────────────────────────────     ││
+  │ │ Recent Analysis:                      ││
+  │ │                                       ││
+  │ │ FAQ 1: Is this provider fraudulent?   ││
+  │ │ FAQ 2: What data checks should I do?  ││
+  │ │ FAQ 3: Which patterns = fraud risk?   ││
+  │ │                                       ││
+  │ └───────────────────────────────────────┘│
+  │                                          │
+  │ [Fraud Detection Tools] [Query Data]     │
+  │ [Run Reports] [Manage Cases]             │
+  └──────────────────────────────────────────┘
+
+================================================================================
+3. ANALYST JOURNEY - MAIN QUESTIONS
+================================================================================
+
+PRIMARY QUESTION: "Is this fraud? Is this provider real?"
+
+Analyst Types:
+  "Is NPI 1234567890 fraudulent?"
+  OR "Check provider 'ABC Healthcare Clinic'"
+  OR "Is this provider real or shell?"
+
+Reading Engine Process:
+  1. Extract provider identifier (NPI, Tax ID, name, address)
+  2. Cross-reference against:
+     - CMS NPPES database
+     - State licensing boards
+     - OIG Exclusions List
+     - Claims patterns
+     - Network verification
+     - Financial history
+  3. Calculate fraud risk score (0-100)
+  4. Identify red flags
+  5. Claude AI provides assessment
+
+Example Response:
+  "PROVIDER FRAUD RISK ASSESSMENT:
+
+   Provider: ABC Healthcare Clinic
+   NPI: 1234567890 | Tax ID: 12-3456789
+   Address: 123 Office Park, Buffalo, NY
+
+   FRAUD RISK SCORE: 78/100 ⚠ HIGH RISK
+
+   RED FLAGS DETECTED:
+   ✗ Address is PO Box (not office building)
+   ✗ Billed 340 visits/month (2x typical)
+   ✗ Same services billed multiple times same date
+   ✗ Billing outside listed hours of operation
+   ✗ No physical facility found at address
+   ✗ Sudden spike in claims (Jan $50K → May $400K)
+   ✗ Network says 'not available' but claiming patients
+
+   GREEN FLAGS:
+   ✓ NPI is valid and active
+   ✓ Tax ID matches business registration
+   ✓ Licensed to operate in NY
+
+   RECOMMENDATION:
+   🚨 FLAG FOR INVESTIGATION
+   • Immediate claims hold pending review
+   • Site visit recommended
+   • Request documentation for sample claims
+   • Interview recent 'patients' if possible
+
+   [Flag for Investigation] [Request Docs]
+   [Halt Claims Pending Review]"
+
+---
+
+SECONDARY QUESTION 1: "What data quality checks should I perform before analyzing?"
+
+Analyst Types:
+  "How do I validate my dataset?"
+  OR "What checks should I run first?"
+  OR "Data quality verification steps"
+
+Reading Engine Process:
+  1. Provide standardized QA checklist
+  2. Recommend validation steps
+  3. Show common data issues
+  4. Guide through cleaning process
+  5. Claude AI explains importance
+
+Example Response:
+  "DATA QUALITY CHECKS - PRE-ANALYSIS CHECKLIST:
+
+   STEP 1: COMPLETENESS CHECK
+   ☐ Count records: [Expected: 3.2M members]
+   ☐ Missing values by field: <2% acceptable
+   ☐ Identify null/blank fields
+   ☐ Check for truncated data
+
+   STEP 2: ACCURACY CHECK
+   ☐ Valid date formats (YYYY-MM-DD)
+   ☐ Logical date ranges (service date < claim date)
+   ☐ Valid ZIP codes / addresses
+   ☐ Valid CPT/HCPCS procedure codes
+   ☐ Valid ICD-10 diagnosis codes
+   ☐ Provider IDs exist (NPI lookup)
+   ☐ Member IDs exist (UMID lookup)
+
+   STEP 3: CONSISTENCY CHECK
+   ☐ No duplicate claims (same claim submitted twice)
+   ☐ Beneficiary demographic consistency (name/DOB)
+   ☐ Units match service type (e.g., >10 units for single visit = error)
+   ☐ Dates align with plan rules
+
+   STEP 4: OUTLIER CHECK
+   ☐ Unusually high charges (>$50K claim = verify)
+   ☐ Unusual service combinations
+   ☐ Provider billing unusual volume
+   ☐ Member with unusual patterns
+
+   RESULTS:
+   ✓ 98.5% complete
+   ✓ 99.2% accurate formats
+   ⚠ 0.3% duplicates (remove before analysis)
+   ⚠ 1.2% outliers (investigate)
+
+   [Run Automated QA] [View Report] [Export Clean Data]"
+
+---
+
+SECONDARY QUESTION 2: "Which billing patterns indicate potential fraud, waste, or abuse?"
+
+Analyst Types:
+  "What patterns should I watch for?"
+  OR "Fraud detection rules"
+  OR "Billing anomalies to investigate"
+
+Reading Engine Process:
+  1. Pull fraud detection algorithms
+  2. Explain patterns and red flags
+  3. Show examples
+  4. Provide thresholds
+  5. Claude AI describes detection methods
+
+Example Response:
+  "FRAUD/WASTE/ABUSE PATTERNS:
+
+   PATTERN 1: DUPLICATE BILLING
+   Description: Same service billed 2+ times
+   Red Flag: Emergency room visit billed 3 times
+   Detection: <1% acceptable, >2% = investigate
+   Action: Identify duplicate claims, recover payment
+
+   PATTERN 2: BILLING OUTSIDE HOURS
+   Description: Services billed at 2 AM by 24/7 office
+   Red Flag: Physical therapy billed 24/7
+   Detection: Claims outside facility hours
+   Action: Verify if services actually provided
+
+   PATTERN 3: UNUSUAL COMBINATIONS
+   Description: Services never combined = billed together
+   Red Flag: Spinal surgery + pediatric vaccines same visit
+   Detection: Rule-based (incompatible codes together)
+   Action: Request medical records to verify
+
+   PATTERN 4: UNBUNDLING
+   Description: Bundled service billed as separate items
+   Red Flag: Annual physical = billed as 10 separate visits
+   Detection: Code combinations flagged
+   Action: Recover overpayment, provider education
+
+   PATTERN 5: UPCODING
+   Description: Higher-cost service billed instead of lower
+   Red Flag: Emergency room visit billed as trauma surgery
+   Detection: Compare documentation to diagnosis codes
+   Action: Review medical records, recover difference
+
+   PATTERN 6: PROVIDER CHANGE
+   Description: Sudden change in billing/network
+   Red Flag: 10 claims in 5 years → 500 claims in 1 month
+   Detection: Volume increase >300% = investigate
+   Action: Audit all recent claims, potential fraud
+
+   PATTERN 7: SHELL PROVIDER
+   Description: Non-existent or improper provider
+   Red Flag: Address is PO Box or residential
+   Detection: Address verification, site visit
+   Action: Verify legitimacy, potentially halt payments
+
+   FRAUD RISK THRESHOLDS:
+   • Low: 0-30 risk score
+   • Medium: 31-60 risk score
+   • High: 61-85 risk score
+   • Critical: 86-100 risk score
+
+   [Run Pattern Detection] [View Examples] [Set Alerts]"
+
+================================================================================
+4. ANALYST FRAUD DETECTION TOOLS
+================================================================================
+
+Tool 1: Automated Fraud Detection
+  - Runs predefined algorithms
+  - Flags suspicious claims
+  - Generates fraud risk scores
+  - Creates investigation cases
+
+Tool 2: Custom Query Builder
+  - Write SQL to analyze data
+  - Filter by provider, member, dates
+  - Export results for review
+  - Create custom reports
+
+Tool 3: Claims Audit
+  - Review individual claims
+  - Check against rules
+  - Request documentation
+  - Deny/recover if fraudulent
+
+Tool 4: Provider Network Verification
+  - Check if provider is in network
+  - Verify credentials
+  - Check exclusion status
+  - Identify shell providers
+
+Tool 5: Pattern Analysis
+  - Identify spending anomalies
+  - Trend analysis
+  - Comparison to benchmarks
+  - Predictive modeling
+
+================================================================================
+5. ANALYST FAQ RESPONSES
+================================================================================
+
+FAQ 1: "Is this provider real or fraudulent?"
+
+[See PRIMARY QUESTION above for detailed response]
+
+---
+
+FAQ 2: "What data quality checks should I perform?"
+
+[See SECONDARY QUESTION 1 above for detailed response]
+
+---
+
+FAQ 3: "Which billing patterns indicate fraud, waste, or abuse?"
+
+[See SECONDARY QUESTION 2 above for detailed response]
+
+================================================================================
+6. ANALYST WORKFLOW
+================================================================================
+
+TYPICAL FRAUD ANALYST WORKFLOW:
+
+PHASE 1: DETECTION
+  1. Run automated fraud detection algorithms
+  2. Algorithms flag suspicious claims (e.g., >500 per month)
+  3. Claims assigned fraud risk scores
+  4. High-risk cases (>75 score) = auto-escalate
+
+PHASE 2: INITIAL ANALYSIS
+  1. Analyst reviews flagged cases
+  2. Examines claims in detail
+  3. Cross-references provider info
+  4. Checks patterns for multiple cases
+
+PHASE 3: INVESTIGATION DECISION
+  1. Assess evidence strength
+  2. Determine if actual fraud vs. billing error
+  3. Low evidence: Close case, no action
+  4. Medium evidence: Request documentation
+  5. High evidence: Escalate to investigator
+
+PHASE 4: ESCALATION (if warranted)
+  1. Create investigation case
+  2. Assign to Medicaid Inspector General
+  3. Provider put on claims hold
+  4. Request detailed documentation
+  5. Conduct site visit if necessary
+
+PHASE 5: RESOLUTION
+  1. Determination: Fraud, Waste, Abuse, or Clean
+  2. If fraud: Calculate overpayment
+  3. Recover overpayment
+  4. Refer to law enforcement if criminal
+  5. Close case, document lessons learned
+
+DOCUMENTATION:
+  - All analysis saved under UBADA
+  - Audit trail of findings
+  - Provider notified if claims held
+  - Case closure documented
+
+================================================================================
+7. ANALYST PERFORMANCE METRICS
+================================================================================
+
+Tracked for All UBADA Analysts:
+
+Quality Metrics:
+  - Accuracy of fraud findings (% confirmed by investigators)
+  - False positive rate (incorrect flags)
+  - Time to resolve case
+
+Productivity:
+  - Cases reviewed per month
+  - Claims analyzed
+  - $ in fraud recovered
+  - Cases escalated
+
+Development:
+  - Skill level progress
+  - Certifications maintained
+  - Training completion
+  - Publications/presentations
+
+Performance Recognition:
+  - Top analysts promoted to Lead
+  - High recovery = bonus eligibility
+  - Accuracy >95% = performance bonus
+
+================================================================================
+8. ANALYST JOURNEY END STATE
+================================================================================
+
+Analyst Successfully Completes Journey When:
+  ✓ UBADA authorized and authenticated
+  ✓ 2FA enrolled and active
+  ✓ Skill level/analyst type confirmed
+  ✓ Data access scope understood
+  ✓ Can run fraud detection
+  ✓ Can analyze claims data
+  ✓ Understands fraud patterns
+  ✓ Can escalate to investigators
+  ✓ Maintains audit trail of work
+
+Ongoing Access:
+  - Analyst can return to analysis tools
+  - Ask fraud detection questions
+  - Run custom queries
+  - Generate fraud reports
+  - Manage investigation cases
+  - Track case outcomes
+
+Training & Development:
+  - Continuing education required
+  - Fraud certification updated yearly
+  - New analysts supervised
+  - Senior analysts lead investigations
+
+================================================================================
+
+END OF JOURNEY BLUEPRINT
+
+================================================================================

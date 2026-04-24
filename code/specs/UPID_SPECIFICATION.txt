@@ -1,0 +1,524 @@
+================================================================================
+UNIVERSAL PROVIDER IDENTIFIER (UPID) SPECIFICATION
+TORQ-e Identity Verification System
+================================================================================
+
+VERSION: 1.0
+DATE: April 23, 2026
+AUTHOR: Design Phase - TORQ-e Development Team
+
+================================================================================
+1. DEFINITION
+================================================================================
+
+UPID (Universal Provider Identifier) is the single, persistent, unique
+identifier that represents a healthcare/wellness provider across all New York
+State Medicaid systems, regardless of:
+- Legal entity name changes (merger, rebranding, DBA changes)
+- Address changes (relocation, satellite offices)
+- NPI changes (rare but happens on revalidation)
+- Ownership changes (acquisition, change of control)
+- Network affiliations (joining/leaving managed care networks)
+- License/credentialing status changes (active, inactive, suspended, revoked)
+- Multiple service locations (one UPID for organization, satellite locations tracked separately)
+
+UPID is generated ONCE at initial verification and NEVER CHANGES for that
+provider entity for the lifetime of their enrollment record.
+
+================================================================================
+2. TERMINOLOGY & SYNONYMS
+================================================================================
+
+The entity identified by UPID is referred to by different terms:
+
+PROVIDER
+  - Definition: Individual healthcare professional (physician, nurse, therapist)
+  - Usage: Claims systems, referral systems, clinical networks
+  - Example: "Dr. Jane Smith, MD - Provider"
+  - System: Provider enrollment, credentialing databases
+
+FACILITY
+  - Definition: Physical location providing healthcare services
+  - Usage: Hospitals, clinics, urgent care centers, labs
+  - Example: "New York Hospital - Facility"
+  - System: Facility networks, in-network directories
+
+ORGANIZATION
+  - Definition: Legal entity that employs providers and/or operates facilities
+  - Usage: Healthcare systems, group practices, community health centers
+  - Example: "Mount Sinai Health System - Organization"
+  - System: Billing, contracts, organizational hierarchies
+
+VENDOR / SUPPLIER
+  - Definition: Non-clinical provider (pharmacy, DME supplier, lab)
+  - Usage: Pharmacy networks, medical equipment supply
+  - Example: "CVS Pharmacy #2145 - Vendor"
+  - System: Pharmacy benefits, supply chain
+
+NETWORK PARTICIPANT
+  - Definition: Any entity contracted with a managed care plan
+  - Usage: Plan network directories, in/out-of-network determination
+  - Example: "Participating provider in Fidelis network"
+  - System: Plan network management systems
+
+UNIFIED REFERENCE
+  - All terms refer to healthcare/wellness service PROVIDERS
+  - All systems map to ONE UPID
+  - UPID is the common denominator across fragmented provider data
+
+================================================================================
+3. UPID STRUCTURE
+================================================================================
+
+Format: UUID v4 (128-bit identifier)
+Example: 660f9500-f40c-52e5-b827-557766551111
+
+Length: 36 characters (with hyphens)
+Pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+Generation:
+  - Created at first successful verification
+  - Algorithm: Cryptographically secure random generation (UUID v4)
+  - No embedded provider data in the identifier itself
+  - No sequential numbering (prevents enumeration)
+  - Immutable once assigned
+
+Storage:
+  - Primary database: TORQ-e Provider Identity Database
+  - Indexed for fast lookup by UPID, NPI, Medicaid ID
+  - Encrypted at rest
+  - Auditable (creation date, created by, last modified, verification method)
+
+================================================================================
+4. VENN DIAGRAM: PROVIDER DATA POINTS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                     UNIVERSAL PROVIDER DATA                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  CENTER (Always Present, Core Identity):                           │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • National Provider Identifier (NPI)                             │
+│  • Legal Entity Name (DBA, if applicable)                         │
+│  • Provider Type Code (individual, organization, facility)        │
+│  • Tax ID / EIN (Employer Identification Number)                 │
+│  • Primary Practice Address                                       │
+│  • Contact Phone / Email                                          │
+│                                                                     │
+│  RING 1 (Usually Present, High Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Medicaid Provider ID (State-specific)                          │
+│  • State License Number(s)                                        │
+│  • DEA Number (if prescribing)                                    │
+│  • Medical Specialty/Taxonomy Code                                │
+│  • Board Certification Status                                     │
+│  • Malpractice Insurance Carrier                                  │
+│  • UPIN (if applicable, legacy)                                   │
+│                                                                     │
+│  RING 2 (Often Present, Medium Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Secondary/Satellite Office Locations                           │
+│  • Hospital Affiliation(s)                                        │
+│  • Group Practice Membership                                      │
+│  • Network Participation (list of plans)                          │
+│  • Credentialing Status (active, inactive, suspended)             │
+│  • Provider Enrollment Date(s)                                    │
+│  • Languages Spoken                                               │
+│                                                                     │
+│  RING 3 (Sometimes Present, Variable):                            │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Education/Training History                                     │
+│  • Prior Addresses (historical)                                   │
+│  • Prior NPI Numbers (if changed)                                 │
+│  • Ownership Structure                                            │
+│  • Corporate Relationships (parent company, subsidiaries)         │
+│  • Telehealth Capability                                          │
+│  • Accessibility Features                                         │
+│                                                                     │
+│  RING 4 (Sparse/Unreliable, Use with Caution):                   │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Social Media/Online Presence                                   │
+│  • Patient Reviews/Ratings                                        │
+│  • Fraud/Complaint History                                        │
+│  • Billing Pattern Analysis (claims data)                         │
+│  • GitHub/Professional Portfolio (if applicable)                  │
+│                                                                     │
+│  GAPS (Missing/Difficult to Verify):                             │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Undocumented providers (no NPI yet)                            │
+│  • Overseas-trained providers (licensing in flux)                 │
+│  • Newly licensed providers (not in all systems yet)              │
+│  • Defunct/Closed practices (data still in legacy systems)        │
+│  • Shell/Fraudulent entities (intentionally hidden)               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+5. FINGERPRINTS FOR PROVIDER IDENTIFICATION
+================================================================================
+
+Fingerprint 1 (Highest Confidence - Individual Provider):
+  - NPI + Last Name + DOB = Unique identifier
+  - Used for: Physicians, nurse practitioners, licensed clinical providers
+  - Confidence: 99%+
+  - Reading Engine: Cross-reference NPI against CMS database
+
+Fingerprint 2 (High Confidence - Organization):
+  - Tax ID (EIN) + Legal Entity Name = Unique identifier
+  - Used for: Hospitals, clinics, group practices, healthcare systems
+  - Confidence: 98%+
+  - Reading Engine: Cross-reference EIN against IRS database
+
+Fingerprint 3 (Medium Confidence - Pharmacy/Facility):
+  - Medicaid Provider ID + Address = Unique identifier
+  - Used for: Pharmacies, DME suppliers, labs, facilities
+  - Confidence: 90%+
+  - Reading Engine: Cross-reference Medicaid ID against state systems
+
+Fingerprint 4 (Backup - State License):
+  - State License Number + License Type = Unique identifier
+  - Used for: When NPI/Tax ID unavailable
+  - Confidence: 92%+
+  - Reading Engine: Cross-reference license against state regulatory boards
+
+Fingerprint 5 (Historical - Legacy):
+  - Prior NPI + Address History = Unique identifier
+  - Used for: Providers who changed NPI (revalidation, name change)
+  - Confidence: 85%+
+  - Reading Engine: Fuzzy match name/address history
+
+================================================================================
+6. VERIFICATION TIERS & UPID GENERATION
+================================================================================
+
+TIER 1A: NPI VERIFICATION (Individual Licensed Provider)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Provider provides NPI number                              │
+  │    (or identifies themselves with state license)             │
+  │                                                              │
+  │ 2. Reading Engine validates:                                │
+  │    - Check NPI against CMS (Centers for Medicare/Medicaid)  │
+  │    - Verify name, specialty, address match                  │
+  │    - Check state license database                           │
+  │    - Verify license is active (not suspended/revoked)       │
+  │    - Check for malpractice/sanction history                 │
+  │    - Verify DEA number (if prescriber)                      │
+  │                                                              │
+  │ 3. Cross-reference identity:                                │
+  │    - NPI + Last Name + DOB = unique fingerprint             │
+  │    - Check for duplicate NPIs (rare but possible)           │
+  │    - Verify no sanctions from OIG/EXCLUSIONS list           │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app (TOTP)                              │
+  │    - Phone number verified via SMS/call                    │
+  │                                                              │
+  │ 5. UPID GENERATED & ASSIGNED                                │
+  │    - Stored in TORQ-e database                             │
+  │    - Provider receives UPID confirmation                   │
+  │    - Enrollment credentials issued                         │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 1B: TAX ID VERIFICATION (Organization/Facility)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Organization provides Tax ID (EIN) and legal name         │
+  │                                                              │
+  │ 2. Reading Engine validates:                                │
+  │    - Check EIN against IRS database                         │
+  │    - Verify business name matches                           │
+  │    - Check Business Entity Search (state)                   │
+  │    - Verify FEIN is not delinquent/revoked                 │
+  │    - Confirm organization type (healthcare provider)        │
+  │    - Verify physical address exists                         │
+  │                                                              │
+  │ 3. Cross-reference identity:                                │
+  │    - EIN + Legal Name + Address = unique fingerprint        │
+  │    - Check for duplicate organizations                      │
+  │    - Verify no exclusions/sanctions                         │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app for authorized representative        │
+  │    - Phone/email verified via SMS/call                     │
+  │                                                              │
+  │ 5. UPID GENERATED & ASSIGNED                                │
+  │    - Stored in TORQ-e database                             │
+  │    - Organization receives UPID confirmation               │
+  │    - Provider portal credentials issued                    │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 2: IN-PERSON / MANUAL VERIFICATION (New/Unverifiable Providers)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Provider cannot provide verified credentials              │
+  │    (Newly licensed, overseas training, complex structure)    │
+  │                                                              │
+  │ 2. Provider attends in-person verification                   │
+  │    - Medicaid office or authorized verification agent       │
+  │    - Brings physical credentials (license, ID, EIN cert)    │
+  │    - Submits documented proof of identity                   │
+  │                                                              │
+  │ 3. Verification agent:                                       │
+  │    - Examines all documents                                 │
+  │    - Cross-references information                           │
+  │    - Takes photos of credentials for records               │
+  │    - Verifies provider actually exists/is legitimate        │
+  │    - Notes any discrepancies                               │
+  │                                                              │
+  │ 4. Attestation & Liability:                                 │
+  │    - Verification agent signs: "I verified provider on X"   │
+  │    - Documents stored in provider record                    │
+  │                                                              │
+  │ 5. Enroll in 2FA:                                           │
+  │    - Authenticator app issued                              │
+  │    - Phone verified                                         │
+  │                                                              │
+  │ 6. UPID GENERATED & ASSIGNED                                │
+  │    - Flagged as "Tier 2 - Manual Verification"             │
+  │    - Higher scrutiny on claims until verified              │
+  └─────────────────────────────────────────────────────────────┘
+
+================================================================================
+7. PERSISTENT IDENTITY ACROSS CHANGES
+================================================================================
+
+Legal Name Change (Merger, Rebranding, DBA):
+  - Provider notifies of name change with documentation
+  - Reading Engine verifies: legal documents, IRS filings
+  - UPID remains the same
+  - Old names map to UPID for historical reference
+  - All contracts/networks follow UPID, not name
+
+NPI Change (Rare - Revalidation, Correction):
+  - Provider revalidates with CMS (happens every 5 years)
+  - May receive new NPI in unusual circumstances
+  - Old NPI maps to new NPI (both link to same UPID)
+  - Reading Engine catches and reconciles
+  - UPID never changes despite NPI change
+
+Address Change (Relocation, New Satellite Office):
+  - Provider updates primary/secondary addresses
+  - Reading Engine verifies new address
+  - UPID remains the same
+  - Address history tracked under UPID
+  - Contracts/networks update automatically
+
+Ownership Change (Acquisition, Merger):
+  - Entity acquired by another healthcare system
+  - Tax ID may stay same (if subsidiary) or change (if consolidated)
+  - Reading Engine identifies relationship
+  - Both old and new organizational structures linked to UPID
+  - Provider continuity maintained
+
+Network Changes (Joining/Leaving Plans):
+  - Provider enrolls/disenrolls from managed care plans
+  - UPID follows provider across network changes
+  - Each plan has separate enrollment record
+  - But all point back to single UPID
+  - No confusion about provider identity across plans
+
+License Status Changes (Active → Suspended → Revoked):
+  - License status updated in state databases
+  - Reading Engine monitors and flags changes
+  - UPID marked with status (active, inactive, suspended, revoked)
+  - Automatic claims halt if suspended/revoked
+  - Historical data preserved under UPID
+
+================================================================================
+8. UPID MAPPING TO LEGACY SYSTEMS
+================================================================================
+
+National Provider Identifier (NPI)
+  - Format: 10-digit number (individual) or other (organization)
+  - System: CMS National Plan and Provider Enumeration System (NPPES)
+  - Mapping: NPI → UPID (one-to-one, usually)
+  - Note: Individual provider has one NPI, may have multiple UPIDs if owns multiple practices
+
+Medicaid Provider ID (State)
+  - Format: State-specific (varies by state)
+  - System: EMEDNY, state provider enrollment
+  - Mapping: Medicaid Provider ID → UPID (one-to-one)
+  - Note: Historical Medicaid IDs also map to UPID
+
+Tax ID / EIN
+  - Format: 9-digit XX-XXXXXXX
+  - System: IRS, state business registration
+  - Mapping: EIN → UPID (one-to-one for organization)
+  - Note: EIN encrypted, UPID does not contain EIN
+
+State License Number(s)
+  - Format: State-specific (varies by profession/state)
+  - System: State licensing boards (Medical Board, Board of Nursing, etc.)
+  - Mapping: License(s) → UPID (one provider can have multiple licenses)
+  - Note: Used as backup identifier if NPI unavailable
+
+DEA Number
+  - Format: 9-character code (for prescribers)
+  - System: DEA Diversion Control Division
+  - Mapping: DEA # → UPID (for prescribing providers only)
+  - Note: Maps to UPID only if provider is prescriber
+
+UPIN (Unique Physician Identification Number)
+  - Format: Legacy (6-digit, now obsolete)
+  - System: Old CMS systems (historical only)
+  - Mapping: Legacy UPIN → UPID (historical mapping only)
+  - Note: No longer issued; maps for data reconciliation
+
+Old Provider IDs / Prior Enrollments
+  - Format: Varies (prior state IDs, prior plan IDs)
+  - System: Legacy databases
+  - Mapping: Old ID → UPID (historical reconciliation)
+  - Note: Used for data migration and fraud detection
+
+Reading Engine Responsibility:
+  - Map all legacy provider IDs to single UPID
+  - Identify duplicate UPID creation (prevent)
+  - Flag discrepancies (same NPI, two UPIDs)
+  - Reconcile historical provider records to correct UPID
+  - Detect shell companies and fraudulent providers
+
+================================================================================
+9. FRAUD DETECTION & PROVIDER VERIFICATION
+================================================================================
+
+The Reading Engine uses multiple data sources to verify provider legitimacy:
+
+SOURCE 1: Federal/State Databases
+  - CMS NPPES (NPI lookup)
+  - State licensing boards (professional licenses)
+  - DEA Diversion Control (prescriber verification)
+  - IRS Business Entity Search (EIN verification)
+  - OIG Exclusions List (sanctioned providers)
+
+SOURCE 2: Regulatory & Compliance
+  - Medicare Sanctions List
+  - Medicaid fraud alerts
+  - Medical board disciplinary actions
+  - Malpractice insurance verification
+  - Credentialing organizations (NCQA, URAC)
+
+SOURCE 3: Public Records & News
+  - Healthcare provider complaint databases
+  - News archives (fraud, settlements, suspensions)
+  - Court records (litigation, settlements)
+  - Professional associations (member verification)
+
+SOURCE 4: Financial & Business Verification
+  - Business registration (state Secretary of State)
+  - Tax filing status (EIN active, not delinquent)
+  - Business address verification (USPS, mapping services)
+  - Facility inspection records (state health departments)
+
+SOURCE 5: Network Verification
+  - Hospital affiliation verification
+  - Group practice membership
+  - Network credentialing files
+  - Prior enrollment history
+
+Red Flags (Automatic Rejection or Manual Review):
+  - NPI found on OIG Exclusions List
+  - License suspended, revoked, or never existed
+  - Address does not exist or is a mailbox
+  - Tax ID not matching business name
+  - Same provider with multiple different identities
+  - Recent sanctions or settlements
+  - Duplicate enrollment attempts
+
+================================================================================
+10. TWO-FACTOR AUTHENTICATION & UPID
+================================================================================
+
+2FA Requirements:
+  - Mandatory for all provider accounts accessing enrollment/claims systems
+  - Authenticator app (TOTP - Time-based One-Time Password)
+  - Phone number (SMS/voice verification fallback)
+  - Both must be verified
+
+2FA Enrollment:
+  1. Provider/representative enrolls in authenticator app
+  2. App generates time-based code (30-second rotation)
+  3. Phone number verified via SMS confirmation
+  4. Backup phone number can be added
+  5. 2FA status linked to UPID in database
+
+2FA & Provider Team Access:
+  - Multiple representatives can have access to same UPID
+  - Each person has their own 2FA credentials
+  - UPID shared across team, but authentication individual
+  - Audit log tracks who accessed account and when
+
+2FA Breach / Lost Device:
+  - Provider reports compromised 2FA
+  - Account locked immediately
+  - Identity re-verification required (Tier 1 or Tier 2)
+  - New 2FA enrolled
+  - UPID remains the same but flagged for investigation
+
+================================================================================
+11. DATA INTEGRITY & UPID
+================================================================================
+
+Primary Key: UPID
+  - All provider records in TORQ-e database keyed to UPID
+  - Foreign key in claims, contracts, network directories
+  - No duplication possible if UPID properly enforced
+
+Referential Integrity:
+  - One UPID = One provider entity
+  - One provider = One UPID (no duplicates)
+  - All historical data attached to UPID
+  - Soft delete only (data archived, not destroyed)
+
+Audit Trail:
+  - Created date: when UPID assigned
+  - Created by: system/user who generated UPID
+  - Verification method: Tier 1A, 1B, or Tier 2
+  - Verified against: which databases/documents
+  - Last modified: any updates to provider data
+  - Last accessed: when provider last logged in
+  - Claims activity: linked to UPID for monitoring
+
+Immutability:
+  - UPID cannot be changed once assigned
+  - UPID cannot be reassigned to different provider
+  - UPID cannot be deleted (only archived)
+  - Changes to name/address/NPI do NOT change UPID
+
+================================================================================
+12. SUCCESS METRICS FOR UPID
+================================================================================
+
+Fraud Prevention:
+  - Current: Unknown fraud rate (estimated 3-8% of provider base)
+  - Target: Catch 98%+ of shell/fraudulent providers at enrollment
+  - Target: Identify duplicate provider identities within 30 days
+
+Provider Deduplication:
+  - Current: Estimated 2-5% duplicate provider records in legacy systems
+  - Target: Reduce to <0.1% through UPID consolidation
+
+Identity Resolution Speed:
+  - Current: Manual provider verification 5-15 business days
+  - Target: Automated Tier 1 verification <2 minutes
+  - Target: Tier 2 manual verification completed within 5 business days
+
+Claims Processing:
+  - Current: Claims denied for provider identity mismatches
+  - Target: 99%+ claims accepted on first submission (correct UPID)
+  - Target: Reduce rework due to provider ID issues by 95%
+
+Provider Satisfaction:
+  - Target: 85%+ of providers enroll in UPID without issue
+  - Target: <2% provider account lockouts due to 2FA issues
+
+System Uptime:
+  - Target: 99.95% availability (provider verification system)
+  - Target: <500ms UPID lookup time
+
+================================================================================
+
+END OF SPECIFICATION
+
+Revision History:
+v1.0 - April 23, 2026 - Initial specification
+
+================================================================================

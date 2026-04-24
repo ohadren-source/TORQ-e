@@ -1,0 +1,575 @@
+================================================================================
+UNIVERSAL BUSINESS ANALYST & DATA ANALYST (UBADA) SPECIFICATION
+TORQ-e Identity Verification System
+================================================================================
+
+VERSION: 1.0
+DATE: April 23, 2026
+AUTHOR: Design Phase - TORQ-e Development Team
+
+================================================================================
+1. DEFINITION
+================================================================================
+
+UBADA (Universal Business Analyst and Data Analyst) is the single, persistent,
+unique identifier that represents an authorized analyst accessing TORQ-e
+systems for data analysis, fraud detection, reporting, and insight generation.
+
+UBADA represents the analytical role, skill level, data access scope, and
+analysis objectives for users who:
+- Detect fraud and anomalies in claims
+- Generate program efficiency reports
+- Analyze provider/member patterns
+- Identify waste and inefficiency
+- Track quality metrics and outcomes
+- Support program evaluation and improvement
+- Conduct ad-hoc analyses
+
+UBADA is generated ONCE when an analyst role is authorized and persists for
+the duration of their authorized analytical access.
+
+Note: UBADA combines Business Analysts (program-focused) and Data Analysts
+(technical-focused) under one identifier because both are ultimately answering
+"What's happening in our data?" with different emphasis.
+
+================================================================================
+2. TERMINOLOGY & SYNONYMS
+================================================================================
+
+The entity identified by UBADA is referred to by different terms:
+
+DATA ANALYST
+  - Definition: Technical professional analyzing claims/member data
+  - Usage: Fraud detection, pattern analysis, quantitative insights
+  - Example: "Senior Data Analyst - Fraud Detection"
+  - System: Ad-hoc query tools, statistical analysis platforms
+
+BUSINESS ANALYST
+  - Definition: Professional analyzing program operations/outcomes
+  - Usage: Program efficiency, quality metrics, strategic insights
+  - Example: "Program Business Analyst - Medicaid Operations"
+  - System: Reporting dashboards, KPI tracking, executive summaries
+
+FRAUD ANALYST
+  - Definition: Analyst specialized in fraud detection
+  - Usage: Identifying suspicious patterns, claim aberrations
+  - Example: "Medicaid Fraud Analyst"
+  - System: Fraud detection algorithms, pattern matching tools
+
+PROGRAM EVALUATOR
+  - Definition: Analyst evaluating program performance
+  - Usage: Assessing efficiency, quality, outcomes
+  - Example: "Program Evaluator - Managed Care"
+  - System: Evaluation frameworks, outcome tracking
+
+RESEARCHER
+  - Definition: Academic or policy researcher analyzing Medicaid data
+  - Usage: Policy analysis, program research, publications
+  - Example: "Health Services Researcher"
+  - System: De-identified dataset access, research portals
+
+AUDITOR / COMPLIANCE ANALYST
+  - Definition: Analyst reviewing claims for compliance
+  - Usage: Payment accuracy, policy adherence, risk assessment
+  - Example: "Claims Compliance Analyst"
+  - System: Claims audit tools, variance analysis
+
+UNIFIED REFERENCE
+  - All terms refer to ANALYSTS examining TORQ-e data
+  - All systems map to ONE UBADA per analyst
+  - UBADA defines analysis scope and data access
+
+================================================================================
+3. UBADA STRUCTURE
+================================================================================
+
+Format: UUID v4 + Analyst Type + Skill Level
+Example: 990i2833-j73f-85h8-e150-880099884444
+Analyst Type: FRAUD (fraud detection), BUSINESS (program analysis), RESEARCH
+Skill Level: JUNIOR (supervised), SENIOR (independent), LEAD (oversight)
+
+Length: 36 characters UUID + 1-10 character analyst type + skill level
+Pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|TYPE|LEVEL
+
+Generation:
+  - Created when analyst role is authorized
+  - Algorithm: Cryptographically secure random generation (UUID v4)
+  - Analyst type and skill level assigned based on role
+  - Immutable once assigned
+
+Storage:
+  - Primary database: TORQ-e Analyst Identity Database
+  - Indexed by UBADA, Analyst Name, Skill Level
+  - Encrypted at rest
+  - Audit logging of all analyses performed
+
+================================================================================
+4. ANALYST TYPES & SKILL LEVELS
+================================================================================
+
+ANALYST TYPE 1: FRAUD ANALYST
+
+JUNIOR Fraud Analyst:
+  - Access: Can query claims data under supervision
+  - Skills: Learning fraud detection patterns, basic SQL
+  - Reports: Generate predefined fraud detection reports
+  - Flags: Cannot independently flag claims for investigation
+  - Escalation: Supervisor reviews and approves all findings
+  - Certification: Healthcare fraud detection training required
+  - Data access: De-identified claims data, basic metrics
+  - Cannot: Access identifiable member/provider data alone
+
+SENIOR Fraud Analyst:
+  - Access: Full access to claims data including identifiable info
+  - Skills: Advanced fraud detection, statistical modeling, SQL expertise
+  - Reports: Create custom fraud detection queries and analyses
+  - Flags: Can independently flag claims/providers for investigation
+  - Escalation: Direct to Medicaid Inspector General
+  - Certification: Healthcare fraud certification, advanced analytics
+  - Data access: Full claims data, member/provider identifiers, networks
+  - Can: Access all data necessary for investigation
+
+LEAD Fraud Analyst:
+  - Access: Full access plus supervisory oversight
+  - Skills: Expert-level fraud detection, ML capabilities
+  - Reports: Design and deploy new fraud detection models
+  - Flags: Approves and escalates investigations
+  - Escalation: Direct to leadership, law enforcement coordination
+  - Certification: Fraud examination (CFE), healthcare expertise
+  - Data access: Full access including sensitive investigation files
+  - Can: Define fraud detection strategy, train team, oversee cases
+
+---
+
+ANALYST TYPE 2: BUSINESS ANALYST
+
+JUNIOR Business Analyst:
+  - Access: Standard dashboard access, predefined reports
+  - Skills: Learning program operations, basic reporting
+  - Reports: Generate predefined program metrics and reports
+  - Analysis: Cannot modify report parameters independently
+  - Escalation: All analyses reviewed by supervisor
+  - Certification: Program knowledge training required
+  - Data access: Aggregate data, summary metrics, program KPIs
+  - Cannot: Access individual member/provider data
+
+SENIOR Business Analyst:
+  - Access: Custom dashboards, ad-hoc report generation
+  - Skills: Program analysis, outcome evaluation, SQL for reports
+  - Reports: Create custom reports, analyze program operations
+  - Analysis: Can independently analyze program efficiency
+  - Escalation: Present findings to program directors
+  - Certification: Master's degree or equivalent; program expertise
+  - Data access: Aggregate data with identifiers for program analysis
+  - Can: Deep dive into program performance, identify trends
+
+LEAD Business Analyst:
+  - Access: Full access to program data, system configuration
+  - Skills: Expert program evaluation, predictive analysis, visualization
+  - Reports: Design KPI frameworks, create executive dashboards
+  - Analysis: Provides strategic insights to leadership
+  - Escalation: Direct to Deputy Commissioner, senior leadership
+  - Certification: Healthcare management background, analytics expertise
+  - Data access: Full access for program-level analysis
+  - Can: Define program metrics, evaluate policy impacts, guide improvements
+
+---
+
+ANALYST TYPE 3: RESEARCH ANALYST
+
+JUNIOR Research Analyst:
+  - Access: Limited de-identified dataset for research
+  - Skills: Learning research methodology, data handling
+  - Research: Conduct research under faculty/PI supervision
+  - Publications: Contributing author on research papers
+  - Data: Only de-identified, aggregated data
+  - Cannot: Access identifiable member/provider data
+  - Approval: All research requires IRB and sponsor approval
+
+SENIOR Research Analyst:
+  - Access: De-identified research datasets, advanced analytics
+  - Skills: Research design, statistical analysis, publication
+  - Research: Lead research projects under institutional oversight
+  - Publications: First/lead author on research papers
+  - Data: De-identified data matching research protocol
+  - Can: Access limited identifiable data if IRB-approved
+  - Approval: Research protocol must be IRB-approved
+
+LEAD Research Analyst / Principal Investigator:
+  - Access: Full authority over research dataset access
+  - Skills: Research leadership, policy analysis, national reputation
+  - Research: Design and lead major research initiatives
+  - Publications: Lead/sole author on major publications
+  - Data: Access approved by IRB and program leadership
+  - Can: Negotiate data access terms, publish findings
+  - Approval: IRB approval plus program leadership sign-off
+
+================================================================================
+5. VENN DIAGRAM: ANALYST DATA POINTS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                 UNIVERSAL ANALYST DATA                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  CENTER (Always Present, Core Identity):                           │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Analyst Name                                                    │
+│  • Analyst Type (Fraud, Business, Research)                       │
+│  • Skill Level (Junior, Senior, Lead)                             │
+│  • Organization / Agency                                          │
+│  • Primary Analysis Objective                                     │
+│  • Data Access Scope (what datasets, what geography)             │
+│  • Authorization Date                                             │
+│  • Supervisor / Manager Name                                      │
+│                                                                     │
+│  RING 1 (Usually Present, High Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Professional Credentials / Certifications                      │
+│  • Educational Background (degree, field)                         │
+│  • Prior Experience / Resume Summary                              │
+│  • Technical Skills (SQL, Python, R, BI tools)                    │
+│  • Authorizing Official (who approved access)                     │
+│  • Contact Information                                            │
+│  • Budget / Cost Center (for billing analysis time)              │
+│  • Training Completion Status                                     │
+│                                                                     │
+│  RING 2 (Often Present, Medium Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Current Analysis Projects                                      │
+│  • Historical Analysis / Report Output                            │
+│  • Datasets Used Regularly                                        │
+│  • Performance Metrics (accuracy of findings)                     │
+│  • Publications / Reports Authored                                │
+│  • Collaboration Partners (internal/external)                     │
+│  • Prior Access Levels (history of access)                        │
+│                                                                     │
+│  RING 3 (Sometimes Present, Variable):                            │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Specialized Tools Authorized (ML platforms, etc.)              │
+│  • Data Requests Submitted                                        │
+│  • Analysis Findings Quality Reviews                              │
+│  • Continuing Education / Training Records                        │
+│  • Publication History                                            │
+│  • Grant / Research Funding Sources                               │
+│                                                                     │
+│  GAPS (Restricted/Not Stored):                                    │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • SSN (only in separate secure HR system)                        │
+│  • Detailed background check results                              │
+│  • Medical/personal health information                            │
+│  • Salary / Compensation details                                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+6. VERIFICATION TIERS & UBADA GENERATION
+================================================================================
+
+TIER 1: INTERNAL ANALYST (Government Employee)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Government agency (NYS DOH) employee applies for access   │
+  │    as analyst (fraud, business, research)                    │
+  │                                                              │
+  │ 2. Request must include:                                    │
+  │    - Job position and role description                      │
+  │    - Analyst type (Fraud, Business, Research)              │
+  │    - Proposed skill level (Junior, Senior, Lead)           │
+  │    - Data access needed (specific datasets, scope)         │
+  │    - Training/certifications completed                     │
+  │    - Supervisor approval and recommendation                │
+  │    - Background check completed (required)                 │
+  │                                                              │
+  │ 3. Reading Engine validates:                                │
+  │    - Verify employment with government agency              │
+  │    - Confirm required certifications (fraud analyst certs) │
+  │    - Verify completed training modules                     │
+  │    - Background check in order                             │
+  │    - Supervisor authorization confirmed                    │
+  │    - No prior data security violations                     │
+  │    - Skill level appropriate for position                  │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app (TOTP)                              │
+  │    - Phone verified via SMS/call                           │
+  │                                                              │
+  │ 5. UBADA GENERATED & ASSIGNED                               │
+  │    - Analyst type and skill level applied                  │
+  │    - Data access scope configured                          │
+  │    - User receives login credentials                       │
+  │    - Analyst portal access enabled                         │
+  │    - All analysis activity audit trails begin              │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 1B: SKILL LEVEL PROMOTION (Existing Analyst)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Analyst applies for skill level advancement              │
+  │    (Junior → Senior, Senior → Lead)                         │
+  │                                                              │
+  │ 2. Request must include:                                    │
+  │    - Performance record (accuracy of prior analyses)        │
+  │    - Additional certifications/training                     │
+  │    - Supervisor recommendation                             │
+  │    - Proposed new skill level                              │
+  │                                                              │
+  │ 3. Reading Engine validates:                                │
+  │    - Review analyst's prior work quality                    │
+  │    - Confirm additional certifications                      │
+  │    - Verify supervisor endorsement                         │
+  │                                                              │
+  │ 4. Same UBADA reassigned with new skill level:             │
+  │    - UBADA remains unchanged                               │
+  │    - Skill level updated in database                       │
+  │    - Data access scope expanded (if appropriate)           │
+  │    - Prior skill level history preserved                   │
+  │    - 2FA remains active                                    │
+  │                                                              │
+  │ 5. Analyst continues with expanded access                  │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 2: EXTERNAL RESEARCHER / CONTRACTOR
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. University researcher / contractor requests access        │
+  │    for research on Medicaid data                            │
+  │                                                              │
+  │ 2. Request must include:                                    │
+  │    - Research institution name                             │
+  │    - Principal Investigator and credentials                │
+  │    - IRB approval letter (if human subjects research)       │
+  │    - Data access request (specific datasets needed)         │
+  │    - Research protocol (de-identification requirements)     │
+  │    - Contract/MOU with government agency                    │
+  │    - Confidentiality/publication agreements                │
+  │                                                              │
+  │ 3. Reading Engine validates:                                │
+  │    - Verify research institution legitimacy                │
+  │    - Confirm IRB approval (if applicable)                   │
+  │    - Verify Contract/MOU exists and is valid               │
+  │    - Check PI credentials and prior publications           │
+  │    - No conflicts of interest                              │
+  │    - Data access request aligned with protocol             │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app required                            │
+  │    - Phone/email verified                                   │
+  │                                                              │
+  │ 5. UBADA GENERATED & ASSIGNED                               │
+  │    - Analyst type: "Research"                              │
+  │    - Skill level: Based on PI experience                   │
+  │    - Data access: De-identified only                       │
+  │    - Cannot access identifiable member/provider info       │
+  │    - Contract end date triggers automatic deactivation     │
+  │    - All queries logged for compliance                     │
+  └─────────────────────────────────────────────────────────────┘
+
+================================================================================
+7. DATA ACCESS & ANALYSIS SCOPE
+================================================================================
+
+FRAUD ANALYST Data Access:
+  - JUNIOR: De-identified claims patterns, basic metrics
+  - SENIOR: Full claims data with member/provider identifiers
+  - LEAD: Full access including investigation files
+
+BUSINESS ANALYST Data Access:
+  - JUNIOR: Aggregate program metrics, public dashboards
+  - SENIOR: Aggregate data with limited identifiers for analysis
+  - LEAD: Full program data for comprehensive evaluation
+
+RESEARCH ANALYST Data Access:
+  - JUNIOR: De-identified research dataset only
+  - SENIOR: De-identified research dataset, IRB-approved
+  - LEAD: De-identified primary data + identifiable if IRB-approved
+
+---
+
+Fraud Detection Capabilities:
+  - JUNIOR: Run predefined fraud detection reports
+  - SENIOR: Create custom fraud detection queries, flag cases
+  - LEAD: Design fraud detection models, deploy new algorithms
+
+Reporting Capabilities:
+  - JUNIOR: Generate predefined reports, basic queries
+  - SENIOR: Custom reports, ad-hoc analysis, data visualization
+  - LEAD: Design reporting frameworks, executive dashboards, KPIs
+
+Analysis Speed:
+  - JUNIOR: No real-time analysis (batch reports only)
+  - SENIOR: Interactive queries, real-time exploration
+  - LEAD: Can request priority processing, advanced modeling
+
+================================================================================
+8. UBADA MAPPING TO LEGACY SYSTEMS
+================================================================================
+
+Analyst Employee ID / Contractor ID
+  - Format: Agency-specific (e.g., state employee number)
+  - System: HR, contractor management systems
+  - Mapping: Employee ID → UBADA (one-to-one for analyst)
+  - Note: UBADA persists even if employee ID changes
+
+Analyst Tool Logins
+  - Format: BI tool logins, database logins, query tools
+  - System: Legacy analytical tools (Tableau, SQL Server, SAS)
+  - Mapping: Tool credentials → UBADA (unified under one UBADA)
+  - Note: All tool logins now tied to single UBADA for audit
+
+Prior Analysis Projects / Reports
+  - Format: Legacy report IDs, historical queries
+  - System: Old analytics platforms, file shares
+  - Mapping: Legacy report ID → UBADA (attribution tracking)
+  - Note: Historical analyses now attributed to UBADA
+
+Research Authorizations / IRB
+  - Format: IRB approval numbers, protocol IDs
+  - System: University IRB systems
+  - Mapping: IRB approval → UBADA (research tracking)
+  - Note: Research authorization tied to UBADA
+
+Reading Engine Responsibility:
+  - Map analyst credentials to single UBADA
+  - Identify skill level based on experience/certifications
+  - Track all historical analyses under UBADA
+  - Link authorizations (IRB, certifications) to UBADA
+
+================================================================================
+9. FRAUD DETECTION & ANOMALY DETECTION
+================================================================================
+
+Fraud Detection Algorithms (Run by SENIOR+ analysts):
+  1. Duplicate Billing Detection
+     - Same service billed multiple times
+     - Multiple providers billing same service same date
+     - Alert: Flag for manual review
+
+  2. Billing Pattern Anomalies
+     - Provider billing 5x normal volume for service
+     - Unusual service combinations (never billed together)
+     - Billing outside hours of operation
+     - Alert: Investigate provider and review claims
+
+  3. Member Utilization Anomalies
+     - Member seeing 10+ different providers same month (doctor shopping)
+     - Member traveling between counties for identical services
+     - Member claiming services from deceased provider
+     - Alert: Verify member identity, review claims
+
+  4. Network Analysis
+     - Related providers billing same patients
+     - Shell provider paying kickbacks to referring provider
+     - Phantom network (claimed but non-existent provider network)
+     - Alert: Network verification, investigation
+
+  5. Financial Red Flags
+     - Charges wildly above/below market rate
+     - Provider receiving payment despite exclusion status
+     - Payment to non-enrolled provider
+     - Alert: Claims hold, investigation
+
+Cost-Benefit Analysis:
+  - Focus investigations on high-dollar potential fraud
+  - Fraudulent claims > $10K per case trigger automatic escalation
+  - Serial small frauds ($1K × 100 claims) also escalated
+  - Low-value anomalies reviewed quarterly
+
+================================================================================
+10. ANALYSIS AUDIT & OUTPUT MANAGEMENT
+================================================================================
+
+All Analysis Outputs Tracked:
+  - What report/analysis was run
+  - By which UBADA analyst
+  - What data was queried
+  - How many records were accessed
+  - When analysis was conducted
+  - Who viewed/accessed the results
+  - What findings were documented
+
+Report Retention:
+  - Fraud findings: Archived 7 years (statute of limitations)
+  - Program reports: Archived 5 years
+  - Research datasets: Per IRB approval (typically 5-7 years)
+  - Audit trails: Permanent (never deleted)
+
+Data Export Controls:
+  - Analysts cannot export raw data to personal devices
+  - Reports can only be exported in approved formats
+  - All exports logged and tracked
+  - Sensitive findings require supervisor approval before export
+
+Quality Assurance:
+  - 10% of fraud findings independently reviewed
+  - All LEAD-level analyses verified before escalation
+  - Statistical accuracy of analyses spot-checked
+  - Analyst performance metrics tracked
+
+================================================================================
+11. TWO-FACTOR AUTHENTICATION & UBADA
+================================================================================
+
+2FA Requirements:
+  - Mandatory for all UBADA analysts
+  - Authenticator app (TOTP)
+  - Phone number verified
+  - Backup phone strongly recommended
+
+2FA Enrollment:
+  1. Analyst enrolls in authenticator app
+  2. App generates time-based code
+  3. Phone verified via SMS/call
+  4. Backup phone can be added
+  5. 2FA linked to UBADA
+
+2FA & Data Access:
+  - Lost phone = automatic lock from sensitive data
+  - Re-verification required before access restored
+  - High-value analysis (>$10K fraud finding) requires 2FA + approval
+
+2FA Breach / Account Compromise:
+  - Analyst reports compromised 2FA
+  - Account locked immediately
+  - All recent analyses reviewed for integrity
+  - Re-enrollment required with verification
+  - UBADA flagged for investigation
+  - Access restored after clearance
+
+================================================================================
+12. SUCCESS METRICS FOR UBADA
+================================================================================
+
+Fraud Detection Effectiveness:
+  - Current: Manual reviews, inconsistent fraud detection
+  - Target: Catch 80%+ of fraudulent claims before payment
+  - Target: Average fraud finding: $50K per analyst per year
+
+Analyst Productivity:
+  - Current: Manual analysis, 5-10 cases per analyst per month
+  - Target: Automated detection alerts 50+ cases per analyst per month
+  - Target: Analyst can manually investigate 10-15 complex cases/month
+
+Analysis Accuracy:
+  - Target: 95%+ accuracy in fraud findings (confirmed by investigators)
+  - Target: <5% false positive rate (waste of investigation time)
+
+Reporting Speed:
+  - Target: Custom report generation <5 minutes
+  - Target: Complex analysis turnaround <24 hours
+
+Skill Development:
+  - Target: Junior analysts promoted to Senior within 2 years
+  - Target: 100% of analysts maintain required certifications
+  - Target: Continuing education tracked and verified
+
+System Uptime:
+  - Target: 99.95% availability (analysis tools critical)
+  - Target: <1 second query response time
+  - Target: Large dataset queries (<10 minutes for massive data pulls)
+
+================================================================================
+
+END OF SPECIFICATION
+
+Revision History:
+v1.0 - April 23, 2026 - Initial specification
+
+================================================================================

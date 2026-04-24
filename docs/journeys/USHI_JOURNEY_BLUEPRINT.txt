@@ -1,0 +1,323 @@
+================================================================================
+USHI JOURNEY BLUEPRINT
+Stakeholder/Government Entity Card
+================================================================================
+
+ROLE: Government Stakeholder (State/County oversight of Medicaid)
+IDENTIFIER: USHI (Universal Stakeholder Identity)
+PRIMARY QUESTION: "What's the breakdown of program efficiency?"
+SECONDARY QUESTIONS: "What are performance metrics?" / "How do I benchmark against other states?"
+
+================================================================================
+1. ENTRY POINT → USHI ENTRY CARD
+================================================================================
+
+Card 1-2: Role Selection → USHI Login
+  ┌──────────────────────────────────────────┐
+  │ TORQ-e Medicaid - Government Stakeholder │
+  │                                          │
+  │ Enter Your USHI                          │
+  │ [____________________________]           │
+  │                                          │
+  │ [Continue →]                             │
+  │                                          │
+  │ Forgot your USHI?                        │
+  │ [Recover via 2FA]                        │
+  │                                          │
+  │ Don't have a USHI yet?                   │
+  │ [Request Access]                         │
+  └──────────────────────────────────────────┘
+
+PATH A: Existing Stakeholder → 2FA → Dashboard
+PATH B: New Stakeholder → Authorization Request → Review → Access
+
+================================================================================
+2. STAKEHOLDER DASHBOARD
+================================================================================
+
+Card 3: Government Oversight Dashboard
+
+  ┌──────────────────────────────────────────┐
+  │ NYS DOH Medicaid Oversight Dashboard     │
+  │ USHI: 880h1722-i62e-74g7-d049-779988... │
+  │ Authority Level: ADMIN                   │
+  │                                          │
+  │ ┌─ Your Questions ──────────────────────┐│
+  │ │ Ask about program metrics, efficiency:││
+  │ │ [____________________________] [Ask →] ││
+  │ │                                       ││
+  │ │ ─────────────────────────────────     ││
+  │ │ Key Metrics at a Glance:              ││
+  │ │                                       ││
+  │ │ Members Enrolled: 3.2M                ││
+  │ │ Program Cost: $51.2B (YTD)            ││
+  │ │ CPPM (Cost Per Member Month): $1,334  ││
+  │ │ Quality Score: 84.2% (HEDIS)          ││
+  │ │                                       ││
+  │ │ [View Full Dashboard] [Reports]       ││
+  │ │                                       ││
+  │ └───────────────────────────────────────┘│
+  │                                          │
+  │ [Program Analysis] [Performance]         │
+  │ [Fraud Monitoring] [Quality Metrics]     │
+  └──────────────────────────────────────────┘
+
+================================================================================
+3. STAKEHOLDER JOURNEY - MAIN QUESTIONS
+================================================================================
+
+PRIMARY QUESTION: "What's the breakdown of program efficiency?"
+
+User (Stakeholder) Types:
+  "How efficient is our Medicaid program?"
+  OR "Breakdown program costs by category"
+  OR "Where is money being spent?"
+
+Reading Engine Process:
+  1. Retrieve program-wide claims data
+  2. Aggregate by service category
+  3. Calculate efficiency metrics
+  4. Identify cost drivers
+  5. Flag anomalies/areas of concern
+  6. Claude AI generates executive summary
+
+Example Response:
+  "PROGRAM EFFICIENCY ANALYSIS (2026 YTD):
+
+   TOTAL SPENDING: $51.2B
+   TOTAL MEMBERS: 3.2M
+   CPPM: $1,334/member/month
+
+   SPENDING BY CATEGORY:
+   ┌─────────────────────────────────────┐
+   │ Hospital/ER: $18.5B (36%)          │
+   │ Outpatient: $12.3B (24%)           │
+   │ Pharmacy: $8.4B (16%)              │
+   │ Long-term Care: $7.2B (14%)        │
+   │ Behavioral Health: $3.1B (6%)      │
+   │ Other: $1.7B (4%)                  │
+   └─────────────────────────────────────┘
+
+   EFFICIENCY INDICATORS:
+   ✓ Hospital readmission rate: 18% (target <15%)
+   ✗ ED utilization rate: 280 visits/1000 members (target <200)
+   ✓ Preventive care rate: 72% (target >65%)
+   ⚠ Pharmacy cost trend: +8% YoY (concerning)
+
+   AREAS FOR IMPROVEMENT:
+   1. Reduce unnecessary ED visits (save $2-3B)
+   2. Manage pharmacy costs (specialty drugs rising)
+   3. Improve care coordination (reduce readmissions)
+
+   RECOMMENDATIONS:
+   [View Detailed Analysis] [Compare to Last Year]
+   [Benchmark vs Other States] [Generate Report]"
+
+---
+
+SECONDARY QUESTION 1: "What are the required performance measures (HEDIS, CAHPS)?"
+
+User Types:
+  "What are our HEDIS scores?"
+  OR "How are we performing on quality metrics?"
+  OR "CAHPS results"
+
+Reading Engine Process:
+  1. Retrieve plan performance data
+  2. Pull HEDIS measures (care quality indicators)
+  3. Pull CAHPS results (member satisfaction)
+  4. Compare to targets and benchmarks
+  5. Identify high/low performers
+  6. Claude AI explains metrics
+
+Example Response:
+  "QUALITY PERFORMANCE METRICS:
+
+   HEDIS MEASURES (Healthcare Effectiveness Data and Information Set):
+
+   Care Quality:
+   • Preventive care (pap smears, mammograms): 72% (target 75%)
+   • Diabetes care (blood sugar control): 68% (target 72%)
+   • Hypertension control: 74% (target 78%)
+   • Child immunization rate: 84% (target >85%)
+
+   ✓ Strengths: Child care, immunizations
+   ✗ Gaps: Chronic disease management, preventive screening
+
+   CAHPS MEASURES (Consumer Assessment of Healthcare Providers):
+
+   Member Satisfaction (1-10 scale):
+   • Overall health plan: 7.2/10
+   • Doctor communication: 7.8/10
+   • Care coordination: 6.9/10
+   • Accessibility: 7.4/10
+
+   ⚠ Areas needing focus: Care coordination (lowest score)
+
+   BENCHMARK:
+   • Our state average: 7.2
+   • National average: 7.5
+   • Top performers: 8.1+
+
+   PLANS IN YOUR STATE:
+   • Fidelis: 7.8 (top performer)
+   • Anthem: 7.1 (below average)
+   • Your plan: 7.2 (meets target)
+
+   [View Plan Details] [Identify Improvement Areas]
+   [Compare Plans] [See Historical Trends]"
+
+---
+
+SECONDARY QUESTION 2: "How do I benchmark my program against other states?"
+
+User Types:
+  "How does NY compare to Massachusetts?"
+  OR "Benchmark our costs"
+  OR "Compare our metrics to other states"
+
+Reading Engine Process:
+  1. Retrieve NY Medicaid metrics
+  2. Pull comparison state data
+  3. Calculate CPPM differences
+  4. Compare quality indicators
+  5. Identify best practices
+  6. Claude AI provides analysis
+
+Example Response:
+  "NEW YORK vs OTHER STATES - MEDICAID BENCHMARK:
+
+   COST COMPARISON (CPPM - Cost Per Member Per Month):
+   ┌──────────────┬─────────────┬────────────┐
+   │ State        │ CPPM        │ Difference │
+   ├──────────────┼─────────────┼────────────┤
+   │ Massachusetts│ $1,298      │ -$36 ✓     │
+   │ New York     │ $1,334      │ baseline   │
+   │ Pennsylvania │ $1,456      │ +$122 ✗    │
+   │ California   │ $1,512      │ +$178 ✗    │
+   │ Florida      │ $987        │ -$347 ✓    │
+   └──────────────┴─────────────┴────────────┘
+
+   QUALITY BENCHMARK (HEDIS Average):
+   • Massachusetts: 76% (best in region)
+   • New York: 72% (meets national avg)
+   • Pennsylvania: 68% (below average)
+
+   KEY INSIGHTS:
+   • NY costs are in middle range ($1,334 CPPM)
+   • Quality slightly below Massachusetts
+   • More expensive than Florida but higher quality
+   • Room for cost optimization: +$50-100M savings possible
+
+   BEST PRACTICE OPPORTUNITIES:
+   1. Massachusetts Model: Care coordination program
+   2. Florida Model: Care network efficiency
+   3. Implement similar to reduce costs 5-10%
+
+   [Deep Dive Comparison] [Export to Excel]
+   [View Best Practices] [Cost Savings Analysis]"
+
+================================================================================
+4. STAKEHOLDER FAQ RESPONSES
+================================================================================
+
+FAQ 1: "What are the required performance measures (HEDIS, CAHPS scores)?"
+
+[See SECONDARY QUESTION 1 above for detailed response]
+
+---
+
+FAQ 2: "How do I benchmark my program's costs and outcomes against other states?"
+
+[See SECONDARY QUESTION 2 above for detailed response]
+
+---
+
+FAQ 3: "What is my cost-per-member-per-month trend and what are the drivers?"
+
+Claude Response:
+  "COST TREND ANALYSIS (Past 24 Months):
+
+   CPPM TREND:
+   • 2024 Jan: $1,156/member/month
+   • 2024 Jun: $1,205 (+4.2%)
+   • 2024 Dec: $1,245 (+3.3%)
+   • 2025 Jun: $1,298 (+4.3%)
+   • 2026 Jan: $1,334 (+2.8%)
+
+   OVERALL TREND: +15.4% over 24 months (rate of increase: ~7%/year)
+
+   COST DRIVERS (What's driving increases):
+   ┌──────────────────────────────────────────┐
+   │ Pharmacy Costs: +12% (specialty drugs)   │
+   │ Hospital Costs: +8% (volume + rates)     │
+   │ Care Coordination: +6% (staff, programs) │
+   │ Behavioral Health: +4% (opioid treatment)│
+   │ Preventive Care: +2% (vaccinations)      │
+   └──────────────────────────────────────────┘
+
+   TOP 5 COST DRIVERS:
+   1. Specialty pharmacy (56% of drug costs)
+   2. Hospital inpatient admissions
+   3. Diabetes/chronic disease management
+   4. Behavioral health (opioid crisis)
+   5. ER utilization rates
+
+   PROJECTED TREND:
+   • Current trajectory: $1,334 → $1,412 (2026 projected)
+   • Mitigation potential: Reduce to $1,350 (2-3% savings)
+   • Target: Achieve <4% annual growth
+
+   RECOMMENDATIONS FOR COST CONTROL:
+   [View Intervention Strategies]
+   [Manage Pharmacy Costs] [Reduce ED Utilization]
+   [Care Coordination Programs]"
+
+================================================================================
+5. STAKEHOLDER MONITORING & OVERSIGHT
+================================================================================
+
+Real-Time Dashboard Metrics:
+  - Current month spending vs. budget
+  - Year-to-date CPPM trend
+  - Quality indicator status (HEDIS, CAHPS)
+  - Fraud detection flags
+  - Plan performance rankings
+  - Member satisfaction scores
+  - Provider/facility anomalies
+
+Automated Alerts:
+  - CPPM exceeds threshold
+  - Quality measures decline below target
+  - Fraud detected (large claims, pattern anomalies)
+  - Plan performance drops significantly
+  - Member complaints increase
+  - Provider goes into exclusion status
+
+Reports Available:
+  - Monthly program summary
+  - Quarterly performance analysis
+  - Annual efficiency report
+  - Benchmarking report vs. other states
+  - Fraud & waste detection report
+  - Quality improvement recommendations
+
+================================================================================
+6. STAKEHOLDER JOURNEY END STATE
+================================================================================
+
+Stakeholder Successfully Completes Journey When:
+  ✓ USHI authorized and authenticated
+  ✓ 2FA enrolled and active
+  ✓ Authority level understood
+  ✓ Understands data access scope
+  ✓ Can generate efficiency reports
+  ✓ Can monitor program performance
+  ✓ Can identify improvement areas
+  ✓ Access to benchmarking tools
+
+================================================================================
+
+END OF JOURNEY BLUEPRINT
+
+================================================================================

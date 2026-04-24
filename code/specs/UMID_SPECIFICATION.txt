@@ -1,0 +1,426 @@
+================================================================================
+UNIVERSAL MEMBER IDENTIFIER (UMID) SPECIFICATION
+TORQ-e Identity Verification System
+================================================================================
+
+VERSION: 1.0
+DATE: April 23, 2026
+AUTHOR: Design Phase - TORQ-e Development Team
+
+================================================================================
+1. DEFINITION
+================================================================================
+
+UMID (Universal Member Identifier) is the single, persistent, unique identifier
+that represents an individual across all New York State Medicaid systems,
+regardless of:
+- Name changes (marriage, divorce, legal change)
+- Address changes
+- Phone number changes
+- Plan changes (switching managed care organizations)
+- Eligibility status changes (loss/regain of coverage)
+- Program tier changes (Emergency Medicaid → MAGI → Disability, etc.)
+
+UMID is generated ONCE at initial verification and NEVER CHANGES for that
+individual for the lifetime of their enrollment record.
+
+================================================================================
+2. TERMINOLOGY & SYNONYMS
+================================================================================
+
+The individual identified by UMID is referred to by different terms depending
+on the system and entity:
+
+MEMBER
+  - Definition: Individual enrolled in a managed care plan (HMO)
+  - Usage: Managed Care Organization systems, plan-specific databases
+  - Example: "Fidelis Members," "Anthem Members"
+  - System: Plan enrollment databases
+
+CLIENT
+  - Definition: Individual receiving services from a social services entity
+  - Usage: Department of Social Services, local DSS offices, welfare systems
+  - Example: "Medicaid client," "TANF client"
+  - System: Social services case management systems
+
+RECIPIENT
+  - Definition: Individual officially designated as receiving Medicaid benefits
+  - Usage: NYS Department of Health official documents, EMEDNY
+  - Example: "Medicaid recipient," "state benefits recipient"
+  - System: State Medicaid eligibility and enrollment systems
+
+BENEFICIARY
+  - Definition: Individual entitled to receive benefits under federal law
+  - Usage: Medicare (federal), general benefits terminology
+  - Example: "Medicare beneficiary," "plan beneficiary"
+  - System: Federal and multi-program systems
+
+UNIFIED REFERENCE
+  - All four terms refer to the SAME PERSON
+  - All four systems map to the ONE UMID
+  - UMID is the common denominator across fragmented nomenclature
+
+================================================================================
+3. UMID STRUCTURE
+================================================================================
+
+Format: UUID v4 (128-bit identifier)
+Example: 550e8400-e29b-41d4-a716-446655440000
+
+Length: 36 characters (with hyphens)
+Pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+Generation:
+  - Created at first successful verification (Tier 1 or Tier 2)
+  - Algorithm: Cryptographically secure random generation (UUID v4)
+  - No embedded personal data in the identifier itself
+  - No sequential numbering (prevents enumeration/guessing)
+  - Immutable once assigned
+
+Storage:
+  - Primary database: TORQ-e Member Identity Database
+  - Indexed for fast lookup
+  - Encrypted at rest
+  - Auditable (creation date, created by, last modified, last accessed)
+
+================================================================================
+4. VERIFICATION TIERS & UMID GENERATION
+================================================================================
+
+TIER 1: GOVERNMENT ID VERIFICATION (Digital Path)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Member provides valid government ID                       │
+  │    (Driver's License, Passport, State ID)                   │
+  │                                                              │
+  │ 2. Reading Engine validates against state/federal databases  │
+  │    - Check state DMV records                                │
+  │    - Check federal passport database                        │
+  │    - Verify ID is not revoked/cancelled                     │
+  │                                                              │
+  │ 3. Match govt ID data to member:                            │
+  │    - Full name (phonetic matching on variations)            │
+  │    - Date of birth                                          │
+  │    - Address on ID                                          │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app (TOTP)                              │
+  │    - Phone number verified via SMS/call                    │
+  │                                                              │
+  │ 5. UMID GENERATED & ASSIGNED                                │
+  │    - Stored in TORQ-e database                             │
+  │    - Member receives UMID confirmation                     │
+  │    - Access to digital system granted                      │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 2: IN-PERSON PROVIDER VOUCHING (Manual Path)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Member unable to provide valid government ID             │
+  │    (Undocumented, lost ID, no ID issued, etc.)            │
+  │                                                              │
+  │ 2. Member schedules in-person visit with provider           │
+  │    - Provider conducts identity verification               │
+  │    - Provider collects what ID/documentation available     │
+  │    - Provider obtains detailed information:                │
+  │      * Full name (spelling verified)                       │
+  │      * Date of birth (documented)                          │
+  │      * Current address                                     │
+  │      * Contact information                                 │
+  │      * Any alternative documentation                       │
+  │                                                              │
+  │ 3. Provider attestation:                                    │
+  │    - "I have verified this individual in person on [DATE]"│
+  │    - Provider signature/digital sign-off                   │
+  │    - Provider accepts liability:                           │
+  │      "If this member is fraudulent or duplicate, I         │
+  │      understand my organization may be denied payment       │
+  │      and subject to audit/investigation"                   │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app (TOTP)                              │
+  │    - Phone number verified via SMS/call                    │
+  │                                                              │
+  │ 5. UMID GENERATED & ASSIGNED                                │
+  │    - Stored in TORQ-e database                             │
+  │    - Provider attestation linked to UMID                   │
+  │    - Member receives UMID confirmation                     │
+  │    - Access to digital system granted                      │
+  │    - Flag in system: "Tier 2 - In-person vouched"         │
+  └─────────────────────────────────────────────────────────────┘
+
+================================================================================
+5. PERSISTENT IDENTITY ACROSS CHANGES
+================================================================================
+
+Member Name Change:
+  - Member notifies system of legal name change
+  - Reading engine verifies legal change documentation
+  - UMID remains the same
+  - Old name/new name both map to same UMID
+  - Historical records preserved under UMID
+  - Claims history follows UMID, not name
+
+Address Change:
+  - Member updates address in system
+  - Verification: USPS address validation or 2FA re-confirmation
+  - UMID remains the same
+  - Address history tracked but linked to UMID
+  - Mail/benefits follow UMID to new address
+
+Phone Number Change:
+  - Member updates phone number
+  - 2FA must be re-verified with new phone
+  - UMID remains the same
+  - Old phone logs out automatically
+  - New phone authenticates to existing UMID
+
+Plan Change (Member switches HMO):
+  - Member disenrolls from Plan A, enrolls in Plan B
+  - Both plans receive same UMID
+  - Plan A member ID ≠ Plan B member ID
+  - But both map to one UMID
+  - Member's history follows UMID across plans
+  - No duplicate records created
+
+Eligibility Loss & Regain:
+  - Member loses Medicaid eligibility (income increase, job change)
+  - UMID marked as "inactive" but NOT deleted
+  - Member regains eligibility months/years later
+  - System recognizes UMID as returning member
+  - All historical data (claims, services, coverage) reattaches to UMID
+  - No confusion, no duplicates
+
+================================================================================
+6. UMID MAPPING TO LEGACY SYSTEMS
+================================================================================
+
+The fragmented Medicaid ecosystem uses multiple IDs. UMID maps to all of them:
+
+Medicaid ID (State)
+  - Format: 10-digit NYS Medicaid number
+  - System: EMEDNY
+  - Mapping: Medicaid ID → UMID (one-to-one)
+  - Note: Historical Medicaid IDs also map to UMID
+
+Plan Member ID (Managed Care)
+  - Format: Plan-specific (varies by HMO)
+  - System: Fidelis, Anthem, EmblemHealth, etc.
+  - Mapping: Each Plan Member ID → UMID (many-to-one)
+  - Note: Member may have multiple Plan IDs across time/plans
+
+Medicare ID (Federal)
+  - Format: 11-digit or MBI (Medicare Beneficiary Identifier)
+  - System: CMS Federal Systems
+  - Mapping: Medicare ID → UMID (for dual-eligible members)
+  - Note: Dual-eligible (Medicare + Medicaid) maps to single UMID
+
+CHIP ID (Children's Health Insurance Program)
+  - Format: State-specific
+  - System: CHIP Enrollment Systems
+  - Mapping: CHIP ID → UMID (children aging into Medicaid map to same UMID)
+
+Social Security Number (SSN)
+  - Format: 9-digit XXX-XX-XXXX
+  - System: Federal eligibility verification
+  - Mapping: SSN → UMID (but NOT used as UMID)
+  - Security: SSN encrypted, UMID does not contain SSN
+
+Date of Birth + Name (Legacy Matching)
+  - System: Manual records, old paper files
+  - Mapping: DOB + Name (with fuzzy matching) → UMID
+  - Note: Used for historical data reconciliation
+
+Reading Engine Responsibility:
+  - Map all legacy IDs to single UMID
+  - Identify duplicate UMID creation (prevent)
+  - Flag discrepancies (e.g., same SSN, two UMIDs)
+  - Reconcile historical records to correct UMID
+
+================================================================================
+7. TWO-FACTOR AUTHENTICATION (2FA) & UMID
+================================================================================
+
+2FA Requirements:
+  - Mandatory for all UMID holders
+  - Authenticator app (TOTP - Time-based One-Time Password)
+  - Phone number (SMS/voice verification fallback)
+  - Both must be provided and verified
+
+2FA Flow:
+  1. Member enrolls in authenticator app (Google Authenticator, Authy, etc.)
+  2. App generates time-based code (30-second rotation)
+  3. Phone number verified via SMS confirmation
+  4. Backup phone number can be added (for account recovery)
+  5. 2FA status linked to UMID in database
+
+2FA & Device Changes:
+  - Member gets new phone → can re-enroll 2FA to new device
+  - Old device loses access automatically
+  - UMID remains the same
+  - No account takeover risk (verified through recovery process)
+
+2FA Breach Protocol:
+  - Member reports lost phone/compromised 2FA
+  - Account locked immediately
+  - Identity re-verification required (Tier 1 or Tier 2 again)
+  - New 2FA enrolled
+  - UMID remains the same but flagged for audit
+
+================================================================================
+8. DATA INTEGRITY & UMID
+================================================================================
+
+Primary Key: UMID
+  - All member records in TORQ-e database keyed to UMID
+  - Foreign key in all related tables (eligibility, claims, benefits, etc.)
+  - No duplication possible if UMID is properly enforced
+
+Referential Integrity:
+  - One UMID = One person
+  - One person = One UMID (no duplicates)
+  - All historical data attached to UMID
+  - Deletion of UMID cascades (soft delete only, data archived)
+
+Audit Trail:
+  - Created date: timestamp when UMID assigned
+  - Created by: system/user who generated UMID
+  - Tier 1 or Tier 2: verification method used
+  - Provider (if Tier 2): which provider vouched
+  - Last modified: any changes to linked data
+  - Last accessed: when member last logged in
+  - IP address/device logs: for security tracking
+
+Immutability:
+  - UMID cannot be changed once assigned
+  - UMID cannot be reassigned to different person
+  - UMID cannot be deleted (only archived)
+  - Changes to name/address/contact do NOT change UMID
+
+================================================================================
+9. SECURITY & PRIVACY
+================================================================================
+
+Encryption:
+  - UMID stored encrypted at rest (AES-256)
+  - UMID transmitted over HTTPS (TLS 1.2+)
+  - Database access restricted to authenticated users
+  - Audit logging of all UMID access
+
+Access Control:
+  - Members can only see their own UMID
+  - Providers can see UMID of members they serve (with consent)
+  - Plans can see UMID of enrolled members
+  - Analysts can see UMID for auditing (anonymized views)
+  - Government stakeholders see aggregate UMID data (not PII)
+
+De-identification:
+  - UMID itself is not personally identifiable
+  - UMID + name/SSN/DOB = PII (must be encrypted together)
+  - Aggregated reports use UMID without linking data
+  - HIPAA compliant (UMID treated as secondary identifier)
+
+Backup & Disaster Recovery:
+  - UMID database replicated across secure locations
+  - Daily encrypted backups
+  - Recovery tested quarterly
+  - Member UMID history never lost
+
+================================================================================
+10. UMID ADOPTION TIMELINE
+================================================================================
+
+Phase 1: New Enrollments
+  - All new members (Tier 1, Tier 2) assigned UMID
+  - Systems running in parallel (legacy IDs still used)
+  - Duration: Months 1-6
+
+Phase 2: Historical Records Migration
+  - Existing members assigned UMID retroactively
+  - Reading engine maps legacy IDs to UMID
+  - De-duplication and conflict resolution
+  - Duration: Months 6-12
+
+Phase 3: Legacy System Integration
+  - EMEDNY integration with UMID
+  - Plan systems integration (Fidelis, Anthem, etc.)
+  - Claims systems updated to use UMID
+  - Duration: Months 12-18
+
+Phase 4: Full Cutover
+  - All systems primary-keyed to UMID
+  - Legacy IDs retained for historical reference only
+  - Complete transition to UMID-based reporting
+  - Duration: Months 18+
+
+================================================================================
+11. SUCCESS METRICS
+================================================================================
+
+Deduplication:
+  - Current estimated duplicates: 5-10% of member base
+  - Target: Reduce to <0.1% within 18 months
+
+Identity Resolution Speed:
+  - Current: Manual verification 5-10 business days
+  - Target: Automated Tier 1 verification <1 minute
+  - Target: Tier 2 vouching <24 hours after in-person visit
+
+Fraud Prevention:
+  - Current: Unknown fraud rate (estimated 2-5%)
+  - Target: Catch 95%+ of duplicate/shell identities before payment
+
+System Uptime:
+  - Target: 99.9% availability (UMID system)
+  - Target: <1ms UMID lookup time
+
+Member Satisfaction:
+  - Target: 90%+ of members successfully enroll in UMID within first month
+  - Target: <5% account lockout rate
+
+================================================================================
+12. GLOSSARY
+================================================================================
+
+UUID (Universally Unique Identifier)
+  - Standard format for generating unique identifiers
+  - Version 4: Random generation (not based on MAC address or time)
+  - Globally unique with negligible collision probability
+
+TOTP (Time-based One-Time Password)
+  - 2FA method using time-synchronized codes
+  - Generated by authenticator apps
+  - 30-second expiration, prevents replay attacks
+
+Soft Delete
+  - Data marked as deleted but not removed from database
+  - Historical record preserved
+  - Can be recovered if needed
+
+Fuzzy Matching
+  - Name matching algorithm that accounts for variations
+  - Handles typos, spelling differences, abbreviations
+  - Example: "Jon" matches "John"
+
+Referential Integrity
+  - Database constraint ensuring data consistency
+  - Foreign keys prevent orphaned records
+  - UMID enforces one-to-one and one-to-many relationships correctly
+
+HIPAA
+  - Health Insurance Portability and Accountability Act
+  - Federal privacy law for health data
+  - UMID system must comply with privacy requirements
+
+================================================================================
+
+END OF SPECIFICATION
+
+This specification is a living document. Updates and revisions will be tracked
+with version numbers and change dates.
+
+For questions, clarifications, or suggestions, contact the TORQ-e Development
+Team.
+
+Revision History:
+v1.0 - April 23, 2026 - Initial specification
+
+================================================================================

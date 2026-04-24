@@ -1,0 +1,477 @@
+================================================================================
+UNIVERSAL HEALTH+WELLNESS PROGRAM (UHWP) SPECIFICATION
+TORQ-e Identity Verification System
+================================================================================
+
+VERSION: 1.0
+DATE: April 23, 2026
+AUTHOR: Design Phase - TORQ-e Development Team
+
+================================================================================
+1. DEFINITION
+================================================================================
+
+UHWP (Universal Health+Wellness Program) is the single, persistent, unique
+identifier that represents a managed care plan across all New York State
+Medicaid systems, regardless of:
+- Plan name changes (rebranding, corporate restructuring)
+- Service area expansion/contraction
+- Ownership changes (parent company acquisition)
+- Network changes (provider additions/removals)
+- Plan type transitions (HMO to PPO, etc.)
+- Regulatory status changes (active, suspended, exited)
+- Subsidiary/affiliate changes
+
+UHWP is generated ONCE at initial plan enrollment in Medicaid and NEVER
+CHANGES for that plan entity for the lifetime of their contract.
+
+================================================================================
+2. TERMINOLOGY & SYNONYMS
+================================================================================
+
+The entity identified by UHWP is referred to by different terms:
+
+PLAN
+  - Definition: Managed care organization offering health insurance
+  - Usage: Member enrollment, network directories, marketing materials
+  - Example: "Fidelis Care Plan," "Anthem Health Plan"
+  - System: Plan enrollment databases, member communication
+
+HMO (Health Maintenance Organization)
+  - Definition: Plan requiring members to use in-network providers
+  - Usage: Product line, benefit structure classification
+  - Example: "Fidelis Care HMO"
+  - System: Network management, coverage determination
+
+MCO (Managed Care Organization)
+  - Definition: Broader term for any organization managing healthcare benefits
+  - Usage: Regulatory, contracting, state oversight
+  - Example: "Fidelis Care as an MCO contractor"
+  - System: State contracts, compliance monitoring
+
+MANAGED CARE PLAN / MANAGED CARE ORGANIZATION
+  - Definition: Organization contracted to manage Medicaid benefits
+  - Usage: Official government terminology, contracts
+  - Example: "New York State contracted with 10 Managed Care Plans"
+  - System: State procurement, regulatory oversight
+
+HEALTH PLAN
+  - Definition: Generic term for any insurance plan
+  - Usage: Federal/state reporting, general reference
+  - Example: "Health plan coverage," "Health plan network"
+  - System: Federal data collection, CMS reporting
+
+MLTC (Managed Long-Term Care)
+  - Definition: Specialized plan managing long-term care benefits
+  - Usage: Elderly/disabled beneficiary plans
+  - Example: "MLTC Plan," "Long-term care managed care"
+  - System: Separate from acute care MCOs, specialized enrollment
+
+UNIFIED REFERENCE
+  - All terms refer to health PLANS managing Medicaid benefits
+  - All systems map to ONE UHWP
+  - UHWP is the common denominator across fragmented plan data
+
+================================================================================
+3. UHWP STRUCTURE
+================================================================================
+
+Format: UUID v4 (128-bit identifier)
+Example: 770g0611-h51d-63f6-c938-668877662222
+
+Length: 36 characters (with hyphens)
+Pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+Generation:
+  - Created when plan signs Medicaid managed care contract
+  - Algorithm: Cryptographically secure random generation (UUID v4)
+  - No embedded plan data in the identifier itself
+  - Immutable once assigned
+
+Storage:
+  - Primary database: TORQ-e Plan Identity Database
+  - Indexed for fast lookup by UHWP, Plan ID, CMS Plan ID
+  - Encrypted at rest
+  - Auditable (contract date, contract terms, modifications)
+
+================================================================================
+4. VENN DIAGRAM: PLAN DATA POINTS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                    UNIVERSAL PLAN DATA                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  CENTER (Always Present, Core Identity):                           │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Plan Name (Legal entity)                                       │
+│  • Plan Type (HMO, PPO, MLTC, etc.)                               │
+│  • Tax ID / EIN (Parent organization)                             │
+│  • New York State Plan ID                                         │
+│  • CMS Plan ID (Federal identifier)                               │
+│  • Service Area (Counties/regions served)                         │
+│  • Contract Start Date                                            │
+│                                                                     │
+│  RING 1 (Usually Present, High Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Parent Organization / Holding Company                          │
+│  • Plan Administrator Name & Contact                              │
+│  • Medical Director Name & License                                │
+│  • Network Arrangement (narrow network vs. broad)                 │
+│  • In-Network Provider Directory (count)                          │
+│  • Covered Benefits List                                          │
+│  • Member Co-pays & Deductibles                                   │
+│  • Quality Rating (NCQA accreditation status)                     │
+│                                                                     │
+│  RING 2 (Often Present, Medium Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Current Enrollment Numbers (by county)                         │
+│  • Prior Service Areas (historical)                               │
+│  • Regulatory Status (active, inactive, suspended, exited)        │
+│  • Contract Amendment History                                     │
+│  • Quality Metrics (HEDIS, CAHPS scores)                         │
+│  • Financial Performance (loss ratios)                            │
+│  • Prior Plan Names (if rebranded)                               │
+│  • Subsidiary Relationships                                       │
+│                                                                     │
+│  RING 3 (Sometimes Present, Variable):                            │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Care Coordination Programs                                     │
+│  • Disease Management Offerings                                   │
+│  • Telehealth Capabilities                                        │
+│  • Special Needs Plans (SNP)                                      │
+│  • Behavioral Health Network                                      │
+│  • Pharmacy Network (PBM)                                         │
+│  • Dispute/Appeals History                                        │
+│                                                                     │
+│  RING 4 (Sparse/External Data):                                   │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Member Satisfaction Reviews                                    │
+│  • Complaints to State (CMS)                                      │
+│  • Litigation History                                             │
+│  • Regulatory Violations / Fines                                  │
+│  • Social Media Mentions                                          │
+│  • Financial Ratings / Credit (parent org)                        │
+│                                                                     │
+│  GAPS (Missing/Difficult):                                        │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Plans exiting market (data often purged)                       │
+│  • New entrant plans (not in all systems yet)                     │
+│  • Phantom networks (claimed vs. actual provider availability)    │
+│  • Real-time provider network updates                             │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+5. FINGERPRINTS FOR PLAN IDENTIFICATION
+================================================================================
+
+Fingerprint 1 (Highest Confidence - New York State):
+  - NY State Plan ID + Plan Name = Unique identifier
+  - Used for: All NY Medicaid plans (only ones tracked by state)
+  - Confidence: 99%+
+  - Reading Engine: Cross-reference against NY Medicaid plan directory
+
+Fingerprint 2 (High Confidence - Federal):
+  - CMS Plan ID + Service Area = Unique identifier
+  - Used for: Federal plan identification, Medicare Advantage plans
+  - Confidence: 98%+
+  - Reading Engine: Cross-reference against CMS plan directory
+
+Fingerprint 3 (Medium Confidence - Organization):
+  - Tax ID (EIN) + Plan Type = Unique identifier
+  - Used for: When plan name changes (rebranding)
+  - Confidence: 92%+
+  - Reading Engine: Cross-reference EIN against IRS, state records
+
+Fingerprint 4 (Historical - Legacy):
+  - Prior Plan ID + Prior Plan Name + Service Area = Unique identifier
+  - Used for: Plans that rebranded, changed structures
+  - Confidence: 85%+
+  - Reading Engine: Fuzzy match historical plan data
+
+================================================================================
+6. VERIFICATION TIERS & UHWP GENERATION
+================================================================================
+
+TIER 1: NEW YORK STATE CONTRACT VERIFICATION
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Plan provides NY Medicaid contract documentation          │
+  │    (Plan ID, contract executed, service areas)               │
+  │                                                              │
+  │ 2. Reading Engine validates:                                │
+  │    - Verify plan in NY DOH Medicaid managed care directory  │
+  │    - Confirm contract is active (not expired/suspended)     │
+  │    - Verify Tax ID (EIN) matches parent organization        │
+  │    - Confirm service areas and counties                     │
+  │    - Check regulatory status (licensed to operate)          │
+  │    - Verify CMS Plan ID (if applicable)                     │
+  │    - Check for any regulatory violations/sanctions          │
+  │                                                              │
+  │ 3. Cross-reference identity:                                │
+  │    - NY Plan ID + Plan Name + Service Area = fingerprint    │
+  │    - Check for duplicate UHWP creation                      │
+  │    - Verify no prior suspension/exit on file                │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app for plan administrator               │
+  │    - Phone/email verified                                   │
+  │                                                              │
+  │ 5. UHWP GENERATED & ASSIGNED                                │
+  │    - Stored in TORQ-e database                             │
+  │    - Plan receives UHWP confirmation                        │
+  │    - Integration with member/claims systems                │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 1B: PLAN EXPANSION / SERVICE AREA CHANGE
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Existing plan requests to expand service area             │
+  │    (Add new counties, expand existing operations)            │
+  │                                                              │
+  │ 2. Reading Engine validates:                                │
+  │    - Confirm plan has valid contract amendment              │
+  │    - Verify new service area authorization from state       │
+  │    - Check plan financial/operational capacity              │
+  │    - Verify network adequacy in new area                    │
+  │                                                              │
+  │ 3. Same UHWP reassigned with expanded scope:                │
+  │    - UHWP remains the same                                  │
+  │    - Service area updated in database                       │
+  │    - Historical service area tracked                        │
+  │                                                              │
+  │ 4. 2FA remains active                                        │
+  │                                                              │
+  │ 5. Plan continues operations with updated UHWP scope        │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 2: MANUAL VERIFICATION (New Entrant Plan)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. New plan seeking Medicaid managed care contract           │
+  │    (Not yet in state system but has signed contract)         │
+  │                                                              │
+  │ 2. Plan provides documentation:                              │
+  │    - Executed state contract                                │
+  │    - Proof of financial solvency                            │
+  │    - Network adequacy documentation                         │
+  │    - Quality & compliance certifications                    │
+  │    - Parent organization information                        │
+  │                                                              │
+  │ 3. Manual verification by state/TORQ-e:                      │
+  │    - Review all contract documentation                      │
+  │    - Verify financial capacity                              │
+  │    - Validate network (sample provider verification)        │
+  │    - Check regulatory status of parent organization         │
+  │    - Attestation of compliance officer                      │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app for plan representatives             │
+  │    - Phone/email verified                                   │
+  │                                                              │
+  │ 5. UHWP GENERATED & ASSIGNED                                │
+  │    - Flagged as "Tier 2 - Manual Verification"             │
+  │    - Higher scrutiny on initial operations                 │
+  │    - Network adequacy monitored closely                     │
+  └─────────────────────────────────────────────────────────────┘
+
+================================================================================
+7. PERSISTENT IDENTITY ACROSS CHANGES
+================================================================================
+
+Plan Name Change / Rebranding:
+  - Plan notifies of name change with legal documentation
+  - Reading Engine verifies: state filings, tax authority
+  - UHWP remains the same
+  - Old names map to UHWP for historical reference
+  - Member communications updated; same UHWP for benefits
+
+Service Area Changes:
+  - Plan requests expansion/contraction of counties served
+  - Reading Engine verifies contract authority
+  - UHWP remains the same
+  - Service area history tracked under UHWP
+  - Networks updated automatically
+
+Ownership / Parent Company Change:
+  - Plan acquired by larger healthcare system
+  - Tax ID may stay same or change
+  - Reading Engine identifies ownership relationship
+  - UHWP remains the same despite ownership change
+  - Operational continuity maintained
+
+Network Changes:
+  - Plan adds/removes providers from network
+  - Reading Engine monitors network adequacy
+  - UHWP unchanged; network directory updated
+  - Historical network snapshots preserved
+  - Member in-network status tracked correctly
+
+Regulatory Status Changes:
+  - Plan suspension, contract modification, or exit
+  - UHWP flagged with status (active, suspended, exited)
+  - Automatic member notifications triggered
+  - Historical data preserved under UHWP
+  - Claims/coverage remains tied to UHWP
+
+================================================================================
+8. UHWP MAPPING TO LEGACY SYSTEMS
+================================================================================
+
+New York State Plan ID
+  - Format: NYS-specific (varies)
+  - System: NYS DOH Medicaid Managed Care directory
+  - Mapping: State Plan ID → UHWP (one-to-one)
+  - Note: Primary state identifier for plans
+
+CMS Plan ID
+  - Format: 5-character code (federal)
+  - System: CMS, used for Medicare Advantage, some Medicaid
+  - Mapping: CMS Plan ID → UHWP (if applicable)
+  - Note: Not all Medicaid plans have CMS ID; mainly Medicare Advantage
+
+Tax ID / EIN (Parent Organization)
+  - Format: 9-digit XX-XXXXXXX
+  - System: IRS, parent company identifier
+  - Mapping: Parent EIN → UHWP (one parent org may have multiple plans)
+  - Note: EIN encrypted, UHWP does not contain EIN
+
+Prior Plan IDs / Legacy Plan Codes
+  - Format: Varies (prior state IDs, prior affiliations)
+  - System: Legacy databases
+  - Mapping: Old Plan ID → UHWP (historical reconciliation)
+  - Note: Used when plans rebranded or reorganized
+
+Plan Network ID / Internal Plan Numbers
+  - Format: Plan-specific internal numbers
+  - System: Plan's internal systems (separate from state)
+  - Mapping: Internal Plan ID → UHWP (for data integration)
+  - Note: May vary across plan systems
+
+Reading Engine Responsibility:
+  - Map all legacy plan IDs to single UHWP
+  - Identify duplicate UHWP creation (prevent)
+  - Flag discrepancies (same plan, multiple UHWPs)
+  - Reconcile historical plan records to correct UHWP
+  - Track plan mergers, acquisitions, exits
+
+================================================================================
+9. PLAN VERIFICATION & NETWORK ADEQUACY
+================================================================================
+
+Network Adequacy Verification:
+  - Reading Engine samples in-network provider directory
+  - Verifies providers' UPIDs (provider credentials)
+  - Checks geographic distribution of providers
+  - Ensures specialty coverage (required for Medicaid)
+  - Validates telehealth/after-hours access claims
+  - Red flag: Claims of broad network but few actual providers (phantom network)
+
+Financial Solvency Verification:
+  - Reading Engine checks parent organization financial status
+  - Monitors plan loss ratios and reserve requirements
+  - Red flag: Financial instability, chronic losses, reserve depletion
+  - Regulatory action history tracked
+
+Quality & Compliance Verification:
+  - Reading Engine tracks HEDIS scores
+  - Monitors CAHPS member satisfaction results
+  - Checks for NCQA accreditation status
+  - Reviews complaint history (state filings)
+  - Red flag: Chronic quality issues, repeated violations
+
+Plan Exit / Suspension Protocol:
+  - If plan exits Medicaid or license suspended
+  - UHWP marked as "inactive" or "exited"
+  - Members automatically reassigned to other plans
+  - Claims for plan continue to be processed (historical)
+  - UHWP data archived but preserved
+
+================================================================================
+10. TWO-FACTOR AUTHENTICATION & UHWP
+================================================================================
+
+2FA Requirements:
+  - Mandatory for all plan administrators
+  - Authenticator app (TOTP)
+  - Phone number verified
+
+2FA Enrollment:
+  1. Plan administrator enrolls in authenticator app
+  2. App generates time-based code
+  3. Phone number verified via SMS
+  4. 2FA linked to UHWP in database
+
+2FA & Multiple Plan Representatives:
+  - Multiple staff can have access to same UHWP
+  - Each person has individual 2FA credentials
+  - Audit log tracks who accessed account and when
+
+2FA Breach / Lost Device:
+  - Plan reports compromised 2FA
+  - Account locked immediately
+  - Identity re-verification required
+  - New 2FA enrolled
+  - UHWP remains unchanged but flagged for investigation
+
+================================================================================
+11. DATA INTEGRITY & UHWP
+================================================================================
+
+Primary Key: UHWP
+  - All plan records in TORQ-e database keyed to UHWP
+  - Foreign key in member enrollment, network directories, contracts
+  - No duplication possible if UHWP properly enforced
+
+Referential Integrity:
+  - One UHWP = One plan entity
+  - One plan = One UHWP (no duplicates)
+  - All historical data attached to UHWP
+  - Soft delete only (data archived)
+
+Audit Trail:
+  - Contract start date: when plan began operations
+  - Contract amendments: service area changes, modifications
+  - Regulatory status: active, suspended, exited
+  - Member enrollment: total enrollment by UHWP
+  - Quality metrics: tracked by UHWP
+  - Complaints/violations: linked to UHWP
+
+Immutability:
+  - UHWP cannot be changed once assigned
+  - UHWP cannot be reassigned to different plan
+  - Changes to plan name/service area do NOT change UHWP
+  - Historical data preserved under UHWP
+
+================================================================================
+12. SUCCESS METRICS FOR UHWP
+================================================================================
+
+Plan Identification Accuracy:
+  - Current: Plans identified by multiple IDs (state, CMS, internal)
+  - Target: 100% of plans assigned single UHWP
+  - Target: Zero duplicate UHWPs for same plan
+
+Network Directory Accuracy:
+  - Current: In-network provider lists often inaccurate (phantom networks)
+  - Target: 95%+ of claimed in-network providers verified within 48 hours
+  - Target: Out-of-network determination 99% accurate
+
+Service Area Tracking:
+  - Target: All plan service area changes tracked by UHWP
+  - Target: Member eligibility by service area 99% accurate
+
+Plan Status Monitoring:
+  - Target: Plan regulatory status updated within 24 hours of change
+  - Target: Member notifications sent within 48 hours of plan exit
+
+System Uptime:
+  - Target: 99.95% availability (plan verification system)
+  - Target: <200ms UHWP lookup time
+
+================================================================================
+
+END OF SPECIFICATION
+
+Revision History:
+v1.0 - April 23, 2026 - Initial specification
+
+================================================================================

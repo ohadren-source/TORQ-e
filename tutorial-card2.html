@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-e Provider Tutorial</title>
+    <link rel="icon" type="image/png" href="branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #1e5631;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f97316;
+        }
+
+        .section p {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2d6a4f;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .limitation-list li:before {
+            content: "✗";
+            color: #d32f2f;
+        }
+
+        .support {
+            background: #f0f8f5;
+            border-left: 4px solid #2d6a4f;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+
+        .support h3 {
+            color: #1e5631;
+            margin-bottom: 8px;
+        }
+
+        .support p {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .support a {
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .support a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            background: #2d6a4f;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: #1e5631;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="branding/logo/TdST.png" alt="TORQ-e Logo">
+            <h1>TORQ-e Provider Guide</h1>
+            <p>Streamline Your Claims and Enrollment</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>What is TORQ-e for Providers?</h2>
+                <p>
+                    TORQ-e is a powerful tool that saves healthcare providers time and money by automating claims processing, enrollment verification, and fraud detection. Instead of juggling multiple portals and waiting days for answers, you get real-time insights about member coverage, claim validity, and payment status.
+                </p>
+                <p>
+                    Think of TORQ-e as your personal claims assistant that's available 24/7.
+                </p>
+            </div>
+
+            <div class="section">
+                <h2>What Can TORQ-e Do For You?</h2>
+                <ul class="feature-list">
+                    <li>Look up your current Medicaid enrollment status (FFS, MCO, or both)</li>
+                    <li>Verify member coverage before you submit a claim</li>
+                    <li>Validate a claim against member eligibility and coverage limits BEFORE you submit it</li>
+                    <li>Submit claims to the right place automatically (FFS vs. MCO routing)</li>
+                    <li>Track claim status and payment timelines in real-time</li>
+                    <li>Get alerts if a claim is delayed past the 30-day federal payment deadline</li>
+                    <li>Analyze a claim for fraud patterns and red flags (unusual billing, overutilization, etc.)</li>
+                    <li>Catch billing errors early and resubmit faster</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>What Can't TORQ-e Do?</h2>
+                <ul class="feature-list limitation-list">
+                    <li>TORQ-e cannot process payments or send money directly to your account</li>
+                    <li>TORQ-e cannot enroll you in Medicaid—you still apply through official channels</li>
+                    <li>TORQ-e cannot appeal a denied claim (you need to follow denial procedures)</li>
+                    <li>TORQ-e cannot modify member eligibility or add/remove coverage levels</li>
+                    <li>TORQ-e does not work with non-Medicaid insurance (Medicare, commercial plans, etc.)</li>
+                    <li>TORQ-e cannot override Medicaid rules or exceptions set by DOH</li>
+                    <li>For major account issues or manual exceptions, you still need to contact Medicaid directly</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>How It Works</h2>
+                <p>
+                    Upload your claim or member info and ask TORQ-e questions: "Is this member covered?" or "Is this claim valid?" TORQ-e checks multiple data sources and flags issues before they become problems. You get a confidence score with every answer, so you know when to take extra care.
+                </p>
+                <p>
+                    Most claims can be validated in seconds, not hours.
+                </p>
+            </div>
+
+            <div class="support">
+                <h3>Need Help?</h3>
+                <p>For questions about TORQ-e or technical support, email: <a href="mailto:ohad.phoenix@isoccpp.org">ohad.phoenix@isoccpp.org</a></p>
+                <p style="margin-top: 12px; font-size: 13px; color: #666;">
+                    For Medicaid enrollment, claim disputes, or policy questions, contact your MCO or the NY Department of Health directly.
+                </p>
+            </div>
+
+            <a href="login-card2.html" class="back-link">← Back to Login</a>
+        </div>
+    </div>
+</body>
+</html>

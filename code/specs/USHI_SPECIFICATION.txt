@@ -1,0 +1,512 @@
+================================================================================
+UNIVERSAL STAKEHOLDER IDENTITY (USHI) SPECIFICATION
+TORQ-e Identity Verification System
+================================================================================
+
+VERSION: 1.0
+DATE: April 23, 2026
+AUTHOR: Design Phase - TORQ-e Development Team
+
+================================================================================
+1. DEFINITION
+================================================================================
+
+USHI (Universal Stakeholder Identity) is the single, persistent, unique
+identifier that represents a government entity, agency, or authorized
+stakeholder accessing TORQ-e systems for administrative, oversight, or
+program management purposes.
+
+USHI represents the organizational role, authority level, and access scope
+for individuals who:
+- Administer Medicaid programs (state, county, local)
+- Conduct compliance & fraud oversight
+- Monitor program efficiency & quality
+- Generate reports and analytics
+- Manage beneficiary enrollment
+- Authorize payments and contracts
+
+USHI is generated ONCE when a stakeholder entity is authorized to access
+TORQ-e and persists for the duration of their authorized access.
+
+================================================================================
+2. TERMINOLOGY & SYNONYMS
+================================================================================
+
+The entity identified by USHI is referred to by different terms:
+
+STAKEHOLDER
+  - Definition: Government entity with authority over Medicaid program
+  - Usage: Regulatory oversight, program administration, compliance
+  - Example: "NYS Department of Health Stakeholder"
+  - System: Access control, authorization levels
+
+GOVERNMENT ENTITY
+  - Definition: Federal, state, or local government agency
+  - Usage: Formal administrative and regulatory context
+  - Example: "New York State Department of Health"
+  - System: Regulatory submissions, official reporting
+
+AUTHORIZED USER
+  - Definition: Individual employed by/authorized by stakeholder
+  - Usage: System access, audit trail tracking
+  - Example: "John Smith, Authorized User - NYS DOH"
+  - System: Login authentication, activity logging
+
+AGENCY
+  - Definition: Administrative organization (DOH, DSS, OIG, etc.)
+  - Usage: Organizational hierarchy, department designation
+  - Example: "Office of Medicaid Inspector General"
+  - System: Organizational structures, role-based access
+
+ADMINISTRATOR
+  - Definition: Individual with administrative authority
+  - Usage: System access, data modification authority
+  - Example: "Medicaid Program Administrator"
+  - System: Access levels, approval authority
+
+AUDITOR / COMPLIANCE OFFICER
+  - Definition: Individual authorized to audit/monitor program
+  - Usage: Fraud detection, program integrity
+  - Example: "Medicaid Fraud Control Unit Investigator"
+  - System: Audit trails, read-only access for specific functions
+
+UNIFIED REFERENCE
+  - All terms refer to government/authorized STAKEHOLDERS
+  - All systems map to ONE USHI per organization/role
+  - USHI defines access scope and authority level
+
+================================================================================
+3. USHI STRUCTURE
+================================================================================
+
+Format: UUID v4 (128-bit identifier) + Authority Level Code
+Example: 880h1722-i62e-74g7-d049-779988773333
+Authority Level: ADMIN (administrator), AUDITOR (read-only), ANALYST (reporting)
+
+Length: 36 characters UUID + 1-10 character authority code
+Pattern: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx|AUTHORITY
+
+Generation:
+  - Created when government entity is authorized to access TORQ-e
+  - Algorithm: Cryptographically secure random generation (UUID v4)
+  - Authority code assigned based on agency role and authorization level
+  - Immutable once assigned
+
+Storage:
+  - Primary database: TORQ-e Stakeholder Identity Database
+  - Indexed by USHI, Organization Name, Authority Level
+  - Encrypted at rest
+  - Audit logging of all access (who, what, when, why)
+
+================================================================================
+4. AUTHORITY LEVELS & ACCESS SCOPES
+================================================================================
+
+LEVEL 1: SUPER ADMIN (NYS DOH Leadership)
+  - Full read/write access to all TORQ-e data
+  - Can authorize/revoke other stakeholders
+  - Can modify program rules and policies
+  - Full audit trail access
+  - Can generate any report
+  - System impact: Direct control of TORQ-e functionality
+  - Users: Deputy Commissioner, Director of Medicaid
+
+LEVEL 2: ADMIN (Agency Directors, Program Managers)
+  - Read/write access to assigned programs
+  - Can manage beneficiary/provider enrollments
+  - Can approve payment policy changes
+  - Limited authorization of lower-level users
+  - Full audit trail for assigned programs
+  - Can generate reports on assigned programs
+  - Users: Office of Medicaid Director, Program Manager
+
+LEVEL 3: INVESTIGATOR (Fraud Control, Compliance)
+  - Read-heavy access (most data can be viewed)
+  - Write limited to investigation findings/flags
+  - Can flag provider/member for investigation
+  - Access to fraud detection reports
+  - Cannot modify beneficiary benefits/eligibility
+  - Investigation audit trail
+  - Users: Medicaid Inspector General investigator, Compliance Officer
+
+LEVEL 4: AUDITOR (Internal Audit, Quality Assurance)
+  - Read-only access to specified data
+  - No write access (cannot modify data)
+  - Can access audit trails and reports
+  - Cannot view PII unless necessary for audit
+  - Limited to specific audit scope
+  - Cannot access fraud investigations
+  - Users: Audit staff, Quality monitoring staff
+
+LEVEL 5: ANALYST (Data Analytics, Reporting)
+  - Read-only access to de-identified/aggregated data
+  - Can generate standard reports
+  - Cannot access individual-level PII
+  - Limited to data necessary for assigned reports
+  - Audit trail of report generation (not data access details)
+  - Users: Analytics team, Business intelligence staff
+
+LEVEL 6: VIEW-ONLY (Community Partners, Contractors)
+  - Read-only access to public/aggregate information
+  - No access to individual member/provider data
+  - Can view program statistics
+  - Cannot access audit trails or investigation data
+  - Users: Community health partners, grant-funded programs
+
+================================================================================
+5. VENN DIAGRAM: STAKEHOLDER DATA POINTS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────┐
+│               UNIVERSAL STAKEHOLDER DATA                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  CENTER (Always Present, Core Identity):                           │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Government Agency Name                                          │
+│  • Agency Type (State DOH, County DSS, OIG, etc.)                 │
+│  • Authorized User Name                                           │
+│  • User Title / Role                                              │
+│  • User Contact Information (email, phone)                        │
+│  • Authority Level (Admin, Auditor, Analyst, etc.)               │
+│  • Authorization Date                                             │
+│  • Data Access Scope (all programs, specific counties, etc.)      │
+│                                                                     │
+│  RING 1 (Usually Present, High Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Agency Contact Information (official)                          │
+│  • Agency Leadership (Director, Commissioner)                     │
+│  • Department / Sub-unit Assignment                               │
+│  • Authorizing Official (who approved access)                     │
+│  • Delegation/Supervisory Chain                                   │
+│  • Credentials / Certifications (if applicable)                   │
+│  • Prior TORQ-e access (if returning user)                        │
+│                                                                     │
+│  RING 2 (Often Present, Medium Confidence):                       │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Specific Program Responsibilities                              │
+│  • Geographic Jurisdiction (state, county, region)                │
+│  • Budget Authority / Approval Limits                             │
+│  • Training/Certification Records                                 │
+│  • Prior Government Service History                               │
+│  • Legal Authority (laws granting access authorization)           │
+│  • Prior Audit/Compliance History                                 │
+│                                                                     │
+│  RING 3 (Sometimes Present, Variable):                            │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • Performance Metrics / Evaluation Records                       │
+│  • Conflict of Interest Disclosures                               │
+│  • Background Check Status                                        │
+│  • Continuing Education / Training History                        │
+│  • Prior access violation history                                 │
+│  • Data breach incident involvement                               │
+│                                                                     │
+│  GAPS (Restricted/Not Stored in TORQ-e):                         │
+│  ═══════════════════════════════════════════════════════════════  │
+│  • SSN (kept only in separate secure system)                      │
+│  • Detailed background check results (kept by HR)                 │
+│  • Medical/health information (not relevant)                      │
+│  • Personal financial information (not relevant)                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+6. VERIFICATION TIERS & USHI GENERATION
+================================================================================
+
+TIER 1: GOVERNMENT AGENCY AUTHORIZATION
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Government agency (NYS DOH, County DSS, etc.) requests    │
+  │    access authorization for employee/contractor              │
+  │                                                              │
+  │ 2. Request must include:                                    │
+  │    - Agency name and legal authorization (law, contract)    │
+  │    - User name and official title                           │
+  │    - Required access level (Admin, Auditor, Analyst)        │
+  │    - Data scope needed (which programs, counties)           │
+  │    - Business justification for access                      │
+  │    - Authorizing official signature                         │
+  │                                                              │
+  │ 3. Reading Engine validates:                                │
+  │    - Verify agency is legitimate government entity          │
+  │    - Confirm legal authority for access authorization       │
+  │    - Verify user is actually employed by agency             │
+  │    - Background check confirmation (from agency)            │
+  │    - No prior access violations                             │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app (TOTP)                              │
+  │    - Phone/email verified via SMS/call                     │
+  │    - Backup phone option for account recovery              │
+  │                                                              │
+  │ 5. USHI GENERATED & ASSIGNED                                │
+  │    - Stored in TORQ-e database                             │
+  │    - Authority level applied                               │
+  │    - Data access scope configured                          │
+  │    - User receives login credentials                       │
+  │    - Access audit trail begins                             │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 1B: AUTHORITY LEVEL CHANGE (Existing User)
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. User's role/authority changes within government agency    │
+  │    (Promotion, transfer to different program, etc.)          │
+  │                                                              │
+  │ 2. Agency submits authorization for authority level change   │
+  │    - New position/title                                     │
+  │    - New authority level requested                          │
+  │    - Authorizing official approval                          │
+  │                                                              │
+  │ 3. Reading Engine validates:                                │
+  │    - Verify new position/authority legitimate               │
+  │    - Confirm proper authorization                          │
+  │                                                              │
+  │ 4. Same USHI reassigned with new authority level:          │
+  │    - USHI remains unchanged                                 │
+  │    - Authority level updated in database                    │
+  │    - Prior authority level history preserved                │
+  │    - 2FA remains active                                     │
+  │    - Access log shows change                                │
+  │                                                              │
+  │ 5. User continues with expanded/reduced access             │
+  └─────────────────────────────────────────────────────────────┘
+
+TIER 2: CONTRACTOR / EXTERNAL STAKEHOLDER AUTHORIZATION
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 1. Non-government entity (contractor, vendor, researcher)    │
+  │    requests TORQ-e access for legitimate purpose             │
+  │                                                              │
+  │ 2. Request must include:                                    │
+  │    - Organization name and legal status                     │
+  │    - Authorized user name                                   │
+  │    - Purpose of access (research, evaluation, etc.)         │
+  │    - Specific data needed (de-identified only)              │
+  │    - Contract/MOA with government agency                    │
+  │    - Contractor official signature                          │
+  │                                                              │
+  │ 3. Reading Engine validates:                                │
+  │    - Verify contract/MOA with government agency exists      │
+  │    - Background check on contractor/user                    │
+  │    - No conflicts of interest                               │
+  │    - Purpose is legitimate public health interest           │
+  │                                                              │
+  │ 4. Enroll in 2FA:                                           │
+  │    - Authenticator app required                            │
+  │    - Phone/email verified                                   │
+  │                                                              │
+  │ 5. USHI GENERATED & ASSIGNED                                │
+  │    - Authority level typically "Analyst" or "View-Only"     │
+  │    - Access restricted to de-identified aggregate data only │
+  │    - Cannot access individual-level PII                     │
+  │    - Audit trail of all access logged                      │
+  │    - Contract end date triggers automatic deactivation      │
+  └─────────────────────────────────────────────────────────────┘
+
+================================================================================
+7. DATA PRIVACY & USHI
+================================================================================
+
+Principle: USHI enables access CONTROL, not data exposure
+
+Role-Based Data Filtering:
+  - LEVEL 1 (Super Admin): Full access to all data
+  - LEVEL 2 (Admin): Full access to assigned programs only
+  - LEVEL 3 (Investigator): Can flag/investigate, limited write
+  - LEVEL 4 (Auditor): Read-only to assigned audit scope
+  - LEVEL 5 (Analyst): Read-only to de-identified/aggregate data
+  - LEVEL 6 (View-Only): Read-only to public/summary information
+
+PII Protection:
+  - Investigators can see individual names/IDs (needed for investigation)
+  - Analysts cannot see names (only aggregate/de-identified data)
+  - View-Only users cannot access any individual-level information
+  - All PII access logged and auditable
+
+Audit Trail & Accountability:
+  - Every action by USHI-authorized user is logged
+  - What data was accessed
+  - When it was accessed
+  - What reports were generated
+  - If any data was modified/flagged
+  - User cannot delete their own audit trail
+
+De-identification for Analysts:
+  - Reports run by LEVEL 5 (Analyst) exclude PII
+  - Names replaced with member/provider IDs
+  - Addresses generalized to county level
+  - Phone/email not included
+  - Dates generalized (year only, no exact dates)
+
+================================================================================
+8. USHI MAPPING TO LEGACY SYSTEMS
+================================================================================
+
+Government Agency Identifier
+  - Format: State code + Agency abbreviation (e.g., "NY_DOH")
+  - System: Government organizational structure
+  - Mapping: Agency ID → USHI (but many users per agency)
+
+User ID / Employee ID
+  - Format: Agency-specific (e.g., state employee number)
+  - System: HR systems
+  - Mapping: Employee ID → USHI (one-to-one for that user)
+  - Note: USHI persists even if employee number changes (rare)
+
+Role Code / Position Title
+  - Format: Government classification (e.g., "Manager," "Investigator")
+  - System: HR, position management
+  - Mapping: Role → Authority Level in USHI
+  - Note: Change in role updates USHI authority level
+
+Prior Access Records
+  - Format: Legacy system user accounts, prior access logs
+  - System: Old TORQ-e systems or predecessor systems
+  - Mapping: Legacy user ID → USHI (historical reconciliation)
+  - Note: Access history carried forward under USHI
+
+Reading Engine Responsibility:
+  - Map government user IDs to single USHI
+  - Prevent duplicate USHI creation (same person)
+  - Track authority level changes
+  - Maintain access history
+  - Alert on suspicious access patterns
+
+================================================================================
+9. ACCESS AUDIT & COMPLIANCE
+================================================================================
+
+Access Log Tracking:
+  - User login: date, time, IP address, device
+  - Data accessed: specific records, reports generated
+  - Duration of session: when logged out
+  - Any data modifications/flags: documented
+  - Sensitive actions: require additional logging
+
+Suspicious Activity Detection:
+  - Large data downloads (possible data exfiltration)
+  - Access outside normal working hours
+  - Accessing unrelated programs (scope creep)
+  - Multiple failed login attempts (account breach)
+  - Access from unusual IP addresses (compromise)
+
+Audit Reports:
+  - Who accessed what data and when
+  - Changes to data by user
+  - Investigation flagging by investigator
+  - Report generation by analyst
+  - Authority level change history
+
+Annual Re-authorization:
+  - All USHI access reviewed annually by authorizing agency
+  - Confirm user still needs access
+  - Confirm authority level still appropriate
+  - Revoke access if no longer needed
+  - USHI marked as "inactive" (not deleted)
+
+Access Revocation:
+  - User leaves government agency
+  - User changes role, no longer needs access
+  - Authority level reduced/removed
+  - Investigation into user misconduct
+  - USHI marked "revoked" with date/reason
+  - Access immediately terminated
+  - Audit trail preserved
+
+================================================================================
+10. TWO-FACTOR AUTHENTICATION & USHI
+================================================================================
+
+2FA Requirements:
+  - Mandatory for all USHI stakeholders
+  - Authenticator app (TOTP)
+  - Phone number verified
+  - Backup phone optional (for account recovery)
+
+2FA Enrollment:
+  1. User enrolls in authenticator app
+  2. App generates time-based code
+  3. Phone verified via SMS/call
+  4. 2FA linked to USHI in database
+  5. Backup phone can be added
+
+2FA & Credential Change:
+  - If user receives new phone, must update 2FA
+  - If user changes phone number, must update 2FA
+  - If user moves agencies, maintains 2FA if authority level same
+
+2FA Breach / Account Compromise:
+  - User reports lost phone/compromised 2FA
+  - Account locked immediately
+  - Identity re-verification required
+  - User must re-enroll 2FA
+  - USHI remains same but flagged for investigation
+  - Access temporarily revoked until resolved
+
+================================================================================
+11. DATA INTEGRITY & USHI
+================================================================================
+
+Primary Key: USHI
+  - All stakeholder access records keyed to USHI
+  - Authority level tied to USHI
+  - Access audit trail tied to USHI
+  - No duplication possible if USHI properly enforced
+
+Referential Integrity:
+  - One USHI = One authorized stakeholder user
+  - Cannot have same person with multiple UHSIs
+  - All historical access data attached to USHI
+  - Soft delete only (data archived, not destroyed)
+
+Audit Trail:
+  - Authorization date: when USHI created
+  - Authorizing official: who approved access
+  - Authority level: assigned access level
+  - Access scope: what programs/data authorized
+  - Last access: when user last logged in
+  - Access log: complete activity history
+  - Revocation date (if applicable): when access terminated
+
+Immutability:
+  - USHI cannot be changed once assigned
+  - USHI cannot be reassigned to different person
+  - Authority level can change (but tracked)
+  - Data scope can change (but tracked)
+  - Historical data preserved under USHI
+
+================================================================================
+12. SUCCESS METRICS FOR USHI
+================================================================================
+
+Access Control Accuracy:
+  - Current: Manual, fragmented access management
+  - Target: 100% of stakeholders assigned USHI with correct authority
+  - Target: Zero unauthorized access to data
+
+Audit Trail Completeness:
+  - Target: 100% of stakeholder actions logged
+  - Target: Zero deleted audit logs
+  - Target: Access audit trail queryable within <1 second
+
+Authorization Timeliness:
+  - Current: Manual authorization process, 5-10 business days
+  - Target: Automated authorization process <24 hours
+  - Target: Emergency access (with oversight) <1 hour
+
+Compliance:
+  - Target: 100% annual re-authorization completion
+  - Target: Zero access violations
+  - Target: All access follows role-based rules
+
+System Uptime:
+  - Target: 99.99% availability (access control critical)
+  - Target: <50ms USHI access check time
+
+================================================================================
+
+END OF SPECIFICATION
+
+Revision History:
+v1.0 - April 23, 2026 - Initial specification
+
+================================================================================

@@ -1,0 +1,395 @@
+================================================================================
+UMID JOURNEY BLUEPRINT
+Member/Client/Recipient/Beneficiary Card
+================================================================================
+
+ROLE: Member (Individual seeking/managing Medicaid coverage)
+IDENTIFIER: UMID (Universal Member Identifier)
+PRIMARY QUESTION: "Am I eligible for Medicaid?"
+SECONDARY ACTION: Step-by-step signup guide
+
+================================================================================
+1. ENTRY POINT
+================================================================================
+
+Card 1: Role Selection Screen
+  ┌─────────────────────────────────┐
+  │ Select Your Role                │
+  │                                 │
+  │ [Member Card]                   │
+  │ Apply for Medicaid              │
+  │ Manage your coverage            │
+  │                                 │
+  │ [Other role cards...]           │
+  └─────────────────────────────────┘
+
+User clicks: "Member" card
+↓ Routes to Member UMID Card
+
+================================================================================
+2. MEMBER UMID ENTRY CARD
+================================================================================
+
+Card 2: UMID Entry / Member Login
+  ┌──────────────────────────────────────────┐
+  │ TORQ-e Medicaid - Member                 │
+  │                                          │
+  │ Enter Your UMID                          │
+  │ [____________________________]           │
+  │                                          │
+  │ [Continue →]                             │
+  │                                          │
+  │ ──────────────────────────────────      │
+  │ Forgot your UMID?                        │
+  │ [Recover via 2FA]                        │
+  │                                          │
+  │ Don't have a UMID yet?                   │
+  │ [Create One]                             │
+  └──────────────────────────────────────────┘
+
+Three Paths:
+
+PATH A: Existing Member with UMID
+  - Enter UMID
+  - 2FA verification (authenticator code)
+  - Redirects to Member Dashboard
+
+PATH B: Forgot UMID
+  - Enter email or phone
+  - 2FA verification
+  - UMID retrieved and displayed
+  - Redirects to Member Dashboard
+
+PATH C: New Member - Create UMID
+  - Click "Create One"
+  - Proceed to: Tier 1 or Tier 2 Selection
+
+================================================================================
+3. NEW MEMBER: TIER SELECTION
+================================================================================
+
+Card 3: How would you like to verify your identity?
+
+  ┌──────────────────────────────────────────┐
+  │ Verify Your Identity                     │
+  │                                          │
+  │ □ Tier 1: Digital Verification          │
+  │   Have a valid government ID?            │
+  │   (Driver's License, Passport, etc.)     │
+  │   [Proceed with Digital Verification]    │
+  │                                          │
+  │ □ Tier 2: In-Person Verification        │
+  │   Don't have a valid government ID?      │
+  │   [Schedule In-Person Visit]             │
+  └──────────────────────────────────────────┘
+
+If Tier 1 Selected → Gov ID Verification Flow
+If Tier 2 Selected → In-Person Scheduling Flow
+
+================================================================================
+4A. TIER 1 FLOW: DIGITAL GOVERNMENT ID VERIFICATION
+================================================================================
+
+Card 4A: Government ID Entry
+
+  ┌──────────────────────────────────────────┐
+  │ Government ID Verification               │
+  │                                          │
+  │ ID Type:                                 │
+  │ ○ Driver's License                       │
+  │ ○ Passport                               │
+  │ ○ State ID                               │
+  │                                          │
+  │ ID Number:                               │
+  │ [____________________________]           │
+  │                                          │
+  │ Full Name (as shown on ID):              │
+  │ [____________________________]           │
+  │                                          │
+  │ Date of Birth:                           │
+  │ [MM/DD/YYYY]                             │
+  │                                          │
+  │ [Verify ID →]                            │
+  └──────────────────────────────────────────┘
+
+Reading Engine Action:
+  - Cross-reference ID number against state DMV/Passport database
+  - Verify name and DOB match
+  - Confirm ID is active (not revoked)
+  - Flag any discrepancies
+
+If Verified ✓:
+  → Proceed to 2FA Enrollment
+
+If Not Verified ✗:
+  → Display error message
+  → Offer alternative (Tier 2 or try again with different ID)
+
+================================================================================
+4B. TIER 2 FLOW: IN-PERSON VERIFICATION SCHEDULING
+================================================================================
+
+Card 4B: Schedule In-Person Verification
+
+  ┌──────────────────────────────────────────┐
+  │ Schedule In-Person Verification          │
+  │                                          │
+  │ We'll help you verify your identity      │
+  │ in person at a local Medicaid office.    │
+  │                                          │
+  │ Select your county:                      │
+  │ [New York County v]                      │
+  │                                          │
+  │ Available appointments:                  │
+  │ □ Tuesday, April 29, 9:00 AM             │
+  │ □ Wednesday, April 30, 2:00 PM           │
+  │ □ Thursday, May 1, 10:00 AM              │
+  │                                          │
+  │ [Schedule Appointment →]                 │
+  │                                          │
+  │ Already have appointment? [Enter Code]   │
+  └──────────────────────────────────────────┘
+
+Member Actions:
+  - Select county
+  - Choose appointment time
+  - Receives confirmation code
+  - Shows what to bring (any ID, SSN if available, proof of residence)
+
+Appointment Status:
+  - Email confirmation sent
+  - SMS reminder 24 hours before
+  - In-person verification conducted
+  - Provider attestation collected
+  - UMID generated after visit
+
+================================================================================
+5. 2FA ENROLLMENT
+================================================================================
+
+Card 5: Enroll in 2FA (Two-Factor Authentication)
+
+  ┌──────────────────────────────────────────┐
+  │ Secure Your Account                      │
+  │                                          │
+  │ Step 1: Download Authenticator App       │
+  │ Get Google Authenticator or Authy        │
+  │ [→ Download on App Store / Play Store]   │
+  │                                          │
+  │ Step 2: Scan QR Code                     │
+  │ [QR CODE DISPLAY]                        │
+  │ [Can't scan? Enter key manually]         │
+  │                                          │
+  │ Step 3: Verify Phone Number              │
+  │ [____________________________]           │
+  │ [Send SMS Code]                          │
+  │                                          │
+  │ Enter SMS Code:                          │
+  │ [______]                                 │
+  │                                          │
+  │ [Complete 2FA Setup →]                   │
+  └──────────────────────────────────────────┘
+
+After 2FA Enrollment ✓:
+  → UMID Generated
+  → Member receives UMID confirmation
+  → Redirects to Member Dashboard
+
+================================================================================
+6. MEMBER DASHBOARD (AFTER UMID)
+================================================================================
+
+Card 6: Member Dashboard
+
+  ┌──────────────────────────────────────────┐
+  │ Welcome to Your Medicaid Account          │
+  │ UMID: 550e8400-e29b-41d4-a716-446655...  │
+  │                                          │
+  │ ┌─ Your Questions ──────────────────────┐│
+  │ │                                       ││
+  │ │ Ask me anything about your coverage:  ││
+  │ │ [____________________________] [Ask →] ││
+  │ │                                       ││
+  │ │ ─────────────────────────────────     ││
+  │ │ Popular Questions:                    ││
+  │ │                                       ││
+  │ │ FAQ 1: What services does Medicaid    ││
+  │ │        cover?                         ││
+  │ │ [View Answer]                         ││
+  │ │                                       ││
+  │ │ FAQ 2: How do I renew my eligibility? ││
+  │ │ [View Answer]                         ││
+  │ │                                       ││
+  │ │ FAQ 3: What is my member ID and how   ││
+  │ │        do I use it?                   ││
+  │ │ [View Answer]                         ││
+  │ │                                       ││
+  │ └───────────────────────────────────────┘│
+  │                                          │
+  │ [My Coverage] [Contact] [Settings]       │
+  └──────────────────────────────────────────┘
+
+================================================================================
+7. MEMBER JOURNEY - MAIN QUESTION
+================================================================================
+
+MAIN QUESTION: "Am I eligible for Medicaid?"
+
+User Types This Into Text Box:
+  "Am I eligible for Medicaid?"
+
+Reading Engine Process:
+  1. Extract key information from member's UMID/profile
+     - Age
+     - Household size
+     - Monthly income
+     - Citizenship status
+     - Current employment
+
+  2. Run eligibility algorithm against NYS Medicaid rules
+     - Check Modified Adjusted Gross Income (MAGI) limits
+     - Check categorical eligibility (age, disability, pregnancy)
+     - Check citizenship requirements
+     - Determine eligibility category (if eligible)
+
+  3. Claude AI synthesizes response
+     - "Yes, you are eligible for Medicaid because..."
+     - "No, your income exceeds the limit. Here's what to do..."
+     - "Your eligibility depends on: [factor]. Can you confirm?"
+
+  4. Display answer + FAQ suggestions
+
+Example Response:
+  "Based on your household size (3) and monthly income ($2,100),
+   you qualify for Medicaid. Your eligibility category is:
+   MAGI Non-Pregnant Adult. Benefits begin immediately after
+   enrollment confirmation.
+
+   Learn more:
+   • What services does Medicaid cover? [View]
+   • How long does coverage last? [View]
+   • How do I use my member ID? [View]"
+
+================================================================================
+8. MEMBER FAQ RESPONSES
+================================================================================
+
+FAQ 1: "What services and treatments does Medicaid cover?"
+
+Claude Response + Reading Engine:
+  - Pull from NYS Medicaid covered services list
+  - Filter by member's eligibility category
+  - Show: Primary care, specialists, hospital, emergency, prescription drugs
+  - Show: Mental health, dental (if eligible), vision
+  - Show: Preventive care (free)
+  - Show: Cost-sharing rules (copays, deductibles)
+
+Display Format:
+  "Medicaid covers these services:
+
+   ✓ Primary Care Doctor Visits
+   ✓ Specialist Visits (with referral if HMO member)
+   ✓ Hospital Care
+   ✓ Emergency Services
+   ✓ Prescription Drugs
+   ✓ Mental Health Services
+   ✓ Preventive Care (free)
+
+   Your out-of-pocket costs:
+   • Doctor visit: $0-$3 copay
+   • Prescription: $1-$3 copay
+   • Hospital: $0 copay
+
+   [Need something not listed? Ask your doctor about prior approval]"
+
+---
+
+FAQ 2: "How do I renew my Medicaid eligibility?"
+
+Claude Response + Reading Engine:
+  - Check member's renewal date (from eligibility database)
+  - Provide step-by-step renewal instructions
+  - Show: When to renew, how to renew, what information needed
+  - Alert: If renewal due soon
+
+Display Format:
+  "Your Medicaid eligibility renews on: June 30, 2026
+
+   30 days before: You'll receive renewal notice by mail + email
+
+   To renew, you can:
+   1. Online: Go to NY State of Health (nystateofhealth.ny.gov)
+   2. By phone: Call 1-855-355-5777
+   3. By mail: Return the renewal form you receive
+
+   You'll need to provide:
+   • Current household income
+   • Employment status
+   • Changes in family composition
+   • Updated address/contact info
+
+   [Renew now] [Set reminder] [Get help]"
+
+---
+
+FAQ 3: "What is my member ID and how do I use it?"
+
+Claude Response + Reading Engine:
+  - Extract member's UMID from profile
+  - Also show: Managed care plan member ID (if applicable)
+  - Explain where to use it
+  - Show how to access digital member card
+
+Display Format:
+  "Your Member IDs:
+
+   Medicaid UMID (universal): 550e8400-e29b-41d4-a716-446655440000
+
+   Managed Care Plan Member ID: FIDELIS-ABC123456
+
+   Where to use your member ID:
+   • At doctor's office (show your card or UMID)
+   • At pharmacy (to fill prescriptions)
+   • At hospital (for emergency or planned care)
+   • Calling your plan for questions
+
+   Access your digital card:
+   [Download Mobile Card] [Print Physical Card]
+
+   No physical card yet?
+   Cards arrive 7-10 business days after enrollment.
+   Use digital card in the meantime.
+
+   [Contact Plan] [Update Address] [Report Lost Card]"
+
+================================================================================
+9. MEMBER JOURNEY END STATE
+================================================================================
+
+Member Successfully Completes Journey When:
+  ✓ UMID created and verified
+  ✓ 2FA enrolled and active
+  ✓ Main question answered: "Am I eligible?"
+  ✓ Signed up for Medicaid (or confirmed already enrolled)
+  ✓ Viewed FAQs and understands coverage/renewal/ID usage
+  ✓ Can log back in anytime with UMID + 2FA
+
+Ongoing Access:
+  - Member can return to dashboard anytime
+  - Ask new questions (Claude AI + reading engine)
+  - Check eligibility status
+  - Manage coverage preferences
+  - Update contact information
+  - Access member ID and digital card
+
+Support Escalation:
+  - If user needs additional help beyond FAQs
+  - [Contact Medicaid Support]
+  - Routes to live agent or ticketing system
+  - High-priority if urgent (emergency, missing card, etc.)
+
+================================================================================
+
+END OF JOURNEY BLUEPRINT
+
+================================================================================

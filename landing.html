@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-E: Medicaid Unified Identity System</title>
+    <link rel="icon" type="image/png" href="branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 20px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cards-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            text-decoration: none;
+            display: block;
+            min-width: 320px;
+            max-width: 380px;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #2d6a4f;
+        }
+
+        .card-number {
+            display: inline-block;
+            background: #2d6a4f;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .card h2 {
+            color: #1e5631;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            margin-top: 8px;
+        }
+
+        .card .subtitle {
+            color: #f97316;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .card .users {
+            color: #2d6a4f;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Olympic rings effect - bottom row centered */
+        .bottom-row {
+            justify-content: center;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .top-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .bottom-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                max-width: 100%;
+                min-width: 280px;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="branding/logo/TdST.png" alt="TORQ-E Logo" class="logo">
+            <h1>TORQ-e</h1>
+            <p>Medicaid Clarity System</p>
+        </div>
+
+        <div class="cards-wrapper">
+            <!-- Top Row: 3 Cards -->
+            <div class="top-row">
+                <!-- Card 1: UMID -->
+                <a href="login-card1.html" class="card">
+                    <div class="card-number">1</div>
+                    <h2>UMID</h2>
+                    <div class="subtitle">Member Eligibility</div>
+                    <p>Check your Medicaid coverage, recertification dates, upload documents, and track your benefits in real time.</p>
+                    <div class="users">For: Members • Clients • Recipients • Beneficiaries</div>
+                </a>
+
+                <!-- Card 2: UPID -->
+                <a href="login-card2.html" class="card">
+                    <div class="card-number">2</div>
+                    <h2>UPID</h2>
+                    <div class="subtitle">Provider Enrollment & Claims</div>
+                    <p>Verify your Medicaid enrollment, submit and track claims, validate coverage, and detect fraud signals automatically.</p>
+                    <div class="users">For: Healthcare Providers</div>
+                </a>
+
+                <!-- Card 3: UHWP -->
+                <a href="login-card3.html" class="card">
+                    <div class="card-number">3</div>
+                    <h2>UHWP</h2>
+                    <div class="subtitle">Plan Network Management</div>
+                    <p>Manage provider networks, configure plan parameters, monitor network adequacy, and oversee plan operations.</p>
+                    <div class="users">For: Plan Administrators</div>
+                </a>
+            </div>
+
+            <!-- Bottom Row: 2 Cards (Centered) -->
+            <div class="bottom-row">
+                <!-- Card 4: USHI -->
+                <a href="login-card4.html" class="card">
+                    <div class="card-number">4</div>
+                    <h2>USHI</h2>
+                    <div class="subtitle">Government Stakeholder Operations</div>
+                    <p>Program oversight, compliance monitoring, performance metrics, and regulatory reporting across the entire system.</p>
+                    <div class="users">For: Government Stakeholders</div>
+                </a>
+
+                <!-- Card 5: UBADA -->
+                <a href="login-card5.html" class="card">
+                    <div class="card-number">5</div>
+                    <h2>UBADA</h2>
+                    <div class="subtitle">Data Analyst & Fraud Investigation</div>
+                    <p>Advanced fraud investigation, trend analysis, pattern detection, and case management for investigative teams.</p>
+                    <div class="users">For: Data Analysts & Fraud Investigators</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>TORQ-e v1.0 | Medicaid Clarity System | New York State Department of Health</p>
+        </div>
+    </div>
+</body>
+</html>
