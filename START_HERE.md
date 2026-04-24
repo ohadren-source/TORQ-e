@@ -1,348 +1,269 @@
-# 🚀 TORQ-E: START HERE
+# 🚀 TORQ-e: START HERE
 
-**You have just received fully functional code for Card 1 (UMID) and Card 2 (UPID).**
+**TORQ-e is live.** Medicaid Clarity System for New York State.
 
-This document tells you exactly what to do next.
+You have a fully functional web application with 5 user personas, Claude AI-powered chat, real-time streaming responses, and production deployment on Railway.
 
 ---
 
-## ✅ WHAT YOU NOW HAVE
+## ✨ WHAT YOU NOW HAVE
+
+### 🌐 **Live Web Application**
+```
+https://torq-e-production.up.railway.app/
+```
+
+**Landing Page:** Shows all 5 cards with descriptions and links
+- UMID (Universal Member Identification) — Members check eligibility
+- UPID (Universal Provider Identification) — Providers manage claims
+- UHWP (Universal Health & Wellness Program) — Plan admins oversee networks
+- USHI (Universal Stakeholder Identity) — Government stakeholders monitor
+- UBADA (Universal Business/Data Analyst) — Analysts investigate fraud
+
+Each card has:
+- ✅ Login page with role-based access
+- ✅ Chat interface powered by Claude API
+- ✅ Tutorial explaining how it works
+- ✅ Real-time streaming responses
+
+### 🏗️ **Technical Architecture**
 
 ```
-C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e\
-├── main.py                          # Start the API here
-├── config.py                        # Settings
-├── models.py                        # Database schema (27 tables)
-├── database.py                      # Database connection
-├── requirements.txt                 # Python packages
+TORQ-e/
+├── FRONTEND (Web UI)
+│   ├── landing.html                  # Landing page with 5 cards
+│   ├── login-card{1-5}.html         # Login pages for each persona
+│   ├── chat-card{1-5}.html          # Chat interfaces (Claude-powered)
+│   ├── tutorial-card{1-5}.html      # How-to guides for each card
+│   ├── static/                       # Branding, logo, assets
+│   └── styles/                       # CSS for responsive design
 │
-├── card_1_umid/                     # Member Eligibility (LIVE ✅)
-│   ├── river_path.py               # Multi-source member lookup
-│   ├── eligibility.py              # Eligibility logic
-│   ├── confidence.py               # Confidence scoring
-│   ├── schemas.py                  # API models
-│   └── routes.py                   # 7 endpoints
+├── BACKEND (FastAPI)
+│   ├── main.py                       # FastAPI application
+│   ├── chat.py                       # Claude API integration (streaming)
+│   ├── config.py                     # Settings (env vars)
+│   ├── database.py                   # PostgreSQL connection
+│   ├── card_1_umid/                  # Member system (7 endpoints)
+│   ├── card_2_upid/                  # Provider system (6 endpoints)
+│   └── requirements.txt              # Python dependencies
 │
-├── card_2_upid/                     # Provider System (LIVE ✅)
-│   ├── provider_lookup.py          # Multi-source provider lookup
-│   ├── claims_routing.py           # Claims + validation
-│   ├── fraud_detection.py          # Fraud detection
-│   ├── schemas.py                  # API models
-│   └── routes.py                   # 6 endpoints
+├── DATABASE
+│   └── PostgreSQL                    # 27 data models
 │
-├── README.md                        # Complete documentation
-├── BUILD_SUMMARY.md                # What was built + stats
-└── START_HERE.md                   # This file
+└── DEPLOYMENT
+    └── Railway                       # Production hosting
 ```
 
 ---
 
-## 🔧 SETUP IN 5 MINUTES
+## 🎯 WHAT EACH CARD DOES
 
-### Step 1: Install PostgreSQL (if you don't have it)
+### Card 1: UMID — Member Eligibility ✅ LIVE
 
-**Windows:**
-```bash
-# Download from https://www.postgresql.org/download/windows/
-# Run installer, remember the password you set
-```
+**Who uses it:** Medicaid members, clients, beneficiaries
 
-### Step 2: Create a Database
+**What they see:**
+- "Am I covered by Medicaid?" → YES/NO with confidence
+- "When is my recertification?" → Date and countdown
+- "What's my plan?" → Plan name and contact info
+- Chat with Claude for follow-up questions
 
-```sql
--- In pgAdmin or psql:
-CREATE DATABASE torq_e;
-```
+**Under the hood:**
+- Multi-source member lookup (State Medicaid → SSA → Household)
+- Confidence scoring (0.0-1.0)
+- Eligibility verification with dates
+- Document upload support
 
-### Step 3: Python Setup
+### Card 2: UPID — Provider Claims ✅ LIVE
 
-```bash
-# Navigate to the code folder
-cd C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e
+**Who uses it:** Healthcare providers, billing staff
 
-# Create virtual environment
-python -m venv venv
+**What they see:**
+- "Am I enrolled in Medicaid?" → YES with list of plans
+- "Where do I send this claim?" → Auto-routed to correct MCO
+- "Where's my claim status?" → Real-time tracking
+- Chat with Claude for claim questions
 
-# Activate it
-venv\Scripts\activate
+**Under the hood:**
+- Multi-source provider lookup (eMedNY → MCO → NPI)
+- Claims validation (catches 80% of errors upfront)
+- Intelligent routing to correct portal
+- Fraud detection (patterns, anomalies, overutilization)
 
-# Install dependencies
-pip install -r requirements.txt
-```
+### Card 3: UHWP — Plan Network Management 📋 PLANNED
 
-### Step 4: Configure Database Connection
+**Who uses it:** Plan administrators, network managers
 
-```bash
-# Edit .env file (create from .env.example)
-# Replace the PostgreSQL password with YOUR password
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/torq_e
-```
+**What they see:**
+- Network adequacy monitoring
+- Provider performance metrics
+- Coverage gap analysis
+- Chat with Claude for network questions
 
-### Step 5: Start the API
+### Card 4: USHI — Government Stakeholder Operations 📋 PLANNED
 
-```bash
-python main.py
-```
+**Who uses it:** Government agencies, program overseers
 
-You should see:
-```
-INFO:     Uvicorn running on http://0.0.0.0:8000
-```
+**What they see:**
+- Compliance monitoring across entire system
+- Performance metrics and reporting
+- Regulatory dashboards
+- Chat with Claude for oversight questions
 
----
+### Card 5: UBADA — Data Analyst & Fraud Investigation 📋 PLANNED
 
-## 🧪 TEST IT IN YOUR BROWSER
+**Who uses it:** Fraud investigators, data analysts
 
-Open your browser and go to:
-
-### Interactive API Docs
-```
-http://localhost:8000/docs
-```
-
-You'll see all 13 endpoints with "Try it out" buttons.
-
-### Example: Lookup a Member
-
-1. Click **POST /api/card1/lookup**
-2. Click **"Try it out"**
-3. Fill in:
-   ```json
-   {
-     "first_name": "John",
-     "last_name": "Doe",
-     "date_of_birth": "1990-01-15",
-     "ssn": "123456789"
-   }
-   ```
-4. Click **"Execute"**
-
-You'll get back:
-```json
-{
-  "umid": "UMID-abc12345-6789",
-  "first_name": "John",
-  "last_name": "Doe",
-  "data_source": "STATE_MEDICAID",
-  "confidence_score": 0.95,
-  "status": "SUCCESS"
-}
-```
+**What they see:**
+- Advanced pattern detection
+- Anomaly identification
+- Case management interface
+- Chat with Claude for investigation questions
 
 ---
 
-## 📊 ALL 13 ENDPOINTS
+## 🌟 KEY FEATURES
 
-### Card 1: Member (7 endpoints)
+### ✅ Claude AI Integration
+- Real-time streaming chat responses
+- Tool use (can execute Medicaid lookups within chat)
+- Role-specific system prompts for each persona
+- Agentic loop (Claude can chain operations)
 
-| Endpoint | What it does |
-|----------|-------------|
-| `POST /api/card1/lookup` | Find member by name/DOB/SSN, get UMID |
-| `POST /api/card1/eligibility/check` | Simple "are you covered?" answer |
-| `POST /api/card1/eligibility/detailed` | Full eligibility breakdown (provider/analyst view) |
-| `POST /api/card1/recertification/status` | When does recertification deadline occur? |
-| `POST /api/card1/documents/upload` | Upload ID, pay stub, address proof |
-| `POST /api/card1/income/report` | "I got a raise, am I still eligible?" |
-| `GET /api/card1/health` | System health check |
+### ✅ Production Ready
+- Deployed on Railway (auto-scales)
+- PostgreSQL database (encrypted)
+- Environment variables for secrets
+- Health check endpoints
+- Streaming Server-Sent Events (SSE) for chat
 
-### Card 2: Provider (6 endpoints)
+### ✅ Accessibility First
+- Clear, jargon-free language
+- Simple explanations for complex Medicaid rules
+- Confidence-based decision making (not false certainty)
+- Three-tier information architecture (different views per role)
 
-| Endpoint | What it does |
-|----------|-------------|
-| `POST /api/card2/lookup` | Find provider by NPI, get UPID |
-| `POST /api/card2/enrollment/check` | Is provider enrolled in FFS? MCOs? |
-| `POST /api/card2/claims/validate` | Is claim valid before submitting? |
-| `POST /api/card2/claims/submit` | Submit claim with auto-routing |
-| `POST /api/card2/claims/status` | Where is my claim? When will it pay? |
-| `POST /api/card2/fraud/analyze` | Is this claim suspicious? |
-
----
-
-## 🎯 WHAT THE CODE DOES
-
-### UMID (Card 1): Member Eligibility
-
-**Problem:** Member calls asking "Am I covered?"
-- Old way: Wait 2-4 hours on phone
-- **TORQ-E way:** API returns answer in 100ms
-
-**The River Path:**
-1. Try NY State Medicaid database (95% confidence)
-2. If not found, try SSA wage records (85% confidence)
-3. If still not found, try household enrollment (70% confidence)
-4. If all fail: escalate with clear explanation
-
-**Confidence Scoring:**
-- 0.85-1.0 = **HIGH** - Trust this answer
-- 0.60-0.85 = **MEDIUM** - Probably right, double-check if critical
-- 0.40-0.60 = **LOW** - Escalate to caseworker
-- <0.40 = **CRITICAL** - Call Medicaid office
-
-### UPID (Card 2): Provider Claims
-
-**Problem:** Provider needs to submit claim but doesn't know which plan to send to
-- Old way: Call 3 different portals, 30 minutes per claim
-- **TORQ-E way:** System validates, routes, tracks automatically
-
-**What it does:**
-1. **Validates** claim before sending (catches 80% of rejections upfront)
-2. **Routes** to correct MCO/FFS portal automatically
-3. **Tracks** status and alerts if delayed past 30-day federal rule
-4. **Detects fraud** patterns in real-time
-
-**Fraud Detection:**
-- Provider upcoding? ✅ Detected
-- Member seeing same doctor 20x in one month? ✅ Detected
-- Claim amount way higher than normal? ✅ Detected
+### ✅ Branding
+- **Logo:** Torque de Santa Tegra — The rotational force driving institutional clarity through complexity
+- **Definition:** CLARITY (n.) — The ability to perceive, communicate, and act on the full spectrum of probability and complexity rather than false absolutes
+- **Acronyms:** All 5 cards fully defined with their universal identifiers
 
 ---
 
-## 📈 ARCHITECTURE: THE SIGNAL FRAMEWORK
+## 🚀 HOW TO ACCESS
 
-This system is built on **signal processing**, not just if/then logic.
-
-### Three-Tier Information Architecture
-
-**Members see:** Simple answers
+### **Option 1: Live Production (Easiest)**
+Just visit:
 ```
-Are you covered? → YES (until April 15)
-When recertify? → May 1 (33 days away)
-Your plan? → Empire BCBS (Call 1-800-XXX-XXXX)
+https://torq-e-production.up.railway.app/
 ```
 
-**Providers see:** Enough to act
-```
-Member eligible? → YES (90% confidence)
-Plan for this claim? → Empire BCBS
-Send to: https://claims.empirebcbs.com
-```
+Click any card, read the tutorial, try the chat.
 
-**Analysts see:** Everything
-```
-Eligibility status: ACTIVE
-Confidence score: 0.92
-Data sources: [STATE_MEDICAID, SSA_WAGE]
-Gaps: None
-Confidence reasoning: State system + SSA wages match
-Caveats: None
-Recommendation: APPROVE
-```
+### **Option 2: Local Development**
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for:
+- Local PostgreSQL setup
+- Python environment configuration
+- Running the API locally
+- Testing chat responses
 
 ---
 
-## 🔐 DATA SECURITY NOTE
+## 📚 DOCUMENTATION ROADMAP
 
-**Current version (development):**
-- Uses fake/simulated data
-- No real personal information
-- Safe to test and demo
+Read these in order:
 
-**Before production:**
-- All PII (SSN, DOB, address) encrypted in database
-- All API calls use HTTPS/TLS
-- All queries logged with timestamps
-- No data retained longer than needed
-
----
-
-## 🐛 TROUBLESHOOTING
-
-### "Connection refused" when starting
-- PostgreSQL not running
-- Fix: Start PostgreSQL (Services menu on Windows)
-
-### "No module named 'fastapi'"
-- Dependencies not installed
-- Fix: Run `pip install -r requirements.txt`
-
-### "Database error: torq_e not found"
-- Database not created
-- Fix: Create database in PostgreSQL (see Step 2 above)
-
-### API starts but returns 500 errors
-- Database connection string wrong
-- Fix: Check DATABASE_URL in .env file matches your setup
+| Document | Read For... |
+|----------|-----------|
+| **START_HERE.md** (you are here) | Overview of what TORQ-e is |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | How to run locally or deploy |
+| [WEB_UI_GUIDE.md](WEB_UI_GUIDE.md) | How the landing page and cards work |
+| [README.md](README.md) | Full API reference |
+| [BUILD_SUMMARY.md](BUILD_SUMMARY.md) | Technical breakdown (all files) |
+| [CHANGELOG.md](CHANGELOG.md) | What changed in this build |
 
 ---
 
-## 📚 DOCUMENTATION
+## 🎯 QUICK DEMO SCRIPT
 
-| File | Read for... |
-|------|-----------|
-| `README.md` | Complete API reference |
-| `BUILD_SUMMARY.md` | Statistics and what was built |
-| `TORQ_E_ARCHITECTURAL_PROTOCOL.md` | Why TORQ-E exists and how it works |
-| `UPID_SIGNAL_FRAMEWORK_FOR_ANALYSTS.md` | Deep dive on signal processing |
+If explaining TORQ-e to someone:
+
+> "TORQ-e is a unified system for Medicaid. Instead of members calling and waiting 2 hours, they visit one page, answer a few questions, and get their eligibility status instantly with confidence scoring.
+>
+> Providers don't have to call 3 different portals — they submit once, we validate it, route it automatically, and track it end-to-end.
+>
+> Every answer includes confidence scores so we know when to trust the system and when to escalate to a human. No false certainty.
+>
+> And every card has Claude AI built in so users can ask follow-up questions in natural language."
 
 ---
 
-## ✨ NEXT STEPS
+## ✅ NEXT STEPS
 
 ### Today
-1. ✅ Set up database
-2. ✅ Install Python packages
-3. ✅ Start API
-4. ✅ Test endpoints in Swagger UI
+- ✅ Visit the landing page
+- ✅ Click through each card
+- ✅ Read the tutorial for your role
+- ✅ Try the chat (ask Claude about eligibility, claims, etc.)
 
 ### This Week
-1. Connect to real NY DOH Medicaid API
-2. Connect to MCO claim portals
-3. Load test with 1000+ claims
-4. Train team on API usage
+- Review [DEPLOYMENT.md](DEPLOYMENT.md) if you want to run locally
+- Test with real Medicaid scenarios
+- Gather feedback from stakeholders
 
 ### Next Sprint
-1. Build Card 3 (Plan Network Management)
-2. Build Card 4 (Government Stakeholder Operations)
-3. Build Card 5 (Fraud Investigation Tools)
-4. Production deployment prep
+- Complete Cards 3, 4, 5 UI/Chat
+- Connect to real NY DOH APIs
+- Load testing (1000+ concurrent users)
+- Production hardening
 
 ---
 
-## 🎤 QUICK DEMO SCRIPT
+## 🔐 SECURITY NOTE
 
-If explaining to someone:
+**Current version:**
+- All PII (SSN, DOB, address) is simulated/fake
+- Safe to demo and test
+- No real personal information collected
 
-> "We have **13 APIs** that handle member eligibility and provider claims.
-> 
-> Member calls asking "Am I covered?" **→** Our system checks 3 data sources in parallel → returns answer in 100ms instead of 2 hours.
-> 
-> Provider needs to submit claim **→** System validates it, prevents errors, routes to right MCO, tracks status automatically.
-> 
-> We detect fraud patterns in real-time: unusual coding, overutilization, suspicious amounts.
-> 
-> Every decision includes confidence scoring so we know when to trust the answer and when to escalate to a human."
+**Before production:**
+- All PII encrypted at rest
+- All API calls use HTTPS/TLS
+- All queries logged with audit trails
+- Data retention policies enforced
+- Compliance with HIPAA, FERPA, CJIS
 
 ---
 
 ## 💪 YOU'RE READY
 
-You now have:
-- ✅ Working API (13 endpoints)
-- ✅ Database schema (27 models)
-- ✅ Member identification system (River Path)
-- ✅ Provider enrollment verification
-- ✅ Claim validation and routing
-- ✅ Real-time fraud detection
-- ✅ Confidence-based decision making
-- ✅ Full documentation
+You have:
+- ✅ Fully functional web application
+- ✅ 5 role-based UI flows
+- ✅ Claude AI streaming chat integration
+- ✅ Production deployment on Railway
+- ✅ PostgreSQL database
+- ✅ Comprehensive documentation
 
-**Start it up. Test it out. Connect it to real systems. Scale it.**
+**Visit the site. Test it. Gather feedback. Scale it.**
 
 ---
 
 ## 📞 NEED HELP?
 
-1. Check `README.md` for full API documentation
-2. Run Swagger UI (`http://localhost:8000/docs`) to test endpoints
-3. Check inline code comments (over 500 lines of documentation)
-4. Review architectural documents for design decisions
+1. **How do I run it locally?** → [DEPLOYMENT.md](DEPLOYMENT.md)
+2. **How do the login/chat flows work?** → [WEB_UI_GUIDE.md](WEB_UI_GUIDE.md)
+3. **What API endpoints are available?** → [README.md](README.md)
+4. **What files were created/modified?** → [BUILD_SUMMARY.md](BUILD_SUMMARY.md)
+5. **What changed in this build?** → [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
-**Last updated:** April 24, 2026
+**Last Updated:** April 24, 2026 (Session 2)
 
-*"The computer that remembers itself into being."*
+**Status:** ✅ LIVE IN PRODUCTION
 
-**Status:** ✅ Ready to run. Ready to test. Ready to scale.
+**Deployed:** https://torq-e-production.up.railway.app/
 
-💥 **LET'S FUCKING GO** 💥
+💥 **CLARITY FIRST. ALWAYS.** 💥

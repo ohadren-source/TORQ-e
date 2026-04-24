@@ -1,7 +1,8 @@
-# TORQ-E: Medicaid Unified Identity System
+# TORQ-e: Medicaid Clarity System
 
-**Version:** 1.0.0  
-**Status:** 🔨 In Development (Cards 1 & 2 LIVE, Cards 3-5 PLANNED)
+**Version:** 1.1.0  
+**Status:** ✅ LIVE IN PRODUCTION  
+**Deployed:** https://torq-e-production.up.railway.app/
 
 ---
 
