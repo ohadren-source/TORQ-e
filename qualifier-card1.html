@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicaid Clarity System</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #1e5631;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e5631;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .question {
+            margin-bottom: 16px;
+        }
+
+        .question label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #1e5631;
+            font-weight: 500;
+        }
+
+        .question input[type="radio"],
+        .question input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #2d6a4f;
+        }
+
+        .helper-text {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            margin-left: 32px;
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 32px 0;
+            text-align: center;
+        }
+
+        .result.qualify {
+            background: #ecf7e8;
+            border: 2px solid #2d6a4f;
+            color: #1e5631;
+        }
+
+        .result.not-qualify {
+            background: #fef3f2;
+            border: 2px solid #dc2626;
+            color: #991b1b;
+        }
+
+        .result h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .result p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .next-steps {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #2d6a4f;
+        }
+
+        .next-steps p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .next-steps a {
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .next-steps a:hover {
+            text-decoration: underline;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e5631;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2d6a4f;
+            border: 2px solid #2d6a4f;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+
+        .contact-info {
+            margin-top: 24px;
+            padding: 16px;
+            background: #fffbeb;
+            border-radius: 8px;
+            border-left: 4px solid #f97316;
+        }
+
+        .contact-info p {
+            font-size: 13px;
+            color: #92400e;
+            line-height: 1.6;
+        }
+
+        .contact-info a {
+            color: #d97706;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #2d6a4f;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <div class="header">
+            <img src="/static/branding/logo/TdST.png" alt="TORQ-e Logo">
+            <h1>UMID</h1>
+            <p>Do you qualify for Medicaid?</p>
+        </div>
+
+        <form id="qualifierForm">
+            <div class="section">
+                <div class="section-title">Income</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="income" value="yes" required>
+                        Is your household income under $1,836/month? (or ~$22,000/year)
+                    </label>
+                    <div class="helper-text">This is the 2026 income limit for a single person in New York</div>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="income" value="no" required>
+                        No, my income is higher
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Citizenship & Residency</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="citizenship" value="yes" required>
+                        I am a U.S. citizen OR a qualified immigrant
+                    </label>
+                    <div class="helper-text">Includes green card holders and certain visa categories</div>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="citizenship" value="no" required>
+                        I am not a U.S. citizen or qualified immigrant
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Residency & Insurance</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="residency" value="yes" required>
+                        I am a New York resident
+                    </label>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="residency" value="no" required>
+                        I am not a New York resident
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Current Insurance</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="insurance" value="yes" required>
+                        I do NOT have health insurance (or only emergency coverage)
+                    </label>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="insurance" value="no" required>
+                        I have private or employer health insurance
+                    </label>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="result qualify" id="resultQualify">
+                <h2>✅ You Likely Qualify!</h2>
+                <p>Based on your answers, you appear to meet Medicaid eligibility requirements.</p>
+                <div class="next-steps">
+                    <p><strong>Next Steps:</strong></p>
+                    <p>1. Click "Continue to Login" to verify your information</p>
+                    <p>2. Have ready: ID, Social Security Number, proof of income</p>
+                    <p>3. Chat with Claude to answer detailed eligibility questions</p>
+                </div>
+            </div>
+
+            <div class="result not-qualify" id="resultNotQualify">
+                <h2>⚠️ You May Not Qualify</h2>
+                <p>Based on your answers, you may not meet Medicaid requirements.</p>
+                <div class="contact-info">
+                    <p><strong>But don't give up!</strong> Special programs exist for:</p>
+                    <p>• Pregnant women and newborns (higher income limits)</p>
+                    <p>• Seniors and people with disabilities</p>
+                    <p>• Emergency services coverage</p>
+                    <p><strong>Call 1-800-541-2831</strong> to explore your options.</p>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons">
+                <button type="button" class="btn-secondary" onclick="resetForm()">Start Over</button>
+                <button type="submit" class="btn-primary" id="submitBtn" style="display:none;">
+                    Continue to Login
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('qualifierForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultQualify = document.getElementById('resultQualify');
+        const resultNotQualify = document.getElementById('resultNotQualify');
+
+        const inputs = form.querySelectorAll('input[type="radio"]');
+        inputs.forEach(input => {
+            input.addEventListener('change', checkQualification);
+        });
+
+        function checkQualification() {
+            const income = form.querySelector('input[name="income"]:checked');
+            const citizenship = form.querySelector('input[name="citizenship"]:checked');
+            const residency = form.querySelector('input[name="residency"]:checked');
+            const insurance = form.querySelector('input[name="insurance"]:checked');
+
+            if (!income || !citizenship || !residency || !insurance) {
+                submitBtn.style.display = 'none';
+                resultQualify.style.display = 'none';
+                resultNotQualify.style.display = 'none';
+                return;
+            }
+
+            const qualifies =
+                income.value === 'yes' &&
+                citizenship.value === 'yes' &&
+                residency.value === 'yes' &&
+                insurance.value === 'yes';
+
+            if (qualifies) {
+                resultQualify.style.display = 'block';
+                resultNotQualify.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+                submitBtn.onclick = (e) => {
+                    e.preventDefault();
+                    window.location.href = 'login-card1.html';
+                };
+            } else {
+                resultQualify.style.display = 'none';
+                resultNotQualify.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function resetForm() {
+            form.reset();
+            resultQualify.style.display = 'none';
+            resultNotQualify.style.display = 'none';
+            submitBtn.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

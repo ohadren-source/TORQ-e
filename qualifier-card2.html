@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicaid Clarity System</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #1e5631;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e5631;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .question {
+            margin-bottom: 16px;
+        }
+
+        .question label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #1e5631;
+            font-weight: 500;
+        }
+
+        .question input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #2d6a4f;
+        }
+
+        .helper-text {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+            margin-left: 32px;
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 32px 0;
+            text-align: center;
+        }
+
+        .result.enroll {
+            background: #ecf7e8;
+            border: 2px solid #2d6a4f;
+            color: #1e5631;
+        }
+
+        .result.need-enroll {
+            background: #fef3f2;
+            border: 2px solid #dc2626;
+            color: #991b1b;
+        }
+
+        .result h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .result p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .next-steps {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #2d6a4f;
+        }
+
+        .next-steps p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .next-steps a {
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .next-steps a:hover {
+            text-decoration: underline;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e5631;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2d6a4f;
+            border: 2px solid #2d6a4f;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+
+        .contact-info {
+            margin-top: 24px;
+            padding: 16px;
+            background: #fffbeb;
+            border-radius: 8px;
+            border-left: 4px solid #f97316;
+        }
+
+        .contact-info p {
+            font-size: 13px;
+            color: #92400e;
+            line-height: 1.6;
+        }
+
+        .contact-info a {
+            color: #d97706;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #2d6a4f;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <div class="header">
+            <img src="/static/branding/logo/TdST.png" alt="TORQ-e Logo">
+            <h1>UPID</h1>
+            <p>Are you enrolled in Medicaid?</p>
+        </div>
+
+        <form id="qualifierForm">
+            <div class="section">
+                <div class="section-title">Provider Basics</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="npi" value="yes" required>
+                        Do you have a valid NPI (National Provider Identifier)?
+                    </label>
+                    <div class="helper-text">Required to submit claims. You can check at npi.cms.hhs.gov</div>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="npi" value="no" required>
+                        I don't have an NPI yet
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">License & Credentials</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="license" value="yes" required>
+                        My professional license is active and unencumbered
+                    </label>
+                    <div class="helper-text">Check with your state licensing board to verify</div>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="license" value="no" required>
+                        My license is expired, suspended, or restricted
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Exclusion Status</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="exclusion" value="yes" required>
+                        I am NOT on the OIG exclusions list
+                    </label>
+                    <div class="helper-text">Check at <a href="https://exclusions.oig.hhs.gov/" target="_blank" style="color: #2d6a4f; font-weight: 600;">exclusions.oig.hhs.gov</a></div>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="exclusion" value="no" required>
+                        I am on the OIG exclusions list or unsure
+                    </label>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Medicaid Enrollment</div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="enrollment" value="yes" required>
+                        I believe I'm already enrolled in NY Medicaid FFS or MCOs
+                    </label>
+                    <div class="helper-text">Verify at emedny.ny.gov or contact your MCO</div>
+                </div>
+                <div class="question">
+                    <label>
+                        <input type="radio" name="enrollment" value="no" required>
+                        I'm not enrolled yet or unsure
+                    </label>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="result enroll" id="resultEnroll">
+                <h2>✅ You're Ready to Use UPID!</h2>
+                <p>Based on your answers, you meet Medicaid provider requirements.</p>
+                <div class="next-steps">
+                    <p><strong>Next Steps:</strong></p>
+                    <p>1. Click "Continue to Login" to access your provider portal</p>
+                    <p>2. Have ready: NPI, EIN, provider credentials</p>
+                    <p>3. Use Claude to help route claims, check enrollment, validate submissions</p>
+                </div>
+            </div>
+
+            <div class="result need-enroll" id="resultNeedEnroll">
+                <h2>⚠️ You May Need to Enroll First</h2>
+                <p>Based on your answers, you may not yet be enrolled in NY Medicaid.</p>
+                <div class="contact-info">
+                    <p><strong>Next Steps to Enroll:</strong></p>
+                    <p>1. Ensure your NPI is active at npi.cms.hhs.gov</p>
+                    <p>2. Verify your license status with your state board</p>
+                    <p>3. Check OIG exclusions at exclusions.oig.hhs.gov</p>
+                    <p>4. Apply through eMedNY at <a href="https://emedny.ny.gov/" target="_blank">emedny.ny.gov</a></p>
+                    <p><strong>Call 1-800-343-9000</strong> for enrollment support</p>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons">
+                <button type="button" class="btn-secondary" onclick="resetForm()">Start Over</button>
+                <button type="submit" class="btn-primary" id="submitBtn" style="display:none;">
+                    Continue to Login
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('qualifierForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultEnroll = document.getElementById('resultEnroll');
+        const resultNeedEnroll = document.getElementById('resultNeedEnroll');
+
+        const inputs = form.querySelectorAll('input[type="radio"]');
+        inputs.forEach(input => {
+            input.addEventListener('change', checkQualification);
+        });
+
+        function checkQualification() {
+            const npi = form.querySelector('input[name="npi"]:checked');
+            const license = form.querySelector('input[name="license"]:checked');
+            const exclusion = form.querySelector('input[name="exclusion"]:checked');
+            const enrollment = form.querySelector('input[name="enrollment"]:checked');
+
+            if (!npi || !license || !exclusion || !enrollment) {
+                submitBtn.style.display = 'none';
+                resultEnroll.style.display = 'none';
+                resultNeedEnroll.style.display = 'none';
+                return;
+            }
+
+            const enrolled =
+                npi.value === 'yes' &&
+                license.value === 'yes' &&
+                exclusion.value === 'yes' &&
+                enrollment.value === 'yes';
+
+            if (enrolled) {
+                resultEnroll.style.display = 'block';
+                resultNeedEnroll.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+                submitBtn.onclick = (e) => {
+                    e.preventDefault();
+                    window.location.href = 'login-card2.html';
+                };
+            } else {
+                resultEnroll.style.display = 'none';
+                resultNeedEnroll.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function resetForm() {
+            form.reset();
+            resultEnroll.style.display = 'none';
+            resultNeedEnroll.style.display = 'none';
+            submitBtn.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

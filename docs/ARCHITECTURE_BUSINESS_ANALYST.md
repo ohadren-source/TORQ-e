@@ -2,7 +2,7 @@
 
 ## What is TORQ-e?
 
-TORQ-e is a unified identity system for New York State Medicaid. It solves one critical problem: **one person is called different things in different systems** (Member, Client, Recipient, Beneficiary, Provider, Applicant, etc.), which makes it impossible to track them consistently and enables fraud.
+TORQ-e is a unified system for New York State Medicaid. It solves one critical problem: **one person is called different things in different systems** (Member, Client, Recipient, Beneficiary, Provider, Applicant, etc.), which makes it impossible to track them consistently and enables fraud.
 
 **The Solution**: Give everyone a single permanent identifier that never changes, no matter what else changes about them (name, address, insurance plan, employment status).
 

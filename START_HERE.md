@@ -60,13 +60,24 @@ TORQ-e/
 
 ### Card 1: UMID — Member Eligibility ✅ LIVE
 
-**Who uses it:** Medicaid members, clients, beneficiaries
+**Who uses it:** Medicaid members
 
 **What they see:**
 - "Am I covered by Medicaid?" → YES/NO with confidence
 - "When is my recertification?" → Date and countdown
 - "What's my plan?" → Plan name and contact info
 - Chat with Claude for follow-up questions
+
+**The River Path Algorithm (Multi-Source Member Identification):**
+
+The system doesn't just ask one database. It flows through multiple data sources in sequence:
+
+1. **State Medicaid Database** (95% confidence) — Try NY State Medicaid system first (authoritative source)
+2. **SSA Wage Records** (85% confidence) — If not found, check Social Security Administration for income verification
+3. **Household Enrollment** (70% confidence) — If still not found, check household/family enrollment records
+4. **Escalate** — If all fail, provide clear explanation + contact info for human review
+
+This "river" of attempts ensures we find members even if they're in one system but not another. Each source has different coverage, so the algorithm keeps flowing until it finds them.
 
 **Under the hood:**
 - Multi-source member lookup (State Medicaid → SSA → Household)
@@ -76,13 +87,24 @@ TORQ-e/
 
 ### Card 2: UPID — Provider Claims ✅ LIVE
 
-**Who uses it:** Healthcare providers, billing staff
+**Who uses it:** Healthcare providers
 
 **What they see:**
 - "Am I enrolled in Medicaid?" → YES with list of plans
 - "Where do I send this claim?" → Auto-routed to correct MCO
 - "Where's my claim status?" → Real-time tracking
 - Chat with Claude for claim questions
+
+**The River Path Algorithm (Multi-Source Provider Identification):**
+
+Same river flow, different data sources:
+
+1. **eMedNY Database** (95% confidence) — Try NY's official Medicaid enrollment system first
+2. **MCO Directories** (85% confidence) — If not found, check individual Managed Care Organization rosters
+3. **NPI Registry** (70% confidence) — If still not found, fall back to federal NPI registry
+4. **Escalate** — If all fail, provide enrollment guidance + contact info
+
+The "river" ensures we find providers in the system they're enrolled in, because providers may be listed in one system but not cached in another.
 
 **Under the hood:**
 - Multi-source provider lookup (eMedNY → MCO → NPI)
