@@ -93,6 +93,40 @@ If you ignore these rules:
 - ❌ New engineers are confused
 - ❌ Real people (members, providers, analysts) lose the system that serves them
 
+### 6. DOMINION REPUBLISH (DR) — MANDATORY CHANGE LOG
+
+Every time you make a change to TORQ-e—from a single typo to a massive architectural shift—you **MUST** append an entry to `DR.md` in the root directory.
+
+**What goes in DR?**
+- **What:** The specific change made
+- **Why:** The reasoning behind it (architectural, UX, bug fix, etc.)
+- **How:** Technical details of implementation
+- **Scope:** Microscopic, Minor, Medium, Major, Architectural
+- **Files Modified:** List all touched files
+- **Impact:** What this change affects downstream
+
+**Why DR exists:**
+- Creates an audit trail of decisions and rationale
+- Explains *why* code looks the way it does (not just *what*)
+- Prevents the "where did this come from?" confusion months later
+- Documents your thought process in real-time
+- Acts as your personal GitHub when you can't use git
+
+**Format:**
+```
+## [DATE] Session: [BRIEF DESCRIPTION]
+
+### Change N: [WHAT CHANGED]
+**Scope:** [MINOR/MEDIUM/MAJOR/ARCHITECTURAL]
+**What:** [Description of change]
+**Why:** [Reasoning]
+**How:** [Technical details]
+**Files Modified:** [List]
+**Impact:** [What this affects]
+```
+
+**Non-negotiable:** If you make a change and forget to log it in DR.md, it's like it didn't happen for documentation purposes. 
+
 ---
 
 ## BEFORE YOU START ANYTHING
@@ -104,12 +138,13 @@ Check these boxes:
 - [ ] Do I understand the Nile Claim River methodology?
 - [ ] Am I about to delete or overwrite a Tier 1 or Tier 2 document? (If yes: STOP and reconsider)
 - [ ] If I'm updating a document, am I appending and preserving history? (If no: STOP and create new version instead)
+- [ ] Have I logged all changes to DR.md? (If no: STOP and add entries now. Even if just finished coding, DR entries are mandatory.)
 
 ---
 
-## THE RULE IN ONE SENTENCE
+## THE RULES IN ONE SENTENCE
 
-**Append when possible. Create new versions when necessary. Never delete foundational documents unless the entire project pivots.**
+**Append when possible. Create new versions when necessary. Never delete foundational documents unless the entire project pivots. And log every change to DR.md—no exceptions.**
 
 ---
 

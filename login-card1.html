@@ -221,6 +221,97 @@
             text-decoration: underline;
         }
 
+        .toggle-section {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 24px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            border-color: #2d6a4f;
+            color: #2d6a4f;
+            background: #f0f8f5;
+        }
+
+        .enrollment-check {
+            display: none;
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .enrollment-check.show {
+            display: block;
+        }
+
+        .enrollment-check h3 {
+            color: #1e5631;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .enrollment-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .enrollment-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s ease;
+        }
+
+        .enrollment-btn:hover {
+            border-color: #2d6a4f;
+            color: #2d6a4f;
+        }
+
+        .enrollment-message {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #2d6a4f;
+        }
+
+        .enrollment-message strong {
+            display: block;
+            color: #1e5631;
+            margin-bottom: 4px;
+        }
+
+        .no-id-section {
+            display: none;
+        }
+
+        .no-id-section.show {
+            display: block;
+        }
+
         @media (max-width: 600px) {
             .login-card {
                 padding: 32px 24px;
@@ -252,7 +343,15 @@
                 Also known as: Client, Recipient, or Beneficiary
             </div>
 
-            <div class="form-group">
+            <!-- Toggle: Have ID or Need Help -->
+            <div class="toggle-section">
+                <button class="toggle-btn active" id="haveIdBtn">I have a Member ID</button>
+                <button class="toggle-btn" id="noIdBtn">I don't have an ID</button>
+            </div>
+
+            <!-- Section: Have ID (default) -->
+            <div id="haveIdSection">
+                <div class="form-group">
                 <label for="username">Username or Email</label>
                 <input
                     type="text"
@@ -274,7 +373,46 @@
                 <div class="password-note">Password authentication enabled in production</div>
             </div>
 
-            <button class="btn btn-login" id="loginBtn">Enter as Member</button>
+                <button class="btn btn-login" id="loginBtn">Enter as Member</button>
+            </div>
+
+            <!-- Section: Don't Have ID (hidden by default) -->
+            <div id="noIdSection" class="no-id-section">
+                <div class="enrollment-check show">
+                    <h3>Are you currently enrolled in Medicaid?</h3>
+                    <div class="enrollment-options">
+                        <button class="enrollment-btn" id="enrolledYesBtn">Yes</button>
+                        <button class="enrollment-btn" id="enrolledNoBtn">No</button>
+                    </div>
+
+                    <!-- If Enrolled: Show UMID Input -->
+                    <div id="enrolledMessage" style="display: none;">
+                        <div class="enrollment-message">
+                            <strong>You're enrolled!</strong>
+                            Use your Member ID (UMID) to log in. You should have received it in the mail when you enrolled.
+                        </div>
+                        <div class="form-group">
+                            <label for="umidInput">Member ID (UMID)</label>
+                            <input
+                                type="text"
+                                id="umidInput"
+                                placeholder="Enter your Member ID"
+                                required
+                            >
+                        </div>
+                        <button class="btn btn-login" id="umidLoginBtn">Continue with Member ID</button>
+                    </div>
+
+                    <!-- If Not Enrolled: Show Signup Link -->
+                    <div id="notEnrolledMessage" style="display: none;">
+                        <div class="enrollment-message">
+                            <strong>Ready to enroll?</strong>
+                            We'll show you how to get Medicaid coverage in New York.
+                        </div>
+                        <a href="signup-info-card1.html" class="btn btn-primary" style="width: 100%; text-align: center;">How to Sign Up for Medicaid</a>
+                    </div>
+                </div>
+            </div>
 
             <div class="footer-link">
                 <a href="tutorial-card1.html" style="margin-right: 16px;">📖 Tutorial</a>
@@ -285,10 +423,62 @@
     </div>
 
     <script>
+        // Elements
+        const haveIdBtn = document.getElementById('haveIdBtn');
+        const noIdBtn = document.getElementById('noIdBtn');
+        const haveIdSection = document.getElementById('haveIdSection');
+        const noIdSection = document.getElementById('noIdSection');
+        const enrolledYesBtn = document.getElementById('enrolledYesBtn');
+        const enrolledNoBtn = document.getElementById('enrolledNoBtn');
+        const enrolledMessage = document.getElementById('enrolledMessage');
+        const notEnrolledMessage = document.getElementById('notEnrolledMessage');
         const usernameInput = document.getElementById('username');
         const loginBtn = document.getElementById('loginBtn');
+        const umidInput = document.getElementById('umidInput');
+        const umidLoginBtn = document.getElementById('umidLoginBtn');
 
-        // Login button click
+        // Toggle between "Have ID" and "Don't Have ID"
+        haveIdBtn.addEventListener('click', () => {
+            haveIdBtn.classList.add('active');
+            noIdBtn.classList.remove('active');
+            haveIdSection.style.display = 'block';
+            noIdSection.classList.remove('show');
+            enrolledMessage.style.display = 'none';
+            notEnrolledMessage.style.display = 'none';
+        });
+
+        noIdBtn.addEventListener('click', () => {
+            noIdBtn.classList.add('active');
+            haveIdBtn.classList.remove('active');
+            haveIdSection.style.display = 'none';
+            noIdSection.classList.add('show');
+        });
+
+        // Enrollment check: YES
+        enrolledYesBtn.addEventListener('click', () => {
+            enrolledMessage.style.display = 'block';
+            notEnrolledMessage.style.display = 'none';
+            enrolledYesBtn.style.borderColor = '#2d6a4f';
+            enrolledYesBtn.style.color = '#2d6a4f';
+            enrolledYesBtn.style.background = '#f0f8f5';
+            enrolledNoBtn.style.borderColor = '#e0e0e0';
+            enrolledNoBtn.style.color = '#475569';
+            enrolledNoBtn.style.background = 'white';
+        });
+
+        // Enrollment check: NO
+        enrolledNoBtn.addEventListener('click', () => {
+            enrolledMessage.style.display = 'none';
+            notEnrolledMessage.style.display = 'block';
+            enrolledNoBtn.style.borderColor = '#2d6a4f';
+            enrolledNoBtn.style.color = '#2d6a4f';
+            enrolledNoBtn.style.background = '#f0f8f5';
+            enrolledYesBtn.style.borderColor = '#e0e0e0';
+            enrolledYesBtn.style.color = '#475569';
+            enrolledYesBtn.style.background = 'white';
+        });
+
+        // "Have ID" path: Username/Email login
         loginBtn.addEventListener('click', () => {
             if (usernameInput.value.trim()) {
                 sessionStorage.setItem('username', usernameInput.value);
@@ -298,20 +488,39 @@
             }
         });
 
-        // Allow Enter key to submit
         usernameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && usernameInput.value.trim()) {
                 loginBtn.click();
             }
         });
 
-        // Enable/disable login button
         usernameInput.addEventListener('input', () => {
             loginBtn.disabled = !usernameInput.value.trim();
         });
 
+        // "Don't Have ID" path: UMID login (for enrolled members)
+        umidLoginBtn.addEventListener('click', () => {
+            if (umidInput.value.trim()) {
+                sessionStorage.setItem('username', umidInput.value);
+                sessionStorage.setItem('userType', 'Member');
+                sessionStorage.setItem('cardNumber', '1');
+                window.location.href = 'chat-card1.html';
+            }
+        });
+
+        umidInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && umidInput.value.trim()) {
+                umidLoginBtn.click();
+            }
+        });
+
+        umidInput.addEventListener('input', () => {
+            umidLoginBtn.disabled = !umidInput.value.trim();
+        });
+
         // Initial state
         loginBtn.disabled = true;
+        umidLoginBtn.disabled = true;
     </script>
 </body>
 </html>
