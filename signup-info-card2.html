@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Enroll as a Provider - TORQ-e</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2d6a4f;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .header img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #1e5631;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e5631;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin-bottom: 20px;
+            padding-left: 40px;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background: #2d6a4f;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .faq {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #1e5631;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            color: #2d6a4f;
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq-answer.active {
+            display: block;
+        }
+
+        .contact-box {
+            background: #fffbeb;
+            border-left: 4px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .contact-box p {
+            font-size: 14px;
+            color: #92400e;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .contact-box a {
+            color: #d97706;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e5631;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2d6a4f;
+            border: 2px solid #2d6a4f;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="login-card2.html" class="back-link">← Back to Login</a>
+
+        <div class="header">
+            <img src="/static/branding/logo/TdST.png" alt="TORQ-e Logo">
+            <h1>How to Enroll as a Provider</h1>
+            <p>Get your NPI enrolled in 5 simple steps</p>
+        </div>
+
+        <!-- How to Enroll -->
+        <div class="section">
+            <h2 class="section-title">How to Enroll</h2>
+            <ol class="steps">
+                <li><strong>Go to eMedNY:</strong> Visit <a href="https://www.emedny.ny.gov" target="_blank" style="color: #2d6a4f; font-weight: 600;">eMedNY.ny.gov</a></li>
+                <li><strong>Register your account:</strong> Create a new user ID and password</li>
+                <li><strong>Enter your information:</strong> NPI, practice address, license information, and provider details</li>
+                <li><strong>Select plans:</strong> Choose which Medicaid plans you want to join (MCO or Fee-for-Service)</li>
+                <li><strong>You're enrolled:</strong> Enrollment starts, and you'll receive confirmation and your provider ID</li>
+            </ol>
+        </div>
+
+        <!-- Need Help -->
+        <div class="contact-box">
+            <p><strong>Free Help Available</strong></p>
+            <p>Call the eMedNY Provider Services line for enrollment assistance.</p>
+            <p>Or contact your <strong>Managed Care Organization (MCO)</strong> directly if you've already chosen a plan.</p>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(event)">
+                        <span>Do I need an active NPI to enroll?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">Yes. You must have an active NPI (National Provider Identifier) issued by the National Plan and Provider Enumeration System (NPPES). Check your NPI status at <a href="https://npiregistry.cms.hhs.gov/" target="_blank" style="color: #d97706;">NPI Registry</a>.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(event)">
+                        <span>What if my license is suspended or revoked?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">You cannot enroll in Medicaid. Your license must be unencumbered and in good standing. Check your license status with your State Board of Professional Medical Conduct or equivalent licensing body.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(event)">
+                        <span>Am I on the OIG exclusion list?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">You cannot be on the Office of Inspector General (OIG) exclusion list. Search your name at <a href="https://exclusions.oig.hhs.gov/" target="_blank" style="color: #d97706;">Exclusions</a> to verify you're eligible.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(event)">
+                        <span>What's the difference between MCO and FFS?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">MCO (Managed Care Organization) providers join a specific health plan. FFS (Fee-for-Service) providers bill the state directly. You can enroll in one or both depending on your practice type and location.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(event)">
+                        <span>How long does enrollment take?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">Enrollment typically takes 2-4 weeks after submission. You'll receive a provider ID and enrollment confirmation by mail. Your ability to submit claims starts on your enrollment effective date.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(event)">
+                        <span>What documents do I need?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">You'll need your NPI, active state license, federal tax ID (or SSN for sole proprietors), proof of address, and DEA registration (if applicable). eMedNY will specify exactly what's required during enrollment.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="button-group">
+            <a href="https://www.emedny.ny.gov" target="_blank" class="btn btn-primary">Go to eMedNY</a>
+            <a href="login-card2.html" class="btn btn-secondary">Back to Login</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleAnswer(event) {
+            const question = event.currentTarget;
+            const answer = question.nextElementSibling;
+            const arrow = question.querySelector('span:last-child');
+
+            // Close all other answers
+            document.querySelectorAll('.faq-answer').forEach(a => {
+                if (a !== answer) {
+                    a.classList.remove('active');
+                }
+            });
+
+            // Toggle arrow direction for all questions
+            document.querySelectorAll('.faq-question span:last-child').forEach(a => {
+                if (a !== arrow) {
+                    a.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle current answer
+            answer.classList.toggle('active');
+            arrow.style.transform = answer.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+    </script>
+</body>
+</html>
