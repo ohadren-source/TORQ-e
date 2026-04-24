@@ -369,7 +369,18 @@
 
     <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt">
 
+    <!-- Markdown parser for response formatting -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+
     <script>
+        // Initialize markdown parser
+        const md = window.markdownit({
+            html: false,
+            linkify: true,
+            typographer: true,
+            breaks: true
+        });
         // Initialize from sessionStorage
         const username = sessionStorage.getItem('username') || 'Member';
         const cardNumber = sessionStorage.getItem('cardNumber');
@@ -447,6 +458,8 @@
                 const decoder = new TextDecoder();
                 bubble.textContent = ''; // Clear "Thinking..." message
 
+                let fullText = '';
+
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -459,7 +472,9 @@
                             try {
                                 const data = JSON.parse(line.slice(6));
                                 if (data.text) {
-                                    bubble.textContent += data.text;
+                                    fullText += data.text;
+                                    // Show streaming progress with raw text
+                                    bubble.textContent = fullText;
                                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
                                 }
                             } catch (e) {
@@ -469,7 +484,13 @@
                     }
                 }
 
-                conversationHistory.push({ role: 'assistant', content: bubble.textContent });
+                // After streaming is complete, parse markdown and render as HTML
+                const parsedHtml = md.render(fullText);
+                const sanitized = DOMPurify.sanitize(parsedHtml);
+                bubble.innerHTML = sanitized;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                conversationHistory.push({ role: 'assistant', content: fullText });
 
             } catch (error) {
                 console.error('Claude API error:', error);

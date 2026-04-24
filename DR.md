@@ -241,6 +241,51 @@ This cleaner structure makes the data far more suitable for searchable FAQs and 
 
 ---
 
+---
+
+## [2026-04-24] Session: Chat Response Markdown Parsing Fix
+
+### Change 10: Fixed Markdown Rendering in chat-card1.html
+**Scope:** CRITICAL (BUG FIX)  
+**What:** Added markdown parser to render Claude responses as formatted HTML instead of raw markdown syntax  
+**Why:** System prompts instruct Claude to use markdown (**, ##, -, [], etc.), but chat HTML was using `textContent` which displays markdown as literal text instead of parsing it to HTML  
+**How:**
+- Added CDN script: markdown-it (markdown parser)
+- Added CDN script: DOMPurify (HTML sanitization)
+- Modified streaming response handler:
+  - Collect full response text while streaming
+  - After streaming completes, parse with `md.render(fullText)`
+  - Sanitize HTML output to prevent XSS
+  - Insert parsed HTML via `innerHTML`
+- Preserves streaming UX: users see text arriving in real-time, then formatted once complete
+**Files Modified:** chat-card1.html  
+**Impact:** Member chat responses now display with proper formatting (bold, bullets, tables, code blocks, emphasis)
+
+---
+
+### Change 11: Fixed Markdown Rendering in chat-card2.html
+**Scope:** CRITICAL (BUG FIX)  
+**What:** Applied same markdown parsing fix to provider chat  
+**Why:** Same root cause as Change 10 (markdown syntax appearing as literal text)  
+**How:**
+- Identical implementation to chat-card1.html
+- Added markdown-it and DOMPurify CDN scripts
+- Updated streaming handler to parse markdown after response completes
+**Files Modified:** chat-card2.html  
+**Impact:** Provider chat responses now display with proper formatting (tables for enrollment options, bold headers, emphasis)
+
+---
+
+### Summary of Session
+- **Total Changes:** 2 (both critical bug fixes)
+- **Files Modified:** 2 (chat-card1.html, chat-card2.html)
+- **Root Cause:** System prompts instructed Claude to use markdown formatting, but HTML interface used `textContent` instead of parsing HTML
+- **Solution:** Added markdown-it parser + DOMPurify sanitizer to convert markdown to safe HTML after streaming completes
+- **Impact:** Chat responses now display with visual hierarchy, readability, and proper formatting as intended by system prompts
+- **Note:** Cards 3, 4, 5 remain in development stub state (no active chat functionality yet)
+
+---
+
 ## Next Session: Provider Side Build-Out
 - Wire UPID reference into login-card2.html navigation
 - Create provider-specific onboarding journey
