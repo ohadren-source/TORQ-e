@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 from typing import Optional
 
@@ -27,8 +28,6 @@ class Settings(BaseSettings):
     ssa_wage_records_api_url: Optional[str] = None
     federal_exclusions_api_url: Optional[str] = None
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    model_config = ConfigDict(env_file=".env", case_sensitive=False)
 
 settings = Settings()
