@@ -117,11 +117,19 @@ async def root():
         }
     }
 
-# 404 handler
-@app.get("/api/card1/docs", include_in_schema=False)
-async def swagger_ui():
-    """Redirect to OpenAPI docs"""
-    return JSONResponse({"redirect": "/docs"})
+# Catch-all for HTML files (login, chat, tutorial pages)
+@app.get("/{file_path:path}", include_in_schema=False)
+async def serve_html(file_path: str):
+    """Serve HTML files (login-card*.html, chat-card*.html, tutorial-card*.html)"""
+    # Only serve .html files
+    if not file_path.endswith('.html'):
+        return JSONResponse({"detail": "Not Found"}, status_code=404)
+
+    file_full_path = os.path.join(static_dir, file_path)
+    if os.path.exists(file_full_path):
+        return FileResponse(file_full_path, media_type="text/html")
+
+    return JSONResponse({"detail": "Not Found"}, status_code=404)
 
 if __name__ == "__main__":
     import uvicorn
