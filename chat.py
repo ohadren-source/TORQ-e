@@ -181,99 +181,86 @@ async def chat_stream(chat_msg: ChatMessage = Body(...)):
     # Initialize message history (in production, this would come from a database)
     messages = [{"role": "user", "content": chat_msg.message}]
 
-    # Agentic loop for tool use
-    tool_call_count = 0
-    max_tool_calls = 5
+    async def generate_response():
+        """Generator that yields SSE-formatted text and handles agentic loop"""
+        nonlocal messages
+        tool_call_count = 0
+        max_tool_calls = 5
 
-    while tool_call_count < max_tool_calls:
-        # Stream response from Claude
-        response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=1024,
-            system=system_prompt,
-            tools=tools if tools else None,
-            messages=messages,
-            stream=True
-        )
-
-        # Process streaming response
-        assistant_message = ""
-        tool_calls = []
-
-        for event in response:
-            # Handle content blocks
-            if event.type == "content_block_start":
-                if hasattr(event.content_block, "type"):
-                    if event.content_block.type == "text":
-                        pass  # Text streaming begins
-                    elif event.content_block.type == "tool_use":
-                        tool_calls.append({
-                            "id": event.content_block.id,
-                            "name": event.content_block.name,
-                            "input": {}
-                        })
-
-            elif event.type == "content_block_delta":
-                if hasattr(event.delta, "type"):
-                    if event.delta.type == "text_delta":
-                        assistant_message += event.delta.text
-                    elif event.delta.type == "input_json_delta":
-                        # Accumulate JSON input for tool use
-                        if tool_calls:
-                            tool_calls[-1]["input"].update(
-                                json.loads(event.delta.partial_json)
-                            )
-
-        # If no tool calls, we're done - return the streaming response
-        if not tool_calls:
-            return StreamingResponse(
-                stream_generator(client, system_prompt, messages + [{"role": "assistant", "content": assistant_message}]),
-                media_type="text/event-stream"
+        while tool_call_count < max_tool_calls:
+            # Stream response from Claude
+            response = client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=1024,
+                system=system_prompt,
+                tools=tools if tools else None,
+                messages=messages,
+                stream=True
             )
 
-        # Process tool calls
-        assistant_content = [{"type": "text", "text": assistant_message}]
-        for tool_call in tool_calls:
-            assistant_content.append({
-                "type": "tool_use",
-                "id": tool_call["id"],
-                "name": tool_call["name"],
-                "input": tool_call["input"]
-            })
+            # Process streaming response
+            assistant_message = ""
+            tool_calls = []
 
-        messages.append({"role": "assistant", "content": assistant_content})
+            for event in response:
+                # Handle content blocks
+                if event.type == "content_block_start":
+                    if hasattr(event.content_block, "type"):
+                        if event.content_block.type == "text":
+                            pass  # Text streaming begins
+                        elif event.content_block.type == "tool_use":
+                            tool_calls.append({
+                                "id": event.content_block.id,
+                                "name": event.content_block.name,
+                                "input": {}
+                            })
 
-        # Execute tools and add results
-        for tool_call in tool_calls:
-            result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber)
-            messages.append({
-                "role": "user",
-                "content": [
-                    {
-                        "type": "tool_result",
-                        "tool_use_id": tool_call["id"],
-                        "content": result
-                    }
-                ]
-            })
+                elif event.type == "content_block_delta":
+                    if hasattr(event.delta, "type"):
+                        if event.delta.type == "text_delta":
+                            assistant_message += event.delta.text
+                            # Yield text as we receive it (true streaming)
+                            yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
+                        elif event.delta.type == "input_json_delta":
+                            # Accumulate JSON input for tool use
+                            if tool_calls:
+                                tool_calls[-1]["input"].update(
+                                    json.loads(event.delta.partial_json)
+                                )
 
-        tool_call_count += 1
+            # If no tool calls, we're done
+            if not tool_calls:
+                return
 
+            # Process tool calls (agentic loop)
+            assistant_content = [{"type": "text", "text": assistant_message}]
+            for tool_call in tool_calls:
+                assistant_content.append({
+                    "type": "tool_use",
+                    "id": tool_call["id"],
+                    "name": tool_call["name"],
+                    "input": tool_call["input"]
+                })
 
-async def stream_generator(client, system_prompt, messages):
-    """Generate streaming response"""
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1024,
-        system=system_prompt,
-        messages=messages,
-        stream=True
-    )
+            messages.append({"role": "assistant", "content": assistant_content})
 
-    for event in response:
-        if event.type == "content_block_delta":
-            if hasattr(event.delta, "text"):
-                yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
+            # Execute tools and add results
+            for tool_call in tool_calls:
+                result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber)
+                messages.append({
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": tool_call["id"],
+                            "content": result
+                        }
+                    ]
+                })
+
+            tool_call_count += 1
+
+    return StreamingResponse(generate_response(), media_type="text/event-stream")
 
 
 def get_system_prompt(user_type: str, card_number: int) -> str:
