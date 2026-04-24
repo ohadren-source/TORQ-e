@@ -419,6 +419,64 @@
             sendBtn.disabled = !inputText.value.trim() && attachedFiles.length === 0;
         };
 
+        // Call Claude API with streaming
+        async function callClaudeAPI(message, bubble) {
+            const userType = sessionStorage.getItem('userType') || 'Member';
+            const cardNum = parseInt(sessionStorage.getItem('cardNumber')) || 1;
+            const sessionId = sessionStorage.getItem('sessionId') || 'session-' + Date.now();
+
+            try {
+                const response = await fetch('/api/chat/stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        userType: userType,
+                        cardNumber: cardNum,
+                        sessionId: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                bubble.textContent = ''; // Clear "Thinking..." message
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const text = decoder.decode(value);
+                    const lines = text.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.text) {
+                                    bubble.textContent += data.text;
+                                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                                }
+                            } catch (e) {
+                                // Skip malformed lines
+                            }
+                        }
+                    }
+                }
+
+                conversationHistory.push({ role: 'assistant', content: bubble.textContent });
+
+            } catch (error) {
+                console.error('Claude API error:', error);
+                bubble.textContent = `❌ Error: ${error.message}. Make sure the backend is running and ANTHROPIC_API_KEY is configured.`;
+            }
+        }
+
         // Send message
         sendBtn.addEventListener('click', sendMessage);
         inputText.addEventListener('keypress', (e) => {
@@ -460,26 +518,19 @@
             // Scroll to bottom
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // Show typing indicator
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message assistant';
-            typingDiv.innerHTML = `<div class="message-bubble">⏳ Thinking...</div>`;
-            typingDiv.id = 'typing';
-            messagesDiv.appendChild(typingDiv);
+            // Create assistant message bubble for streaming response
+            const assistantDiv = document.createElement('div');
+            assistantDiv.className = 'message assistant';
+            assistantDiv.id = 'streaming-response';
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = '⏳ Thinking...';
+            assistantDiv.appendChild(bubble);
+            messagesDiv.appendChild(assistantDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // TODO: Call Claude API here
-            // For now, simulate a response
-            setTimeout(() => {
-                typingDiv.remove();
-                const responseDiv = document.createElement('div');
-                responseDiv.className = 'message assistant';
-                responseDiv.innerHTML = `<div class="message-bubble">
-                    I'm connected to the TORQ-e backend via Claude API. This streaming response will appear here when integrated with the API backend. Currently in development mode.
-                </div>`;
-                messagesDiv.appendChild(responseDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 1500);
+            // Call Claude API
+            await callClaudeAPI(message, bubble);
         }
 
         function escapeHtml(text) {

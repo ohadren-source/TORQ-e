@@ -1,9 +1,12 @@
 """
-TORQ-E: Medicaid Unified Identity System
+TORQ-e: Medicaid Clarity System
 Main FastAPI Application
 
 Card 1 (UMID): Member Eligibility System
 Card 2 (UPID): Provider System [In Development]
+Card 3 (UHWP): Plan Administrator [Planned]
+Card 4 (USHI): Government Stakeholder [Planned]
+Card 5 (UBADA): Data Analyst & Fraud Investigation [Planned]
 """
 
 from fastapi import FastAPI
@@ -15,6 +18,7 @@ from config import settings
 from database import init_db
 from card_1_umid import router as card1_router
 from card_2_upid import router as card2_router
+from chat import router as chat_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -51,11 +55,14 @@ async def startup_event():
 app.include_router(card1_router)
 app.include_router(card2_router)
 
+# Include Chat router (Claude API integration)
+app.include_router(chat_router)
+
 # Root endpoint
 @app.get("/")
 async def root():
     return {
-        "message": "TORQ-E: Medicaid Unified Identity System",
+        "message": "TORQ-e: Medicaid Clarity System",
         "version": settings.api_version,
         "cards": {
             "1": {

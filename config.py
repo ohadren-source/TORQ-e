@@ -6,9 +6,12 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://user:password@localhost:5432/torq_e"
 
     # API
-    api_title: str = "TORQ-E (Medicaid Unified Identity System)"
+    api_title: str = "TORQ-E (Medicaid Clarity System)"
     api_version: str = "1.0.0"
     api_description: str = "Card 1 (UMID) & Card 2 (UPID) - Member & Provider Unified Identification"
+
+    # Anthropic Claude API
+    anthropic_api_key: str = ""
 
     # River Path configuration
     river_path_timeout_seconds: int = 30
