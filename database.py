@@ -4,7 +4,9 @@ from config import settings
 from models import Base
 
 # Create database engine
-engine = create_engine(settings.database_url, echo=True)
+# Use postgresql+psycopg:// dialect to use psycopg[binary] instead of psycopg2
+db_url = settings.database_url.replace("postgresql://", "postgresql+psycopg://")
+engine = create_engine(db_url, echo=True)
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
