@@ -1,0 +1,32 @@
+================================================================================
+CLAUDE WORKSPACE CONFIGURATION FOR TORQ-E PROJECT
+================================================================================
+
+PRIMARY WORKING DIRECTORY:
+C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e
+
+CRITICAL INSTRUCTION:
+====================
+ALL FILES FOR THIS PROJECT MUST BE SAVED TO THE PRIMARY DIRECTORY ABOVE.
+
+DO NOT USE:
+- C:\Users\ohado\Downloads\SNGBOTME (temporary scratchpad only)
+- C:\Users\ohado\AppData\Roaming\Claude\... (local session directory)
+- Any other temporary location
+
+EVERY FILE CREATED, MODIFIED, OR EDITED GOES HERE:
+C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e
+
+GIT REPOSITORY:
+Git remote is configured in this directory.
+All commits and pushes happen from this location.
+
+MOUNT PATHS (for bash/internal use):
+C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e → /sessions/eager-youthful-albattani/mnt/Documents/3_6_Nife.pi/TORQ-e
+
+VERIFICATION:
+Before creating any file, Claude must verify target directory matches above.
+If mismatch is detected, stop and ask user.
+
+LAST UPDATED: 2026-04-25
+================================================================================

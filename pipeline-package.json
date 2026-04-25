@@ -1,0 +1,41 @@
+{
+  "name": "torq-e-data-ingestion-pipeline",
+  "version": "1.0.0",
+  "description": "TORQ-E Data Ingestion Pipeline - Transform public Medicaid data into unified, validated Card 3 database",
+  "main": "pipeline-main.js",
+  "scripts": {
+    "start": "node pipeline-main.js --run-once",
+    "schedule": "node pipeline-main.js --schedule",
+    "health": "node pipeline-main.js --health-check",
+    "report": "node pipeline-main.js --audit-report",
+    "test": "echo 'Run health check to verify setup'"
+  },
+  "keywords": [
+    "medicaid",
+    "healthcare",
+    "data-ingestion",
+    "etl",
+    "card3",
+    "public-data",
+    "ems-ny",
+    "cms-api"
+  ],
+  "author": "TORQ-E Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.3.0",
+    "joi": "^17.11.0",
+    "node-cron": "^3.0.0",
+    "pg": "^8.11.0",
+    "puppeteer": "^21.6.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
