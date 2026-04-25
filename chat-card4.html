@@ -1466,64 +1466,15 @@
         }
 
         function elaborateMetrics(type) {
-            let elaboration = '';
+            // DISABLED: No hardcoded elaboration text
+            // If real data exists, elaboration will be generated from actual metrics
+            // Until then: silence is better than lies
 
-            if (type === 'metrics') {
-                elaboration = `<strong>System Health Deep Dive:</strong><br><br>
-                    <strong>Coherence Level:</strong> The overall system coherence is calculated across 6 dimensions: enrollment rate, claims processing, data quality, audit trail integrity, compliance adherence, and system stability. Our current 91% average indicates a healthy, well-balanced system with no critical bottlenecks.<br><br>
-                    <strong>Clarity Spectrum Equalizer Breakdown:</strong><br>
-                    • <strong>Enrollment Rate (87.3%):</strong> Active member acquisition is strong. We're maintaining healthy growth velocity without capacity strain.<br>
-                    • <strong>Claims Processing (95%):</strong> Claims throughput is excellent at 2,450/minute. Processing time averages 2.3 hours with 0.8% error rate—well within SLAs.<br>
-                    • <strong>Data Quality (99%):</strong> Multi-source validation shows completeness, accuracy, and timeliness all exceeding standards. Audit trail is unbroken.<br>
-                    • <strong>Audit Trail (100%):</strong> Immutable write-once append logs are 100% intact. 487K+ events logged with zero integrity violations.<br>
-                    • <strong>Compliance (98%):</strong> 48/49 regulatory checks passing. One minor item pending resolution. HIPAA and 42 CFR Part 431 both green.<br>
-                    • <strong>System Stability (96%):</strong> 99.98% uptime. Average response time 234ms. 47-day incident-free streak.<br><br>
-                    <strong>Confidence Score (95%):</strong> Our metrics are generated from real-time data feeds, validated against multiple sources, and refreshed continuously. 95% confidence means we're highly certain these numbers are accurate and representative of actual system state.`;
-            } else if (type === 'quality') {
-                elaboration = `<strong>Data Quality Deep Dive:</strong><br><br>
-                    <strong>Overall Quality Score: 99%</strong><br>
-                    Our data quality assessment measures three core dimensions. First, completeness examines whether all required fields are populated across enrollment records, claims submissions, and audit logs. At 99%, we're capturing virtually all necessary data points. Second, accuracy validates that the data we have is correct—checking member IDs against SSA records, claim codes against medical standards, and provider credentials against state registries. We're at 99.5%, meaning fewer than 1 in 200 records contain errors. Third, timeliness ensures data is fresh and available when needed. At 100%, we're processing and validating in real time.<br><br>
-                    <strong>Audit Trail Validity:</strong> Our immutable append-only logs are intact and unbroken. Every change is timestamped, attributed, and cryptographically verified.<br><br>
-                    <strong>CMS Compliance Ready:</strong> We've validated against 42 CFR Part 431 and HIPAA requirements. All data handling, transmission, and storage meets federal standards. You're audit-ready.`;
-            } else if (type === 'trends') {
-                elaboration = `<strong>Enrollment Trends Analysis:</strong><br><br>
-                    Over the last 7 days, we've seen steady state growth in our member population. New enrollments (12,500) exceed disenrollments (1,800) by a significant margin, indicating market confidence and positive retention. Transfers (3,200) suggest members are switching plans within our ecosystem—likely optimizing for coverage or cost.<br><br>
-                    <strong>Net Growth: +7,900</strong> represents 0.63% weekly growth, which on a 1.25M base annualizes to roughly 33M additional members annually—healthy, sustainable expansion without volatility.<br><br>
-                    <strong>Most Popular Plan: Molina Healthcare (HMO)</strong> continues to dominate enrollment, suggesting members value the integrated care model and provider network breadth. This plan drives network effects—more members attract more providers, which attracts more members.`;
-            } else if (type === 'governance') {
-                elaboration = `<strong>Governance & Compliance Status:</strong><br><br>
-                    Zero active flags means the system is operating cleanly across all compliance dimensions. No policy violations, no audit anomalies, no regulatory red flags.<br><br>
-                    <strong>What We're Monitoring:</strong><br>
-                    • Claims processing patterns (no unusual volume spikes or denial rates)<br>
-                    • Member eligibility churn (no suspicious bulk disenrollments)<br>
-                    • Provider behavior (billing patterns within expected ranges)<br>
-                    • Data integrity (no orphaned records or timestamp anomalies)<br>
-                    • Regulatory adherence (all state and federal requirements met)<br><br>
-                    <strong>Implication:</strong> The system is stable. No corrective action needed. Continue monitoring per standard governance cadence (daily coherence checks, weekly detailed audits).`;
-            } else if (type === 'help') {
-                elaboration = `<strong>Card 4 Capabilities Overview:</strong><br><br>
-                    Card 4 is the Government Stakeholder Operations system. It provides real-time visibility into Medicaid governance, compliance, and system health. Every query returns the Spectrum Analyzer showing coherence across 6 critical dimensions, plus detailed metrics relevant to your question.<br><br>
-                    <strong>Core Functions:</strong><br>
-                    • <strong>Metrics:</strong> Real-time system health with confidence scoring and trend analysis<br>
-                    • <strong>Trends:</strong> 7-day enrollment patterns, member flows, and plan popularity<br>
-                    • <strong>Quality:</strong> Data completeness, accuracy, timeliness, and audit-readiness assessment<br>
-                    • <strong>Governance:</strong> Compliance status, regulatory flags, and operational alerts<br><br>
-                    All responses include the Spectrum Analyzer for consistent coherence visibility. Click "Elaborate" on any response for deeper explanation.`;
-            } else if (type === 'default') {
-                elaboration = `<strong>About Card 4 - Government Stakeholder Operations:</strong><br><br>
-                    Card 4 is your governance command center for Medicaid operations. It aggregates metrics from all system sources—enrollment databases, claims processors, audit logs, provider networks—and presents them through a unified lens: system coherence.<br><br>
-                    <strong>You Have Visibility Into:</strong><br>
-                    • <strong>Real-time Metrics:</strong> Enrollment rates, claims throughput, data quality, audit integrity, compliance status, system stability<br>
-                    • <strong>Historical Trends:</strong> Member growth, churn patterns, plan preferences, volume trends<br>
-                    • <strong>Data Quality:</strong> Validation status across all domains, error rates, audit trail integrity<br>
-                    • <strong>Governance Status:</strong> Regulatory compliance, policy adherence, operational alerts<br><br>
-                    Every response shows the Spectrum Analyzer—your at-a-glance view of system coherence. The traffic light tells you overall health. The equalizer bars show which dimensions need attention.`;
-            }
+            const elaborationHtml = `<div style="background: #fff3cd; border-left: 4px solid #ff9800; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
+                <strong>⚠️ Elaboration Pending Real Data</strong><br>
+                Detailed analysis will be available once the data crawler successfully retrieves metrics from the 9 NY health repositories. Currently: no data sources found.
+            </div>`;
 
-            // Add elaboration as a new message
-            const elaborationHtml = `<div style="background: #f0f8ff; border-left: 4px solid #2d6a4f; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">${elaboration}</div>`;
-
-            // Find the button and insert elaboration below it
             const buttons = document.querySelectorAll('button[onclick*="elaborateMetrics"]');
             const lastButton = buttons[buttons.length - 1];
 

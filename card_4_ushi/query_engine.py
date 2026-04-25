@@ -39,14 +39,42 @@ async def query_aggregate_metrics(
 
     Returns all 6 Spectrum Analyzer dimensions with real values and confidence scores.
     NO MOCK DATA - Every metric is sourced from public repositories.
+    Reports what the crawler found/didn't find.
     """
 
     try:
         if not public_data_schema:
             return {
-                "status": "success",
-                "error": "Public data schema not loaded",
+                "status": "error",
+                "error": "Public data schema not loaded - crawler may not have run yet",
                 "hint": "Data discovery may still be in progress. Try again in a few seconds."
+            }
+
+        # Report what the crawler actually found
+        crawler_status = {
+            "urls_attempted": public_data_schema.get("total_urls_visited", 0),
+            "base_repositories": public_data_schema.get("base_repositories", []),
+            "sources_discovered": public_data_schema.get("total_data_sources_discovered", 0),
+            "sources_with_data_extracted": public_data_schema.get("total_sources_with_extracted_data", 0),
+            "crawler_errors": public_data_schema.get("errors", []),
+            "reading_engine_available": public_data_schema.get("reading_engine_integrated", False)
+        }
+
+        # If crawler found nothing, report it clearly
+        if public_data_schema.get("total_data_sources_discovered", 0) == 0:
+            return {
+                "status": "error",
+                "error": "No data sources discovered by crawler",
+                "crawler_report": crawler_status,
+                "data": {
+                    "enrollment_rate": {"value": None, "confidence_score": 0.0, "sources": [], "status": "no_data"},
+                    "claims_processing": {"value": None, "confidence_score": 0.0, "sources": [], "status": "no_data"},
+                    "data_quality": {"value": None, "confidence_score": 0.0, "sources": [], "status": "no_data"},
+                    "audit_trail": {"value": None, "confidence_score": 0.0, "sources": [], "status": "no_data"},
+                    "compliance": {"value": None, "confidence_score": 0.0, "sources": [], "status": "no_data"},
+                    "system_stability": {"value": None, "confidence_score": 0.0, "sources": [], "status": "no_data"}
+                },
+                "honesty": "Crawler visited {0} base repositories but extracted 0 data sources. If this keeps happening, the issue is in the crawler or reading_engine, not in query logic.".format(crawler_status["urls_attempted"])
             }
 
         # Query all 6 metrics at once (ignore metric_type parameter if provided)
@@ -64,6 +92,7 @@ async def query_aggregate_metrics(
             "data": all_metrics,
             "confidence_score": _calculate_overall_confidence(all_metrics),
             "timestamp": datetime.utcnow().isoformat(),
+            "crawler_report": crawler_status,
             "caveat": "All metrics sourced from real public repositories (emedny.org, health.ny.gov, MCO dashboards)"
         }
 
