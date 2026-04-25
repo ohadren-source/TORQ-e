@@ -550,6 +550,110 @@
             margin-top: 0;
         }
 
+        .sources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .source-item a {
+            color: #2d6a4f;
+            text-decoration: underline;
+            flex: 1;
+        }
+
+        .source-remove-btn {
+            background: none;
+            border: none;
+            color: #f44336;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 6px;
+            transition: all 0.2s ease;
+        }
+
+        .source-remove-btn:hover {
+            font-size: 18px;
+            color: #d32f2f;
+        }
+
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .confirm-dialog {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .confirm-dialog h4 {
+            margin: 0 0 12px 0;
+            color: #333;
+        }
+
+        .confirm-dialog p {
+            margin: 0 0 16px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #d32f2f;
+        }
+
+        .cancel-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .cancel-btn:hover {
+            background: #ccc;
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -785,15 +889,18 @@
             html += `<div class="spectrum-section">
                 <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
                     <h3>
-                        <span class="toggle-icon">▼</span>
+                        <span class="toggle-icon">▶</span>
                         🎯 Coherence Level
                     </h3>
                 </div>
-                <div class="spectrum-content">
+                <div class="spectrum-content collapsed">
                     <div class="coherence-display">
                         <div class="large-traffic-light ${coherence.color}">${coherence.icon}</div>
                         <div class="coherence-value">${coherenceValue}%</div>
                         <div class="coherence-status">${coherence.status}</div>
+                        <div style="margin-top: 12px; font-size: 11px; color: #999; font-style: italic; text-align: center;">
+                            For detailed data sources and removable citations, go to Stability Strength (Equalizer)
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -802,11 +909,11 @@
             html += `<div class="spectrum-section">
                 <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
                     <h3>
-                        <span class="toggle-icon">▼</span>
+                        <span class="toggle-icon">▶</span>
                         📊 Stability Strength (Equalizer)
                     </h3>
                 </div>
-                <div class="spectrum-content">
+                <div class="spectrum-content collapsed">
                     <div class="stability-grid">`;
 
             const dimensions = {
@@ -844,11 +951,11 @@
             html += `<div class="spectrum-section">
                 <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
                     <h3>
-                        <span class="toggle-icon">▼</span>
+                        <span class="toggle-icon">▶</span>
                         🔗 Combined View
                     </h3>
                 </div>
-                <div class="spectrum-content">
+                <div class="spectrum-content collapsed">
                     <div style="text-align: center; padding: 20px;">
                         <div style="font-size: 36px; font-weight: bold; color: ${coherence.color === 'green' ? '#4CAF50' : coherence.color === 'yellow' ? '#FFC107' : '#f44336'}; margin-bottom: 8px;">
                             ${coherenceValue}% Coherence
@@ -958,10 +1065,20 @@
                 visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}${equalizerSVG}</div>`;
             }
 
-            // Build sources HTML - with URLs for Stability Strength section only
+            // Get session-removed sources
+            const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
+
+            // Build sources HTML - URLs in Stability Strength AND Combined View (both include Spectrum)
             let sourcesHtml = data.source;
-            if (isStability && data.sourceUrls) {
-                sourcesHtml = data.sourceUrls.map(src => `<a href="${src.url}" target="_blank" style="color: #2d6a4f; text-decoration: underline; margin-right: 8px;">${src.name}</a>`).join(' | ');
+            if ((isStability || isCombined) && data.sourceUrls) {
+                const activeSources = data.sourceUrls.filter(src => !removedSources.includes(src.url));
+                const sourcesList = activeSources.map(src => `
+                    <div class="source-item">
+                        <a href="${src.url}" target="_blank">${src.name}</a>
+                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${src.name}')">✕</button>
+                    </div>
+                `).join('');
+                sourcesHtml = `<div class="sources-list">${sourcesList}</div>`;
             }
 
             panel.innerHTML = `
@@ -974,6 +1091,46 @@
                 ${data.breakdown}
             `;
             element.appendChild(panel);
+        }
+
+        function removeSourceFromSession(url, name) {
+            // Show confirmation dialog
+            const dialog = document.createElement('div');
+            dialog.className = 'confirm-modal';
+            dialog.innerHTML = `
+                <div class="confirm-dialog">
+                    <h4>Remove Data Source?</h4>
+                    <p>Remove "<strong>${name}</strong>" from analysis for this session only?</p>
+                    <div class="confirm-buttons">
+                        <button class="cancel-btn" onclick="this.parentElement.parentElement.parentElement.remove()">Cancel</button>
+                        <button class="confirm-btn" onclick="confirmRemoveSource('${url}', '${name}', this)">Yes, Remove</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        function confirmRemoveSource(url, name, btn) {
+            // Add to removed sources list
+            const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
+            if (!removedSources.includes(url)) {
+                removedSources.push(url);
+                sessionStorage.setItem('removedSources', JSON.stringify(removedSources));
+            }
+
+            // Remove the modal and the source item from DOM
+            document.querySelector('.confirm-modal').remove();
+
+            // Find and remove the source item
+            const sourceItem = btn.parentElement.parentElement.parentElement;
+            const sourcesList = sourceItem.parentElement;
+            sourceItem.remove();
+
+            // If no sources left, show message
+            if (sourcesList.querySelectorAll('.source-item').length === 0) {
+                sourcesList.innerHTML = '<em style="color: #999; font-size: 11px;">All sources removed from session</em>';
+            }
+        }
         }
 
         async function handleMetricsQuery(query) {
