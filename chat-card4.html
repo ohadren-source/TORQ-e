@@ -380,7 +380,7 @@
                 const response = await fetch(`${API_BASE}/metrics`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, user_role: conversationContext.userRole })
+                    body: JSON.stringify({ metric_type: 'enrollment_rate', date_range_days: 30 })
                 });
 
                 if (!response.ok) return getOfflineMetrics();
@@ -389,16 +389,18 @@
                 conversationContext.lastMetricsShown = data;
 
                 let html = `<strong>📊 System Health Metrics</strong><br><br>`;
-                html += `<div style="padding: 8px; background: ${getStatusColor(data.overall_health)}; border-radius: 4px; color: white; margin-bottom: 8px;">
-                    <strong>Overall Status:</strong> ${data.overall_health}<br>
-                    System Stability: ${data.system_stability}%
+                const apiData = data.data || data;
+
+                html += `<div style="padding: 8px; background: #4CAF50; border-radius: 4px; color: white; margin-bottom: 8px;">
+                    <strong>Overall Status:</strong> ${apiData.metric || 'STABLE'}<br>
+                    Value: ${apiData.value || 'N/A'}${apiData.unit || '%'}
                 </div>`;
-                html += `<strong>Key Metrics:</strong><br>`;
-                html += `• Claims Processing: ${data.claims_per_minute || 'N/A'} per minute<br>`;
-                html += `• Active Members: ${data.active_members || 'N/A'}<br>`;
-                html += `• Audit Trail Integrity: ${data.audit_integrity_pct || 'N/A'}%<br>`;
-                html += `• Data Freshness: ${data.data_freshness_minutes || 'N/A'} minutes old<br><br>`;
-                html += `Ask me about: trends, data quality, governance flags, or specific metrics.`;
+                html += `<strong>Details:</strong><br>`;
+                html += `• Confidence Score: ${(apiData.confidence_score * 100).toFixed(1)}%<br>`;
+                html += `• Freshness: ${apiData.freshness || 'Updated daily'}<br>`;
+                html += `• Trend: ${apiData.trend || 'Stable'}<br>`;
+                html += `• Sources: ${(apiData.sources || []).join(', ') || 'Multiple sources'}<br><br>`;
+                html += `Ask me about: trends, data quality, governance flags.`;
 
                 return html;
             } catch (error) {
@@ -422,10 +424,10 @@
 
         async function handleTrendQuery(query) {
             try {
-                const response = await fetch(`${API_BASE}/enrollment-trends`, {
+                const response = await fetch(`${API_BASE}/metrics`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, user_role: conversationContext.userRole })
+                    body: JSON.stringify({ metric_type: 'enrollment_rate', date_range_days: 7, user_role: conversationContext.userRole })
                 });
 
                 if (!response.ok) return getOfflineTrends();
@@ -456,10 +458,10 @@
 
         async function handleQualityQuery(query) {
             try {
-                const response = await fetch(`${API_BASE}/quality-metrics`, {
+                const response = await fetch(`${API_BASE}/data-quality`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, user_role: conversationContext.userRole })
+                    body: JSON.stringify({ domain: 'enrollment', user_role: conversationContext.userRole })
                 });
 
                 if (!response.ok) return getOfflineQuality();
@@ -497,10 +499,9 @@
 
         async function handleGovernanceQuery(query) {
             try {
-                const response = await fetch(`${API_BASE}/governance-log`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, user_role: conversationContext.userRole })
+                const response = await fetch(`${API_BASE}/governance-log?days_back=30&limit=50`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
                 });
 
                 if (!response.ok) return getOfflineGovernance();
