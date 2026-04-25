@@ -255,15 +255,99 @@
             cursor: not-allowed;
         }
 
-        .dev-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px 16px;
-            margin: 16px 24px;
+        /* CLARITY LIGHT & ELABORATE STYLES */
+        .clarity-light {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .clarity-light.green {
+            color: #15803d;
+        }
+
+        .clarity-light.yellow {
+            color: #ca8a04;
+        }
+
+        .clarity-light.red {
+            color: #dc2626;
+        }
+
+        .light-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .clarity-light.green .light-dot {
+            background: #22c55e;
+        }
+
+        .clarity-light.yellow .light-dot {
+            background: #eab308;
+        }
+
+        .clarity-light.red .light-dot {
+            background: #ef4444;
+        }
+
+        .sources-citation {
+            font-size: 11px;
+            color: #666;
+            margin: 8px 0;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+            font-style: italic;
+        }
+
+        .sources-citation a {
+            color: #2d6a4f;
+            text-decoration: none;
+            border-bottom: 1px dotted #2d6a4f;
+            margin-right: 12px;
+        }
+
+        .sources-citation a:hover {
+            text-decoration: underline;
+        }
+
+        .elaborate-btn {
+            background: none;
+            border: none;
+            color: #2d6a4f;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+            padding: 4px 0;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .elaborate-btn:hover {
+            text-decoration: underline;
+        }
+
+        .elaboration {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-left: 3px solid #2d6a4f;
             border-radius: 4px;
-            font-size: 12px;
-            color: #856404;
-            margin: 0;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .elaboration strong {
+            color: #2d6a4f;
         }
 
         @media (max-width: 768px) {
@@ -332,14 +416,52 @@
 
         // API configuration
         const API_BASE = '/api/card3';
-        const BACKEND_URL = 'http://localhost:3000'; // Adjust based on deployment
+        const BACKEND_URL = 'http://localhost:3000';
 
         // Conversation context
         let conversationContext = {
             lastPlansShown: null,
             lastQuery: null,
-            planCount: 5
+            planCount: 5,
+            lastClarity: 'green',
+            lastSources: []
         };
+
+        // HELPER FUNCTIONS
+        function toggleElaborate(btn) {
+            const elaboration = btn.nextElementSibling;
+            if (elaboration && elaboration.classList.contains('elaboration')) {
+                const isHidden = elaboration.style.display === 'none';
+                elaboration.style.display = isHidden ? 'block' : 'none';
+                btn.textContent = isHidden ? '📖 Hide Details' : '📖 Elaborate';
+            }
+        }
+
+        function renderClarityLight(clarity) {
+            const labelMap = {
+                'green': 'Healthy',
+                'yellow': 'Needs Review',
+                'red': 'Critical'
+            };
+            return `<div class="clarity-light ${clarity}">
+                <span class="light-dot"></span>
+                <span>${labelMap[clarity] || clarity}</span>
+            </div>`;
+        }
+
+        function renderSources(sources) {
+            if (!sources || sources.length === 0) return '';
+            const links = sources.map(s =>
+                `<a href="${s.url}" target="_blank">${s.name}</a>`
+            ).join(' | ');
+            return `<div class="sources-citation">${links}</div>`;
+        }
+
+        function renderElaborateButton(elaborationText) {
+            if (!elaborationText) return '';
+            return `<button class="elaborate-btn" onclick="toggleElaborate(this)">📖 Elaborate</button>
+                    <div class="elaboration" style="display: none;">${elaborationText}</div>`;
+        }
 
         // Auto-resize textarea
         inputText.addEventListener('input', () => {
@@ -361,14 +483,12 @@
             const message = inputText.value.trim();
             if (!message) return;
 
-            // Add user message to chat
             addMessage(message, 'user');
             inputText.value = '';
             inputText.style.height = 'auto';
             sendBtn.disabled = true;
 
             try {
-                // Process the user's request
                 const response = await processUserRequest(message);
                 addMessage(response, 'assistant');
             } catch (error) {
@@ -395,19 +515,11 @@
         async function processUserRequest(userMessage) {
             const msg = userMessage.toLowerCase();
 
-            // Handle clarification/confirmation questions first
-            if ((msg.includes('are those') || msg.includes('are they') || msg.includes('is that')) &&
-                (msg.includes('medicaid') || msg.includes('plan'))) {
-                return handleClarification(userMessage);
-            }
-
-            // Extract count if asking for specific number
             const countMatch = userMessage.match(/(\d+)\s*(plan|most|popular|top)?/i);
             if (countMatch) {
                 conversationContext.planCount = parseInt(countMatch[1]);
             }
 
-            // Route to appropriate handler
             if (msg.includes('plan') || msg.includes('find') || msg.includes('browse') || msg.includes('search') || msg.includes('show')) {
                 return await handlePlanSearch(userMessage);
             } else if (msg.includes('eligible') || msg.includes('eligibility') || msg.includes('qualify')) {
@@ -418,6 +530,8 @@
                 return await handleEnrollment(userMessage);
             } else if (msg.includes('help') || msg.includes('what can') || msg.includes('how')) {
                 return getHelpMessage();
+            } else if (conversationContext.lastPlansShown && conversationContext.lastPlansShown.length > 0) {
+                return await handleContextualQuestion(userMessage, conversationContext.lastPlansShown);
             } else {
                 return `I can help you with Medicaid plans. Try asking:<br>
                 • "Show me plans in [State]"<br>
@@ -427,62 +541,41 @@
             }
         }
 
-        function handleClarification(userMessage) {
-            const msg = userMessage.toLowerCase();
-
-            if (conversationContext.lastPlansShown) {
-                if (msg.includes('are those medicaid') || msg.includes('are they medicaid')) {
-                    return `✓ <strong>Yes, all of these are Medicaid plans.</strong> Each one is a managed care plan available to eligible Medicaid members.<br><br>
-                    Would you like to:<br>
-                    • Learn more about one of these plans<br>
-                    • See plans in a different state<br>
-                    • Check your eligibility`;
-                } else if (msg.includes('different') || msg.includes('other')) {
-                    return `Got it. Let me show you different plans. Which state are you interested in, or would you like to see the most popular plans nationally?`;
-                }
-            }
-
-            return `I can confirm information about plans you're interested in. Ask me:<br>
-            • "Are those Medicaid plans?"<br>
-            • "What's the difference between these plans?"<br>
-            • "Which one covers [service]?"`;
-        }
-
         async function handlePlanSearch(query) {
-            // Determine count to show (3, 5, or requested number)
             const countMatch = query.match(/(\d+)/);
             const requestedCount = countMatch ? Math.min(parseInt(countMatch[1]), 10) : 5;
 
             try {
-                // Extract state from query if provided
                 const stateMatch = query.match(/\b(New York|California|Texas|Florida|[A-Z]{2})\b/i);
                 const state = stateMatch ? stateMatch[0] : null;
 
-                // Fetch programs from API
-                const params = state ? `?state=${encodeURIComponent(state)}` : '';
+                const params = state ? `?state=${encodeURIComponent(state)}&requested_count=${requestedCount}` : `?requested_count=${requestedCount}`;
                 const response = await fetch(`${BACKEND_URL}${API_BASE}/programs${params}`);
 
                 if (!response.ok) {
-                    // Fallback if API not available
                     return showMockPlans(state, requestedCount);
                 }
 
                 const data = await response.json();
 
                 if (data.programs && data.programs.length > 0) {
-                    const plansToShow = data.programs.slice(0, requestedCount);
-                    conversationContext.lastPlansShown = plansToShow;
+                    conversationContext.lastPlansShown = data.programs;
+                    conversationContext.lastClarity = data.clarity;
+                    conversationContext.lastSources = data.sources;
 
-                    let html = `<strong>Top ${requestedCount} Medicaid Plans${state ? ` in ${state}` : ''}</strong> (${data.count} total available)<br><br>`;
-                    plansToShow.forEach((program, idx) => {
+                    let html = `<strong>Top ${data.count} Medicaid Plans${state ? ` in ${state}` : ''}</strong><br>`;
+
+                    data.programs.forEach((program, idx) => {
                         html += `<div style="margin-bottom: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
                             <strong>${idx + 1}. ${program.name}</strong><br>
-                            Type: ${program.type} | Network: ${program.network_type}
+                            Type: ${program.type} | Network: ${program.network}
                         </div>`;
                     });
-                    if (data.count > requestedCount) {
-                        html += `<br><em>...and ${data.count - requestedCount} more plans available</em>`;
-                    }
+
+                    html += renderClarityLight(data.clarity);
+                    html += renderSources(data.sources);
+                    html += renderElaborateButton(`<strong>Network Adequacy Score: ${data.network_adequacy_score}%</strong><br>This measures whether the plan's provider network meets state requirements for specialist access, geographic distribution, and appointment availability.<br><br><strong>What this means:</strong> A higher score indicates better network coverage and accessibility for members.`);
+
                     return html;
                 } else {
                     return `No plans found${state ? ` in ${state}` : ''}. Try a different location or contact support.`;
@@ -504,13 +597,17 @@
             const plansToShow = mockPlans.slice(0, count);
             conversationContext.lastPlansShown = plansToShow;
 
-            let html = `<strong>Top ${count} Medicaid Plans${state ? ` in ${state}` : ''}</strong> (${mockPlans.length} shown)<br><br>`;
+            let html = `<strong>Top ${count} Medicaid Plans${state ? ` in ${state}` : ''}</strong><br><br>`;
             plansToShow.forEach((plan, idx) => {
                 html += `<div style="margin-bottom: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
                     <strong>${idx + 1}. ${plan.name}</strong><br>
                     Type: ${plan.type} | Network: ${plan.network}
                 </div>`;
             });
+
+            html += renderClarityLight('green');
+            html += renderElaborateButton('These are the most popular Medicaid plans available in your area. Each offers different network structures: HMO plans require selecting a primary care provider, while PPO plans offer more flexibility in choosing providers.');
+
             return html;
         }
 
@@ -535,13 +632,19 @@
                 }
 
                 const data = await response.json();
-                let html = `<strong>✓ Based on your eligibility</strong>, you qualify for ${data.count} plans:<br><br>`;
-                data.programs.slice(0, 3).forEach(program => {
+                let html = `<strong>✓ You qualify for ${data.count} plans</strong><br><br>`;
+
+                data.eligible_programs.slice(0, 3).forEach(program => {
                     html += `<div style="margin-bottom: 8px; padding: 8px; background: #e8f5e9; border-radius: 4px;">
                         ✓ <strong>${program.name}</strong><br>
-                        Coverage: ${program.coverage_start_date}
+                        Type: ${program.type} | Network: ${program.network}
                     </div>`;
                 });
+
+                html += renderClarityLight(data.clarity);
+                html += renderSources(data.sources);
+                html += renderElaborateButton(`<strong>Eligibility Status: ${data.member_status}</strong><br>We've verified your member information against our records and confirmed that you qualify for these managed Medicaid plans based on your current enrollment and income status.`);
+
                 return html;
             } catch (error) {
                 return showMockEligibility();
@@ -554,6 +657,8 @@
                 • Empire BlueCross BlueShield (HMO)<br>
                 • UnitedHealthcare Community (PPO)<br>
                 • Molina Healthcare (HMO)<br><br>
+                ${renderClarityLight('green')}
+                ${renderElaborateButton('Your eligibility was confirmed based on your household income, family size, and current program status. All available plans are appropriate for your coverage level.')}<br>
                 Would you like to compare these plans?`;
         }
 
@@ -570,6 +675,47 @@
                 2. Select your preferred plan<br>
                 3. I'll guide you through enrollment<br><br>
                 Which plan interests you?`;
+        }
+
+        async function handleContextualQuestion(userMessage, plansContext) {
+            const msg = userMessage.toLowerCase();
+
+            let aspect = 'general';
+            if (msg.includes('best') || msg.includes('which') || msg.includes('recommend')) {
+                aspect = 'recommendation';
+            } else if (msg.includes('differ') || msg.includes('same') || msg.includes('difference')) {
+                aspect = 'differences';
+            } else if (msg.includes('cover') || msg.includes('benefit') || msg.includes('what do')) {
+                aspect = 'coverage';
+            }
+
+            let html = `<strong>About the plans I just showed:</strong><br><br>`;
+
+            if (aspect === 'recommendation') {
+                html += `<strong>${plansContext[0].name}</strong> (${plansContext[0].type}) is often the most popular choice because of its managed care model and established network.<br><br>
+                    However, the best plan for <strong>you</strong> depends on:<br>
+                    • Your preferred doctors/hospitals<br>
+                    • Which specialists you need<br>
+                    • Your preferred pharmacy<br><br>`;
+                html += renderClarityLight('yellow');
+                html += renderElaborateButton('Different plans work best for different people. HMO plans (like ' + plansContext[0].name + ') tend to be more affordable but require choosing a primary care provider. PPO plans offer more flexibility in provider selection.');
+            } else if (aspect === 'differences') {
+                html += `The main differences between these plans:<br><br>`;
+                plansContext.forEach((plan, idx) => {
+                    html += `<strong>${idx + 1}. ${plan.name} (${plan.type})</strong><br>Network: ${plan.network}<br><br>`;
+                });
+                html += renderClarityLight('green');
+                html += renderElaborateButton('HMOs require selecting a primary care provider and typically have lower premiums. PPOs allow visiting any in-network provider without a referral. The choice depends on your preference for provider flexibility vs. cost savings.');
+            } else {
+                html += `Here's what I know about the ${plansContext.length} plans I showed you:<br><br>`;
+                plansContext.forEach((plan, idx) => {
+                    html += `<strong>${idx + 1}. ${plan.name}</strong><br>Type: ${plan.type} | Network: ${plan.network}<br><br>`;
+                });
+                html += renderClarityLight('green');
+                html += renderElaborateButton('All of these plans are available Medicaid options in your area. Each has established networks with hospitals and specialists. Ask "Which is best for me?" or "Compare these plans" for detailed guidance on choosing the right plan for your needs.');
+            }
+
+            return html;
         }
 
         function getHelpMessage() {

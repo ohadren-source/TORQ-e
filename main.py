@@ -2,14 +2,14 @@
 TORQ-e: Medicaid Clarity System
 Main FastAPI Application
 
-DEMO SCOPE: Cards 1, 2, 4, 5 ONLY
-(Card 3 / UHWP is not implemented in this demo)
+DEMO SCOPE: Cards 1, 2, 3, 4, 5 COMPLETE
+All cards now implemented with context-driven routing and appropriate visualizations.
 
 Card 1 (UMID): Member Eligibility System [LIVE]
 Card 2 (UPID): Provider System [LIVE]
-Card 3 (UHWP): Plan Administrator [NOT IN THIS DEMO]
-Card 4 (USHI): Government Stakeholder [In Development]
-Card 5 (UBADA): Data Analyst & Fraud Investigation [Backend Ready]
+Card 3 (UHWP): Plan Network Management [LIVE - Context-Driven]
+Card 4 (USHI): Government Stakeholder Governance [LIVE - Locked v1.0.0]
+Card 5 (UBADA): Data Analyst & Fraud Investigation [LIVE - Backend Ready]
 """
 
 from fastapi import FastAPI
@@ -23,6 +23,7 @@ from config import settings
 from database import init_db
 from card_1_umid import router as card1_router
 from card_2_upid import router as card2_router
+from card_3_uhwp import router as card3_router
 from card_4_ushi import router as card4_router
 from card_5_ubada import router as card5_router
 from chat import router as chat_router
@@ -63,6 +64,7 @@ async def startup_event():
 # Include Card routes
 app.include_router(card1_router)
 app.include_router(card2_router)
+app.include_router(card3_router)
 app.include_router(card4_router)
 app.include_router(card5_router)
 
@@ -89,7 +91,7 @@ async def root():
     return {
         "message": "TORQ-e: Medicaid Clarity System",
         "version": settings.api_version,
-        "demo_scope": "Cards 1, 2, 4, 5 ONLY (Card 3 not implemented in this demo)",
+        "demo_scope": "Cards 1-5 COMPLETE (Full System Live)",
         "cards": {
             "1": {
                 "name": "UMID (Member Eligibility)",
@@ -117,16 +119,33 @@ async def root():
                 ]
             },
             "3": {
-                "name": "UHWP (Plan Administrator)",
-                "status": "⏭️  NOT IN THIS DEMO (easiest card, skipped for demo)"
+                "name": "UHWP (Plan Network Management)",
+                "status": "✅ LIVE",
+                "endpoints": [
+                    "GET /api/card3/programs (by state)",
+                    "GET /api/card3/eligible-programs (by member)",
+                    "POST /api/card3/plan-comparison",
+                    "GET /api/card3/health"
+                ]
             },
             "4": {
                 "name": "USHI (Government Stakeholder)",
-                "status": "🔨 IN DEVELOPMENT"
+                "status": "✅ LIVE - LOCKED v1.0.0",
+                "endpoints": [
+                    "POST /api/card4/metrics",
+                    "POST /api/card4/fraud-signals",
+                    "POST /api/card4/data-quality",
+                    "GET /api/card4/governance-log"
+                ]
             },
             "5": {
-                "name": "UBADA (Data Analyst/Fraud)",
-                "status": "🔨 BACKEND READY"
+                "name": "UBADA (Data Analyst/Fraud Investigation)",
+                "status": "✅ LIVE - Backend Ready",
+                "endpoints": [
+                    "POST /api/card5/create-case",
+                    "POST /api/card5/add-evidence",
+                    "GET /api/card5/cases"
+                ]
             }
         }
     }
