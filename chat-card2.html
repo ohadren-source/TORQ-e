@@ -481,10 +481,10 @@
         // Initialize from sessionStorage
         const username = sessionStorage.getItem('username') || 'Provider';
         const cardNumber = sessionStorage.getItem('cardNumber');
-        const providerId = sessionStorage.getItem('provider_id');
+        const providerId = sessionStorage.getItem('upid');
         document.getElementById('userName').textContent = username;
 
-        // SESSION CONTEXT CHECK: If provider is logged in with provider_id, use it automatically
+        // SESSION CONTEXT CHECK: If provider is logged in with upid, use it automatically
         window.addEventListener('load', () => {
             if (providerId) {
                 const welcomeMsg = document.createElement('div');
@@ -553,7 +553,7 @@
             const userType = sessionStorage.getItem('userType') || 'Provider';
             const cardNum = parseInt(sessionStorage.getItem('cardNumber')) || 2;
             const sessionId = sessionStorage.getItem('sessionId') || 'session-' + Date.now();
-            const userProviderId = sessionStorage.getItem('provider_id'); // Get provider_id from session
+            const userProviderId = sessionStorage.getItem('upid'); // Get upid from session
 
             try {
                 const payload = {
@@ -563,10 +563,10 @@
                     sessionId: sessionId
                 };
 
-                // If provider is logged in with provider_id, include it so Claude knows they're authenticated
+                // If provider is logged in with upid, include it so Claude knows they're authenticated
                 if (userProviderId) {
-                    payload.provider_id = userProviderId;
-                    payload.context = `Provider is authenticated with ID: ${userProviderId}. Do not ask for provider credentials - use their session provider_id for claim validation and member lookups.`;
+                    payload.upid = userProviderId;
+                    payload.context = `Provider is authenticated with ID: ${userProviderId}. Do not ask for provider credentials - use their session upid for claim validation and member lookups.`;
                 }
 
                 const response = await fetch('/api/chat/stream', {

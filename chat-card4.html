@@ -726,8 +726,10 @@
         const API_BASE = 'https://torq-e-production.up.railway.app/api/card4';
 
         // Conversation context
+        const ushiId = sessionStorage.getItem('ushi_id');
         let conversationContext = {
             lastMetricsShown: null,
+            ushiId: ushiId,
             userRole: sessionStorage.getItem('user_role') || 'GOVERNANCE_AUTHORITY'
         };
 

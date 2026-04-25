@@ -612,7 +612,7 @@
         }
 
         async function handleEligibilityCheck(query) {
-            const beneficiaryId = sessionStorage.getItem('beneficiary_id');
+            const beneficiaryId = sessionStorage.getItem('whup_id');
 
             if (!beneficiaryId) {
                 return `To check your eligibility, I need your member information. Please:<br>

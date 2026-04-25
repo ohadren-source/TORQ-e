@@ -356,6 +356,7 @@
             .catch(error => console.log('Header not found (development mode):', error));
 
         // Chat functionality
+        const ubadaId = sessionStorage.getItem('ubada_id');
         const inputText = document.getElementById('inputText');
         const sendBtn = document.getElementById('sendBtn');
         const messagesDiv = document.getElementById('messages');

@@ -231,6 +231,7 @@
         loginBtn.addEventListener('click', () => {
             if (usernameInput.value.trim()) {
                 sessionStorage.setItem('username', usernameInput.value);
+                sessionStorage.setItem('ushi_id', usernameInput.value);
                 sessionStorage.setItem('userType', 'GovernmentStakeholder');
                 sessionStorage.setItem('cardNumber', '4');
                 window.location.href = 'chat-card4.html';

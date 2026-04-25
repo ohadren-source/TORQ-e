@@ -423,6 +423,7 @@
         loginBtn.addEventListener('click', () => {
             if (usernameInput.value.trim()) {
                 sessionStorage.setItem('username', usernameInput.value);
+                sessionStorage.setItem('upid', usernameInput.value);
                 sessionStorage.setItem('userType', 'Provider');
                 sessionStorage.setItem('cardNumber', '2');
                 window.location.href = 'chat-card2.html';
@@ -443,6 +444,7 @@
         npiLoginBtn.addEventListener('click', () => {
             if (npiInput.value.trim()) {
                 sessionStorage.setItem('username', npiInput.value);
+                sessionStorage.setItem('upid', npiInput.value);
                 sessionStorage.setItem('userType', 'Provider');
                 sessionStorage.setItem('cardNumber', '2');
                 window.location.href = 'chat-card2.html';

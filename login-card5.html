@@ -231,6 +231,7 @@
         loginBtn.addEventListener('click', () => {
             if (usernameInput.value.trim()) {
                 sessionStorage.setItem('username', usernameInput.value);
+                sessionStorage.setItem('ubada_id', usernameInput.value);
                 sessionStorage.setItem('userType', 'DataAnalyst');
                 sessionStorage.setItem('cardNumber', '5');
                 window.location.href = 'chat-card5.html';
