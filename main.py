@@ -24,6 +24,8 @@ from database import init_db
 from card_1_umid import router as card1_router
 from card_2_upid import router as card2_router
 from chat import router as chat_router
+from governance import router as governance_router
+from source_management import router as source_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -62,6 +64,10 @@ app.include_router(card2_router)
 
 # Include Chat router (Claude API integration)
 app.include_router(chat_router)
+
+# Include Governance & Source Management routers (Phase 1 - Shared Infrastructure)
+app.include_router(governance_router)
+app.include_router(source_router)
 
 # Mount static files (HTML, CSS, images, etc.)
 # Serve from the project root directory where landing.html, login-*.html, etc. are located
