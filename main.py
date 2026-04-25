@@ -2,11 +2,14 @@
 TORQ-e: Medicaid Clarity System
 Main FastAPI Application
 
-Card 1 (UMID): Member Eligibility System
-Card 2 (UPID): Provider System [In Development]
-Card 3 (UHWP): Plan Administrator [Planned]
-Card 4 (USHI): Government Stakeholder [Planned]
-Card 5 (UBADA): Data Analyst & Fraud Investigation [Planned]
+DEMO SCOPE: Cards 1, 2, 4, 5 ONLY
+(Card 3 / UHWP is not implemented in this demo)
+
+Card 1 (UMID): Member Eligibility System [LIVE]
+Card 2 (UPID): Provider System [LIVE]
+Card 3 (UHWP): Plan Administrator [NOT IN THIS DEMO]
+Card 4 (USHI): Government Stakeholder [In Development]
+Card 5 (UBADA): Data Analyst & Fraud Investigation [In Development]
 """
 
 from fastapi import FastAPI
@@ -76,6 +79,7 @@ async def root():
     return {
         "message": "TORQ-e: Medicaid Clarity System",
         "version": settings.api_version,
+        "demo_scope": "Cards 1, 2, 4, 5 ONLY (Card 3 not implemented in this demo)",
         "cards": {
             "1": {
                 "name": "UMID (Member Eligibility)",
@@ -104,15 +108,15 @@ async def root():
             },
             "3": {
                 "name": "UHWP (Plan Administrator)",
-                "status": "📋 PLANNED"
+                "status": "⏭️  NOT IN THIS DEMO (easiest card, skipped for demo)"
             },
             "4": {
                 "name": "USHI (Government Stakeholder)",
-                "status": "📋 PLANNED"
+                "status": "🔨 IN DEVELOPMENT"
             },
             "5": {
                 "name": "UBADA (Data Analyst/Fraud)",
-                "status": "📋 PLANNED"
+                "status": "🔨 IN DEVELOPMENT"
             }
         }
     }

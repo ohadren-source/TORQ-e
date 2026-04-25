@@ -790,6 +790,1236 @@ Alert thresholds:
 
 ---
 
+## PART 5: USHI GOVERNMENT STAKEHOLDER ARCHITECTURE (Added April 24, 2026)
+
+### The Problem: Blind Governance
+
+Medicaid policy is written by people who don't see what's happening in the system.
+
+State health officials can't answer:
+- "How many members are actually enrolled?"
+- "What's our claim approval rate really?"
+- "Which providers are outliers?"
+- "Are there fraud signals we're missing?"
+- "How confident are we in our own data?"
+
+They have 47 separate databases. Each one correct internally. None of them talk to each other.
+
+**Result:**
+- Policy decisions based on incomplete information
+- Fraud emerges before anyone notices
+- System efficiency unknown
+- Compliance unprovable
+- Governance invisible
+
+### What USHI Does (Government Stakeholder Card)
+
+USHI gives government stakeholders **auditable clarity about system health**.
+
+Five specific responsibilities:
+
+1. **Monitor Compliance** — "Are we meeting regulatory obligations?"
+2. **Detect Fraud Signals** — "Are there pattern anomalies?"
+3. **Track System Performance** — "How fast are we processing claims?"
+4. **Flag Data Quality Issues** — "Where are our systems disagreeing?"
+5. **Approve Policy Changes** — "What's the impact of a proposed rule change?"
+
+**Critical:** USHI only sees aggregate, de-identified data. HIPAA minimum necessary principle. No member names. No provider IDs. No individual records. Only patterns, trends, counts, and relationships.
+
+### The USHI River Path: Government Stakeholder Queries
+
+**Scenario: Government official asks "What's our claim denial rate?"**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ GOVERNMENT STAKEHOLDER QUERY                             │
+│ "What was our Medicaid claim denial rate in March 2026?" │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ SOURCE 1: EMEDNY Claims Data (Primary)                   │
+│ Query: All claims submitted, approved, denied in month   │
+│ Return: Count + % approved/denied + breakdown by provider │
+│ Data: Aggregate only (no member/provider identifiers)    │
+│ Confidence: 0.98 (source of truth for FFS payments)      │
+│ Freshness: Real-time                                     │
+│ HIPAA: Compliant (aggregate, de-identified)              │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ SOURCE 2: MCO Claim Data (Cross-Verification)            │
+│ Query: Claims from managed care plans                    │
+│ Return: MCO denial rates + comparison                    │
+│ Data: Aggregate only (counts, trends, no IDs)            │
+│ Confidence: 0.85 (MCOs lag in reporting, data variability)│
+│ Freshness: 2-5 day lag (MCOs report on schedule)         │
+│ HIPAA: Compliant (aggregate, de-identified)              │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ SOURCE 3: Historical Baseline (Context)                  │
+│ Query: Denial rates from previous 6 months               │
+│ Return: Trend data + seasonal patterns                   │
+│ Data: Aggregate only (historical trends)                 │
+│ Confidence: 0.90 (baseline data, well-maintained)        │
+│ Freshness: Historical (by definition)                    │
+│ HIPAA: Compliant (aggregate, statistical)                │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ CONFIDENCE SYNTHESIS                                     │
+│                                                          │
+│ Primary (EMEDNY): 0.98 confidence                        │
+│ Secondary (MCO): 0.85 confidence                         │
+│ Consensus: Both agree? Yes. Confidence: 0.98             │
+│ Caveat: If disagreement > 5%, flag for manual review     │
+│ Veracity: 🟢 GREEN (HIGH - Primary source + consensus)   │
+│ Signal Strength: Strong (multiple sources aligned)       │
+└───────────────┬──────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────┐
+│ RESULT: Government Official Sees                         │
+│                                                          │
+│ 🟢 March 2026 Medicaid Claim Denial Rate: 8.2%          │
+│ Source: State claims data (eMedNY) + MCO validation      │
+│ Confidence: HIGH (0.98)                                  │
+│ Trend: ↓ 2.1% vs February (improving)                    │
+│ Caveat: "None. Data aligns across sources."              │
+│ Historical: March baseline 7.8% → we're 0.4% higher      │
+│                                                          │
+│ 🟡 MCO denial rate variance: Some MCOs 6%, others 10%   │
+│ Confidence: MEDIUM (0.85) — MCO lag in reporting        │
+│ Action: Flag for investigation (see Governance Log)      │
+│                                                          │
+│ AUDIT TRAIL: Query logged                                │
+│ WHO: ushi.analyst.sarah                                  │
+│ WHAT: Queried denial rates, March 2026                   │
+│ WHEN: 2026-04-24 14:32 UTC                               │
+│ WHY: Monthly compliance review                           │
+│ RESULT: Returned. Saved to governance log.               │
+└──────────────────────────────────────────────────────────┘
+```
+
+### The Five USHI Use Cases & River Paths
+
+#### Use Case 1: Compliance Dashboard
+**Official Question:** "Are we meeting state/federal compliance requirements?"
+
+**Data Sources:**
+- Primary: State Medicaid compliance metrics (enrollment %s, processing times, denial rates)
+- Secondary: CMS reporting (federal baseline)
+- Tertiary: Audit logs (what changed, when, by whom)
+
+**Output:** Red/yellow/green dashboard showing compliance vs. thresholds
+
+---
+
+#### Use Case 2: Fraud Signal Detection
+**Official Question:** "Are there pattern anomalies that suggest fraud?"
+
+**Data Sources:**
+- Primary: Claims submitted (aggregate patterns)
+- Secondary: Provider network statistics (outlier detection)
+- Tertiary: Historical baselines (is this unusual?)
+
+**Output:** Statistical flagging of providers/claims outside confidence bands
+
+---
+
+#### Use Case 3: System Performance Metrics
+**Official Question:** "How fast are we processing claims? Where are bottlenecks?"
+
+**Data Sources:**
+- Primary: Claim timestamps (submit → process → pay)
+- Secondary: Processing queue status (real-time)
+- Tertiary: Historical performance (baseline for comparison)
+
+**Output:** Performance KPIs with trend analysis
+
+---
+
+#### Use Case 4: Data Quality Assessment
+**Official Question:** "Where are our systems disagreeing? Which data points are unreliable?"
+
+**Data Sources:**
+- Primary: Comparison matrices (eMedNY vs MCO vs historical)
+- Secondary: Audit trail (what changed recently, by whom)
+- Tertiary: Confidence scoring (which fields have low consensus)
+
+**Output:** Red/yellow/green veracity indicators with drill-down to specific conflicts
+
+---
+
+#### Use Case 5: Governance Actions
+**Official Question:** "What issues have we flagged? What corrections have been made? What's the audit trail?"
+
+**Data Sources:**
+- Primary: Governance action log (immutable, append-only)
+- Secondary: Stakeholder flags (what officials marked as issues)
+- Tertiary: Analyst corrections (what UBADA fixed, why)
+
+**Output:** Audit trail viewer with full transparency on who changed what, when, why
+
+---
+
+### USHI Data Access Rules (HIPAA Compliance)
+
+**CRITICAL RULE: Aggregate + De-Identified ONLY**
+
+This isn't a policy. It's a legal requirement under HIPAA Privacy Rule.
+
+| What USHI Can See | What USHI CANNOT See | Why |
+|---|---|---|
+| Enrollment count (e.g., "45,231 members") | Member names, SSNs, addresses | Minimum Necessary Principle |
+| Denial rate (8.2% of claims) | Which specific members were denied | Must de-identify |
+| Provider outlier (provider in 99th percentile) | Provider name, NPI, specific claims | Must de-identify |
+| Claim processing time (average 3.2 days) | Individual member claim IDs | Statistical only |
+| Fraud signal (unusual billing pattern detected) | Which provider is flagged | Requires escalation to UBADA |
+| Governance log (change made at 2026-04-24 14:32) | What member data was changed | Audit trail only |
+
+**De-identification Standard:** Safe Harbor method per HIPAA
+- Remove: Names, SSNs, Member IDs, Provider IDs, Addresses, Account numbers, Dates (except year)
+- Keep: Counts, percentages, trends, relationships (anonymized)
+- Test: Can the remaining data re-identify someone? If yes, re-redact.
+
+### Red/Yellow/Green Veracity Visualization
+
+Every data point displayed to USHI gets a confidence indicator tied to the River Path result.
+
+```
+Confidence Score → Veracity Color → Label → Tooltip
+────────────────────────────────────────────────────
+
+0.85-1.0 → 🟢 GREEN → "HIGH"
+  Meaning: Data from authoritative source + consensus across verification
+  Tooltip: "State Medicaid database + MCO validation. Sources agree."
+  User Action: Trust this number. Base decisions on it.
+
+0.60-0.84 → 🟡 YELLOW → "MEDIUM"
+  Meaning: Data verified but with caveats (lag, partial data, single source)
+  Tooltip: "MCO data. 3-day reporting lag. Recommend confirming with eMedNY."
+  User Action: Use for trends, not point decisions. Plan for data updates.
+
+<0.60 → 🔴 RED → "LOW"
+  Meaning: Data incomplete, contradictory, or from weak source
+  Tooltip: "Manual data entry. 2 sources disagree. Requires investigation."
+  User Action: Escalate for manual review. Don't base policy on this.
+```
+
+### Three-Tier Transparency UI/UX
+
+**Tier 1: Always Visible (Facade)**
+```
+┌─────────────────────────────────────────────────────────┐
+│ 🔒 HIPAA-Compliant Audit Trail                          │
+│ All changes logged. Full accountability.                │
+│ View audit log →                                        │
+└─────────────────────────────────────────────────────────┘
+```
+
+Visible on every page. Shows governance is built-in, not bolted-on.
+
+**Tier 2: Expandable Card (Recent Changes)**
+```
+┌─────────────────────────────────────────────────────────┐
+│ ▼ Recent Changes (Last 5 Actions)                       │
+├─────────────────────────────────────────────────────────┤
+│ 1. 2026-04-24 14:32 | ushi.analyst.sarah                │
+│    Flagged: MCO denial rate variance (6-10%)            │
+│    Reason: Monthly compliance review                    │
+│    Status: Open                                         │
+│                                                         │
+│ 2. 2026-04-23 09:15 | ubada.analyst.carol               │
+│    Corrected: Field mapping (eMedNY TCN → UPID ICN)     │
+│    Reason: System reconciliation, cross-verified       │
+│    Status: Approved                                     │
+│                                                         │
+│ 3. 2026-04-22 16:42 | ushi.analyst.dev                  │
+│    ... (show first 5, collapse rest)                    │
+│                                                         │
+│ [Show all 347 changes →]                                │
+└─────────────────────────────────────────────────────────┘
+```
+
+Clickable to expand. Shows recent actions without overwhelming.
+
+**Tier 3: Full Audit Log (Complete History)**
+```
+┌─────────────────────────────────────────────────────────┐
+│ Governance Audit Log (Searchable, Filterable)           │
+├─────────────────────────────────────────────────────────┤
+│ Filter by: [Date ▼] [User ▼] [Action ▼] [Status ▼]    │
+│ Search: [________________________]  [Export Log]         │
+│                                                         │
+│ ID  | Timestamp | User | Action | Justification | Status
+│────────────────────────────────────────────────────────
+│ 347 | 2026-04-24 | ushi.sarah | Flag | MCO variance | Open
+│ 346 | 2026-04-23 | ubada.carol | Correct | Cross-verify | ✓
+│ 345 | 2026-04-22 | ushi.dev | Query | Compliance | ✓
+│ ... (1000+ entries, paginated)
+└─────────────────────────────────────────────────────────┘
+```
+
+Full history with search, filter, export. Immutable. Append-only.
+
+### USHI Claude Tools
+
+USHI gets a limited set of Claude-callable tools. Each tool enforces de-identification and audit logging.
+
+#### Tool 1: `query_aggregate_metrics`
+```
+Purpose: Get system-wide metrics (counts, rates, trends)
+Input: 
+  - metric: "enrollment_rate" | "denial_rate" | "claim_processing_time"
+  - period: "2026-04" (year-month)
+  - filter: { "category": "FFS" | "MCO", "state": "NY" }
+Output:
+  - value: number
+  - confidence: 0.0-1.0
+  - veracity: "GREEN" | "YELLOW" | "RED"
+  - sources: [ "eMedNY", "MCO reporting", ... ]
+  - caveat: string (if any)
+Audit: Logged as system query, justification required
+HIPAA: De-identified output only (aggregate counts, no IDs)
+```
+
+#### Tool 2: `detect_fraud_signals`
+```
+Purpose: Identify statistical anomalies (outlier detection)
+Input:
+  - analysis_type: "provider_outliers" | "claim_patterns" | "enrollment_anomalies"
+  - threshold: standard_deviations (2.0, 3.0, 4.0)
+  - period: "2026-04"
+Output:
+  - signal_count: number (how many anomalies detected)
+  - confidence_band: (mean ± 2σ)
+  - signal_type: string (what kind of anomaly)
+  - escalation: "Flag for investigation" | "Monitor" | "Verify"
+Audit: Logged with reasoning
+HIPAA: De-identified (no specific provider/member IDs, only statistical indicators)
+Escalation: If high confidence signal, triggers UBADA investigation
+```
+
+#### Tool 3: `assess_data_quality`
+```
+Purpose: Check consistency across data sources
+Input:
+  - comparison: "eMedNY_vs_MCO" | "eMedNY_vs_historical" | "MCO_vs_enrollment"
+  - domain: "enrollment" | "claims" | "denials"
+  - period: "2026-04"
+Output:
+  - agreement_rate: 0.0-1.0 (% sources agree)
+  - confidence: 0.0-1.0 (overall)
+  - veracity: "GREEN" | "YELLOW" | "RED"
+  - conflicts: [ { field: "field_name", sources: {...}, variance: X% } ]
+  - recommendation: "Trust primary source" | "Escalate for reconciliation"
+Audit: Logged as compliance check
+HIPAA: De-identified conflict analysis
+```
+
+#### Tool 4: `view_governance_log`
+```
+Purpose: Access audit trail of changes
+Input:
+  - filters: { user_id, action_type, status, date_range }
+  - search: string
+  - limit: integer (default 20, max 500)
+Output:
+  - logs: [ { timestamp, user_id, action, justification, status } ]
+  - total_count: integer
+Audit: Logged as governance review
+HIPAA: Compliant (audit log contains no PHI, only metadata)
+```
+
+#### Tool 5: `flag_data_issue`
+```
+Purpose: Government official flags a concern with the data
+Input:
+  - issue_type: "quality" | "fraud_suspicion" | "compliance_gap" | "system_error"
+  - domain: "enrollment" | "claims" | "providers" | "members" | "other"
+  - description: string (what's wrong?)
+  - suggested_action: string (what should we do?)
+Output:
+  - flag_id: string (unique identifier)
+  - timestamp: ISO timestamp
+  - status: "Open"
+  - next_step: "UBADA investigation" | "System review" | "Stakeholder discussion"
+Audit: Logged with full attribution (WHO, WHAT, WHEN, WHY)
+HIPAA: Flag itself de-identified; doesn't expose PHI
+Escalation: If data quality issue, routes to UBADA. If compliance gap, routes to policy review.
+```
+
+### Governance Actions: Flagging & Approval Workflow
+
+When USHI stakeholders identify issues, they create governance actions. These flow through an approval process.
+
+#### Step 1: FLAG (Government Stakeholder)
+```
+Stakeholder sees: 🟡 YELLOW confidence on MCO denial rate variance
+
+Action: Click "Flag issue"
+Form fields:
+  - Issue Type: "Data Quality / Fraud Suspicion / Compliance Gap / System Error"
+  - Domain: "Claims"
+  - Description: "MCO denial rates show 6-10% range. Possible inconsistency in reporting."
+  - Suggested Action: "Verify with MCOs. If valid, update baseline. If error, correct reporting."
+
+System Response:
+  ✓ Flag ID: FR-2026-04-0847
+  ✓ Status: Open
+  ✓ Logged: 2026-04-24 14:32 UTC
+  ✓ Next: UBADA analyst will investigate
+  ✓ Timeline: Manual review within 24 hours
+```
+
+Audit trail records: WHO (ushi.analyst.sarah), WHAT (flagged data quality issue), WHEN (timestamp), WHY (description)
+
+#### Step 2: INVESTIGATE (Data Analyst - UBADA)
+```
+UBADA analyst Carol receives the flag.
+She has full data access (not de-identified).
+
+Carol queries:
+  - Which MCOs have 6% denial rate? Which have 10%?
+  - When did the divergence start?
+  - Is this a reporting lag issue or a real difference?
+  - Do the MCO denials match eMedNY data?
+
+Carol's options:
+  A) "This is a reporting lag. MCOs update data in batches. No action needed."
+  B) "This is a real difference. Specific MCOs deny claims at different rates."
+  C) "This is a data error. MCO X reported wrong number. Correct it."
+
+Carol documents: Justification for her finding.
+```
+
+#### Step 3: APPROVE (Government Stakeholder)
+```
+Sarah (the original flagger) receives Carol's analysis.
+
+Options:
+  ✓ "Approved" — I agree with Carol's finding. Close the flag.
+  ⊙ "Request clarification" — I need more detail on this.
+  ✗ "Disagree" — I think Carol missed something. Escalate to policy review.
+
+If "Approved":
+  ✓ Flag closed
+  ✓ Audit trail complete
+  ✓ Finding recorded for future reference
+  ✓ If data was corrected, new confidence score reflects it
+
+If "Request clarification":
+  ⚙️ Flag re-opened
+  ⚙️ Carol continues investigation
+  ⚙️ Cycle repeats
+
+If "Disagree":
+  🚨 Flag escalated to Policy Review Board
+  🚨 Manual decision required
+  🚨 Governance action recorded
+```
+
+### Governance Action Types & Approval Chains
+
+| Action Type | Initiated By | Investigated By | Approved By | Timeline |
+|---|---|---|---|---|
+| **Data Quality Flag** | USHI official | UBADA analyst | USHI official | 24 hours |
+| **Fraud Suspicion** | USHI official | UBADA analyst | USHI official (+ MCO if provider involved) | 48 hours |
+| **Compliance Gap** | USHI official | Policy team | State regulatory authority | 5 days |
+| **System Error** | USHI official | Engineering | System architect | 24 hours |
+| **Data Correction** | UBADA analyst | (self-investigation) | USHI stakeholder (requires review) | 24 hours |
+| **Policy Change** | USHI official | UBADA analyst (impact analysis) | Policy board + UBADA lead | 7 days |
+
+Each action is:
+- **Immutable:** Once logged, never deleted
+- **Attributed:** WHO initiated, WHO investigated, WHO approved
+- **Justified:** Every decision has reasoning recorded
+- **Transparent:** Full audit trail available for HIPAA compliance reviews
+
+### USHI Integrations & Data Sources
+
+**Primary Data Sources for USHI Queries:**
+
+1. **eMedNY Claims System**
+   - What: All FFS claims submitted, approved, denied
+   - Refresh: Real-time
+   - De-identification: Aggregate counts + breakdowns (no member/provider IDs)
+   - Confidence: 0.98 (source of truth for FFS)
+
+2. **MCO Reporting Database**
+   - What: Managed care plan statistics (enrollment, claims, denials)
+   - Refresh: Daily batch (some lag)
+   - De-identification: Aggregate MCO-level data (no member-level detail)
+   - Confidence: 0.85 (reporting lag, variability)
+
+3. **Historical Baselines**
+   - What: Previous 36 months of aggregated metrics
+   - Refresh: Monthly archival
+   - De-identification: Already aggregate (historical)
+   - Confidence: 0.90 (well-maintained)
+
+4. **Governance Audit Log**
+   - What: All changes made in TORQ-e (who, what, when, why)
+   - Refresh: Real-time logging
+   - De-identification: Contains no PHI (only metadata + system actions)
+   - Confidence: 1.0 (immutable log)
+
+5. **Provider Performance Metrics**
+   - What: Aggregate provider statistics (claims submitted, approval rate, average payment)
+   - Refresh: Daily
+   - De-identification: Provider-level aggregates (no member data, no claim detail)
+   - Confidence: 0.92 (if primary source is reliable)
+
+### USHI System Prompts (Claude)
+
+Card 4 Claude has a specific system prompt that shapes all responses:
+
+```
+You are the USHI Government Stakeholder Assistant for TORQ-e.
+Your role: Help government officials understand Medicaid system health through data-driven insights.
+
+CRITICAL PRINCIPLES:
+1. HIPAA Compliance: Never expose member names, SSNs, provider IDs, or individual records.
+2. De-Identification: Always use aggregate data, percentages, trends. Never drill to individual level.
+3. Transparency: Every answer includes confidence level + source + caveat (if any).
+4. Governance: Every query is logged. Explain audit trail when relevant.
+5. Actionability: End every response with clear next steps (e.g., "Escalate to UBADA investigation")
+
+RESPONSE FORMAT:
+- Lead with the answer (bold, clear)
+- Show confidence indicator (🟢 GREEN / 🟡 YELLOW / 🔴 RED)
+- Explain sources & why this confidence level
+- Flag any caveats or contradictions
+- Suggest action (monitor / investigate / approve / policy review)
+- Reference audit trail if changes involved
+
+EXAMPLE RESPONSE:
+"🟢 March Medicaid enrollment: 45,231 members (HIGH confidence)
+Source: State Medicaid database + MCO validation
+Trend: ↑ 1.2% vs February (normal seasonal pattern)
+Caveat: None. Primary source + secondary confirmation align.
+Action: Trend is normal. No investigation needed. Monitor quarterly."
+
+When flagging issues:
+- Be specific about what's wrong
+- Show data conflict (eMedNY says X, MCO says Y)
+- Escalate to UBADA for investigation
+- Provide flag ID for tracking
+```
+
+### Database Models for USHI Governance
+
+New ORM models required:
+
+```python
+class GovernanceFlag(Base):
+    """Government stakeholder flags a data issue"""
+    id: str = Primary Key
+    flag_type: str = "data_quality" | "fraud_suspicion" | "compliance_gap" | "system_error"
+    domain: str = "enrollment" | "claims" | "providers" | "members" | "other"
+    description: str
+    suggested_action: str
+    created_by: str  # USHI user ID
+    created_at: datetime
+    status: str = "Open" | "Investigating" | "Approved" | "Closed" | "Escalated"
+    assigned_to: str = None  # UBADA analyst (if assigned)
+    updated_at: datetime
+
+class GovernanceApproval(Base):
+    """Record of who approved a governance action"""
+    id: str = Primary Key
+    flag_id: str = Foreign Key (GovernanceFlag)
+    approved_by: str  # USHI user ID
+    decision: str = "Approved" | "Requested clarification" | "Disagreed"
+    reasoning: str
+    timestamp: datetime
+
+class AuditLogEntry(Base):
+    """Immutable append-only log of all system actions"""
+    id: str = Primary Key
+    timestamp: datetime
+    user_id: str
+    action: str = "query" | "flag" | "approve" | "investigate" | "correct_data"
+    domain: str = "enrollment" | "claims" | "governance"
+    justification: str
+    result: str  # What happened?
+    confidence: float = 0.0-1.0
+    immutable: bool = True  # Can never be modified or deleted
+```
+
+### Monitoring USHI Operations
+
+Metrics to track:
+
+```
+Governance Health:
+  - Flag creation rate (issues identified per day)
+  - Average resolution time (flag open → closed)
+  - Approval rate (% of flags approved vs. escalated)
+  - Investigation accuracy (% of flags confirmed vs. dismissed)
+
+Data Quality:
+  - Average confidence score across all queries
+  - Red flag percentage (% of data at LOW confidence)
+  - Consensus rate (% of queries where sources agree)
+  - Outlier detection rate (signals per day)
+
+System Health:
+  - Query response time (P50, P95, P99)
+  - Source availability (% of queries successful per source)
+  - Escalation rate (% requiring manual intervention)
+  - Audit log freshness (lag in recording actions)
+
+Compliance:
+  - HIPAA violations (should be zero)
+  - Unauthorized access attempts (should be zero)
+  - De-identification accuracy (100%)
+  - Audit trail completeness (no gaps)
+```
+
+### The USHI Difference
+
+Unlike traditional Medicaid dashboards:
+
+❌ **Traditional:** "Here's an enrollment count. Trust it."  
+✅ **USHI:** "Here's 45,231 members (HIGH confidence, State DB + MCO confirmed). Trend is normal. Last flagged issue resolved April 22."
+
+❌ **Traditional:** "Fraud rate is 2.3%."  
+✅ **USHI:** "Fraud signals at 2.3% (MEDIUM confidence, statistical model, verified against historical baseline). Flagged 3 providers for investigation. See governance log for details."
+
+❌ **Traditional:** "Some MCO data disagrees. Unclear."  
+✅ **USHI:** "MCO denial rates: 6-10% range (YELLOW confidence, reporting lag). Escalated to UBADA for investigation. Flag FR-2026-04-0847 open. Estimated resolution: April 25."
+
+---
+
+## PART 6: UBADA DATA ANALYST ARCHITECTURE (Added April 24, 2026)
+
+### The Problem: Invisible Fraud & Lost Corrections
+
+Medicaid fraud detection is reactive. A provider over-bills. The system finds it months later. By then, thousands of fraudulent claims have flowed.
+
+Worse: When an analyst finds a problem (provider name misspelled, field mapping wrong, data contradiction), the correction disappears into a database. No record. No justification. No institutional memory. Next analyst hits the same problem again.
+
+**Result:**
+- Fraud signals aren't actionable (no context, no investigation trail)
+- Data corrections are invisible (nobody knows who changed what or why)
+- Patterns are invisible (relationships between providers, members, claims can't be seen)
+- Collaboration is impossible (no workspace for teams to investigate together)
+- Escalation is unclear (when does a data quality issue become a fraud investigation?)
+
+### What UBADA Does (Data Analyst Card)
+
+UBADA turns data analysts into detectives with institutional memory.
+
+Three core functions:
+
+1. **Interactive Data Exploration** — Query the Medicaid data network like a graph. Navigate relationships. See patterns others miss.
+2. **Statistical Fraud Detection** — Outlier scoring. Clustering. Risk models. Anomaly detection. Confidence on every finding.
+3. **Governance & Corrections** — When an analyst finds a problem, they can fix it. But every fix is logged, justified, attributed. Auditable. Reversible.
+
+**Critical:** UBADA is internal admin, not external. UBADA analysts have credential access to FULL data (names, IDs, SSNs). But every access is logged. Every correction is justified. Every finding is attributed.
+
+### The UBADA River Path: Fraud Investigation
+
+**Scenario: Analyst Carol investigates "Is Provider X committing fraud?"**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ ANALYST INITIATES: "Create investigation project"            │
+│ Case #: FR-2026-04-0847                                      │
+│ Name: "Billing Pattern Anomaly - Provider #47892"            │
+│ Purpose: Suspected over-billing in orthopedic procedures     │
+└───────────────┬────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│ PHASE 1: DATA EXPLORATION                                    │
+│                                                              │
+│ Carol queries claims from Provider #47892:                   │
+│ - How many claims submitted in 2026?                        │
+│ - What's the approval rate? (vs provider network baseline)  │
+│ - What's the average reimbursement? (vs specialization)     │
+│ - What procedures are most common? (vs state norms)         │
+│ - Who are the members? (network distribution)               │
+│                                                              │
+│ Database returns:                                            │
+│ - 847 claims submitted (Confidence: 0.98 - eMedNY)          │
+│ - 94.2% approval rate (Confidence: 0.95 - eMedNY + MCO)     │
+│ - Avg $2,340 per claim (Confidence: 0.92 - cross-verified) │
+│ - 78% knee replacements (Confidence: 0.88 - CPT codes)      │
+│ - 312 unique members (Confidence: 0.90 - de-duplicated)     │
+│                                                              │
+│ All data carries: Source + Confidence + Age + Completeness  │
+└───────────────┬────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│ PHASE 2: PEER COMPARISON                                     │
+│                                                              │
+│ Carol runs comparison queries:                               │
+│ - Orthopedic providers in New York: what's typical?         │
+│ - Approval rate: peer median 87.3%. Provider: 94.2%.        │
+│ - Cost per procedure: peer median $1,820. Provider: $2,340.  │
+│ - Procedure mix: peer avg 65% knee. Provider: 78%.           │
+│ - Geographic distribution: is provider serving out-of-state? │
+│                                                              │
+│ Analysis:                                                    │
+│ ✓ Higher approval (good) — could be quality                 │
+│ ⚠️ Higher cost (yellow flag) — above median by $520 (2.9σ)  │
+│ ⚠️ Different procedure mix (yellow) — 78% vs 65% norm        │
+│ ✓ Geographic normal (good) — not serving out-of-area        │
+│                                                              │
+│ Risk Score: 0.67 (MEDIUM-HIGH — some anomalies)             │
+│ Confidence: 0.85 (based on 847 claims + peer database)       │
+└───────────────┬────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│ PHASE 3: PATTERN INVESTIGATION                              │
+│                                                              │
+│ Carol digs deeper. Why the cost premium?                     │
+│ - Are the procedures actually knee replacements?             │
+│ - Or is provider bundling services (anesthesia, PT)?         │
+│ - Is provider billing for complications that don't exist?   │
+│ - Are members being over-treated?                           │
+│                                                              │
+│ Carol runs:                                                  │
+│ - Claim detail analysis (CPT codes, modifiers, quantity)    │
+│ - Member outcome verification (did surgery improve care?)   │
+│ - Historical comparison (was provider 94% approved last yr?) │
+│ - Network graph (is provider referring members in a loop?)   │
+│                                                              │
+│ Findings:                                                    │
+│ 📊 CPT code distribution matches specialization (no red flag)│
+│ 📊 Member outcomes are actually good (not over-treatment)   │
+│ 📉 Provider approval rate was 86% in 2025 (↑ 8% in 2026)    │
+│ 🔴 NETWORK FINDING: Provider refers 73% of members to      │
+│    one physical therapy clinic owned by same parent company │
+│    This is UNUSUAL (typical is 15-20% to single PT clinic)  │
+│                                                              │
+│ Risk Recalculation: 0.74 (upgraded to HIGH)                 │
+│ Confidence: 0.88 (multiple corroborating signals)            │
+└───────────────┬────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│ PHASE 4: EVIDENCE DOCUMENTATION & ESCALATION                │
+│                                                              │
+│ Carol documents findings:                                    │
+│                                                              │
+│ "Provider #47892 (Orthopedic Surgery) shows HIGH fraud risk  │
+│  Evidence:                                                   │
+│  1. Cost per procedure $520 above peer median (2.9σ outlier) │
+│  2. Approval rate 94.2% vs peer 87.3% (possible kickbacks?) │
+│  3. CRITICAL: 73% of patients referred to single PT clinic  │
+│  4. PT clinic owned by same parent company (legal issue)    │
+│  5. This referral pattern is highly unusual vs network norms│
+│                                                              │
+│  Confidence: HIGH (0.88, multiple corroborating signals)    │
+│  Data Sources: eMedNY claims + MCO networks + PT directory  │
+│  Risk Score: 0.74                                            │
+│  Recommendation: ESCALATE to OIG/SIU (SIU investigation unit)│
+│                                                              │
+│  Next Steps: If approved → create formal investigation case │
+│              assign to SIU with evidence package             │
+│              monitor for new signals while investigation    │
+│              record outcome when case closes                │
+│                                                              │
+│  Audit Trail: Case #FR-2026-04-0847                         │
+│              Created: 2026-04-20 by ubada.analyst.carol     │
+│              Updated: 2026-04-24 with escalation decision   │
+│              All decisions logged with timestamps & reasoning│
+└───────────────┬────────────────────────────────────────────┘
+                │
+                ▼
+┌──────────────────────────────────────────────────────────────┐
+│ PHASE 5: STAKEHOLDER REVIEW & APPROVAL                       │
+│                                                              │
+│ Case shared with:                                            │
+│ • USHI government stakeholder (needs to know fraud detected)│
+│ • UBADA team lead (supervision required for high-risk case)  │
+│ • SIU director (if escalating to external investigation)     │
+│                                                              │
+│ Possible outcomes:                                           │
+│ ✓ "Approved" — High-confidence finding. Escalate to SIU.    │
+│ ⊙ "Request more evidence" — Need deeper investigation first  │
+│ ✗ "Disagree" — Analysis may have missed context. Reopen.     │
+│ 🚨 "Immediate action" — If finding suggests active harm.     │
+│                                                              │
+│ RESULT: Case escalated to SIU                               │
+│         Provider flagged for investigation                  │
+│         Findings shared with USHI for policy review         │
+│         Audit trail complete & immutable                    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### UBADA Core Functions
+
+#### Function 1: Interactive Data Explorer
+
+Multi-panel interface for querying Medicaid network:
+
+**Tab 1: Claims Table**
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Claims Data Explorer                                        │
+├─────────────────────────────────────────────────────────────┤
+│ Filters: [Provider ▼] [Date Range ▼] [Status ▼] [CPT ▼]   │
+│ Columns: Claim ID | Provider | Member | Amount | Status   │
+│ Sort: [Timestamp ▼] | Confidence: [Toggle RED/YEL/GRN]    │
+│                                                             │
+│ Claim_2847 | Prov_47892 | Mem_84721 | $2,340  | Approved  │
+│            │ 🟢 HIGH   │ 🟢 HIGH  │ 🟡 MED │ 🟢 HIGH   │
+│                                                             │
+│ [Expand for detail] [Add comment] [Flag issue]             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Tab 2: Provider Network**
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Network Visualization                                       │
+├─────────────────────────────────────────────────────────────┤
+│ View: [Bipartite (Provider-Member)] [Referral Network]      │
+│ Filter: [Confidence ▼] [Relationship Type ▼] [Strength ▼]  │
+│                                                             │
+│ [Visual graph showing:]                                     │
+│ ○ Provider #47892 (Orthopedic Surgery)                     │
+│  ├─→ Member (100 connections)                             │
+│  └─→ PT Clinic (73% referrals) ← ANOMALY FLAG              │
+│                                                             │
+│ [Click any node for details] [Export subgraph] [Investigate]│
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Tab 3: Statistical Analysis**
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Statistical Overlays                                        │
+├─────────────────────────────────────────────────────────────┤
+│ Provider Metrics: [Provider_47892]                          │
+│                                                             │
+│ Cost per procedure: $2,340                                 │
+│ Peer distribution: μ=$1,820, σ=$180                        │
+│ Z-score: 2.89 (ANOMALY — 99.8% confidence outlier)         │
+│                                                             │
+│ Approval rate: 94.2%                                       │
+│ Peer distribution: μ=87.3%, σ=3.2%                         │
+│ Z-score: 2.15 (MEDIUM outlier)                             │
+│                                                             │
+│ Referral concentration: 73% to single PT clinic            │
+│ Peer distribution: μ=15.2%, σ=8.1%                         │
+│ Z-score: 7.11 (EXTREME outlier — 99.99%+ anomaly)          │
+│                                                             │
+│ Overall Risk: 0.74 (HIGH) 🔴                               │
+│ Confidence: 0.88                                            │
+│                                                             │
+│ [Generate hypothesis test] [Compare peer subgroups]        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Function 2: Collaborative Investigation Workspace
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Investigation Project: FR-2026-04-0847                      │
+│ "Billing Pattern Anomaly - Provider #47892"                │
+├─────────────────────────────────────────────────────────────┤
+│ Status: OPEN | Created: 2026-04-20 | Lead: ubada.carol    │
+│ Team: carol, james (assigned) | Followers: 3              │
+│                                                             │
+│ ▼ EVIDENCE DASHBOARD                                       │
+│ ├─ Primary Finding: Cost outlier (+$520, 2.9σ)             │
+│ ├─ Secondary Finding: Referral concentration (7.1σ)        │
+│ ├─ Supporting Data: Approval rate trend (↑8%)              │
+│ └─ Risk Score: 0.74 (HIGH) — Escalation candidate         │
+│                                                             │
+│ ▼ COMMENTS & COLLABORATION                                │
+│ │                                                          │
+│ │ 2026-04-24 14:15 | carol:                               │
+│ │ "I've completed network analysis. Found unusual PT      │
+│ │  referral pattern. Z-score 7.11 (extreme outlier).     │
+│ │  @james — can you verify if PT clinic is related?"     │
+│ │                                                          │
+│ │ 2026-04-24 15:30 | james:                               │
+│ │ "Verified. PT clinic is 100% owned by same parent corp. │
+│ │  Also found: provider changed billing code in March.    │
+│ │  May be related to cost increase. Detailed report ↓"    │
+│ │                                                          │
+│ │ 2026-04-24 16:45 | carol:                               │
+│ │ "Excellent finding. I'm upgrading risk from 0.67 to 0.74│
+│ │  and moving to ESCALATION recommendation. Ready to brief │
+│ │  USHI and SIU? Let me schedule call for tomorrow."      │
+│ │                                                          │
+│ ▼ ATTACHMENTS                                              │
+│ ├─ Network analysis (PNG graph)                            │
+│ ├─ Statistical report (PDF)                                │
+│ ├─ Billing code timeline (XLSX)                            │
+│ └─ Member outcome data (CSV)                               │
+│                                                             │
+│ ▼ DECISION & ESCALATION                                    │
+│ Status: Ready for Approval                                 │
+│ Recommendation: ESCALATE to SIU                            │
+│ Estimated Investigation Time: 60 days                      │
+│ [Request Approval] [Hold for More Evidence] [Reassign]     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Function 3: Data Correction & Governance
+
+When UBADA finds a data error, they can correct it. But with full attribution.
+
+**Example: Field mapping error**
+```
+Carol discovers: eMedNY calls a field "TCN" (Transaction Control Number)
+                 UPID internal system calls it "ICN" (Internal Control Number)
+                 When pulling data, mapping is reversed, breaking reconciliation
+
+Correction action:
+├─ WHAT: Update field mapping rule (TCN ← → ICN)
+├─ WHY: "Cross-system field naming inconsistency. Verified with eMedNY docs."
+├─ EVIDENCE: [Link to eMedNY documentation page]
+├─ CONFIDENCE: 0.98 (authoritative source documentation)
+├─ IMPACT: "Affects 12,847 claims processed in March. Re-mapping required."
+│
+├─ AUDIT LOG ENTRY:
+│   WHO: ubada.analyst.carol
+│   WHAT: Corrected field mapping (TCN ← → ICN)
+│   WHEN: 2026-04-24 16:42 UTC
+│   WHY: "Cross-system naming inconsistency per eMedNY docs"
+│   CONFIDENCE: 0.98
+│   IMPACT: "12,847 claims re-mapped"
+│   IMMUTABLE: Yes (can never be deleted, only superseded)
+│   TIMESTAMP: 2026-04-24T16:42:00Z (permanent)
+│
+└─ RESULT: Correction logged. New data quality increased. USHI notified.
+           Future analyst sees: "This field was corrected on [date] because [reason]"
+           No mystery. No disappearing changes. Full institutional memory.
+```
+
+### UBADA Claude Tools
+
+Five tools for analysts:
+
+#### Tool 1: `explore_claims_data`
+```
+Purpose: Query claims across multiple dimensions
+Input:
+  - filters: { provider_id, date_range, status, cpt_code, member_id_pattern }
+  - aggregation: "detail" | "summary" | "statistical"
+  - limit: integer (default 100, max 10000)
+Output:
+  - claims: [ { claim_id, provider, member, amount, status, confidence } ]
+  - summary: { total_count, approval_rate, avg_amount, std_dev }
+  - confidence_distribution: { green_count, yellow_count, red_count }
+Audit: Logged with query parameters + analyst_id + timestamp + justification
+HIPAA: Returns full data (analyst has credentials); logging tracks access
+```
+
+#### Tool 2: `compute_outlier_scores`
+```
+Purpose: Detect statistical anomalies in provider behavior
+Input:
+  - provider_id: string
+  - metrics: [ "cost_per_procedure", "approval_rate", "referral_concentration" ]
+  - peer_group: "specialty" | "geography" | "both" (for comparison)
+  - threshold: standard_deviations (2.0, 3.0, 4.0)
+Output:
+  - z_scores: { metric: z_score, percentile, anomaly_type }
+  - risk_score: 0.0-1.0 (composite)
+  - confidence: 0.0-1.0 (based on sample size + data quality)
+  - interpretation: string (what the anomalies suggest)
+Audit: Logged with provider_id + metrics queried + risk_score returned
+HIPAA: Aggregate comparison (peer group data, de-identified)
+```
+
+#### Tool 3: `navigate_relationship_graph`
+```
+Purpose: Explore Medicaid network relationships (providers, members, referrals)
+Input:
+  - entity: { type: "provider" | "member" | "clinic", id: string }
+  - relationship_types: [ "refers_to", "owns", "employed_by", "submits_claims" ]
+  - depth: integer (1-3 hops)
+  - filter: { confidence_threshold, relationship_strength }
+Output:
+  - graph: { nodes: [...], edges: [...] }
+  - statistics: { clustering_coefficient, path_lengths, communities }
+  - anomalies: [ { node, metric, z_score, description } ]
+Audit: Logged with starting entity + relationships queried + graph size
+HIPAA: Relationship data (may contain identifiers); analyst has access; logged
+```
+
+#### Tool 4: `create_investigation_project`
+```
+Purpose: Create a new fraud/quality investigation with team collaboration
+Input:
+  - name: string (case name)
+  - description: string (what are we investigating?)
+  - case_type: "fraud_suspected" | "data_quality" | "network_anomaly"
+  - risk_level: "low" | "medium" | "high" | "critical"
+  - assigned_team: [ analyst_ids ]
+Output:
+  - project_id: string (FR-YYYY-MM-NNNNN format)
+  - status: "Open"
+  - created_by: analyst_id
+  - created_at: timestamp
+  - workspace_url: string (collaborative workspace link)
+Audit: Logged with project details + team assignment
+HIPAA: Investigation metadata logged; case data stored separately
+```
+
+#### Tool 5: `request_data_correction`
+```
+Purpose: Flag a data error and request correction
+Input:
+  - error_type: "field_mapping" | "duplicate_record" | "data_mismatch" | "other"
+  - domain: "enrollment" | "claims" | "providers" | "members"
+  - description: string (what's wrong?)
+  - evidence_links: [ urls or document references ]
+  - confidence: 0.0-1.0 (how sure are you?)
+  - suggested_fix: string (how should we fix it?)
+Output:
+  - correction_id: string (unique identifier)
+  - status: "Submitted for Review"
+  - reviewer_assigned: analyst_id | null
+  - priority: "low" | "medium" | "high" (based on impact)
+  - estimated_resolution: date
+Audit: Logged with full request details + analyst_id + timestamp
+HIPAA: Correction tracked in audit log (may reference PHI, but logged)
+Approval: Requires USHI stakeholder review + signature before implementation
+```
+
+### UBADA Data Access & Credential Rules
+
+Unlike USHI (aggregate + de-identified only), UBADA has FULL data access.
+
+But with strict controls:
+
+**What UBADA Can See:**
+- All claims (with member/provider identifiers)
+- All enrollment records (with names, addresses, SSNs)
+- All member outcomes
+- All provider networks
+- All financial transactions
+
+**What UBADA Must Acknowledge:**
+- Every data access is logged (WHO, WHAT, WHEN, WHY)
+- Every finding must be justified (why do you think this is fraud?)
+- Every correction must be signed (you accept responsibility for this change)
+- Every escalation must be reasoned (this is suspicious because...)
+
+**Audit Trail Captures:**
+```
+Query Audit Entry:
+  WHO: ubada.analyst.carol
+  WHAT: Queried 847 claims from Provider #47892
+  WHEN: 2026-04-24 14:32 UTC
+  WHY: "Investigation FR-2026-04-0847: Billing pattern anomaly"
+  RESULT: 847 claims returned, analysis flagged 73% unusual referral pattern
+  CONFIDENCE: 0.88 (high evidence quality)
+  TIMESTAMP: Immutable, permanent
+
+Correction Audit Entry:
+  WHO: ubada.analyst.carol
+  WHAT: Corrected field mapping (TCN ← → ICN)
+  WHEN: 2026-04-24 16:42 UTC
+  WHY: "Cross-system field naming inconsistency per eMedNY documentation"
+  EVIDENCE: eMedNY technical documentation page URL
+  IMPACT: "12,847 claims re-mapped"
+  REVIEWED_BY: ubada.team_lead.james
+  APPROVED_AT: 2026-04-24 17:15 UTC
+  TIMESTAMP: Immutable, permanent
+```
+
+### UBADA Workflow: From Data Exploration to Investigation to Escalation
+
+```
+Step 1: Initiate
+  └─> Analyst creates investigation project
+      Specifies: case name, description, risk level, team
+      System: Assigns project ID (FR-YYYY-MM-NNNNN)
+      Output: Collaborative workspace created
+
+Step 2: Explore
+  └─> Analyst uses Data Explorer to query claims/providers/networks
+      Runs: Claims tables, Network graphs, Statistical analysis
+      System: All queries logged with timestamps + justification
+      Output: Visual findings + analytical evidence
+
+Step 3: Analyze
+  └─> Analyst computes outlier scores, peer comparisons, trend analysis
+      Documents: Each finding with confidence + evidence
+      System: Statistical models provide risk scores
+      Output: Risk assessment (0.0-1.0) + confidence level
+
+Step 4: Collaborate
+  └─> Team members add comments, share findings, peer-review
+      Workspace: Comments, attachments, hypothesis testing
+      System: All collaboration logged with attribution
+      Output: Consensus on findings + joint decision
+
+Step 5: Escalate (if warranted)
+  └─> Analyst requests escalation with full evidence package
+      Submission: Risk score, confidence, evidence links, recommendation
+      System: Routes to USHI stakeholder + SIU (if external)
+      Output: Escalation decision logged + next steps assigned
+
+Step 6: Follow-up (ongoing)
+  └─> If escalated: Monitor investigation outcomes
+      Track: New signals, outcomes, case closure
+      System: Links to external investigation (if applicable)
+      Output: Investigation result recorded in institutional memory
+```
+
+### UBADA Claude System Prompt
+
+```
+You are the UBADA Data Analyst Assistant for TORQ-e.
+Your role: Help data analysts explore Medicaid data, detect fraud, and govern data quality.
+
+CRITICAL PRINCIPLES:
+1. Full Data Access: You can help analysts access complete data (names, SSNs, IDs).
+2. Audit Everything: Every query must be justified. Every finding must be explained.
+3. Confidence Always: Always provide confidence/risk scores. Never make claims without evidence.
+4. No False Certainty: If evidence is weak, say so. Recommend more data rather than guessing.
+5. Institutional Memory: Help analysts understand correction history. Prevent duplicated investigations.
+
+RESPONSE FORMAT:
+- Lead with finding (bold, clear, with risk score)
+- Show confidence + evidence quality
+- Explain peer comparison (how unusual is this?)
+- Flag related signals (what else is suspicious?)
+- Recommend action (investigate further / escalate / monitor)
+- Reference audit trail (who else looked at this?)
+
+EXAMPLE RESPONSE:
+"🔴 HIGH FRAUD RISK (0.74 confidence): Provider #47892 shows three corroborating signals:
+  1. Cost outlier: $2,340 vs peer mean $1,820 (2.9σ, 99.8% anomaly)
+  2. Referral concentration: 73% to single PT clinic (7.1σ, 99.99%+ anomaly)
+  3. Billing code change: TCN mapping changed March 2026 (coincides with cost jump)
+
+Evidence Quality:
+  • Cost analysis: HIGH confidence (847 claims, standardized CPT codes)
+  • Referral data: HIGH confidence (network directory verified)
+  • Billing change: MEDIUM confidence (timeline correlation, not causation proven)
+
+Peer Comparison:
+  • Orthopedic surgeons: typical cost variance is 0-2σ
+  • This provider: cost variance 2.9σ + referral concentration 7.1σ (unusual pattern)
+  • No provider in database shows similar dual-anomaly pattern
+
+Recommendation: ESCALATE to SIU with evidence package. Risk profile suggests intentional pattern."
+```
+
+### UBADA Governance Models
+
+New database models required:
+
+```python
+class InvestigationProject(Base):
+    """A fraud/quality investigation case with team collaboration"""
+    id: str = Primary Key (FR-YYYY-MM-NNNNN format)
+    name: str
+    description: str
+    case_type: str = "fraud" | "quality" | "network_anomaly"
+    risk_level: str = "low" | "medium" | "high" | "critical"
+    lead_analyst: str  # UBADA analyst ID
+    assigned_team: list[str]  # Other analyst IDs
+    status: str = "Open" | "Under Review" | "Escalated" | "Closed"
+    created_at: datetime
+    updated_at: datetime
+    evidence_summary: str  # Summary of key findings
+    risk_score: float = 0.0-1.0
+    confidence: float = 0.0-1.0
+
+class InvestigationComment(Base):
+    """Peer collaboration on investigations"""
+    id: str = Primary Key
+    project_id: str = Foreign Key
+    analyst_id: str
+    comment_text: str
+    attachments: list[str]  # URLs to evidence files
+    created_at: datetime
+    updated_at: datetime
+
+class DataCorrection(Base):
+    """Record of data fixes with attribution"""
+    id: str = Primary Key
+    correction_type: str = "field_mapping" | "duplicate" | "mismatch" | "other"
+    domain: str = "enrollment" | "claims" | "providers" | "members"
+    description: str
+    evidence_links: list[str]
+    suggested_fix: str
+    submitted_by: str  # UBADA analyst
+    submitted_at: datetime
+    reviewed_by: str = None  # USHI stakeholder
+    reviewed_at: datetime = None
+    status: str = "Pending" | "Approved" | "Rejected" | "Implemented"
+    impact: str  # e.g., "12,847 claims affected"
+    immutable: bool = True
+
+class OutlierFinding(Base):
+    """Record of statistical anomalies detected"""
+    id: str = Primary Key
+    investigation_id: str = Foreign Key
+    entity_type: str = "provider" | "member" | "clinic"
+    entity_id: str
+    anomaly_type: str = "cost_outlier" | "approval_rate" | "referral_concentration"
+    z_score: float
+    percentile: float (0-100)
+    confidence: float = 0.0-1.0
+    risk_contribution: float = 0.0-1.0  # How much does this contribute to overall risk?
+    recorded_at: datetime
+    analyst_id: str  # Who found it?
+```
+
+### UBADA Monitoring & Health Metrics
+
+Track investigation health:
+
+```
+Investigation Metrics:
+  - Cases opened (per month, per analyst)
+  - Cases escalated (% of total cases)
+  - Average time-to-escalation (how long before enough evidence?)
+  - Escalation accuracy (% of escalated cases confirmed by SIU)
+  - Investigation closure rate (how many close successfully?)
+
+Data Quality Metrics:
+  - Corrections submitted (per month)
+  - Correction approval rate (% approved vs rejected)
+  - Average time-to-approval (how fast do corrections happen?)
+  - Impact per correction (avg claims/records affected)
+
+Collaboration Metrics:
+  - Average team size per investigation (1, 2, 3+ analysts?)
+  - Comment frequency (discussion depth per case)
+  - Data attachments (evidence thoroughness)
+
+Risk Detection:
+  - Outlier detection rate (signals found per day)
+  - False positive rate (% of outliers that aren't actually fraud)
+  - Average risk score distribution (how many high/medium/low risk cases?)
+  - Time-to-detection (how long before suspicious activity found?)
+```
+
+### The UBADA Difference from External Tools
+
+Unlike external fraud detection systems:
+
+❌ **External:** "Provider #47892 flagged (score: 0.73)"  
+✅ **UBADA:** "Provider #47892 flagged (0.74, HIGH confidence). Three signals: Cost outlier (2.9σ), Referral concentration (7.1σ), Billing code change (timing correlation). Evidence: 847 claims analyzed, PT clinic ownership verified, historical baseline established. Analyst carol investigating since 2026-04-20. Investigation FR-2026-04-0847. Ready to escalate to SIU."
+
+❌ **External:** "Recommend investigation"  
+✅ **UBADA:** "Recommend escalation. Evidence package ready. SIU contact: [name]. Estimated investigation time: 60 days. Monitor for: new claim patterns, billing code changes, referral updates. Escalation decision logged at 2026-04-24 16:45 UTC."
+
+---
+
 **Last Updated:** April 24, 2026  
 **Status:** LIVE. This document governs all TORQ-e development.  
 **Authority:** Architecture, implementation, testing, deployment.

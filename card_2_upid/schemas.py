@@ -53,6 +53,7 @@ class ProviderIdentityResponse(BaseModel):
     specialty: Optional[str]
     data_source: str
     confidence_score: float
+    caveats: Optional[str] = None  # Data quality warnings (conflict between sources, etc.)
     status: str
 
 class ProviderEnrollmentStatusResponse(BaseModel):

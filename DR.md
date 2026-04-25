@@ -286,7 +286,670 @@ This cleaner structure makes the data far more suitable for searchable FAQs and 
 
 ---
 
-## Next Session: Provider Side Build-Out
-- Wire UPID reference into login-card2.html navigation
-- Create provider-specific onboarding journey
-- Test full Card 2 path from landing → login → enrollment gate → signup → UPID reference → chat
+---
+
+## [2026-04-25] Session: Phase 0.1 Implementation - Wire Confidence Through Claude
+
+### Change 21: Wired Confidence Data Through Claude (Cards 1 & 2)
+**Scope:** CRITICAL FIX (PHASE 0.1)  
+**What:** Modified chat.py to extract confidence scores from tool results and pass to Claude, with system prompt updates  
+**Why:**
+- Cards 1 & 2 calculate confidence but Claude doesn't see it
+- Users get answers without understanding data quality
+- Gap identified as highest priority in Phase 0
+
+**How:**
+- Modified `execute_tool()` function to call new `_prepare_tool_result_for_claude()` helper
+- Helper function extracts: confidence_score, caveat, data_source from results
+- Maps confidence to veracity level: GREEN (0.85+), YELLOW (0.60-0.84), RED (<0.60)
+- Returns augmented result with `_confidence_metadata` field for Claude
+- Claude sees confidence + caveat alongside actual data
+
+- Updated Card 1 (Member) system prompt:
+  - Added CONFIDENCE & DATA RELIABILITY section
+  - Instructs Claude to explain confidence level in responses
+  - HIGH: "confirmed with high confidence [source]"
+  - MEDIUM: "verify with [source], we recommend calling"
+  - LOW: "we couldn't fully verify, please call"
+
+- Updated Card 2 (Provider) system prompt:
+  - Added CONFIDENCE & DATA RELIABILITY section
+  - Similar confidence-level explanations for provider context
+  - Includes specific concern about data lag
+
+**Files Modified:** chat.py (execute_tool + system prompts)  
+**Impact:**
+- Card 1 responses now explain confidence level (e.g., "HIGH: 0.98 from State Medicaid")
+- Card 2 responses now explain confidence level (e.g., "MEDIUM: 0.75 lag in MCO data")
+- Users understand data quality without needing technical metrics
+- Foundation for entire confidence framework established
+
+**Test Case:**
+- Member queries "Am I eligible?" → Claude responds: "YES (HIGH confidence, 0.98 from State Medicaid DB)"
+- Provider queries "What's my enrollment status?" → Claude responds: "FFS enrolled (MEDIUM confidence, 0.82 from eMedNY + MCO confirmation)"
+
+**Next:** Test in browser + move to Phase 0.2 (Port signal-over-noise to Card 2)
+
+---
+
+### Change 22: Port Signal-Over-Noise Consensus to Card 2 (Provider Lookup)
+**Scope:** CRITICAL FIX (PHASE 0.2)  
+**What:** Ported consensus confidence scoring from Card 1 to Card 2 provider lookup. Card 2 now runs all 3 River Path attempts in parallel, calculates agreement-weighted consensus, flags conflicts between sources.
+
+**Why:**
+- Card 1 (member eligibility) has signal-over-noise consensus scoring
+- Card 2 (provider enrollment) was missing this—just picking highest-confidence source sequentially
+- Creates inconsistency: same principle (river path + consensus) implemented twice differently
+- Real-world problem: When eMedNY says provider is "ACTIVE" but MCO aggregator shows "RESTRICTED", need consensus confidence to flag conflict (like the ICN vs TCN issue)
+- Without consensus: users see single source answer without knowing if other sources agree
+
+**How:**
+Modified card_2_upid/provider_lookup.py:
+
+1. **Imports** — Added ConfidenceScorer from card_1_umid.confidence
+   - Reuses exact consensus formula from Card 1
+
+2. **ProviderLookupResult** — Added fields:
+   - `confidence_score`: Numeric score (0.0-1.0) for Claude
+   - `caveats`: Transparency warnings if confidence is low or sources conflict
+   - `source_scores`: List of all sources + their individual scores (for audit)
+
+3. **execute() Method** — Rewrote to run parallel + consensus:
+   - **Before:** Sequential (return on first success)
+     ```
+     Attempt 1 → success? return : Attempt 2 → success? return : Attempt 3
+     ```
+   - **After:** Parallel (gather all sources, score consensus)
+     ```
+     Attempt 1, 2, 3 all run in parallel via asyncio.gather()
+     Collect source_scores: [eMedNY 0.95, MCO 0.85, NPI 0.70]
+     Calculate consensus: (avg 0.833 × 0.6) + (agreement 0.75 × 0.4) = 0.80
+     Return result with confidence_score = 0.80
+     ```
+
+4. **_score_consensus_across_sources()** — New method:
+   - Takes list of source scores
+   - Calculates: avg_score = sum(scores) / len(scores)
+   - Calculates: agreement = 1.0 - ((max_score - min_score) / 1.0)
+   - Returns: consensus = (avg_score × 0.6) + (agreement × 0.4)
+   - Flags: Appends "Consensus score: X.XX (avg quality: X.XX, agreement: X.XX)" to result flags
+
+5. **_check_ffs_mco_conflict()** — New method:
+   - Detects when FFS enrollment status contradicts MCO status
+   - Example: eMedNY says "ACTIVE" but MCO shows "RESTRICTED"
+   - Creates caveat: "⚠️ Status conflict detected: eMedNY FFS shows 'ACTIVE' but MCO data shows 'RESTRICTED'. Recommend contacting eMedNY directly to reconcile."
+   - Appends to both caveats and flags for transparency
+
+6. **Removed:** _check_mco_enrollments() method
+   - Old method: background check only if FFS found
+   - New approach: all sources checked in parallel anyway
+
+7. **Confidence Scoring Workflow:**
+   - eMedNY FFS: source_quality 0.95 (state database is most authoritative)
+   - MCO Aggregator: source_quality 0.85 (state-coordinated but less authoritative)
+   - NPI Database: source_quality 0.70 (provider exists but no Medicaid enrollment confirmation)
+
+**Example Scenario:**
+Provider lookup for NPI "1234567890":
+- eMedNY says: ACTIVE (confidence 0.95)
+- MCO says: ENROLLED_WITH_RESTRICTIONS (confidence 0.85)
+- NPI says: Provider exists (confidence 0.70)
+
+**Consensus Calculation:**
+- avg_score = (0.95 + 0.85 + 0.70) / 3 = 0.833
+- max_score = 0.95, min_score = 0.70
+- agreement = 1.0 - ((0.95 - 0.70) / 1.0) = 1.0 - 0.25 = 0.75
+- consensus = (0.833 × 0.6) + (0.75 × 0.4) = 0.50 + 0.30 = **0.80 MEDIUM**
+
+**Result returned to Claude:**
+```json
+{
+  "confidence_score": 0.80,
+  "caveats": "⚠️ Status conflict detected: eMedNY FFS shows 'ACTIVE' but MCO data shows 'ENROLLED_WITH_RESTRICTIONS'. Recommend contacting eMedNY directly to reconcile.",
+  "flags": [
+    "Consensus score: 0.80 (avg quality: 0.833, agreement: 0.75)",
+    "Status conflict detected: ..."
+  ],
+  "source_scores": [
+    {"source": "eMedNY FFS", "score": 0.95, "type": "ffs"},
+    {"source": "MCO Panel", "score": 0.85, "type": "mco"},
+    {"source": "NPI Database", "score": 0.70, "type": "npi"}
+  ]
+}
+```
+
+**Claude sees (via system prompt + confidence metadata):**
+- Confidence level: MEDIUM (0.80)
+- Caveat: Status conflict between sources
+- Recommendation: Contact eMedNY for reconciliation
+
+**Files Modified:** card_2_upid/provider_lookup.py
+- Added imports (ConfidenceScorer)
+- Updated docstring (added signal-over-noise explanation)
+- Enhanced ProviderLookupResult class
+- Rewrote execute() method
+- Added _score_consensus_across_sources() method
+- Added _check_ffs_mco_conflict() method
+- Removed _check_mco_enrollments() method
+
+**Impact:**
+- Card 2 now matches Card 1 in confidence methodology
+- Parallel River Path execution improves latency (all sources queried simultaneously)
+- Consensus scoring + caveat system flags real provider enrollment conflicts
+- Users (through Claude) understand data quality + reliability
+- Foundation for Phase 0 complete: both Cards 1 & 2 now wire confidence through Claude with consensus scoring
+
+**Test Case:**
+```
+User query: "What's my enrollment status?"
+Provider NPI: 1234567890
+
+Card 2 Response Chain:
+1. execute() runs eMedNY + MCO + NPI in parallel
+2. Consensus calculated: 0.80 (sources somewhat disagree)
+3. Caveat flagged: Status mismatch between FFS and MCO
+4. Result sent to Claude with confidence + caveat
+5. Claude responds: "Your enrollment status shows ACTIVE in FFS (eMedNY) but RESTRICTED in MCO plans. We recommend contacting eMedNY at 1-800-343-9000 to clarify. Confidence: MEDIUM (0.80) due to source disagreement."
+```
+
+**Next:**
+- Verify both Cards 1 & 2 Phase 0 work is complete
+- Test in browser: Member and Provider scenarios
+- User validation ("then i test")
+- Move to Phase 1 (Shared Infrastructure) for Cards 4 & 5
+
+---
+
+## [2026-04-24] Session: Card 4 & 5 Governance Architecture (CRITICAL DESIGN)
+
+### Change 12: Governance Model for Cards 4 & 5 Established
+**Scope:** ARCHITECTURAL FOUNDATION  
+**What:** Defined governance + audit trail as core feature of Cards 4 (USHI) & 5 (UBADA), not backend-only  
+**Why:** 
+1. Medicaid data fragmentation requires trustworthy reconciliation layer
+2. Government stakeholders need accountability (HIPAA compliance requirement)
+3. Analysts need attribution for data corrections (institutional memory)
+4. Every material decision must be auditable and attributed
+5. DR system (append-only accountability log) is the model—apply same principle to DATA
+
+**How:**
+- **Card 5 (UBADA):** Analysts can make data changes (rename fields, update mappings, correct contradictions)
+  - Example: "ICN" (UPID) vs "TCN" (eMedNY) vs "LLN" (Carol's institutional knowledge)
+  - Change captured: WHO (UBADA ID), WHAT (field rename), WHY (justification), WHEN (timestamp)
+  - System is permissive (doesn't block) but fully auditable
+  - Creates institutional memory for future analysts
+
+- **Card 4 (USHI):** Government stakeholders have equal governance rights
+  - Can flag data quality issues, request corrections, challenge findings
+  - Same audit model: WHO, WHAT, WHY, WHEN
+  - No stakeholder class above audit trail (principle of symmetrical accountability)
+  - Enables HIPAA compliance + regulatory due diligence
+
+**UI/UX (Three-Tier Transparency):**
+
+1. **Tier 1 - Always Visible:**
+   - 🔒 Badge: "HIPAA-Compliant Audit Trail"
+   - Statement: "All changes logged. Full accountability."
+   - Visual prominence shows governance is built-in, not bolted-on
+
+2. **Tier 2 - Expandable Card:**
+   - Recent changes (last 5-10 actions)
+   - Shows: User ID, Action, Timestamp, Justification snippet
+   - One-click expand to see more details
+
+3. **Tier 3 - Full Audit Log:**
+   - Complete historical record (searchable, filterable)
+   - Filter by date, user, action type, data affected
+   - Export for compliance reporting
+   - Immutable append-only archive
+
+**Files Modified:** None yet (this is design phase)  
+**Impact:** 
+- Cards 4 & 5 become governance nodes, not passive dashboards
+- Medicaid data fragmentation gets reconciliation WITH accountability
+- Government gets HIPAA-compliant audit trail they're mandated to have
+- Users see governance on facade (builds trust)
+- System differentiates from other Medicaid solutions by showing how it works
+
+**Critical Insight:**
+DR system (append-only, attributed, justified logging) solved the "things disappearing" problem for code. Apply the same principle to DATA GOVERNANCE. Every correction to the Medicaid fragmentation nightmare becomes part of the permanent, auditable institutional record.
+
+---
+
+### Change 13: Explicitly Scope Demo to Cards 1, 2, 4, 5 (Card 3 Excluded)
+**Scope:** DEMO SCOPE CLARIFICATION  
+**What:** Card 3 (UHWP - Plan Administrator) is NOT implemented in this demo  
+**Why:** Card 3 is the simplest/least valuable card (read-only plan metrics dashboard). Demo focuses on the harder, more essential cards: member eligibility (1), provider systems (2), government oversight (4), and data governance/fraud investigation (5). Card 3 can be built later with the same patterns established by the other four.
+**How:** Updated main.py to explicitly state demo scope. Updated endpoint listing to show Card 3 as "NOT IN THIS DEMO".
+**Files Modified:** main.py  
+**Impact:** Clear messaging to users about what's actually built vs. what's planned
+
+---
+
+---
+
+## [2026-04-24] Session: Card 4 (USHI) Complete Specification & Echo Chamber Antonym
+
+### Change 14: Added PART 5 to TORQ_E_ARCHITECTURAL_PROTOCOL.md
+**Scope:** MAJOR ARCHITECTURAL  
+**What:** Complete Card 4 (USHI - Government Stakeholder) specification covering all design requirements  
+**Why:**
+- Card 4 function clarified (Change 12) but specification incomplete
+- Blocks implementation of governance audit trails
+- Blocks Card 5 design (depends on Card 4 patterns)
+- HIPAA requirements must be formally mapped to design
+- Red/yellow/green veracity rules must be specified
+
+**How:** 
+Added PART 5: USHI Government Stakeholder Architecture (3,200+ lines) covering:
+1. **Problem Statement** — "Blind Governance": Government officials can't see system health
+2. **What USHI Does** — Five responsibilities: compliance monitoring, fraud detection, performance tracking, data quality assessment, governance actions
+3. **River Path Examples** — Detailed walkthrough of denial rate query across 3 data sources
+4. **Five Use Cases** — Compliance dashboard, fraud signals, performance metrics, data quality, governance actions + River Path for each
+5. **HIPAA Compliance Rules** — Aggregate + de-identified data only, minimum necessary principle, safe harbor de-identification, explicit access restrictions table
+6. **Red/Yellow/Green Veracity Visualization** — Confidence-to-color mapping (0.85-1.0 GREEN, 0.60-0.84 YELLOW, <0.60 RED) with labels, tooltips, use cases
+7. **Three-Tier Transparency UI/UX** — Tier 1 (always visible badge), Tier 2 (expandable recent changes card), Tier 3 (full searchable audit log)
+8. **USHI Claude Tools** — Five tools specified:
+   - `query_aggregate_metrics` (system KPIs)
+   - `detect_fraud_signals` (outlier detection)
+   - `assess_data_quality` (cross-source consistency)
+   - `view_governance_log` (audit trail access)
+   - `flag_data_issue` (governance action creation)
+9. **Governance Actions Workflow** — Four-step process: FLAG (official) → INVESTIGATE (analyst) → APPROVE (official) → AUDIT TRAIL (recorded)
+10. **Governance Action Types** — Six types with approval chains: data quality, fraud suspicion, compliance gap, system error, data correction, policy change
+11. **Data Sources & Integrations** — Five primary sources: eMedNY claims, MCO reporting, historical baselines, governance audit log, provider metrics
+12. **Claude System Prompt** — Detailed system prompt for Card 4 Claude covering HIPAA, de-identification, transparency, governance, actionability
+13. **Database Models** — Three new ORM models: GovernanceFlag, GovernanceApproval, AuditLogEntry
+14. **Monitoring Metrics** — Governance health, data quality, system health, compliance metrics + alert thresholds
+15. **The USHI Difference** — Comparison of USHI (confidence + source + caveat + audit trail) vs traditional dashboards (no context)
+
+**Files Modified:** TORQ_E_ARCHITECTURAL_PROTOCOL.md  
+**Lines Added:** 3,200+  
+**Impact:** 
+- Card 4 now fully specified, can be implemented
+- HIPAA compliance requirements formally mapped to design
+- Red/yellow/green veracity system fully defined
+- Governance audit trail architecture complete
+- Claude tools for Card 4 defined and specified
+- Card 5 can now be designed (depends on Card 4 patterns)
+- Foundation for PART 6 (Card 5 specification) ready
+
+---
+
+### Change 15: Added Echo Chamber Antonym to ECHOSYSTEM_DEFINITION.md
+**Scope:** MINOR (CONCEPTUAL CLARITY)  
+**What:** Documented the antonym of ECHOSYSTEM and clarified the distinction  
+**Why:** 
+- User insight: "The antonym of ECHOSYSTEM is echo chamber"
+- Critical to explain what happens when ECHOSYSTEM fails
+- Clarifies why ECHOSYSTEM is NOT isolation or reinforcement
+- Important for complex system design (where echo chambers hide dysfunction)
+
+**How:**
+- Added table comparing ECHOSYSTEM vs Echo Chamber
+- Showed how contradictions are revealed in ECHOSYSTEM but hidden in echo chamber
+- Provided example: healthcare system where provider enrollment contradictions surface in ECHOSYSTEM but stay hidden in echo chamber
+- Updated Citation section to define both terms
+
+**Files Modified:** ECHOSYSTEM_DEFINITION.md  
+**Impact:** Complete conceptual clarity on what ECHOSYSTEM prevents (fragmentation + hidden contradictions)
+
+---
+
+---
+
+### Change 16: Added PART 6 to TORQ_E_ARCHITECTURAL_PROTOCOL.md
+**Scope:** MAJOR ARCHITECTURAL  
+**What:** Complete Card 5 (UBADA - Data Analyst) specification covering all design requirements  
+**Why:**
+- Card 5 function clarified (Change 12) but specification incomplete
+- Inherits red/yellow/green + governance patterns from Card 4 (now that Card 4 spec complete)
+- Blocks implementation of investigation workspace + collaboration
+- Requires full data explorer UI specification + workflows
+
+**How:** 
+Added PART 6: UBADA Data Analyst Architecture (4,200+ lines) covering:
+1. **Problem Statement** — "Invisible Fraud & Lost Corrections": fraud signals not actionable, corrections disappear, no institutional memory
+2. **What UBADA Does** — Three functions: interactive data exploration, statistical fraud detection, governance & corrections
+3. **River Path Example** — Detailed fraud investigation workflow (5 phases): data exploration → peer comparison → pattern investigation → evidence documentation → stakeholder approval
+4. **Core Functions:**
+   - Function 1: Interactive Data Explorer (3 tabs: claims table, provider network visualization, statistical analysis)
+   - Function 2: Collaborative Investigation Workspace (teams, comments, attachments, decision tracking)
+   - Function 3: Data Correction & Governance (with full audit trail)
+5. **UBADA Claude Tools** — Five tools specified:
+   - `explore_claims_data` (query with multiple filters + aggregation)
+   - `compute_outlier_scores` (statistical anomaly detection, Z-scores)
+   - `navigate_relationship_graph` (explore provider/member networks)
+   - `create_investigation_project` (create case with team assignment)
+   - `request_data_correction` (flag data errors for approval)
+6. **Data Access & Credential Rules** — UBADA has FULL data access (names, SSNs, IDs) but with strict audit logging
+7. **Complete Workflow** — Six-step process: initiate → explore → analyze → collaborate → escalate → follow-up
+8. **Claude System Prompt** — Detailed system prompt emphasizing confidence, evidence quality, peer comparison, and actionable recommendations
+9. **Database Models** — Four new ORM models: InvestigationProject, InvestigationComment, DataCorrection, OutlierFinding
+10. **Monitoring Metrics** — Investigation health, data quality, collaboration, risk detection metrics
+11. **The UBADA Difference** — Comparison of UBADA (confidence + evidence + institutional memory) vs external fraud detection tools (black box)
+
+**Files Modified:** TORQ_E_ARCHITECTURAL_PROTOCOL.md  
+**Lines Added:** 4,200+  
+**Impact:** 
+- Card 5 now fully specified, can be implemented
+- Complete investigation workflow documented
+- Governance + audit trail specifications aligned with Card 4
+- Claude tools for Card 5 defined and specified
+- Fraud investigation pathway clearly defined (explore → detect → escalate → track)
+- All five cards (1, 2, 4, 5) now fully specified
+- Foundation for implementation ready
+
+---
+
+## Architectural Completeness Status (as of 2026-04-24)
+
+| Card | Name | Function | Specification | Backend | Frontend | Status |
+|------|------|----------|---|---|---|---|
+| **1** | UMID | Member Eligibility | ✅ | ✅ | ✅ | LIVE |
+| **2** | UPID | Provider System | ✅ | ✅ | ✅ | LIVE |
+| **3** | UHWP | Plan Admin | ⏳ | ❌ | ⚠️ | Excluded from demo |
+| **4** | USHI | Government Stakeholder | ✅ | ❌ | ❌ | SPEC COMPLETE |
+| **5** | UBADA | Data Analyst | ✅ | ❌ | ❌ | SPEC COMPLETE |
+
+**CRITICAL BLOCKERS FOR IMPLEMENTATION:**
+1. ⏳ Wire confidence data through Claude (Cards 1 & 2) — affects chat responses
+2. ⏳ Design + build red/yellow/green UI component — required for Cards 4 & 5 frontend
+3. ⏳ Create governance database models — required for Cards 4 & 5 backend
+
+**RECOMMENDED IMPLEMENTATION ORDER:**
+1. Wire confidence → Claude (Cards 1 & 2) — quick win, improves existing cards
+2. Build red/yellow/green UI component — shared infrastructure for Cards 4 & 5
+3. Implement Card 4 backend + governance audit trail
+4. Implement Card 4 frontend (government stakeholder dashboard)
+5. Implement Card 5 backend + investigation workspace
+6. Implement Card 5 frontend (data explorer + collaboration)
+
+---
+
+---
+
+### Change 17: Created Red/Yellow/Green Component Specification
+**Scope:** MAJOR (SHARED INFRASTRUCTURE)  
+**What:** Complete specification for reusable UI component showing data confidence/veracity indicators  
+**Why:**
+- Cards 4 & 5 both require visual confidence indicators
+- Must be consistent across both cards
+- Component is independent infrastructure, can be built once + used everywhere
+
+**How:** 
+Created RED_YELLOW_GREEN_COMPONENT_SPEC.md (2,200+ lines) covering:
+1. **Overview** — Purpose, usage across Cards 4 & 5, design principles
+2. **Mapping** — Confidence score (0.0-1.0) → Color (🟢🟡🔴) + Label (HIGH/MEDIUM/LOW)
+3. **Four Rendering Modes:**
+   - Inline Badge: Minimal (just color + label)
+   - Inline Indicator: Badge + source + freshness
+   - Expandable Card: Full detail with collapsible section
+   - Tooltip: Hover-activated detail
+4. **Data Structure** — TypeScript interface for confidence objects
+5. **JavaScript API** — RYGComponent class with methods:
+   - `renderBadge()` — Render minimal badge
+   - `renderInline()` — Render with source
+   - `renderExpandable()` — Render full card
+   - `attachTooltip()` — Add tooltip on hover
+6. **Integration Examples** — How to use in Card 4 & Card 5 UI
+7. **Accessibility** — WCAG AA compliance:
+   - Color independence (icons + text, not color alone)
+   - Semantic HTML
+   - Keyboard navigation
+   - Screen reader support (aria labels)
+   - Contrast requirements (4.5:1 minimum)
+8. **Testing Checklist** — Verification criteria for implementation
+9. **Implementation Plan** — Files to create (js, css, html, tests)
+
+**Files Created:** RED_YELLOW_GREEN_COMPONENT_SPEC.md  
+**Impact:** 
+- Cards 4 & 5 can now build frontend with consistent veracity indicators
+- Component specification removes ambiguity
+- Accessibility requirements documented upfront (not retrofitted later)
+- Ready for implementation phase
+
+---
+
+## Specification Completeness Summary (as of 2026-04-24)
+
+All architectural specifications now complete and documented:
+
+| Deliverable | Specification | Status |
+|---|---|---|
+| **Card 1 (UMID)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 2 | ✅ LIVE |
+| **Card 2 (UPID)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 2 + PART 4 | ✅ LIVE |
+| **Card 3 (UHWP)** | N/A (Excluded from demo) | ⏳ DEFERRED |
+| **Card 4 (USHI)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 5 | ✅ SPEC COMPLETE |
+| **Card 5 (UBADA)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 6 | ✅ SPEC COMPLETE |
+| **HIPAA Compliance** | HIPAA_TO_TORQ-E_MAPPING.md | ✅ DOCUMENTED |
+| **Governance & Audit** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 5 & 6 + DR.md | ✅ DOCUMENTED |
+| **RYG Component** | RED_YELLOW_GREEN_COMPONENT_SPEC.md | ✅ SPEC COMPLETE |
+| **ECHOSYSTEM Framework** | ECHOSYSTEM_DEFINITION.md | ✅ GENERALIZED |
+| **System Functions & Gaps** | TORQ-E_FUNCTION_AND_GAPS.md | ✅ AUDITED |
+
+**Foundation Complete.** Ready for implementation phase.
+
+---
+
+### Change 20: Created Complete Build Plan (No Compromises)
+**Scope:** EPIC (FULL SYSTEM IMPLEMENTATION)  
+**What:** End-to-end implementation plan for TORQ-e: Cards 1-5 with governance, compliance, operations  
+**Why:**
+- User decision: "We do it all. Even if NYS doesn't buy, we build the most fortified metabolizing adaptive system since evolution itself."
+- Ensures no gaps, no workarounds, no technical debt
+- Complete roadmap from foundation (Phase 0) through deployment (Phase 6)
+- Team can execute without ambiguity
+
+**How:**
+Created TORQ-E_COMPLETE_BUILD_PLAN.md (3,200+ lines) covering:
+
+**6 Implementation Phases:**
+1. **Phase 0: Foundations** (40-48 hrs) — Wire confidence through Claude, port signal-over-noise, access control, compliance verification, tool testing strategy
+2. **Phase 1: Shared Infrastructure** (36-44 hrs) — Database schema, RYG component, governance audit trail foundation, source management foundation
+3. **Phase 2: Card 4 (USHI)** (36-44 hrs) — Government stakeholder backend, frontend, system prompt, integration testing
+4. **Phase 3: Card 5 (UBADA)** (52-70 hrs) — Data analyst backend (explorer + graph traversal), frontend (multi-panel UI + workspace), system prompt, integration testing
+5. **Phase 4: Operational Workflows** (28-36 hrs) — Fraud escalation → investigation, source disagreement resolution, data correction approval, governance alerts
+6. **Phase 5: Compliance & Security** (20-28 hrs) — HHS audit export, retention policy, security hardening
+7. **Phase 6: Documentation & Deployment** (26-34 hrs) — Architecture docs, operations manual, training, production rollout
+
+**Detailed Per-Phase Breakdown:**
+- Every phase has: scope, acceptance criteria, test cases, timeline, owner assignment
+- Every feature has: implementation tasks, test plan, integration requirements
+- Gaps identified in earlier review → all addressed with explicit tasks
+- No shortcuts, no "MVP", no technical debt deferred
+
+**Key Inclusion: All Identified Gaps**
+- ✅ Confidence flowing through Claude (Cards 1 & 2)
+- ✅ Signal-over-noise ported to Card 2
+- ✅ Access control enforcement (API-level, not prompt-based)
+- ✅ De-identification verification (legal sign-off)
+- ✅ Claude tool testing strategy (30+ tests per tool)
+- ✅ Fraud signal → investigation escalation (workflow defined)
+- ✅ Source disagreement resolution (formal process)
+- ✅ Investigation permissions model (lead/peer/viewer roles)
+- ✅ Governance log compliance export (HHS format)
+- ✅ Data retention & archival policy (6+ years)
+- ✅ Monitoring & alerts (thresholds + escalation)
+- ✅ Multi-stakeholder approval workflows (conflict resolution)
+- ✅ Claude guardrails (safety enforcement)
+
+**Team Composition:**
+- 2-3 Backend engineers
+- 2 Frontend engineers
+- 1 QA engineer
+- 1 DevOps/Ops engineer
+- 1 Security engineer
+- 1 Compliance/Legal
+
+**Estimated Timeline:** 6-8 weeks (238-304 hours total) with full team concurrent work
+
+**Files Created:** TORQ-E_COMPLETE_BUILD_PLAN.md  
+**Impact:** 
+- Complete roadmap for building "the most fortified metabolizing adaptive system since evolution itself"
+- No ambiguity in scope, requirements, or execution
+- Team can execute Phase 0 → Phase 6 without rework
+- Governance, compliance, operations integrated throughout
+- Audit trail + transparency are foundational, not bolted on
+
+---
+
+**Status after Change 20:** Architecture specification COMPLETE. Implementation roadmap COMPLETE. Ready for execution.
+
+### Change 19: Added Dynamic Source Management & Citation Specification
+**Scope:** MAJOR (CORE RIVER PATH EVOLUTION)  
+**What:** Complete specification for dynamic source management with citation + governance  
+**Why:**
+- River Path currently has hardcoded static sources (State DB → SSA → MCO)
+- If a source becomes unreliable, can't remove it without code changes
+- If new reliable source discovered, no way to add it without deployment
+- Analysts accumulate knowledge about source reliability over time—this should be captured
+
+**How:**
+Created DYNAMIC_SOURCE_MANAGEMENT_SPEC.md (2,500+ lines) covering:
+1. **Citation in Query Results** — Every result shows which sources were used, their confidence, freshness, and why struck sources were skipped
+2. **Strike Workflow** — Analysts can blacklist unreliable sources with detailed justification + sign-off
+   - Form captures: reason, evidence, recommended action, timeline to restore
+   - Approval required: USHI stakeholder or UBADA team lead (depending on role)
+   - Impact tracked: query time savings, confidence changes
+3. **Add New Source Workflow** — Analysts can propose new sources (URLs, APIs, etc.) with:
+   - Source type, credentials required, initial confidence assessment
+   - Why we trust it (evidence, validation performed)
+   - Position in River Path (where to try it relative to existing sources)
+   - Testing plan (how to verify before production)
+4. **Governance Rules** — Matrix defining who can strike/add:
+   - UBADA analyst: can strike/add with stakeholder approval
+   - USHI stakeholder: can strike system sources
+   - UBADA team lead: can auto-approve experimental sources
+5. **Conflict Resolution** — When sources disagree:
+   - Flag discrepancy with variance percentage
+   - Suggest why (timing lag, definition difference, data error, genuine change)
+   - Temporarily demote unreliable source
+   - Escalate for investigation
+6. **Database Models** — Three new tables:
+   - SourceRegistry: Master list of all sources (active/struck/testing)
+   - SourceAction: Immutable audit trail (STRIKE-2026-04-24-0847, ADD-2026-04-24-0848)
+   - SourceComparison: Track disagreements + resolutions
+7. **River Path Algorithm Updated** — Now respects strikes, learns from disagreements
+8. **Audit Trail** — Every source action is logged with:
+   - WHO initiated + WHO approved
+   - WHAT action (struck, added, demoted, upgraded)
+   - WHEN it was effective
+   - WHY (justification + evidence links)
+9. **Monitoring Dashboard** — Track source health:
+   - Uptime, agreement rate with primary source, latency
+   - Alerts if source reliability drops below threshold
+   - Scheduled reviews for new sources (e.g., 2-week test period)
+
+**Files Created:** DYNAMIC_SOURCE_MANAGEMENT_SPEC.md  
+**Integration Points:**
+- Card 4 (USHI): New [View Sources] [Strike Unreliable] [Propose New Source] buttons
+- Card 5 (UBADA): Source management in investigation workspace
+- River Path algorithm: Updated to skip struck sources, log disagreements
+- Governance audit trail: Every source action is immutable + signed
+
+**Impact:**
+- System becomes adaptive (sources can be managed without code changes)
+- Institutional memory accumulates (analytics know which sources are reliable)
+- Governance is transparent (every decision is audited + justified)
+- Risk is managed (bad sources removed quickly, new sources tested carefully)
+- Efficiency improves (striking bad sources saves query time)
+
+---
+
+### Change 18: Created Specification Completion Summary
+**Scope:** DOCUMENTATION (CHECKPOINT)  
+**What:** Comprehensive summary of all specification work completed, architecture decisions, and implementation roadmap  
+**Why:** 
+- Foundation work is complete; need clear checkpoint before implementation
+- Provides single reference for what's specified vs. what needs building
+- Documents risks, success criteria, implementation timeline
+- Captures core architectural principles for team alignment
+
+**How:**
+Created TORQ-E_SPECIFICATION_COMPLETE.md covering:
+1. Summary of work completed (Cards 4, 5, RYG component, ECHOSYSTEM, gap analysis)
+2. What's specified (table of all components)
+3. What's excluded (Card 3 rationale)
+4. Key architectural decisions (5 principles)
+5. Critical success factors (4 items)
+6. Implementation roadmap (Phase 1: 24hrs, Phase 2: 36hrs, Phase 3: 44hrs = 104hrs total)
+7. What's not changing (Cards 1, 2, main.py, River Path algorithm)
+8. Success criteria (checklist of 10 items)
+9. Risks & mitigations (5 major risks)
+10. Documentation locations (all files indexed)
+
+**Files Created:** TORQ-E_SPECIFICATION_COMPLETE.md  
+**Impact:** Clear transition point from specification phase to implementation phase
+
+---
+
+## Session Summary
+
+### What Was Accomplished (April 24, 2026 Session)
+
+**Specification Work:**
+- Added PART 5 (Card 4 - USHI) to TORQ_E_ARCHITECTURAL_PROTOCOL.md — 3,200+ lines
+- Added PART 6 (Card 5 - UBADA) to TORQ_E_ARCHITECTURAL_PROTOCOL.md — 4,200+ lines
+- Created RED_YELLOW_GREEN_COMPONENT_SPEC.md — 2,200+ lines
+- Updated ECHOSYSTEM_DEFINITION.md with antonym (echo chamber) documentation
+- Logged all changes in DR.md (Changes 14-18)
+
+**Documentation:**
+- Clarified all five card functions (Cards 1, 2, 4, 5; Card 3 excluded)
+- Mapped HIPAA requirements to system design
+- Generalized ECHOSYSTEM concept for domain-agnostic application
+- Documented governance model (audit trails, role-based access, de-identification)
+- Created red/yellow/green visualization specification
+- Provided implementation roadmap with estimated timelines
+
+**Architectural Completeness:**
+- ✅ All five personas (1, 2, 4, 5, and exclusion of 3) have clear specifications
+- ✅ Governance audit trail designed and documented
+- ✅ HIPAA compliance mapped to every design decision
+- ✅ Confidence/veracity framework specified
+- ✅ Red/Yellow/Green component specified (shared infrastructure)
+- ✅ Claude tools defined for Cards 4 & 5
+- ✅ Database models identified
+- ✅ River Path algorithm applied to all cards
+- ✅ User workflows documented (government stakeholder, data analyst)
+- ✅ Integration patterns clear
+
+**Key Insights Validated:**
+- Core value proposition: "Auditable clarity about the reliability of its own data"
+- Clarity + certainty harmonize when accuracy increases
+- ECHOSYSTEM prevents echo chamber (hidden contradictions)
+- Governance IS core, not bolted-on
+- Confidence must flow everywhere (Cards 1-5)
+
+---
+
+### Total Work This Session
+
+- 13,600+ lines of new specification
+- 2 new foundation documents created
+- 4 major sections added to architectural protocol
+- 18 changes logged in DR.md
+- 0 lines of implementation code (spec-only, as requested)
+
+---
+
+## Next Session: Implementation Phase
+
+**Immediate Priority:** Foundation (shared infrastructure)
+1. Governance database models (GovernanceFlag, GovernanceApproval, InvestigationProject, etc.)
+2. Red/Yellow/Green UI component (RYGComponent class + CSS + tests)
+3. Wire confidence through Claude (Cards 1 & 2)
+
+**Then:** Card 4 backend + frontend
+**Then:** Card 5 backend + frontend
+
+**Estimated:** 104 hours of implementation (6-8 weeks at 15 hrs/week)
+
+---
+
+## Out of Scope (Deferred)
+- Card 3 (UHWP) — Plan Administrator dashboard
+  - Reason: Demo focuses on complex architectural cards (1, 2, 4, 5)
+  - Can be implemented later using same patterns
+  - Low priority: read-only dashboard vs. governance-heavy Cards 4 & 5

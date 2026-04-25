@@ -65,6 +65,7 @@ async def lookup_provider(
             specialty=result.provider_data.get("specialty"),
             data_source=result.data_source.value if result.data_source else "UNKNOWN",
             confidence_score=result.confidence,
+            caveats=result.caveats,
             status="SUCCESS"
         )
 

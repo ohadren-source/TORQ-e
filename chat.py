@@ -126,37 +126,85 @@ TOOLS_BY_CARD = {
 # ============================================================================
 
 async def execute_tool(tool_name: str, tool_input: dict, card_number: int) -> str:
-    """Execute tool based on card type and tool name"""
+    """Execute tool based on card type and tool name. Extract confidence data for Claude."""
     try:
         if card_number == 1:
             # Card 1 (Member) tools
             if tool_name == "lookup_member":
                 result = await card1_routes.lookup_member(tool_input.get("member_id"))
-                return json.dumps(result)
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "check_eligibility":
                 result = await card1_routes.check_eligibility(tool_input.get("member_id"))
-                return json.dumps(result)
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "check_recertification":
                 result = await card1_routes.check_recertification(tool_input.get("member_id"))
-                return json.dumps(result)
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
         elif card_number == 2:
             # Card 2 (Provider) tools
             if tool_name == "lookup_provider":
                 result = await card2_routes.lookup_provider(tool_input.get("npi"))
-                return json.dumps(result)
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "check_enrollment":
                 result = await card2_routes.check_enrollment(tool_input.get("npi"))
-                return json.dumps(result)
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "validate_claim":
                 result = await card2_routes.validate_claim(tool_input.get("claim_data"))
-                return json.dumps(result)
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
         return json.dumps({"error": f"Unknown tool: {tool_name}"})
 
     except Exception as e:
         logger.error(f"Tool execution error: {e}")
         return json.dumps({"error": str(e)})
+
+
+def _prepare_tool_result_for_claude(result: dict, card_number: int, tool_name: str) -> str:
+    """
+    Extract confidence + caveat data from tool result and prepare for Claude.
+    Adds metadata so Claude understands data reliability.
+    """
+    try:
+        # Extract confidence metadata if present
+        metadata = {
+            "confidence": None,
+            "caveat": None,
+            "veracity": None,
+            "sources": None
+        }
+
+        # Check for confidence score in result
+        if isinstance(result, dict):
+            if "confidence_score" in result:
+                confidence_score = result.get("confidence_score", 0.0)
+                metadata["confidence"] = confidence_score
+
+                # Determine veracity level
+                if confidence_score >= 0.85:
+                    metadata["veracity"] = "HIGH (🟢)"
+                elif confidence_score >= 0.60:
+                    metadata["veracity"] = "MEDIUM (🟡)"
+                else:
+                    metadata["veracity"] = "LOW (🔴)"
+
+            if "caveats" in result:
+                metadata["caveat"] = result.get("caveats")
+
+            if "data_source" in result:
+                metadata["sources"] = result.get("data_source")
+
+        # Prepare result with confidence context for Claude
+        augmented_result = {
+            "data": result,
+            "_confidence_metadata": metadata  # Claude will see this and use it
+        }
+
+        return json.dumps(augmented_result)
+
+    except Exception as e:
+        logger.warning(f"Could not prepare confidence metadata: {e}")
+        # Fallback: return result as-is if metadata extraction fails
+        return json.dumps(result)
 
 
 # ============================================================================
@@ -290,11 +338,18 @@ Be conversational but structured. Use whitespace generously. Make every response
 ✓ **Be actionable** — Every answer should end with "here's what you do next"
 ✓ **Be honest about limits** — If you don't know, say so and direct them to call.
 
+**CONFIDENCE & DATA RELIABILITY:**
+When responding about eligibility, include the confidence level from the data:
+- 🟢 **HIGH (0.85+):** "Your status is confirmed with high confidence. We verified it with [State Medicaid data]."
+- 🟡 **MEDIUM (0.60-0.84):** "This is based on available data, but verify with [source]. We recommend calling to confirm."
+- 🔴 **LOW (<0.60):** "We couldn't fully verify this. Please call 1-800-541-2831 for verification."
+
 **WHEN RESPONDING:**
 - Simplify eligibility rules into plain English
 - Explain recertification like a checklist
 - Show timelines with dates, not "30 days"
 - Use phrases like "You should..." and "Next, you can..."
+- Always include confidence level explanation (HIGH/MEDIUM/LOW)
 - Always provide contact info for escalation: 1-800-541-2831"""
 
     elif user_type == "Provider":
@@ -308,12 +363,19 @@ Be conversational but structured. Use whitespace generously. Make every response
 ✓ **Be solution-focused** — Help them troubleshoot claims rejections and enrollment blockers.
 ✓ **Be direct** — Providers are busy. Get to the point.
 
+**CONFIDENCE & DATA RELIABILITY:**
+When responding about enrollment or claims status, include the confidence level:
+- 🟢 **HIGH (0.85+):** "Verified with [eMedNY + MCO confirmation]. Status is authoritative."
+- 🟡 **MEDIUM (0.60-0.84):** "Data from [source] but verify with eMedNY. [Specific lag/concern noted]."
+- 🔴 **LOW (<0.60):** "Data incomplete or conflicting. Contact eMedNY Support for verification."
+
 **WHEN RESPONDING:**
 - Reference eMedNY enrollment requirements specifically
 - Break down claim validation errors with codes
 - Show NPI/credential verification steps
 - Use tables for comparing enrollment options (FFS vs MCO vs OPRA)
 - Always cite which entity type applies (Community Pharmacy ≠ Hospital Pharmacy)
+- Include confidence level and data source in responses
 - Escalation: eMedNY Support 1-800-343-9000"""
 
     elif user_type == "PlanAdmin":
