@@ -1217,8 +1217,9 @@
                 html += `• New Members: ${data.new_members || '12,500'}<br>`;
                 html += `• Transfers: ${data.transfers || '3,200'}<br>`;
                 html += `• Disenrollments: ${data.disenrollments || '1,800'}<br>`;
-                html += `• Net Growth: ${data.net_growth || '+7,900'}<br><br>`;
-                html += `<em>Most popular plan: ${data.top_plan || 'Molina Healthcare'}</em>`;
+                html += `• Net Growth: ${data.net_growth || '+7,900'}<br>`;
+                html += `• Most popular plan: ${data.top_plan || 'Molina Healthcare'}<br><br>`;
+                html += `<button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
@@ -1274,8 +1275,9 @@
                 html += `• Accuracy: ${data.accuracy || 99.5}%<br>`;
                 html += `• Timeliness: ${data.timeliness || 100}%<br>`;
                 html += `• Audit Trail Valid: ${data.audit_valid ? 'YES ✓' : 'ISSUES'}<br>`;
-                html += `• CMS Compliance Ready: ${data.cms_ready ? 'YES ✓' : 'Needs work'}<br><br>`;
-                html += `<em>Last audit: ${data.last_audit || '2 hours ago'}</em>`;
+                html += `• CMS Compliance Ready: ${data.cms_ready ? 'YES ✓' : 'Needs work'}<br>`;
+                html += `• Last audit: ${data.last_audit || '2 hours ago'}<br><br>`;
+                html += `<button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
@@ -1337,7 +1339,8 @@
                         ✓ No active governance flags
                     </div>`;
                 }
-                html += `<br><em>System is operating within compliance boundaries.</em>`;
+                html += `<br><em>System is operating within compliance boundaries.</em><br><br>`;
+                html += `<button onclick="elaborateMetrics('governance')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
