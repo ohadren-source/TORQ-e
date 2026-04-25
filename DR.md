@@ -460,6 +460,63 @@ Card 2 Response Chain:
 
 ---
 
+### Change 23: Updated Card 4 & 5 Descriptions with HIPAA & Audit Emphasis
+**Scope:** DOCUMENTATION (CLARITY)  
+**What:** Updated descriptions of Cards 4 & 5 to explicitly highlight HIPAA compliance and audit trail features throughout specification and planning documents
+
+**Why:**
+- Card 4 & 5 core distinction: HIPAA-compliant governance with immutable audit trails
+- Previous descriptions focused on function but didn't lead with compliance + governance
+- Users + implementers need to understand HIPAA + audit foundation from the start
+- Emphasis prevents accidental non-compliance during implementation
+
+**How:**
+Updated in four documents:
+
+1. **INDEX_ALL_SPECIFICATIONS.md**
+   - Changed table: "Card 4 (USHI)" → "Card 4 (USHI) + HIPAA Mapping"
+   - Changed table: "Card 5 (UBADA)" → "Card 5 (UBADA) + HIPAA Mapping"
+   - Added new section: "Card 4 (USHI) & Card 5 (UBADA) — Governance Foundation"
+   - Lists what makes each special: HIPAA compliance, audit trails, institutional memory
+
+2. **TORQ-E_COMPLETE_BUILD_PLAN.md**
+   - Phase 2 intro: "Build government oversight dashboard with governance" → "Build government oversight dashboard with HIPAA-compliant auditable governance"
+   - Added "What Makes Card 4 Special:" section
+     - Aggregate-only data (de-identified, HIPAA-compliant minimum necessary principle)
+     - Every governance action audited + immutable
+     - Three-tier transparency
+     - HHS-ready: audit trail exportable, 6+ year retention
+   - Phase 3 intro: "Build fraud investigation workspace with governance" → "Build fraud investigation workspace with HIPAA-compliant audit trail and institutional memory"
+   - Added "What Makes Card 5 Special:" section
+     - Full-identified data access WITH complete audit logging
+     - Every investigation step captured + immutable
+     - Institutional memory: source decisions + corrections tracked
+     - HHS-ready: investigation audit trail exportable, analyst access control, 6+ year retention
+
+3. **TORQ-E_SPECIFICATION_COMPLETE.md**
+   - Added "Executive Summary: The Three Pillars" section at top
+   - Pillar 1: Confidence & Transparency (Cards 1 & 2)
+   - Pillar 2: HIPAA-Compliant Governance (Cards 4 & 5)
+   - Pillar 3: Institutional Memory (Dynamic Source Management)
+   - Emphasizes HIPAA as architectural foundation, not afterthought
+
+4. **TORQ_E_ARCHITECTURAL_PROTOCOL.md**
+   - Already had strong HIPAA emphasis in PART 5 & 6
+   - No changes needed (properly documented)
+
+**Files Modified:**
+- INDEX_ALL_SPECIFICATIONS.md
+- TORQ-E_COMPLETE_BUILD_PLAN.md
+- TORQ-E_SPECIFICATION_COMPLETE.md
+
+**Impact:**
+- Clear that Cards 4 & 5 are "HIPAA-compliant governance systems" not "dashboards that happen to have governance"
+- Implementers understand compliance requirements from reading the title/intro
+- Audit trails are foundational, not feature additions
+- Government + Legal can see immediately that system is built for regulatory compliance
+
+---
+
 ## [2026-04-24] Session: Card 4 & 5 Governance Architecture (CRITICAL DESIGN)
 
 ### Change 12: Governance Model for Cards 4 & 5 Established
