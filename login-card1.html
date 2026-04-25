@@ -481,6 +481,7 @@
         loginBtn.addEventListener('click', () => {
             if (usernameInput.value.trim()) {
                 sessionStorage.setItem('username', usernameInput.value);
+                sessionStorage.setItem('umid', usernameInput.value);
                 sessionStorage.setItem('userType', 'Member');
                 sessionStorage.setItem('cardNumber', '1');
                 window.location.href = 'chat-card1.html';
@@ -501,6 +502,7 @@
         umidLoginBtn.addEventListener('click', () => {
             if (umidInput.value.trim()) {
                 sessionStorage.setItem('username', umidInput.value);
+                sessionStorage.setItem('umid', umidInput.value);
                 sessionStorage.setItem('userType', 'Member');
                 sessionStorage.setItem('cardNumber', '1');
                 window.location.href = 'chat-card1.html';
