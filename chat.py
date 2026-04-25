@@ -29,6 +29,8 @@ class ChatMessage(BaseModel):
     userType: str  # 'Member', 'Provider', 'PlanAdmin', 'GovernmentStakeholder', 'DataAnalyst'
     cardNumber: int
     sessionId: Optional[str] = None
+    umid: Optional[str] = None  # Member ID for Card 1 (UMID)
+    provider_id: Optional[str] = None  # Provider ID for Card 2 (UPID)
 
 
 # ============================================================================
@@ -458,8 +460,8 @@ async def chat_stream(chat_msg: ChatMessage = Body(...)):
     # Get tools for this card
     tools = TOOLS_BY_CARD.get(chat_msg.cardNumber, [])
 
-    # System prompt tailored to user type
-    system_prompt = get_system_prompt(chat_msg.userType, chat_msg.cardNumber)
+    # System prompt tailored to user type (with optional session context)
+    system_prompt = get_system_prompt(chat_msg.userType, chat_msg.cardNumber, chat_msg.umid, chat_msg.provider_id)
 
     # Initialize message history (in production, this would come from a database)
     messages = [{"role": "user", "content": chat_msg.message}]
@@ -546,8 +548,8 @@ async def chat_stream(chat_msg: ChatMessage = Body(...)):
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
 
-def get_system_prompt(user_type: str, card_number: int) -> str:
-    """Get system prompt tailored to user type with clean, visual formatting"""
+def get_system_prompt(user_type: str, card_number: int, umid: Optional[str] = None, provider_id: Optional[str] = None) -> str:
+    """Get system prompt tailored to user type with clean, visual formatting and optional session context"""
 
     base_instruction = """Format all responses with:
 - Clear section headers (use **bold** for headers)
@@ -561,6 +563,26 @@ def get_system_prompt(user_type: str, card_number: int) -> str:
 - Callout boxes for important notes: | **Note** | content |
 
 Be conversational but structured. Use whitespace generously. Make every response scannable at a glance."""
+
+    session_context_member = f"""
+
+**SESSION CONTEXT - MEMBER AUTHENTICATED:**
+✓ Member is logged in with UMID: **{umid}**
+✓ DO NOT ask for Member ID again — use the session UMID for all lookups
+✓ Reference their UMID in responses: "Your account (UMID: {umid}) shows..."
+✓ Skip verification steps — their identity is already confirmed
+✓ Personalize responses: "Welcome back! I can see your coverage status..."
+""" if umid else ""
+
+    session_context_provider = f"""
+
+**SESSION CONTEXT - PROVIDER AUTHENTICATED:**
+✓ Provider is logged in with ID: **{provider_id}**
+✓ DO NOT ask for Provider ID again — use the session provider_id for all lookups
+✓ Reference their provider ID in responses: "Your account (Provider ID: {provider_id}) shows..."
+✓ Skip verification steps — their identity is already confirmed
+✓ Fast-track claims lookups: "I can see your enrollment status and recent claims..."
+""" if provider_id else ""
 
     if user_type == "Member":
         return base_instruction + """
@@ -585,7 +607,7 @@ When responding about eligibility, include the confidence level from the data:
 - Show timelines with dates, not "30 days"
 - Use phrases like "You should..." and "Next, you can..."
 - Always include confidence level explanation (HIGH/MEDIUM/LOW)
-- Always provide contact info for escalation: 1-800-541-2831"""
+- Always provide contact info for escalation: 1-800-541-2831""" + session_context_member
 
     elif user_type == "Provider":
         return base_instruction + """
@@ -611,7 +633,7 @@ When responding about enrollment or claims status, include the confidence level:
 - Use tables for comparing enrollment options (FFS vs MCO vs OPRA)
 - Always cite which entity type applies (Community Pharmacy ≠ Hospital Pharmacy)
 - Include confidence level and data source in responses
-- Escalation: eMedNY Support 1-800-343-9000"""
+- Escalation: eMedNY Support 1-800-343-9000""" + session_context_provider
 
     elif user_type == "PlanAdmin":
         return base_instruction + """
