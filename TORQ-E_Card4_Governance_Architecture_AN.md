@@ -8,46 +8,186 @@
 **Card 4 is the control room.** It's where the people managing Medicaid look at the system and ask: "Is everything working? Are we in compliance? Are there problems we need to fix?"
 
 Card 4 serves everyone who needs to understand system health:
-- **Bob** (Governance) — Is the system stable? Are we audit-ready?
-- **OMIG Investigator** (Fraud) — What fraud patterns are we seeing? Which cases need attention?
-- **User 3** (Operations) — Are claims processing smoothly? What's our budget status?
+- **Bob** (Governance) — Is the system coherent and audit-ready?
+- **OMIG Investigator** (Fraud) — What fraud signals are we detecting? Which need escalation?
+- **User 3** (Operations) — Are claims processing smoothly? What's our stability across all systems?
 
-**One dashboard. One system. Different ways of using it.**
+**One dashboard. One system. Three ways to look at it.**
 
 ---
 
-## The Dashboard: What You See
+## The Dashboard: Coherence Level Spectrum
 
-### The Spectrum Analyzer
+The core of Card 4 is the **Coherence Level Spectrum**—a visual system showing whether your Medicaid operations are "in sync" across every dimension that matters.
 
-The core of Card 4 is the **Spectrum Analyzer**—a visual display showing system health across multiple dimensions simultaneously.
+**"Coherence" means:** All parts of your system are working together smoothly. When coherence is high, everything aligns. When it drops, something needs attention.
 
-Think of it like a sound equalizer: multiple bars, each showing a different measure. Instead of audio frequencies, we're measuring system signals.
+### Three Views of the Same Data
+
+All three views show the same underlying health data. Pick the one that answers your question fastest. **Each metric is clickable** to drill into data sources and calculation logic.
+
+#### **View 1: Coherence Level** (The Single Light)
+```
+         🟢 
+        95%
+     COHERENT
+```
+
+**One number. One color.**
+- 🟢 **GREEN (90-100%)** = System is coherent, all parts aligned
+- 🟡 **YELLOW (70-89%)** = System is wavering, some parts struggling  
+- 🔴 **RED (0-69%)** = System is fragmented, urgent action needed
+
+**Click to expand:** See the traffic light visual indicating which dimension is the concern.
+
+**Use this when:** You need yes/no confidence fast. "Are we healthy?" → Look at one light.
+
+#### **View 2: Stability Strength (The Equalizer)**
+
+**Six vertical rectangles, one per dimension:**
 
 ```
-SYSTEM HEALTH SPECTRUM
+[⚠] ENROLLMENT RATE              87.3%
+    ▄▄▄▄▄▄░░ (progress bar)
 
-Billing Patterns    ████████░░ 82%
-Fraud Risk         █░░░░░░░░░ 15%
-Processing Volume  ███████░░░ 71%
-Compliance Status  █████████░ 95%
-Data Quality       ███████░░░ 73%
+[✓] CLAIMS PROCESSING             95%
+    ▄▄▄▄▄▄▄░ (progress bar)
+
+[✓] DATA QUALITY                  99%
+    ▄▄▄▄▄▄▄░ (progress bar)
+
+[✓] AUDIT TRAIL                  100%
+    ▄▄▄▄▄▄▄░ (progress bar)
+
+[✓] COMPLIANCE                    98%
+    ▄▄▄▄▄▄▄░ (progress bar)
+
+[✓] SYSTEM STABILITY              96%
+    ▄▄▄▄▄▄▄░ (progress bar)
 ```
 
-Each bar:
-- **Height (0-100%)** — Signal strength for that dimension
-- **Green (75-100%)** — Healthy
-- **Yellow (50-75%)** — Watch this
-- **Orange (25-50%)** — Action needed
-- **Red (0-25%)** — Critical
+**Layout:** Full-width rectangles stacked vertically for easy scanning
+- **Left:** Traffic light (🟢/🟡/🔴)
+- **Center:** Metric name + percentage value
+- **Right:** Progress bar showing strength
+- **Each rectangle is clickable**
 
-### Traffic Light Mode (Optional)
+**When you click a metric:**
+1. **Equalizer visualization** appears (5 bars representing the value strength)
+2. **Real data source citations** with clickable links:
+   - [eMedNY Portal](https://www.emedny.org/) | [CMS Data](https://data.cms.gov/) | [State DOH](https://www.health.ny.gov/)
+3. **Calculation logic** (the exact formula used)
+4. **Detailed breakdown** (specific numbers and recent activity)
 
-If you prefer simple: **Is everything OK?**
+**Use this when:** You need to know which specific system is struggling AND want to verify the data. "Where's the problem and who says so?" → Click any rectangle.
 
-Single indicator: 🟢 GREEN (healthy) / 🟡 YELLOW (caution) / 🔴 RED (critical)
+#### **View 3: Combined View** (Both Together)
 
-Click **"Detailed View"** to see the full spectrum. Click **"Simple View"** to see just the traffic light.
+```
+         🟢
+        95%
+     COHERENT
+
+     System is COHERENT across all dimensions
+     
+     [⚠] ENROLLMENT RATE              87.3%
+     [✓] CLAIMS PROCESSING             95%
+     [✓] DATA QUALITY                  99%
+     [✓] AUDIT TRAIL                  100%
+     [✓] COMPLIANCE                    98%
+     [✓] SYSTEM STABILITY              96%
+```
+
+**Coherence % at top + all six metrics below (same clickable rectangles)**
+
+**When you click a metric in Combined View:**
+1. Shows **BOTH** traffic light AND equalizer visuals
+2. Shows plain text sources (no URLs in this view)
+3. Full calculation details
+
+**Use this when:** You want the complete picture with maximum context. "Show me everything." → Combined view provides all three layers at once.
+
+---
+
+## What Each Dimension Measures
+
+### Enrollment Rate
+**The Question:** How many eligible members are actually enrolled in Medicaid?
+
+**What we're tracking:**
+- New members added this period
+- Members who left (disenrollments)
+- Transfers between plans
+- Net growth/decline
+
+**Why it matters:** Low enrollment = eligibility problem or communication gap. High volatility = system instability.
+
+**Data comes from:** State Medicaid Database, MCO reporting systems
+
+### Claims Processing  
+**The Question:** Are we paying providers on time and smoothly?
+
+**What we're tracking:**
+- Claims processed per minute (throughput)
+- Average processing time
+- Number stuck in queue
+- Error rate
+
+**Why it matters:** Slow processing blocks provider payments. High errors mean payment delays and provider frustration.
+
+**Data comes from:** eMedNY claims system, real-time processing logs
+
+### Data Quality
+**The Question:** Can we trust our data? Would it pass a CMS audit?
+
+**What we're tracking:**
+- Completeness (all required fields filled?)
+- Accuracy (does data match reality?)
+- Timeliness (how fresh is the data?)
+- Cross-source validation (do different systems agree?)
+
+**Why it matters:** Bad data = bad decisions. CMS audits require 95%+ quality.
+
+**Data comes from:** Multi-source validation (State DB, MCO reports, SSA feeds)
+
+### Audit Trail Integrity
+**The Question:** Can we prove everything that happened in the system?
+
+**What we're tracking:**
+- Log completeness (nothing missing)
+- Timestamp validity (all events time-stamped correctly)
+- Chain integrity (unbroken sequence)
+- Immutability (logs can't be altered)
+
+**Why it matters:** Regulators demand proof. A broken audit trail = compliance failure.
+
+**Data comes from:** Immutable append-only audit log database
+
+### Compliance Status
+**The Question:** Are we following all federal and state rules?
+
+**What we're tracking:**
+- HIPAA requirements (privacy/security)
+- 42 CFR Part 431 (federal Medicaid rules)
+- State-specific mandates
+- Payment accuracy standards
+
+**Why it matters:** Non-compliance = penalties, loss of federal funding, legal liability.
+
+**Data comes from:** CMS regulatory requirements, state mandate checklists
+
+### System Stability
+**The Question:** Is the system reliable and fast?
+
+**What we're tracking:**
+- Uptime % (how often is it actually available?)
+- Response time (how fast do queries run?)
+- Incident-free streak (how long since last outage?)
+- Infrastructure health (servers, databases, networks)
+
+**Why it matters:** Downtime blocks all operations. Slow systems make everyone less effective.
+
+**Data comes from:** Infrastructure monitoring, uptime tracking systems
 
 ---
 

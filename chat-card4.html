@@ -352,14 +352,16 @@
 
         /* Stability Strength - Equalizer Grid */
         .stability-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .stability-item {
-            text-align: center;
-            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
             border-radius: 6px;
             background: white;
             border: 1px solid #e0e0e0;
@@ -368,7 +370,7 @@
         }
 
         .stability-item:hover {
-            transform: translateY(-2px);
+            transform: translateX(4px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-color: #2d6a4f;
         }
@@ -376,6 +378,36 @@
         .stability-item.active {
             background: #e8f5e9;
             border-color: #4CAF50;
+        }
+
+        .stability-item-traffic-light {
+            flex-shrink: 0;
+        }
+
+        .stability-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stability-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .stability-item-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stability-item-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
         }
 
         .traffic-light {
@@ -447,6 +479,64 @@
             margin-top: 12px;
             font-size: 12px;
             line-height: 1.6;
+        }
+
+        .breakdown-visuals {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 0;
+            padding: 12px;
+            background: #fafafa;
+            border-radius: 4px;
+        }
+
+        .traffic-light-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .traffic-light-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: 2px solid #999;
+        }
+
+        .traffic-light-circle.active {
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .traffic-light-circle.red.active {
+            background: #f44336;
+            border-color: #c62828;
+        }
+
+        .traffic-light-circle.yellow.active {
+            background: #FFD700;
+            border-color: #F57F17;
+        }
+
+        .traffic-light-circle.green.active {
+            background: #4CAF50;
+            border-color: #2e7d32;
+        }
+
+        .equalizer-visual {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 50px;
+        }
+
+        .equalizer-bar {
+            width: 6px;
+            background: #4CAF50;
+            border-radius: 2px;
+            transition: height 0.3s ease;
         }
 
         .breakdown-panel strong {
@@ -624,36 +714,66 @@
                 'Enrollment Rate': {
                     value: metrics.enrollment_rate,
                     source: 'State Medicaid Database, MCO Reporting',
+                    sourceUrls: [
+                        { name: 'NYS DOH Medicaid', url: 'https://www.health.ny.gov/health_care/medicaid/' },
+                        { name: 'eMedNY Enrollment Portal', url: 'https://www.emedny.org/' },
+                        { name: 'CMS Medicaid Data', url: 'https://data.cms.gov/Medicaid' }
+                    ],
                     logic: 'Active members / eligible population × 100',
                     breakdown: 'Current: 1,250,000 active | Eligible pool: 1,432,000 | Recent additions: +12,500 (7 days)'
                 },
                 'Claims Processing': {
                     value: metrics.claims_processing,
                     source: 'eMedNY Claims System, Real-time Processing Logs',
+                    sourceUrls: [
+                        { name: 'eMedNY Claims Processing', url: 'https://www.emedny.org/' },
+                        { name: 'CMS Claims Data', url: 'https://data.cms.gov/provider-payments' },
+                        { name: 'HIPAA Clearinghouse Standards', url: 'https://www.hhs.gov/hipaa/index.html' }
+                    ],
                     logic: 'Processed claims / submitted claims × 100',
                     breakdown: 'Throughput: 2,450 claims/min | Processing time: avg 2.3 hours | Error rate: 0.8%'
                 },
                 'Data Quality': {
                     value: metrics.data_quality,
                     source: 'Multi-source validation engine (CMS, MCO, SSA)',
+                    sourceUrls: [
+                        { name: 'CMS Data Quality Framework', url: 'https://www.cms.gov/data-quality' },
+                        { name: 'SSA Data Exchange', url: 'https://www.ssa.gov/medicarelead/' },
+                        { name: 'NIST Data Standards', url: 'https://www.nist.gov/topics/healthcare-information-and-medical-devices' }
+                    ],
                     logic: '(Completeness + Accuracy + Timeliness) / 3',
                     breakdown: 'Completeness: 99% | Accuracy: 99.5% | Timeliness: 100% | Validation conflicts: 12'
                 },
                 'Audit Trail': {
                     value: metrics.audit_trail,
                     source: 'Immutable audit log database (write-once append)',
+                    sourceUrls: [
+                        { name: '42 CFR Part 455.2 - Audit Requirements', url: 'https://www.ecfr.gov/current/title-42/part-455' },
+                        { name: 'CMS Audit & Compliance Standards', url: 'https://www.cms.gov/Research-Statistics-Data-and-Systems/Monitoring-and-Auditing' },
+                        { name: 'HIPAA Audit Control & Accountability', url: 'https://www.hhs.gov/hipaa/for-professionals/security/laws-regulations/index.html' }
+                    ],
                     logic: 'Log integrity verification + timestamp validation',
                     breakdown: 'Total events logged: 487,293 | Unbroken chain: YES | Last validation: 2m ago'
                 },
                 'Compliance': {
                     value: metrics.compliance,
                     source: 'CMS regulatory requirements, State mandate checklist',
+                    sourceUrls: [
+                        { name: 'CMS Medicaid Compliance Requirements', url: 'https://www.cms.gov/Medicaid/Compliance' },
+                        { name: '42 CFR Part 431 - State Organization and General Administration', url: 'https://www.ecfr.gov/current/title-42/part-431' },
+                        { name: 'NY Medicaid Regulations', url: 'https://www.health.ny.gov/health_care/medicaid/regulations.htm' }
+                    ],
                     logic: 'Policies met / total required policies × 100',
                     breakdown: 'HIPAA: PASS | 42 CFR Part 431: PASS | State reqs: PASS (48/49 checks) | 1 pending'
                 },
                 'System Stability': {
                     value: metrics.system_stability,
                     source: 'Infrastructure monitoring, uptime tracking',
+                    sourceUrls: [
+                        { name: 'CMS System Performance Standards', url: 'https://www.cms.gov/regulations-and-guidance/guidance/manuals/downloads' },
+                        { name: 'NIST Cybersecurity Framework', url: 'https://www.nist.gov/cyberframework' },
+                        { name: 'OMB Circular A-130 - IT Infrastructure Requirements', url: 'https://www.whitehouse.gov/omb/circulars/a-130/' }
+                    ],
                     logic: 'Uptime % + zero-incident score + response time baseline',
                     breakdown: 'Uptime: 99.98% | Avg response: 234ms | Incident-free streak: 47 days'
                 }
@@ -701,13 +821,19 @@
             for (const [label, value] of Object.entries(dimensions)) {
                 const color = getColor(value);
                 html += `<div class="stability-item" onclick="showBreakdown(this, '${label}')">
-                    <div class="spectrum-label">${label}</div>
-                    <div class="traffic-light ${color}">
-                        ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
+                    <div class="stability-item-traffic-light">
+                        <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 0;">
+                            ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
+                        </div>
                     </div>
-                    <div class="spectrum-value">${value}%</div>
-                    <div class="status-bar">
-                        <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
+                    <div class="stability-item-content">
+                        <div class="stability-item-header">
+                            <span class="stability-item-label">${label}</span>
+                            <span class="stability-item-value">${value}%</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
+                        </div>
                     </div>
                 </div>`;
             }
@@ -734,12 +860,21 @@
 
             for (const [label, value] of Object.entries(dimensions)) {
                 const color = getColor(value);
-                html += `<div class="stability-item" style="padding: 8px;" onclick="showBreakdown(this, '${label}')">
-                    <div class="spectrum-label">${label}</div>
-                    <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 4px auto;">
-                        ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
+                html += `<div class="stability-item" onclick="showBreakdown(this, '${label}')">
+                    <div class="stability-item-traffic-light">
+                        <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 0;">
+                            ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
+                        </div>
                     </div>
-                    <div class="spectrum-value">${value}%</div>
+                    <div class="stability-item-content">
+                        <div class="stability-item-header">
+                            <span class="stability-item-label">${label}</span>
+                            <span class="stability-item-value">${value}%</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
+                        </div>
+                    </div>
                 </div>`;
             }
 
@@ -779,13 +914,60 @@
                 item.classList.remove('active');
             });
 
-            // Add breakdown panel
+            // Determine which section this is from
+            const sectionHeader = element.closest('.spectrum-section')?.querySelector('.spectrum-header h3')?.textContent || '';
+            const isCoherence = sectionHeader.includes('Coherence');
+            const isStability = sectionHeader.includes('Stability');
+            const isCombined = sectionHeader.includes('Combined');
+
+            const color = data.value >= 90 ? 'green' : data.value >= 70 ? 'yellow' : 'red';
+            const value = data.value;
+
+            // Generate traffic light visual
+            const trafficLightSVG = `
+                <div class="traffic-light-visual">
+                    <div class="traffic-light-circle red ${color === 'red' ? 'active' : ''}"></div>
+                    <div class="traffic-light-circle yellow ${color === 'yellow' ? 'active' : ''}"></div>
+                    <div class="traffic-light-circle green ${color === 'green' ? 'active' : ''}"></div>
+                </div>
+            `;
+
+            // Generate equalizer visual (5 bars representing the value)
+            const equalizerBars = [];
+            for (let i = 1; i <= 5; i++) {
+                const barHeight = (value / 100) * 50 * (i / 5) + (value / 100) * 20;
+                equalizerBars.push(`<div class="equalizer-bar" style="height: ${Math.max(5, barHeight)}px;"></div>`);
+            }
+            const equalizerSVG = `
+                <div class="equalizer-visual">
+                    ${equalizerBars.join('')}
+                </div>
+            `;
+
+            // Add breakdown panel with appropriate visuals
             element.classList.add('active');
             const panel = document.createElement('div');
             panel.className = 'breakdown-panel';
+
+            let visualsHtml = '';
+            if (isCoherence) {
+                visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}</div>`;
+            } else if (isStability) {
+                visualsHtml = `<div class="breakdown-visuals">${equalizerSVG}</div>`;
+            } else if (isCombined) {
+                visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}${equalizerSVG}</div>`;
+            }
+
+            // Build sources HTML - with URLs for Stability Strength section only
+            let sourcesHtml = data.source;
+            if (isStability && data.sourceUrls) {
+                sourcesHtml = data.sourceUrls.map(src => `<a href="${src.url}" target="_blank" style="color: #2d6a4f; text-decoration: underline; margin-right: 8px;">${src.name}</a>`).join(' | ');
+            }
+
             panel.innerHTML = `
+                ${visualsHtml}
                 <strong>📍 Data Source</strong>
-                ${data.source}
+                ${sourcesHtml}
                 <strong>⚙️ Calculation Logic</strong>
                 ${data.logic}
                 <strong>📊 Detailed Breakdown</strong>

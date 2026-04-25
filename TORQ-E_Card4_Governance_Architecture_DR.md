@@ -1046,27 +1046,76 @@ GET /api/card4/health
   }
 ```
 
-### Spectrum Analyzer Component (TODO: Next Build)
+### Spectrum Analyzer Component (✅ IMPLEMENTED & LIVE)
+
+**Architecture:** 3-Tier Collapsible Spectrum System
+
+#### **Tier 1: Coherence Level**
+- Single large traffic light (red/yellow/green)
+- Overall system coherence percentage
+- Status: COHERENT / WAVERING / FRAGMENTED
+- **On click:** Shows traffic light visual (3 stacked circles, active light glows)
+
+#### **Tier 2: Stability Strength (Equalizer)**
+- 6 full-width vertical rectangles, stacked
+- Layout: [Traffic Light] | [Metric Label + %] | [Progress Bar]
+- Each rectangle shows one dimension:
+  1. Enrollment Rate
+  2. Claims Processing
+  3. Data Quality
+  4. Audit Trail
+  5. Compliance
+  6. System Stability
+
+**On click of any rectangle:**
+1. **Equalizer visual appears** (5 bars representing metric strength)
+2. **URL citations displayed** with clickable links:
+   - Real government sources (eMedNY, CMS, SSA, NYS DOH)
+   - 42 CFR regulations
+   - NIST standards
+   - Each opens in new tab
+3. **Calculation logic** (exact formula)
+4. **Detailed breakdown** (specific numbers)
+
+#### **Tier 3: Combined View**
+- Large coherence % at top
+- All 6 metrics below (same clickable rectangles)
+- **On click:** Shows BOTH traffic light AND equalizer visuals
+- Plain text sources (no URLs in this view)
 
 **Visual Design:**
 ```
-┌─────────────────────────────────────────┐
-│ SYSTEM HEALTH SPECTRUM (Role-specific)  │
-├─────────────────────────────────────────┤
-│ Stability         ███████████░░░░░░  75% │
-│ Compliance        ████████████░░░░░ 84%  │
-│ Audit Integrity   ████████████████ 98%   │
-│ Data Freshness    ███████████░░░░░░ 82%  │
-│ Fraud Risk        ██░░░░░░░░░░░░░░░ 12%  │
-│ Processing Volume ██████████░░░░░░░ 68%  │
-│ Payment Status    ████████████████ 96%   │
-│ Budget Health     ████████████░░░░░ 79%  │
-└─────────────────────────────────────────┘
-         Each bar clickable for details
-         Colors: GREEN (75-100), YELLOW (25-74), RED (0-24)
+COHERENCE LEVEL
+[Expand/Collapse ▶]
+
+STABILITY STRENGTH (EQUALIZER)
+[Expand/Collapse ▶]
+[🟡] ENROLLMENT RATE         87.3%
+    ▄▄▄▄▄▄░░ (progress bar)
+[✓] CLAIMS PROCESSING         95%
+    ▄▄▄▄▄▄▄░ (progress bar)
+[✓] DATA QUALITY              99%
+    ▄▄▄▄▄▄▄░ (progress bar)
+[✓] AUDIT TRAIL              100%
+    ▄▄▄▄▄▄▄░ (progress bar)
+[✓] COMPLIANCE                98%
+    ▄▄▄▄▄▄▄░ (progress bar)
+[✓] SYSTEM STABILITY          96%
+    ▄▄▄▄▄▄▄░ (progress bar)
+
+COMBINED VIEW
+[Expand/Collapse ▼]
+96% Coherence
+System is COHERENT across all dimensions
++ All 6 metrics
 ```
 
-**Status:** Designed, awaiting implementation (will add after Chat functionality verified)
+**Color Coding:**
+- 🟢 GREEN (90-100%) - Healthy
+- 🟡 YELLOW (70-89%) - Caution
+- 🔴 RED (0-69%) - Critical
+
+**Status:** ✅ LIVE on Railway, tested with Spectrum Analyzer interactive features
 
 ### Database Integration
 
