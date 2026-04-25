@@ -551,19 +551,28 @@
             const userType = sessionStorage.getItem('userType') || 'Member';
             const cardNum = parseInt(sessionStorage.getItem('cardNumber')) || 1;
             const sessionId = sessionStorage.getItem('sessionId') || 'session-' + Date.now();
+            const userUmid = sessionStorage.getItem('umid'); // Get UMID from session
 
             try {
+                const payload = {
+                    message: message,
+                    userType: userType,
+                    cardNumber: cardNum,
+                    sessionId: sessionId
+                };
+
+                // If user is logged in with UMID, include it so Claude knows they're authenticated
+                if (userUmid) {
+                    payload.umid = userUmid;
+                    payload.context = `User is authenticated with UMID: ${userUmid}. Do not ask for Member ID - use their session UMID for eligibility checks.`;
+                }
+
                 const response = await fetch('/api/chat/stream', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        userType: userType,
-                        cardNumber: cardNum,
-                        sessionId: sessionId
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {

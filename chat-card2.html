@@ -553,19 +553,28 @@
             const userType = sessionStorage.getItem('userType') || 'Provider';
             const cardNum = parseInt(sessionStorage.getItem('cardNumber')) || 2;
             const sessionId = sessionStorage.getItem('sessionId') || 'session-' + Date.now();
+            const userProviderId = sessionStorage.getItem('provider_id'); // Get provider_id from session
 
             try {
+                const payload = {
+                    message: message,
+                    userType: userType,
+                    cardNumber: cardNum,
+                    sessionId: sessionId
+                };
+
+                // If provider is logged in with provider_id, include it so Claude knows they're authenticated
+                if (userProviderId) {
+                    payload.provider_id = userProviderId;
+                    payload.context = `Provider is authenticated with ID: ${userProviderId}. Do not ask for provider credentials - use their session provider_id for claim validation and member lookups.`;
+                }
+
                 const response = await fetch('/api/chat/stream', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        userType: userType,
-                        cardNumber: cardNum,
-                        sessionId: sessionId
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
