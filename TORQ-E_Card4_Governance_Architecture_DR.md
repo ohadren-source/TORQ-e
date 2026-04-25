@@ -1,19 +1,26 @@
 # TORQ-E Card 4: Government Stakeholder Governance Architecture
 ## Internal Design Repository (DR)
 
+**Status:** ✅ IMPLEMENTED (LIVE on Railway)
+**Version:** 1.0.0  
+**Last Updated:** 2026-04-25
+
 ---
 
 ## Overview
 
-**Card 4** is the government oversight layer serving three distinct stakeholders with different needs, workflows, and information requirements—all from the same unified backend.
+**Card 4 (USHI)** is the government oversight layer serving three distinct stakeholders with different needs, workflows, and information requirements—all from the same unified backend.
 
-- **Bob Pollock** (Enterprise Data Governance): System stability, compliance, audit integrity
-- **OMIG Investigator** (Fraud Investigation): Fraud signals, case management, evidence
-- **User 3** (eMedNY Operations): Claims processing health, operational metrics, budget
+**Stakeholders:**
+- **Bob Pollock** (Enterprise Data Governance): System stability, compliance, audit integrity, overnight incident summaries
+- **OMIG Investigator** (Fraud Investigation): Fraud signals, case management, evidence chains, pattern analysis
+- **User 3** (eMedNY Operations): Claims processing health, operational metrics, budget tracking, enrollment trends
 
 **Core Principle:** One system, three voices. Same data. Different dimensions. Same spectrum analyzer engine, different bar configurations.
 
-**QD:** The system is executing right now, proving itself continuously. Bob watches it work in real-time.
+**QD:** The system is executing right now, proving itself continuously. Bob watches it work in real-time via conversational governance interface.
+
+**Deployment:** Railway (https://torq-e-production.up.railway.app/api/card4)
 
 ---
 
