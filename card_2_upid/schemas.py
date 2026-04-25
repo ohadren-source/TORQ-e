@@ -113,7 +113,4 @@ class FraudSignalResponse(BaseModel):
 class FraudReportResponse(BaseModel):
     """Comprehensive fraud report"""
     total_claims_analyzed: int
-    flagged_claims: int
-    average_risk_score: float
-    high_risk_percentage: float
-    recommendation: str
+    flagged_claims
