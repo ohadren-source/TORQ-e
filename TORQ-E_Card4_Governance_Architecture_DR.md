@@ -948,6 +948,166 @@ Each bar clickable to expand details, citations, evidence.
 
 **Card 4 shows her:** Fraud signals + evidence confidence + cross-state coordination. She doesn't need system stability metrics or budget forecasts.
 
+---
+
+## Implementation Details
+
+### Frontend (chat-card4.html)
+
+**Deployment:** https://torq-e-production.up.railway.app/chat-card4.html
+
+**Interface:** Conversational chat with intelligent intent routing
+
+**Intent Handlers:**
+1. **Metrics Query** → `/api/card4/metrics` 
+   - User: "Show me system health" → Returns stability%, audit integrity, active members
+   
+2. **Trend Query** → `/api/card4/metrics?metric_type=enrollment_rate`
+   - User: "What are enrollment trends?" → Returns growth patterns, transfers, disenrollments
+   
+3. **Quality Query** → `/api/card4/data-quality`
+   - User: "Is our data audit-ready?" → Returns completeness%, accuracy%, CMS readiness
+   
+4. **Governance Query** → `/api/card4/governance-log`
+   - User: "Any alerts or flags?" → Returns active governance flags and issues
+
+5. **Help/Default** → Returns guidance on available queries
+
+**Response Format:** HTML-formatted with:
+- Color-coded status boxes (GREEN=stable, YELLOW=caution, RED=critical)
+- Key metrics with contextual information
+- Confidence scores from backend
+- Data freshness indicators
+
+### Backend API (card_4_ushi/)
+
+**Location:** `/card_4_ushi/routes.py` and `/card_4_ushi/query_engine.py`
+
+**5 Primary Endpoints:**
+
+```
+POST /api/card4/metrics
+  Params: metric_type, date_range_days, filter_by
+  Returns: {
+    metric: string,
+    value: number,
+    confidence_score: 0.0-1.0,
+    sources: string[],
+    trend: string,
+    freshness: string,
+    caveat: string
+  }
+
+POST /api/card4/fraud-signals
+  Params: entity_type (provider|member|claim_pattern), threshold_sigma
+  Returns: {
+    data: FraudSignal[],
+    confidence_score: number,
+    recommendation: "Escalate to Card 5 (UBADA)"
+  }
+
+POST /api/card4/data-quality
+  Params: domain (enrollment|claims|provider_data)
+  Returns: {
+    data: {
+      completeness: percent,
+      accuracy: percent,
+      timeliness: percent,
+      audit_valid: boolean,
+      cms_ready: boolean
+    },
+    quality_score: number
+  }
+
+GET /api/card4/governance-log
+  Params: filter_by, days_back, limit
+  Returns: [
+    {
+      timestamp: datetime,
+      action: string,
+      entry_json: JSONB,
+      hash: string (immutable)
+    }
+  ]
+
+POST /api/card4/flag-issue
+  Params: issue_type, domain, title, description, justification, evidence, flagged_by
+  Returns: {
+    flag_id: string,
+    note: "Flag created and logged to immutable audit trail"
+  }
+
+GET /api/card4/health
+  Returns: {
+    status: "healthy",
+    card: "4 (USHI)",
+    tools: 5,
+    tools_available: string[]
+  }
+```
+
+### Spectrum Analyzer Component (TODO: Next Build)
+
+**Visual Design:**
+```
+┌─────────────────────────────────────────┐
+│ SYSTEM HEALTH SPECTRUM (Role-specific)  │
+├─────────────────────────────────────────┤
+│ Stability         ███████████░░░░░░  75% │
+│ Compliance        ████████████░░░░░ 84%  │
+│ Audit Integrity   ████████████████ 98%   │
+│ Data Freshness    ███████████░░░░░░ 82%  │
+│ Fraud Risk        ██░░░░░░░░░░░░░░░ 12%  │
+│ Processing Volume ██████████░░░░░░░ 68%  │
+│ Payment Status    ████████████████ 96%   │
+│ Budget Health     ████████████░░░░░ 79%  │
+└─────────────────────────────────────────┘
+         Each bar clickable for details
+         Colors: GREEN (75-100), YELLOW (25-74), RED (0-24)
+```
+
+**Status:** Designed, awaiting implementation (will add after Chat functionality verified)
+
+### Database Integration
+
+**Tables Used:**
+- `data_ingestion_audit_log` - Immutable governance audit trail
+- `programs` - Medicaid plan data (for enrollment metrics)
+- `beneficiary_selections` - Enrollment decisions
+- `claims` - Claims data (for processing metrics)
+- `providers` - Provider data (for fraud signals)
+
+**Immutability Enforcement:**
+- All governance actions logged with hash verification
+- Database triggers prevent modification/deletion of audit logs
+- Timestamp immutable on creation
+
+---
+
+## Testing Protocol
+
+**Query Set for QA (Carol & Selam):**
+
+1. "What's the overall system health?" → Test metrics handler
+2. "What are enrollment trends for the last 7 days?" → Test trend handler
+3. "Is our data audit-ready?" → Test quality handler
+4. "Any governance flags or alerts?" → Test governance handler
+5. "How many members enrolled and what's the denial rate?" → Test compound query
+6. "Give me a complete status report" → Test aggregation
+
+**Expected Results:**
+- ✅ Responses show real data from Railway backend
+- ✅ Confidence scores included
+- ✅ Data freshness indicators present
+- ✅ Color-coded status boxes render correctly
+- ✅ No "Offline Mode" fallbacks
+
+**Success Criteria:**
+- All 6 queries return live API data (not cached fallback)
+- Response times < 2 seconds
+- Confidence scores realistic (0.8-0.99 range)
+- No CORS errors in browser console
+
 **User 3's perspective:** "Are operations running smoothly? Are we within budget?"
 
 **Card 4 shows him:** Processing volume + error rate + payment status + budget health. He doesn't need fraud data or compliance metrics.
