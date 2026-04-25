@@ -347,3 +347,20 @@ async def report_income_change(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# WRAPPER FUNCTIONS FOR CHAT INTEGRATION
+# ============================================================================
+# These wrapper functions map chat.py's expected function names to actual implementations
+
+async def check_eligibility(member_id: str):
+    """Wrapper for check_eligibility_member_view - used by chat.py"""
+    request = EligibilityCheckRequest(umid=member_id, check_type="current")
+    return await check_eligibility_member_view(request)
+
+
+async def check_recertification(member_id: str):
+    """Wrapper for check_recertification_status - used by chat.py"""
+    request = RecertificationCheckRequest(umid=member_id)
+    return await check_recertification_status(request)
