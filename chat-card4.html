@@ -350,7 +350,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Stability Strength - Equalizer Grid */
+        /* Clarity Spectrum Equalizer Grid */
         .stability-grid {
             display: flex;
             flex-direction: column;
@@ -899,18 +899,18 @@
                         <div class="coherence-value">${coherenceValue}%</div>
                         <div class="coherence-status">${coherence.status}</div>
                         <div style="margin-top: 12px; font-size: 11px; color: #999; font-style: italic; text-align: center;">
-                            For detailed data sources and removable citations, go to Stability Strength (Equalizer)
+                            For detailed data sources and removable citations, go to Clarity Spectrum Equalizer
                         </div>
                     </div>
                 </div>
             </div>`;
 
-            // SECTION 2: Stability Strength (Equalizer)
+            // SECTION 2: Clarity Spectrum Equalizer
             html += `<div class="spectrum-section">
                 <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
                     <h3>
                         <span class="toggle-icon">▶</span>
-                        📊 Stability Strength (Equalizer)
+                        📊 Clarity Spectrum Equalizer
                     </h3>
                 </div>
                 <div class="spectrum-content collapsed">
@@ -1068,7 +1068,7 @@
             // Get session-removed sources
             const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
 
-            // Build sources HTML - URLs in Stability Strength AND Combined View (both include Spectrum)
+            // Build sources HTML - URLs in Clarity Spectrum Equalizer AND Combined View (both include Spectrum)
             let sourcesHtml = data.source;
             if ((isStability || isCombined) && data.sourceUrls) {
                 const activeSources = data.sourceUrls.filter(src => !removedSources.includes(src.url));
@@ -1420,7 +1420,7 @@
             if (type === 'metrics') {
                 elaboration = `<strong>System Health Deep Dive:</strong><br><br>
                     <strong>Coherence Level:</strong> The overall system coherence is calculated across 6 dimensions: enrollment rate, claims processing, data quality, audit trail integrity, compliance adherence, and system stability. Our current 91% average indicates a healthy, well-balanced system with no critical bottlenecks.<br><br>
-                    <strong>Stability Strength Breakdown:</strong><br>
+                    <strong>Clarity Spectrum Equalizer Breakdown:</strong><br>
                     • <strong>Enrollment Rate (87.3%):</strong> Active member acquisition is strong. We're maintaining healthy growth velocity without capacity strain.<br>
                     • <strong>Claims Processing (95%):</strong> Claims throughput is excellent at 2,450/minute. Processing time averages 2.3 hours with 0.8% error rate—well within SLAs.<br>
                     • <strong>Data Quality (99%):</strong> Multi-source validation shows completeness, accuracy, and timeliness all exceeding standards. Audit trail is unbroken.<br>
