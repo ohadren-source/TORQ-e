@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from config import settings
 from card_1_umid import routes as card1_routes
 from card_2_upid import routes as card2_routes
+from card_4_ushi import query_engine as card4_engine
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -109,7 +110,76 @@ CARD_2_TOOLS = [
 ]
 
 CARD_3_TOOLS = []  # Plan Admin tools - pending implementation
-CARD_4_TOOLS = []  # Government Stakeholder tools - pending implementation
+
+CARD_4_TOOLS = [
+    {
+        "name": "query_aggregate_metrics",
+        "description": "Query system-wide aggregate metrics (HIPAA-compliant, de-identified). Returns enrollment rates, denial rates, processing times, and approval rates as aggregate percentages and counts only—no individual records.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "metric_type": {"type": "string", "enum": ["enrollment_rate", "denial_rate", "processing_time", "approval_rate"], "description": "Type of metric to query"},
+                "date_range_days": {"type": "integer", "description": "Number of days back to analyze (default 30)"},
+                "filter_by": {"type": "string", "description": "Optional filter: state, region, provider_specialty, claim_type (optional)"}
+            },
+            "required": ["metric_type"]
+        }
+    },
+    {
+        "name": "detect_fraud_signals",
+        "description": "Detect statistical anomalies and potential fraud signals using z-score analysis. Returns outlier patterns and counts—never individual identities. HIPAA-compliant aggregate-only results.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "entity_type": {"type": "string", "enum": ["provider", "member", "claim_pattern"], "description": "Type of entity to analyze for anomalies"},
+                "threshold_sigma": {"type": "number", "description": "Number of standard deviations from mean (default 2.0)"}
+            },
+            "required": ["entity_type"]
+        }
+    },
+    {
+        "name": "assess_data_quality",
+        "description": "Assess cross-source data consistency and quality. Analyzes agreement rates between data sources (State DB vs MCO vs SSA) and identifies disagreement types. Returns aggregate quality scores only.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "domain": {"type": "string", "enum": ["enrollment", "claims", "provider_data"], "description": "Data domain to assess"}
+            },
+            "required": ["domain"]
+        }
+    },
+    {
+        "name": "view_governance_log",
+        "description": "Access immutable governance audit trail. Returns WHO/WHAT/WHEN/WHY for all governance actions (flags, approvals, corrections, source changes) with complete justification and evidence links.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "filter_by": {"type": "string", "description": "Filter by action type (STRIKE_SOURCE, FLAG, APPROVE_CORRECTION, ADD_SOURCE) or domain"},
+                "days_back": {"type": "integer", "description": "Number of days back to retrieve (default 30)"},
+                "limit": {"type": "integer", "description": "Maximum number of records to return (default 50)"}
+            },
+            "required": []
+        }
+    },
+    {
+        "name": "flag_data_issue",
+        "description": "Create a governance flag for data quality issues, fraud suspicions, compliance gaps, or system errors. Logs immutable record to audit trail with full justification and evidence.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "issue_type": {"type": "string", "enum": ["data_quality", "fraud_suspicion", "compliance_gap", "system_error"], "description": "Type of issue being flagged"},
+                "domain": {"type": "string", "enum": ["claims", "enrollment", "provider_data"], "description": "Data domain affected"},
+                "title": {"type": "string", "description": "Brief title of the issue"},
+                "description": {"type": "string", "description": "Detailed description of the issue"},
+                "justification": {"type": "string", "description": "Reasoning and policy basis for the flag"},
+                "evidence": {"type": "array", "items": {"type": "string"}, "description": "List of evidence items (can be metric names, report links, etc.)"},
+                "flagged_by": {"type": "string", "description": "Name/ID of person creating the flag"}
+            },
+            "required": ["issue_type", "domain", "title", "description", "justification", "evidence", "flagged_by"]
+        }
+    }
+]
+
 CARD_5_TOOLS = []  # Data Analyst tools - pending implementation
 
 TOOLS_BY_CARD = {
@@ -150,6 +220,45 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int) -> st
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "validate_claim":
                 result = await card2_routes.validate_claim(tool_input.get("claim_data"))
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+
+        elif card_number == 4:
+            # Card 4 (USHI - Government Stakeholder) tools
+            if tool_name == "query_aggregate_metrics":
+                result = await card4_engine.query_aggregate_metrics(
+                    metric_type=tool_input.get("metric_type"),
+                    date_range_days=tool_input.get("date_range_days", 30),
+                    filter_by=tool_input.get("filter_by")
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "detect_fraud_signals":
+                result = await card4_engine.detect_fraud_signals(
+                    entity_type=tool_input.get("entity_type", "provider"),
+                    threshold_sigma=tool_input.get("threshold_sigma", 2.0)
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "assess_data_quality":
+                result = await card4_engine.assess_data_quality(
+                    domain=tool_input.get("domain", "enrollment")
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "view_governance_log":
+                result = await card4_engine.view_governance_log(
+                    filter_by=tool_input.get("filter_by"),
+                    days_back=tool_input.get("days_back", 30),
+                    limit=tool_input.get("limit", 50)
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "flag_data_issue":
+                result = await card4_engine.flag_data_issue(
+                    issue_type=tool_input.get("issue_type"),
+                    domain=tool_input.get("domain"),
+                    title=tool_input.get("title"),
+                    description=tool_input.get("description"),
+                    justification=tool_input.get("justification"),
+                    evidence=tool_input.get("evidence", []),
+                    flagged_by=tool_input.get("flagged_by")
+                )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
         return json.dumps({"error": f"Unknown tool: {tool_name}"})
@@ -400,21 +509,70 @@ When responding about enrollment or claims status, include the confidence level:
     elif user_type == "GovernmentStakeholder":
         return base_instruction + """
 
-**ROLE:** You are helping a **government agency** stakeholder oversee Medicaid program operations and compliance.
+**ROLE:** You are helping a **government agency** stakeholder oversee Medicaid program operations with HIPAA-compliant governance, immutable audit trails, and institutional memory.
+
+**CARD 4 (USHI) MISSION:**
+Government Stakeholder Operations — Provide aggregate-only reporting, flag compliance issues, and maintain authoritative governance logs for HHS audit readiness. Everything you do is logged, justified, and immutable.
 
 **CORE PRINCIPLES:**
-✓ **Be compliant** — Every response ties to regulation or policy.
-✓ **Be aggregate** — Focus on system-wide performance, not individual cases.
-✓ **Be accountable** — Frame around outcomes and metrics that matter to oversight.
-✓ **Be official** — Use regulatory language and cite governing statutes.
+✓ **Be HIPAA-compliant** — NEVER mention individual SSNs, member names, or provider NPIs. Always aggregate (e.g., "47 providers" not "John Smith, NPI 1234567890").
+✓ **Be governance-focused** — Frame every issue around policy, compliance, and institutional accountability.
+✓ **Be immutable** — Acknowledge that flags, approvals, and corrections create permanent audit records with full justification.
+✓ **Be transparent** — Always cite data sources, confidence levels, and methodologies for every claim.
+✓ **Be official** — Use regulatory language: "enrollee" not "member", "claims processing rate" not "speed", "attestation" not "confirmation".
 
-**WHEN RESPONDING:**
-- Reference NY Medicaid policy, federal CMS rules, or Medicaid Act sections
-- Report aggregate metrics: enrollment rates, denial rates, payment timeliness
-- Flag compliance gaps or fraud risk signals
-- Use official terminology: "enrollee" not "member", "claims processing rate" not "speed"
-- Provide dashboards showing program-wide health
-- Suggest policy or operational improvements based on data"""
+**HIPAA COMPLIANCE GUARDRAILS:**
+- NEVER attempt to query individual member records (no SSNs, names, DOBs, medical history)
+- NEVER return PII in any form — only aggregate metrics and patterns
+- ALWAYS de-identify: "Providers billing >4σ above average" not "Dr. Jones, NPI 1234567890"
+- ALWAYS contextualize: "This likely reflects specialty mix, not necessarily fraud"
+- NEVER make final fraud determinations alone — always recommend escalation to Card 5 (UBADA) for investigation
+
+**WHEN REPORTING METRICS:**
+- Lead with aggregate statistics: enrollment rates, denial percentages, processing times
+- Include confidence scores and freshness: "HIGH confidence (0.95) | Updated daily"
+- Show data sources and caveats: "eMedNY + MCO reporting | Lag: 24 hours"
+- Provide context: trends, comparisons to baselines, regulatory thresholds
+- Use 🟢 GREEN (0.85+), 🟡 YELLOW (0.60-0.84), 🔴 RED (<0.60) for confidence visualization
+
+**WHEN FLAGGING ISSUES:**
+- Explain the governance process: flag → review → approval → immutable record
+- Cite policy/statute: "Under 42 CFR §438.12, plans must maintain 60% provider adequacy"
+- Provide evidence: which metrics, comparisons, or data points support the flag
+- Distinguish signal from noise: "3.1σ outliers warrant investigation, not immediate action"
+- Recommend next steps: "Create governance flag for Card 5 investigation", "Strike unreliable data source", "Request corrective action from MCO"
+
+**WHEN CITING GOVERNANCE ACTIONS:**
+- Reference the immutable audit trail: "Per governance log (FLAG-2026-04-14), eMedNY data reliability was questioned..."
+- Include WHO/WHAT/WHEN/WHY: actor role, action type, domain, justification, evidence
+- Note status: "APPROVED" = policy decision locked in; "INVESTIGATING" = awaiting findings
+- Suggest follow-up: "This flag is 30 days old; recommend escalation decision"
+
+**TONE & LANGUAGE:**
+- Formal, official, HHS-audit-ready language
+- Reference regulations by statute: "42 CFR §438.12", "NY Social Services Law §365-a"
+- Use data terminology: z-scores, percentiles, confidence intervals, agreement rates
+- Avoid speculation — stick to facts, data, and policy
+
+**NEVER DO THIS:**
+- ❌ Suggest ignoring data quality issues
+- ❌ Make policy decisions unilaterally (recommend instead)
+- ❌ Delete or hide governance records
+- ❌ Query individual member or provider data
+- ❌ Override source reliability without evidence and justification
+- ❌ Claim authority you don't have (always frame as "recommend to approval authority")
+
+**ESCALATION LANGUAGE:**
+- To Card 5 (UBADA): "Recommend detailed investigation by UBADA to identify specific providers/members involved"
+- To Approval Authority: "Recommend policy review to address this compliance gap"
+- To HHS: "This pattern triggers federal oversight requirements; recommend proactive reporting"
+
+**REFERENCE DOCUMENTS YOU'LL CITE:**
+- Governance log (immutable audit trail of all actions)
+- Source registry (active/struck status, quality scores, reliability levels)
+- Data quality assessments (inter-source agreement rates)
+- Fraud signal reports (aggregate outlier patterns with z-scores)
+- Compliance frameworks (NY Medicaid policy, CMS rules)"""
 
     elif user_type == "DataAnalyst":
         return base_instruction + """

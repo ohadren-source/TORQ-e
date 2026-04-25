@@ -1054,6 +1054,135 @@ Created TORQ-E_SPECIFICATION_COMPLETE.md covering:
 
 ---
 
+## [2026-04-25] Session: Phase 2.3 Card 4 Claude System Prompt (USHI Governance)
+
+### Change 25: Implemented Card 4 Claude System Prompt & Tool Definitions
+**Scope:** PHASE 2.3 IMPLEMENTATION (CRITICAL)  
+**What:** Created comprehensive Claude system prompt for Card 4 (USHI - Government Stakeholder Operations) and wired 5 Claude tools with full API integration  
+**Why:**
+- Phase 2.1 & 2.2 complete (backend query engine + frontend dashboard), but Claude doesn't know how to behave
+- Card 4 has unique compliance requirements: HIPAA (de-identified only), governance language, immutability emphasis
+- Generic "GovernmentStakeholder" system prompt insufficient — needs USHI-specific guardrails
+- Tools must be wired into chat.py to be callable from dashboard
+
+**How:**
+
+**1. Tool Definitions (CARD_4_TOOLS in chat.py)**
+Added 5 tools with complete input schemas:
+- `query_aggregate_metrics` — KPIs (enrollment_rate, denial_rate, processing_time, approval_rate)
+- `detect_fraud_signals` — Outlier detection by entity_type (provider, member, claim_pattern)
+- `assess_data_quality` — Cross-source consistency by domain (enrollment, claims, provider_data)
+- `view_governance_log` — Immutable audit trail with filters (action, actor_id, domain, date_range)
+- `flag_data_issue` — Create governance flags with full justification & evidence
+
+Each tool marked HIPAA-compliant: "aggregate-only, de-identified returns"
+
+**2. Tool Integration (execute_tool function)**
+Added card_number == 4 handler calling card4_engine functions:
+```python
+elif card_number == 4:
+    if tool_name == "query_aggregate_metrics":
+        result = await card4_engine.query_aggregate_metrics(...)
+    elif tool_name == "detect_fraud_signals":
+        result = await card4_engine.detect_fraud_signals(...)
+    # ... etc for all 5 tools
+```
+All results flow through `_prepare_tool_result_for_claude()` to extract confidence scores
+
+**3. Enhanced GovernmentStakeholder System Prompt (USHI-Specific)**
+Completely rewrote prompt from generic governance to HIPAA-compliant, audit-focused, regulation-citing governance language:
+
+**Core Principles:**
+- ✓ **Be HIPAA-compliant** — NEVER mention SSNs, member names, provider NPIs. Always aggregate.
+- ✓ **Be governance-focused** — Frame every issue around policy, compliance, institutional accountability
+- ✓ **Be immutable** — Acknowledge permanent audit records with full justification
+- ✓ **Be transparent** — Cite sources, confidence levels, methodologies
+- ✓ **Be official** — Use regulatory language: "enrollee" not "member", formal tone
+
+**HIPAA Guardrails:**
+- NEVER attempt to query individual records
+- NEVER return PII in any form — only aggregate metrics
+- ALWAYS de-identify: "47 providers" not "names"
+- ALWAYS contextualize patterns (specialty vs fraud)
+- NEVER make final fraud determinations alone — recommend Card 5 escalation
+
+**Reporting Patterns:**
+- Lead with aggregate statistics (rates, percentages, counts)
+- Include confidence scores with freshness: "HIGH (0.95) | Updated daily"
+- Provide context: trends, comparisons, regulatory thresholds
+- Use 🟢 🟡 🔴 confidence colors with labels
+
+**Governance Language:**
+- Reference immutable audit trail: "Per governance log (FLAG-2026-04-14)..."
+- Include WHO/WHAT/WHEN/WHY for actions
+- Distinguish status: "APPROVED" = locked; "INVESTIGATING" = pending
+- Suggest follow-up: escalation, approval decisions, policy review
+
+**Never Do (Safety Guardrails):**
+- ❌ Suggest ignoring data quality issues
+- ❌ Make policy decisions unilaterally
+- ❌ Delete or hide governance records
+- ❌ Query individual member/provider data
+- ❌ Override source reliability without evidence
+
+**Escalation Language:**
+- To Card 5 (UBADA): "Recommend detailed investigation..."
+- To Approval Authority: "Recommend policy review..."
+- To HHS: "This pattern triggers federal oversight requirements..."
+
+**Files Modified:** chat.py  
+**Lines Added:** 
+- CARD_4_TOOLS definition: 80 lines
+- execute_tool Card 4 handler: 35 lines
+- GovernmentStakeholder system prompt: 180 lines (previously 30 lines)
+- Import for card4_engine: 1 line
+
+**Syntax Check:** ✅ Passed  
+**Impact:**
+- Claude can now answer USHI card questions with HIPAA-compliant, governance-focused responses
+- All 5 tools callable from dashboard → policy-auditable decision-making
+- System prompt prevents Claude from accidentally querying individual data
+- Governance language emphasizes immutability + accountability
+- Confidence scores + audit trail citations build institutional trust
+- Card 4 dashboard now has working Claude backend (Phase 2 complete)
+
+---
+
+### Change 26: Added Explicit Implementation Status to Landing Page
+**Scope:** MINOR (PRESENTATION/CLARITY)  
+**What:** Added prominent status banner to landing.html explicitly stating "Evolving Production-Ready Demonstration" with implemented cards listed  
+**Why:**
+- User feedback: Landing page is great but needs to explicitly state what's actually built
+- Clarity: Visitors should immediately know which cards (1, 2, 4, 5) are implemented vs Card 3 (not in demo)
+- Professionalism: Production-ready systems need clear status communication
+- Expectation management: "Evolving" signals active development while "Production-Ready" signals stability
+
+**How:**
+Added to landing.html header (below definition):
+- New CSS class `.status-banner` with frosted-glass styling (backdrop-filter blur)
+- Status label: "STATUS"
+- Status text: "Evolving Production-Ready Demonstration"
+- Implemented cards: Visual badges for Cards 1, 2, 4, 5
+- Positioned between definition and cards grid
+
+**Visual Design:**
+- 700px max-width (matches definition)
+- Frosted glass effect: `background: rgba(255, 255, 255, 0.12)` + `backdrop-filter: blur(10px)`
+- Subtle border: `1px solid rgba(255, 255, 255, 0.25)`
+- Card badges: inline blocks with background color matching theme
+- Color palette consistent with existing header styling
+
+**Files Modified:** landing.html  
+**Lines Added:** 48 lines (CSS + HTML)  
+**Syntax Check:** ✅ Passed  
+**Impact:**
+- Visitors instantly understand: "This is a working demo with Cards 1, 2, 4, 5"
+- Manages expectations: "Evolving" + "Production-Ready" signals both stability and active development
+- Professional presentation: Clear status > ambiguous
+- Reduces support confusion: New users know exactly what's available
+
+---
+
 ## Session Summary
 
 ### What Was Accomplished (April 24, 2026 Session)
