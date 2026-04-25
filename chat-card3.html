@@ -334,6 +334,13 @@
         const API_BASE = '/api/card3';
         const BACKEND_URL = 'http://localhost:3000'; // Adjust based on deployment
 
+        // Conversation context
+        let conversationContext = {
+            lastPlansShown: null,
+            lastQuery: null,
+            planCount: 5
+        };
+
         // Auto-resize textarea
         inputText.addEventListener('input', () => {
             inputText.style.height = 'auto';
@@ -388,8 +395,20 @@
         async function processUserRequest(userMessage) {
             const msg = userMessage.toLowerCase();
 
+            // Handle clarification/confirmation questions first
+            if ((msg.includes('are those') || msg.includes('are they') || msg.includes('is that')) &&
+                (msg.includes('medicaid') || msg.includes('plan'))) {
+                return handleClarification(userMessage);
+            }
+
+            // Extract count if asking for specific number
+            const countMatch = userMessage.match(/(\d+)\s*(plan|most|popular|top)?/i);
+            if (countMatch) {
+                conversationContext.planCount = parseInt(countMatch[1]);
+            }
+
             // Route to appropriate handler
-            if (msg.includes('plan') || msg.includes('find') || msg.includes('browse') || msg.includes('search')) {
+            if (msg.includes('plan') || msg.includes('find') || msg.includes('browse') || msg.includes('search') || msg.includes('show')) {
                 return await handlePlanSearch(userMessage);
             } else if (msg.includes('eligible') || msg.includes('eligibility') || msg.includes('qualify')) {
                 return await handleEligibilityCheck(userMessage);
@@ -408,11 +427,36 @@
             }
         }
 
+        function handleClarification(userMessage) {
+            const msg = userMessage.toLowerCase();
+
+            if (conversationContext.lastPlansShown) {
+                if (msg.includes('are those medicaid') || msg.includes('are they medicaid')) {
+                    return `✓ <strong>Yes, all of these are Medicaid plans.</strong> Each one is a managed care plan available to eligible Medicaid members.<br><br>
+                    Would you like to:<br>
+                    • Learn more about one of these plans<br>
+                    • See plans in a different state<br>
+                    • Check your eligibility`;
+                } else if (msg.includes('different') || msg.includes('other')) {
+                    return `Got it. Let me show you different plans. Which state are you interested in, or would you like to see the most popular plans nationally?`;
+                }
+            }
+
+            return `I can confirm information about plans you're interested in. Ask me:<br>
+            • "Are those Medicaid plans?"<br>
+            • "What's the difference between these plans?"<br>
+            • "Which one covers [service]?"`;
+        }
+
         async function handlePlanSearch(query) {
             try {
                 // Extract state from query if provided
                 const stateMatch = query.match(/\b(New York|California|Texas|Florida|[A-Z]{2})\b/i);
                 const state = stateMatch ? stateMatch[0] : null;
+
+                // Determine count to show (3, 5, or requested number)
+                const countMatch = query.match(/(\d+)/);
+                const requestedCount = countMatch ? Math.min(parseInt(countMatch[1]), 10) : 5;
 
                 // Fetch programs from API
                 const params = state ? `?state=${encodeURIComponent(state)}` : '';
@@ -420,33 +464,35 @@
 
                 if (!response.ok) {
                     // Fallback if API not available
-                    return showMockPlans(state);
+                    return showMockPlans(state, requestedCount);
                 }
 
                 const data = await response.json();
 
                 if (data.programs && data.programs.length > 0) {
-                    let html = `<strong>Available Plans${state ? ` in ${state}` : ''}</strong> (${data.count} found)<br><br>`;
-                    data.programs.slice(0, 5).forEach(program => {
+                    const plansToShow = data.programs.slice(0, requestedCount);
+                    conversationContext.lastPlansShown = plansToShow;
+
+                    let html = `<strong>Top ${requestedCount} Medicaid Plans${state ? ` in ${state}` : ''}</strong> (${data.count} total available)<br><br>`;
+                    plansToShow.forEach((program, idx) => {
                         html += `<div style="margin-bottom: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-                            <strong>${program.name}</strong><br>
-                            Type: ${program.type}<br>
-                            Network: ${program.network_type}
+                            <strong>${idx + 1}. ${program.name}</strong><br>
+                            Type: ${program.type} | Network: ${program.network_type}
                         </div>`;
                     });
-                    if (data.count > 5) {
-                        html += `<br><em>...and ${data.count - 5} more plans</em>`;
+                    if (data.count > requestedCount) {
+                        html += `<br><em>...and ${data.count - requestedCount} more plans available</em>`;
                     }
                     return html;
                 } else {
                     return `No plans found${state ? ` in ${state}` : ''}. Try a different location or contact support.`;
                 }
             } catch (error) {
-                return showMockPlans();
+                return showMockPlans(null, requestedCount);
             }
         }
 
-        function showMockPlans(state = null) {
+        function showMockPlans(state = null, count = 5) {
             const mockPlans = [
                 { name: 'Empire BlueCross BlueShield', type: 'HMO', network: 'Managed' },
                 { name: 'UnitedHealthcare Community', type: 'PPO', network: 'Open Network' },
@@ -455,10 +501,13 @@
                 { name: 'Aetna Medicaid', type: 'Flex PPO', network: 'Tiered' }
             ];
 
-            let html = `<strong>Available Medicaid Plans</strong> (5 shown)<br><br>`;
-            mockPlans.forEach(plan => {
+            const plansToShow = mockPlans.slice(0, count);
+            conversationContext.lastPlansShown = plansToShow;
+
+            let html = `<strong>Top ${count} Medicaid Plans${state ? ` in ${state}` : ''}</strong> (${mockPlans.length} shown)<br><br>`;
+            plansToShow.forEach((plan, idx) => {
                 html += `<div style="margin-bottom: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-                    <strong>${plan.name}</strong><br>
+                    <strong>${idx + 1}. ${plan.name}</strong><br>
                     Type: ${plan.type} | Network: ${plan.network}
                 </div>`;
             });
