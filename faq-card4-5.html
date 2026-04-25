@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-e Card 4 & 5 FAQ</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #1e5631;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #1e5631;
+        }
+
+        .search-results {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .faq-category {
+            background: white;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1e5631;
+        }
+
+        .faq-category h2 {
+            font-size: 18px;
+            color: #1e5631;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .faq-item {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .faq-question {
+            cursor: pointer;
+            font-weight: 600;
+            color: #1e5631;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover {
+            color: #2d6a4f;
+        }
+
+        .faq-toggle {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #40e0d0;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 12px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-left: 3px solid #40e0d0;
+            border-radius: 3px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        .faq-answer p {
+            margin-bottom: 8px;
+        }
+
+        .faq-answer ul {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .faq-answer li {
+            margin-bottom: 4px;
+        }
+
+        .highlight {
+            background: #fffacd;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include header -->
+    <script>
+        fetch('card4-5-header.html')
+            .then(r => r.text())
+            .then(html => {
+                const header = document.createElement('div');
+                header.innerHTML = html;
+                document.body.insertBefore(header.firstElementChild, document.body.firstChild);
+            });
+    </script>
+
+    <div class="container">
+        <h1>TORQ-e Card 4 & 5 FAQ</h1>
+        <p class="subtitle">Searchable answers to common questions</p>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search FAQ... (e.g., 'audit trail', 'HIPAA', 'permissions')">
+            <div class="search-results">
+                <span id="result-count"></span>
+            </div>
+        </div>
+
+        <!-- FAQ CATEGORIES -->
+        <div id="faq-container"></div>
+
+        <div id="no-results" class="no-results" style="display: none;">
+            <p>No FAQ items match your search. Try different keywords or contact support.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>TORQ-e v1.0 | FAQ last updated 2026-04-25</p>
+    </footer>
+
+    <script>
+        const faqData = [
+            {
+                category: "General Questions",
+                items: [
+                    {
+                        q: "What's the difference between Card 4 and Card 5?",
+                        a: "Card 4 (USHI) provides aggregate-only, de-identified reporting for government oversight. Card 5 (UBADA) provides full data access for detailed fraud investigation. Card 4 users cannot see individual records; Card 5 users can see all PII."
+                    },
+                    {
+                        q: "Who uses Card 4 vs Card 5?",
+                        a: "Card 4: Government officials, program managers, compliance officers (aggregate oversight). Card 5: Data analysts, fraud investigators, compliance specialists (detailed investigation)."
+                    },
+                    {
+                        q: "Can I switch between Card 4 and Card 5?",
+                        a: "Your role determines your access. If you need access to both, contact your system administrator. Most users have access to one card based on their job function."
+                    }
+                ]
+            },
+            {
+                category: "Data Access & Permissions",
+                items: [
+                    {
+                        q: "Why can't I see individual member records on Card 4?",
+                        a: "Card 4 is designed for aggregate-only analysis. You see system-wide patterns (e.g., '47 providers billing >3σ above average') not individual records. This is intentional for HIPAA compliance. For individual-level analysis, escalate to Card 5 investigation."
+                    },
+                    {
+                        q: "Does Card 5 access require special approval?",
+                        a: "Yes. Card 5 provides access to sensitive PII (SSNs, member names, NPIs). Only approved data analysts have access. Contact your administrator if you need Card 5 access."
+                    },
+                    {
+                        q: "What is 'minimum necessary' principle?",
+                        a: "HIPAA requires you access only the data you need for your specific job function. Don't query broad datasets out of curiosity. Always specify filters (provider, date range, claim type) to narrow results."
+                    },
+                    {
+                        q: "What happens if I try to access data I'm not authorized for?",
+                        a: "The system denies the request with a 'Permission Denied' error. This denial is logged to the immutable audit trail and flagged for compliance review."
+                    }
+                ]
+            },
+            {
+                category: "Audit Logging & Compliance",
+                items: [
+                    {
+                        q: "What is logged in the audit trail?",
+                        a: "Every action you take: who (your ID), what (specific action), when (timestamp), why (your stated justification), and evidence (supporting documentation). These records are immutable (cannot be deleted) and retained for 7 years per HIPAA."
+                    },
+                    {
+                        q: "Can I delete or modify audit records?",
+                        a: "No. Audit records are immutable by design. You cannot delete, modify, or hide any audit entry. This ensures compliance and accountability."
+                    },
+                    {
+                        q: "Is accessing the audit trail itself logged?",
+                        a: "Yes. Meta-audit: When you view the audit trail, that access is itself logged. This provides complete transparency about who reviewed what."
+                    },
+                    {
+                        q: "How long are audit logs retained?",
+                        a: "7 years minimum per HIPAA requirements. After 7 years, logs are archived but can be retrieved if needed for investigations or compliance reviews."
+                    },
+                    {
+                        q: "How do I justify my actions in the audit trail?",
+                        a: "When performing Card 5 operations (creating investigations, requesting corrections), provide clear justification. Examples: 'Investigating billing pattern for fraud suspicion' or 'Data correction: DOB mismatch between enrollment and claims systems.'"
+                    }
+                ]
+            },
+            {
+                category: "Card 4 Specific Questions",
+                items: [
+                    {
+                        q: "What metrics can I view on Card 4?",
+                        a: "Enrollment rates, denial rates, processing times, approval rates—all as system-wide aggregates. You can filter by region, specialty, claim type, etc., but always see counts/percentages, never individual records."
+                    },
+                    {
+                        q: "How do I flag a compliance issue on Card 4?",
+                        a: "Use the 'Flag Issue' tool. Specify: issue type (data quality, fraud suspicion, compliance gap, system error), domain (claims, enrollment, provider data), title, detailed description, policy basis, and evidence. All flags are logged immutably."
+                    },
+                    {
+                        q: "What's the governance log and how do I use it?",
+                        a: "The governance log is an immutable audit trail showing all flags, approvals, corrections, and source changes. Use it to track decision chains: who flagged an issue, when it was approved, what evidence supported it, and what action was taken."
+                    },
+                    {
+                        q: "Can I recommend investigation from Card 4?",
+                        a: "Yes. When aggregate metrics suggest fraud or quality issues, you can recommend escalation to Card 5. Include your evidence and reasoning in the governance log. Card 5 analysts can then drill into individual cases."
+                    }
+                ]
+            },
+            {
+                category: "Card 5 Specific Questions",
+                items: [
+                    {
+                        q: "What does 'confidence score' mean?",
+                        a: "A 0.0-1.0 score indicating data quality and evidence strength. 🟢 HIGH (0.85+): Multiple evidence points, strong peer comparison. 🟡 MEDIUM (0.60-0.84): Some evidence but limitations. 🔴 LOW (<0.60): Incomplete or conflicting data. Use confidence to decide next steps."
+                    },
+                    {
+                        q: "What's Z-score and why does it matter?",
+                        a: "Z-score measures how far a data point is from the average, in standard deviations. Z-score >3.0 means 99.7% of data is 'normal'—your outlier is statistically significant. >3σ outliers warrant investigation; 2-3σ requires additional context."
+                    },
+                    {
+                        q: "How do I create an investigation project?",
+                        a: "Use Card 5's 'Create Investigation' tool. Specify: title, investigation type (fraud_suspicion, quality_concern, billing_pattern, referral_arrangement), lead analyst, team members, initial findings, severity (LOW/MEDIUM/HIGH/CRITICAL). This creates an immutable case with team workspace."
+                    },
+                    {
+                        q: "What's the workflow for requesting data corrections?",
+                        a: "1. Identify the error during investigation. 2. Use 'Request Correction' tool (specify: domain, entity, field, current value, proposed value, reason, evidence). 3. Data Governance Committee reviews. 4. Approved corrections are applied and logged. Original value preserved in audit trail."
+                    },
+                    {
+                        q: "Can I share investigation findings with Card 4?",
+                        a: "Yes. Once you complete a Card 5 investigation, you can flag results to Card 4 for governance review. This can prompt policy recommendations or source reliability changes."
+                    },
+                    {
+                        q: "What's 'network exploration' and when do I use it?",
+                        a: "Network exploration maps relationships: which providers co-bill, which members see multiple providers, which facilities concentrate cases. Use it to identify co-billing rings, unnecessary referrals, or facility kickback arrangements."
+                    }
+                ]
+            },
+            {
+                category: "HIPAA & Data Privacy",
+                items: [
+                    {
+                        q: "How is sensitive data (SSN, names, NPIs) protected?",
+                        a: "Sensitive data is encrypted at rest using Fernet (AES-128 encryption). Decryption requires authorization. Non-authorized users see masked data (XXX-XX-1234 for SSN, J*** D*** for names, *****7890 for NPI)."
+                    },
+                    {
+                        q: "What is 'de-identification' and when is it used?",
+                        a: "De-identification removes direct identifiers (names, SSNs) and presents aggregate patterns only. Used on Card 4 for government reporting. Card 5 users (with authorization) see full identifiers for investigation."
+                    },
+                    {
+                        q: "Am I HIPAA-compliant just by using this system?",
+                        a: "The system enforces HIPAA controls (audit logging, access restrictions, encryption). But compliance also requires: following minimum necessary principle, protecting your login credentials, not sharing data beyond your role, and understanding HIPAA regulations. System controls + user responsibility = compliance."
+                    },
+                    {
+                        q: "What if I accidentally query data I shouldn't have access to?",
+                        a: "The system blocks it with a permission error (which is logged). No harm done—the system enforces access controls. But if you see an error, don't try workarounds; contact your administrator to clarify your permissions."
+                    }
+                ]
+            },
+            {
+                category: "Troubleshooting",
+                items: [
+                    {
+                        q: "I'm getting 'Permission Denied' errors. What's wrong?",
+                        a: "You're trying to access data or perform an action your role doesn't allow. Card 4 users can't access individual records. Certain tools require specific authorization. Contact your administrator to request access if needed."
+                    },
+                    {
+                        q: "Data looks different when I query it twice. Why?",
+                        a: "Real-time updates, cross-source lag (typically 24 hours), pending adjudications, and data corrections can cause discrepancies. Check the data freshness timestamp in results. For persistent discrepancies, use Card 5's data correction tool."
+                    },
+                    {
+                        q: "The system is slow. What can I do?",
+                        a: "Add more filters to narrow results (provider NPI, date range, claim type). Smaller result sets query faster. If slowness persists, contact support."
+                    },
+                    {
+                        q: "I need help but the help menu didn't solve my problem.",
+                        a: "See the Help menu in your card's header (top right). Options: Email support, chat support, or troubleshooting documentation. Email is most reliable for complex issues."
+                    }
+                ]
+            }
+        ];
+
+        // Populate FAQ
+        function renderFAQ(data) {
+            const container = document.getElementById('faq-container');
+            container.innerHTML = data.map(cat => `
+                <div class="faq-category">
+                    <h2>${cat.category}</h2>
+                    ${cat.items.map((item, idx) => `
+                        <div class="faq-item" data-question="${item.q.toLowerCase()}" data-answer="${item.a.toLowerCase()}">
+                            <div class="faq-question" onclick="toggleAnswer(this)">
+                                <span class="faq-toggle">+</span>
+                                ${item.q}
+                            </div>
+                            <div class="faq-answer">
+                                ${item.a}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        // Toggle answer visibility
+        function toggleAnswer(el) {
+            const answer = el.nextElementSibling;
+            const toggle = el.querySelector('.faq-toggle');
+            answer.classList.toggle('show');
+            toggle.textContent = answer.classList.contains('show') ? '−' : '+';
+        }
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const items = document.querySelectorAll('.faq-item');
+            let visibleCount = 0;
+
+            items.forEach(item => {
+                const q = item.getAttribute('data-question');
+                const a = item.getAttribute('data-answer');
+                const match = q.includes(query) || a.includes(query);
+                item.style.display = match ? 'block' : 'none';
+                if (match) visibleCount++;
+            });
+
+            // Update result count
+            document.getElementById('result-count').textContent = visibleCount > 0 ? 
+                `Showing ${visibleCount} result${visibleCount !== 1 ? 's' : ''}` : '';
+
+            // Show/hide no-results message
+            document.getElementById('no-results').style.display = visibleCount === 0 && query ? 'block' : 'none';
+        });
+
+        // Initial render
+        renderFAQ(faqData);
+    </script>
+</body>
+</html>

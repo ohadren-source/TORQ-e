@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-e Card 4 & 5 Tutorial</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #1e5631;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .toc {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            border-left: 4px solid #1e5631;
+        }
+
+        .toc h2 {
+            font-size: 14px;
+            color: #1e5631;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .section {
+            background: white;
+            padding: 32px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #1e5631;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 12px;
+        }
+
+        .section h3 {
+            font-size: 18px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #2d6a4f;
+        }
+
+        .section p {
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .section ul, .section ol {
+            margin-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section li {
+            margin-bottom: 8px;
+        }
+
+        .step-box {
+            background: #f9f9f9;
+            border-left: 4px solid #40e0d0;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .step-box strong {
+            color: #1e5631;
+        }
+
+        .workflow-diagram {
+            background: #f0f8f6;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .example {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 16px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+
+        .callout {
+            background: #e8f4f8;
+            border-left: 4px solid #0066cc;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .callout strong {
+            color: #0066cc;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include header -->
+    <script>
+        fetch('card4-5-header.html')
+            .then(r => r.text())
+            .then(html => {
+                const header = document.createElement('div');
+                header.innerHTML = html;
+                document.body.insertBefore(header.firstElementChild, document.body.firstChild);
+            });
+    </script>
+
+    <div class="container">
+        <h1>TORQ-e Cards 4 & 5 Tutorial</h1>
+        <p class="subtitle">Government Stakeholder Operations & Data Analyst Investigation</p>
+
+        <div class="toc">
+            <h2>Quick Navigation</h2>
+            <ul>
+                <li><a href="#card4-overview">Card 4 (USHI) Overview</a></li>
+                <li><a href="#card5-overview">Card 5 (UBADA) Overview</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#workflows">Common Workflows</a></li>
+                <li><a href="#hipaa">HIPAA & Compliance</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <!-- CARD 4 SECTION -->
+        <div class="section" id="card4-overview">
+            <h2>Card 4: USHI (Government Stakeholder Operations)</h2>
+            <p>Card 4 provides aggregate-only reporting for government stakeholders to oversee Medicaid program operations with complete HIPAA compliance.</p>
+            
+            <h3>Key Capabilities</h3>
+            <ul>
+                <li><strong>Aggregate Metrics</strong> — Enrollment rates, denial rates, processing times (no individual records)</li>
+                <li><strong>Fraud Signal Detection</strong> — Statistical outliers and suspicious patterns (de-identified)</li>
+                <li><strong>Data Quality Assessment</strong> — Cross-source data consistency checks</li>
+                <li><strong>Governance Logging</strong> — Immutable audit trail of all flags, approvals, corrections</li>
+                <li><strong>Compliance Reporting</strong> — HHS-ready documentation and evidence</li>
+            </ul>
+
+            <h3>HIPAA Compliance First</h3>
+            <div class="callout">
+                <strong>Remember:</strong> Card 4 NEVER returns individual records. All data is aggregate (e.g., "47 providers billing >3σ above average" not "Dr. Smith, NPI 1234567890"). This is intentional and enforced by the system.
+            </div>
+
+            <h3>Typical User Profile</h3>
+            <p>Government officials, program managers, compliance officers who need system-wide visibility without access to individual member/provider data.</p>
+        </div>
+
+        <!-- CARD 5 SECTION -->
+        <div class="section" id="card5-overview">
+            <h2>Card 5: UBADA (Data Analyst & Fraud Investigation)</h2>
+            <p>Card 5 provides full-fidelity data access for detailed fraud investigation and pattern analysis with complete immutable audit logging.</p>
+            
+            <h3>Key Capabilities</h3>
+            <ul>
+                <li><strong>Full Data Access</strong> — Query claims with names, SSNs, NPIs (authorized access)</li>
+                <li><strong>Outlier Detection</strong> — Z-score analysis with confidence scoring</li>
+                <li><strong>Network Analysis</strong> — Explore provider/member relationships and co-billing patterns</li>
+                <li><strong>Investigation Cases</strong> — Create formal investigation projects with team workspaces</li>
+                <li><strong>Data Corrections</strong> — Request corrections with approval workflow and audit trail</li>
+            </ul>
+
+            <h3>Key Difference from Card 4</h3>
+            <table style="width: 100%; margin: 16px 0; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f0f0f0; border-bottom: 2px solid #ccc;">
+                        <th style="padding: 12px; text-align: left;">Aspect</th>
+                        <th style="padding: 12px; text-align: left;">Card 4 (USHI)</th>
+                        <th style="padding: 12px; text-align: left;">Card 5 (UBADA)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px;">Data Access</td>
+                        <td style="padding: 12px;">Aggregate-only, de-identified</td>
+                        <td style="padding: 12px;">Full data with PII</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px;">Typical Users</td>
+                        <td style="padding: 12px;">Government officials, managers</td>
+                        <td style="padding: 12px;">Data analysts, fraud investigators</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px;">Use Case</td>
+                        <td style="padding: 12px;">Program oversight & compliance</td>
+                        <td style="padding: 12px;">Fraud investigation & case building</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px;">Audit Trail</td>
+                        <td style="padding: 12px;">Governance logging</td>
+                        <td style="padding: 12px;">Immutable investigation records</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Typical User Profile</h3>
+            <p>Data analysts, fraud investigators, compliance specialists who need to investigate specific patterns and build investigation cases with detailed evidence.</p>
+        </div>
+
+        <!-- GETTING STARTED -->
+        <div class="section" id="getting-started">
+            <h2>Getting Started</h2>
+
+            <h3>1. Accessing Your Card</h3>
+            <div class="step-box">
+                <strong>Step 1:</strong> Navigate to the TORQ-e landing page at <code>https://torq-e-production.up.railway.app/</code>
+            </div>
+            <div class="step-box">
+                <strong>Step 2:</strong> Select your card (Card 4 or 5) from the landing page
+            </div>
+            <div class="step-box">
+                <strong>Step 3:</strong> Click "Enter Card" to access the chat interface
+            </div>
+
+            <h3>2. Understanding Your Interface</h3>
+            <p>The chat interface allows you to interact with Claude AI, which has access to your card's tools. Simply describe what you want to do in natural language, and Claude will execute the appropriate tools.</p>
+
+            <div class="example">
+Example queries:
+
+Card 4: "Show me enrollment rates by region for the last 30 days"
+Card 5: "Analyze claims from Dr. Smith, looking for outliers"
+            </div>
+
+            <h3>3. Role-Based Access</h3>
+            <p>Your role determines what data you can access:</p>
+            <ul>
+                <li><strong>Card 4 Users:</strong> Aggregate-only access (no individual records)</li>
+                <li><strong>Card 5 Users:</strong> Full data access including PII (SSNs, names, NPIs)</li>
+            </ul>
+            <div class="callout">
+                <strong>Privacy Note:</strong> All access is logged immutably. Every query you make is recorded with WHO/WHAT/WHEN/WHY in the audit trail.
+            </div>
+        </div>
+
+        <!-- WORKFLOWS -->
+        <div class="section" id="workflows">
+            <h2>Common Workflows</h2>
+
+            <h3>Card 4 Workflow: Monitor Program Metrics</h3>
+            <div class="workflow-diagram">
+1. View Aggregate Metrics
+   ↓
+2. Identify suspicious patterns (high denial rates, outliers)
+   ↓
+3. Assess Data Quality (cross-source agreement)
+   ↓
+4. Flag Issue if needed
+   ↓
+5. View Governance Log to track approval chain
+            </div>
+
+            <h3>Card 5 Workflow: Investigate Fraud Suspicion</h3>
+            <div class="workflow-diagram">
+1. Explore Claims Data
+   (Establish baseline for provider/member)
+   ↓
+2. Compute Outlier Scores
+   (Find statistical anomalies with confidence scores)
+   ↓
+3. Navigate Relationship Graph
+   (Identify co-billing, referral, facility patterns)
+   ↓
+4. Create Investigation Project
+   (Organize findings and team)
+   ↓
+5. Request Data Correction
+   (If data errors found during investigation)
+   ↓
+6. View Audit Trail
+   (Complete immutable record of investigation)
+            </div>
+        </div>
+
+        <!-- HIPAA & COMPLIANCE -->
+        <div class="section" id="hipaa">
+            <h2>HIPAA & Compliance</h2>
+
+            <h3>Data Access Principles</h3>
+            <ul>
+                <li><strong>Minimum Necessary:</strong> You can only access data relevant to your role</li>
+                <li><strong>Role-Based:</strong> Card 4 gets aggregate-only; Card 5 gets individual records</li>
+                <li><strong>Immutable Logging:</strong> Every access is logged and cannot be deleted</li>
+                <li><strong>Encryption:</strong> Sensitive data (SSNs, names, NPIs) encrypted at rest</li>
+            </ul>
+
+            <h3>Audit Trail Transparency</h3>
+            <p>All your actions create permanent audit records showing:</p>
+            <ul>
+                <li><strong>WHO:</strong> Your user ID and role</li>
+                <li><strong>WHAT:</strong> Specific action (query, investigation creation, etc.)</li>
+                <li><strong>WHEN:</strong> Exact timestamp</li>
+                <li><strong>WHY:</strong> Your stated justification for the action</li>
+            </ul>
+
+            <div class="callout">
+                <strong>Important:</strong> Even accessing the audit trail is logged. This meta-audit provides complete transparency.
+            </div>
+        </div>
+
+        <!-- BEST PRACTICES -->
+        <div class="section" id="best-practices">
+            <h2>Best Practices</h2>
+
+            <h3>For Card 4 Users</h3>
+            <ul>
+                <li>Always provide context when flagging issues (which metric, why it matters, regulatory basis)</li>
+                <li>Use the governance log to track approval chain and policy decisions</li>
+                <li>Remember: aggregate data only. You cannot drill down to individuals</li>
+                <li>Recommend Card 5 investigation when anomalies warrant individual-level analysis</li>
+            </ul>
+
+            <h3>For Card 5 Users</h3>
+            <ul>
+                <li>Always document your investigation justification and evidence</li>
+                <li>Use confidence scores to guide next steps (high confidence = more actionable)</li>
+                <li>Create formal investigation projects for complex cases (enables team collaboration)</li>
+                <li>Request data corrections only when data errors are clearly identified</li>
+                <li>Remember: Full data access carries responsibility. Use minimum necessary principle</li>
+            </ul>
+
+            <h3>Cross-Card Collaboration</h3>
+            <ul>
+                <li>Card 4 identifies aggregate patterns → Flag for Card 5 investigation</li>
+                <li>Card 5 investigates individual cases → Results may prompt Card 4 policy recommendations</li>
+                <li>Both create immutable records for compliance and audit readiness</li>
+            </ul>
+        </div>
+
+        <!-- TROUBLESHOOTING -->
+        <div class="section" id="troubleshooting">
+            <h2>Troubleshooting</h2>
+
+            <h3>Permission Denied Errors</h3>
+            <p><strong>Issue:</strong> "Access denied: You cannot view individual records"</p>
+            <p><strong>Cause:</strong> You're a Card 4 user trying to access Card 5 individual data, or you lack permission for the action.</p>
+            <p><strong>Solution:</strong> Verify your user role. If you need Card 5 access, contact system administrator.</p>
+
+            <h3>Audit Trail Not Found</h3>
+            <p><strong>Issue:</strong> Can't find previous queries in audit log</p>
+            <p><strong>Cause:</strong> Audit logs are retained for 7 years per HIPAA requirements. Old records are archived.</p>
+            <p><strong>Solution:</strong> Contact administrator for archived records if needed beyond 7-year window.</p>
+
+            <h3>Data Discrepancies</h3>
+            <p><strong>Issue:</strong> Data looks different across queries</p>
+            <p><strong>Cause:</strong> Real-time updates, cross-source lag (24 hours typical), pending adjudications.</p>
+            <p><strong>Solution:</strong> Check data freshness timestamp in query results. Use Card 5's "Request Data Correction" for confirmed errors.</p>
+
+            <h3>Can't Create Investigation</h3>
+            <p><strong>Issue:</strong> "Create investigation not available"</p>
+            <p><strong>Cause:</strong> Only Card 5 users can create investigations.</p>
+            <p><strong>Solution:</strong> Use Card 4's "Flag Issue" for governance concerns, or escalate to Card 5 analyst.</p>
+
+            <h3>Need Help?</h3>
+            <p>See the Help menu in the top right corner of your card interface.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>TORQ-e v1.0 | Medicaid Clarity System | Tutorial last updated 2026-04-25</p>
+    </footer>
+</body>
+</html>

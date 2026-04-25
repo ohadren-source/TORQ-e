@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-e System Documentation - Cards 4 & 5</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --primary-color: #1e5631;
+            --primary-dark: #0d3b22;
+            --primary-light: #2d6a4f;
+            --accent-green: #52b788;
+            --accent-light: #74c69d;
+            --neutral-light: #f1faee;
+            --neutral-dark: #333;
+            --border-color: #d4d4d4;
+            --error-color: #d62828;
+            --warning-color: #f77f00;
+            --success-color: #06a77d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--neutral-dark);
+            background-color: var(--neutral-light);
+        }
+
+        /* Header Placeholder */
+        #header-container {
+            min-height: 60px;
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Search Bar */
+        .search-section {
+            margin-bottom: 3rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .search-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #docSearch {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--primary-light);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        #docSearch:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.1);
+        }
+
+        .search-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .search-highlight {
+            background-color: #ffeb3b;
+            font-weight: 600;
+        }
+
+        /* Table of Contents */
+        .toc-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toc-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .toc-item {
+            padding: 0.75rem 0;
+        }
+
+        .toc-item a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .toc-item a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Content Sections */
+        .doc-section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .doc-section h2 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--accent-green);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .doc-section h3 {
+            color: var(--primary-light);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .doc-section h4 {
+            color: var(--neutral-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .doc-section p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .doc-section ul, .doc-section ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .code-block code {
+            color: #333;
+        }
+
+        /* Tables */
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .doc-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .doc-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .doc-table tr:hover {
+            background-color: rgba(82, 183, 136, 0.05);
+        }
+
+        /* Call-out Boxes */
+        .callout {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid;
+            border-radius: 4px;
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .callout.note {
+            border-color: #2196F3;
+            background-color: rgba(33, 150, 243, 0.05);
+        }
+
+        .callout.warning {
+            border-color: var(--warning-color);
+            background-color: rgba(247, 127, 0, 0.05);
+        }
+
+        .callout.success {
+            border-color: var(--success-color);
+            background-color: rgba(6, 167, 125, 0.05);
+        }
+
+        .callout strong {
+            color: var(--neutral-dark);
+        }
+
+        /* Architecture Diagram */
+        .architecture-box {
+            background: white;
+            border: 2px solid var(--primary-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .architecture-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .flow-step {
+            background: var(--primary-light);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .doc-section {
+                padding: 1.5rem;
+            }
+
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            #docSearch {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container (will be populated with card4-5-header.html) -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-input-wrapper">
+                <input
+                    type="text"
+                    id="docSearch"
+                    placeholder="Search documentation (system, architecture, compliance, API, etc.)..."
+                    aria-label="Search documentation"
+                >
+            </div>
+            <div class="search-info">
+                <span id="searchResultCount">All sections visible</span>
+            </div>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="toc-section">
+            <h2>📋 Documentation Overview</h2>
+            <ul class="toc-list">
+                <li class="toc-item"><a href="#system-architecture">System Architecture</a></li>
+                <li class="toc-item"><a href="#card4-overview">Card 4 (USHI) Overview</a></li>
+                <li class="toc-item"><a href="#card5-overview">Card 5 (UBADA) Overview</a></li>
+                <li class="toc-item"><a href="#hipaa-security">HIPAA & Security</a></li>
+                <li class="toc-item"><a href="#data-governance">Data Governance</a></li>
+                <li class="toc-item"><a href="#api-reference">API Reference</a></li>
+                <li class="toc-item"><a href="#operations">Operations & Deployment</a></li>
+                <li class="toc-item"><a href="#support">Support & Resources</a></li>
+            </ul>
+        </div>
+
+        <!-- 1. System Architecture -->
+        <div class="doc-section" id="system-architecture">
+            <h2>🏗️ System Architecture</h2>
+
+            <h3>TORQ-e Overview</h3>
+            <p>TORQ-e (TORQ-Enhanced) is a HIPAA-compliant Medicaid Clarity System built on a five-card architecture. Each card serves a distinct stakeholder group with specific data access patterns and operational workflows.</p>
+
+            <h4>Five-Card Architecture</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Card</th>
+                        <th>Code</th>
+                        <th>Stakeholder</th>
+                        <th>Data Access</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Card 1</td>
+                        <td>UMID</td>
+                        <td>Member Eligibility</td>
+                        <td>Self (own records only)</td>
+                        <td>✅ LIVE</td>
+                    </tr>
+                    <tr>
+                        <td>Card 2</td>
+                        <td>UPID</td>
+                        <td>Provider System</td>
+                        <td>Enrolled members' claims</td>
+                        <td>✅ LIVE</td>
+                    </tr>
+                    <tr>
+                        <td>Card 3</td>
+                        <td>UHWP</td>
+                        <td>Plan Administrator</td>
+                        <td>Administrative oversight</td>
+                        <td>⏭️ Planned</td>
+                    </tr>
+                    <tr>
+                        <td>Card 4</td>
+                        <td>USHI</td>
+                        <td>Government Stakeholder</td>
+                        <td>Aggregate metrics only</td>
+                        <td>🔨 In Development</td>
+                    </tr>
+                    <tr>
+                        <td>Card 5</td>
+                        <td>UBADA</td>
+                        <td>Data Analyst / Fraud Investigation</td>
+                        <td>Complete dataset (with audit)</td>
+                        <td>✅ Backend Ready</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Technology Stack</h3>
+            <ul>
+                <li><strong>Backend:</strong> FastAPI (Python) with asynchronous request handling</li>
+                <li><strong>Database:</strong> SQLAlchemy ORM with audit trail persistence</li>
+                <li><strong>Security:</strong> Fernet encryption (AES-128), role-based access control, audit logging</li>
+                <li><strong>Frontend:</strong> Responsive HTML5 with vanilla JavaScript</li>
+                <li><strong>AI Integration:</strong> Claude API for intelligent analysis and investigation</li>
+                <li><strong>Compliance:</strong> HIPAA-compliant logging, minimum-necessary data access, de-identification</li>
+            </ul>
+
+            <h3>Core Principles</h3>
+            <ul>
+                <li><strong>Least Privilege:</strong> Users access only the minimum data necessary for their role</li>
+                <li><strong>Immutable Audit Trail:</strong> All actions are logged with WHO, WHAT, WHEN, WHY for regulatory compliance</li>
+                <li><strong>Data Governance:</strong> Centralized source management with version control and quality scoring</li>
+                <li><strong>Confidence Scoring:</strong> Quality × Completeness × Freshness (0.0-1.0) for data reliability assessment</li>
+                <li><strong>River Path Algorithm:</strong> Multi-source lookup cascade with graceful degradation for fault tolerance</li>
+            </ul>
+        </div>
+
+        <!-- 2. Card 4 Overview -->
+        <div class="doc-section" id="card4-overview">
+            <h2>🏛️ Card 4 (USHI) - Government Stakeholder</h2>
+
+            <h3>Business Purpose</h3>
+            <p>Card 4 serves government stakeholders (state health officials, regulatory agencies, public health administrators) who need aggregate-level insights for policy-making, compliance monitoring, and program oversight. All data access is aggregate-only with no individual member or provider PII visible.</p>
+
+            <h3>Key Capabilities</h3>
+            <ul>
+                <li><strong>Aggregate Metrics:</strong> Enrollment trends, utilization rates, cost patterns, network health</li>
+                <li><strong>Quality Monitoring:</strong> Provider performance, member satisfaction, compliance metrics</li>
+                <li><strong>Governance Interface:</strong> View and flag issues in source data, generate investigation recommendations</li>
+                <li><strong>Audit Trail Access:</strong> Transparent logging of all Card 4 actions for accountability</li>
+                <li><strong>Escalation Workflow:</strong> Flag data quality issues for Card 5 investigation</li>
+            </ul>
+
+            <h3>Data Access Pattern</h3>
+            <div class="callout note">
+                <strong>Key Constraint:</strong> Card 4 is aggregate-only. No individual member names, SSNs, provider NPIs, or claim details are visible. All data is aggregated, de-identified, and summarized by category (region, service type, date range, etc.).
+            </div>
+
+            <h4>Viewable Metrics Categories</h4>
+            <ul>
+                <li><strong>Enrollment:</strong> Total members, monthly trends, demographic breakdowns</li>
+                <li><strong>Utilization:</strong> Service usage rates, provider network size, claim volume</li>
+                <li><strong>Financial:</strong> Aggregate spend, cost-per-member trends, budget forecasts</li>
+                <li><strong>Quality:</strong> Provider performance scores, member satisfaction indices, compliance rates</li>
+                <li><strong>Governance:</strong> Data quality scores, source reliability, flagged issues</li>
+            </ul>
+
+            <h3>Workflow: Monitoring to Escalation</h3>
+            <div class="flow-diagram">
+                <div class="flow-step">View Metrics</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Identify Patterns</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Assess Quality</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Flag Issues</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Audit Log</div>
+            </div>
+
+            <h3>Role-Based Permissions</h3>
+            <p>Government Stakeholder users have the following permissions:</p>
+            <ul>
+                <li>✅ VIEW_AGGREGATE (all metrics categories)</li>
+                <li>✅ FLAG_ISSUE (mark data quality concerns)</li>
+                <li>✅ STRIKE_SOURCE (recommend source removal/replacement)</li>
+                <li>❌ VIEW_INDIVIDUAL (no individual records)</li>
+                <li>❌ VIEW_PII (no names, SSNs, NPIs)</li>
+                <li>❌ CREATE_INVESTIGATION (escalate to Card 5 instead)</li>
+            </ul>
+
+            <h3>Example Use Cases</h3>
+            <ul>
+                <li>Monthly oversight: Review enrollment trends, identify growth patterns or sudden changes</li>
+                <li>Quality assurance: Monitor provider performance metrics, flag underperforming networks</li>
+                <li>Budget forecasting: Analyze aggregate spend trends, predict future cost trajectories</li>
+                <li>Compliance monitoring: Check data quality scores, ensure all sources meet reliability thresholds</li>
+                <li>Issue escalation: Flag suspicious patterns (outliers, data gaps) for Card 5 investigation</li>
+            </ul>
+        </div>
+
+        <!-- 3. Card 5 Overview -->
+        <div class="doc-section" id="card5-overview">
+            <h2>🔬 Card 5 (UBADA) - Data Analyst & Fraud Investigation</h2>
+
+            <h3>Business Purpose</h3>
+            <p>Card 5 serves authorized data analysts and fraud investigators who require complete dataset access to detect anomalies, investigate suspicious patterns, and recommend data corrections. Full PII is accessible under strict audit logging and role-based permissions.</p>
+
+            <h3>Key Capabilities</h3>
+            <ul>
+                <li><strong>Claims Exploration:</strong> Deep-dive analysis of individual claims with full member/provider context</li>
+                <li><strong>Outlier Detection:</strong> Statistical analysis (Z-scores) to identify unusual patterns</li>
+                <li><strong>Relationship Navigation:</strong> Graph-based exploration of member-provider-claim networks</li>
+                <li><strong>Investigation Creation:</strong> Launch formal investigations with documentation and evidence trails</li>
+                <li><strong>Data Correction:</strong> Request amendments to erroneous records with justification</li>
+                <li><strong>Immutable Audit Trail:</strong> Complete WHO/WHAT/WHEN/WHY logging with meta-audit (accessing audit trail is itself logged)</li>
+            </ul>
+
+            <h3>Data Access Pattern</h3>
+            <div class="callout success">
+                <strong>Complete Data Access:</strong> Card 5 users see full individual records including member names, SSNs, provider NPIs, claim amounts, and service details. Access is governed by role-based permissions and subject to audit logging.
+            </div>
+
+            <h4>Five Core Tools</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Purpose</th>
+                        <th>Input</th>
+                        <th>Output</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Explore Claims Data</td>
+                        <td>Deep-dive analysis of claims with context</td>
+                        <td>Member ID, date range, service type filters</td>
+                        <td>Detailed records, patterns, confidence score</td>
+                    </tr>
+                    <tr>
+                        <td>Compute Outlier Scores</td>
+                        <td>Statistical anomaly detection</td>
+                        <td>Dataset scope, metric (cost, frequency), threshold</td>
+                        <td>Z-scores, outlier list, risk flags</td>
+                    </tr>
+                    <tr>
+                        <td>Navigate Relationship Graph</td>
+                        <td>Explore member-provider-claim networks</td>
+                        <td>Starting entity (member/provider/claim)</td>
+                        <td>Connected entities, relationship types, patterns</td>
+                    </tr>
+                    <tr>
+                        <td>Create Investigation</td>
+                        <td>Launch formal investigation project</td>
+                        <td>Case name, allegation type, initial findings</td>
+                        <td>Investigation ID, audit-enabled workspace</td>
+                    </tr>
+                    <tr>
+                        <td>Request Data Correction</td>
+                        <td>Request amendments to erroneous records</td>
+                        <td>Record ID, correction details, justification</td>
+                        <td>Correction request ID, approval status</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Workflow: Investigation to Correction</h3>
+            <div class="flow-diagram">
+                <div class="flow-step">Explore</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Detect</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Navigate</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Investigate</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">Correct</div>
+            </div>
+
+            <h3>Confidence Scoring System</h3>
+            <p>All Card 5 outputs include confidence scores (0.0 to 1.0) calculated as:</p>
+            <div class="code-block">Confidence = Quality × Completeness × Freshness</div>
+            <ul>
+                <li><strong>Quality (0.0-1.0):</strong> Source reliability, data validation status</li>
+                <li><strong>Completeness (0.0-1.0):</strong> Proportion of required fields populated</li>
+                <li><strong>Freshness (0.0-1.0):</strong> Time since data last verified (1.0 = within 7 days, degrading to 0.0 at 180+ days)</li>
+            </ul>
+
+            <h4>Color-Mapped Confidence</h4>
+            <ul>
+                <li>🟢 <strong>High (0.70-1.0):</strong> Reliable data, proceed with confidence</li>
+                <li>🟡 <strong>Medium (0.40-0.69):</strong> Partial reliability, use with caution</li>
+                <li>🔴 <strong>Low (&lt;0.40):</strong> Questionable reliability, verify independently</li>
+            </ul>
+
+            <h3>Role-Based Permissions</h3>
+            <p>Data Analyst / Fraud Investigator users have full permissions:</p>
+            <ul>
+                <li>✅ VIEW_INDIVIDUAL (all individual records)</li>
+                <li>✅ VIEW_PII (names, SSNs, NPIs, claim details)</li>
+                <li>✅ CREATE_INVESTIGATION (formal investigation workspace)</li>
+                <li>✅ REQUEST_CORRECTION (propose data amendments)</li>
+                <li>✅ APPROVE_CORRECTION (review and approve corrections)</li>
+                <li>✅ FLAG_ISSUE (mark data quality concerns)</li>
+            </ul>
+
+            <h3>Example Use Cases</h3>
+            <ul>
+                <li><strong>Fraud Detection:</strong> Identify patterns of unusual billing (member ID misuse, provider overbilling)</li>
+                <li><strong>Data Quality Investigation:</strong> Research incomplete or inconsistent records, recommend corrections</li>
+                <li><strong>Anomaly Analysis:</strong> Use outlier detection to find members with unusual claim frequencies or amounts</li>
+                <li><strong>Network Analysis:</strong> Explore relationships between members, providers, and services to identify suspicious patterns</li>
+                <li><strong>Investigation Case Work:</strong> Create formal investigations with documented evidence trails and audit logging</li>
+            </ul>
+        </div>
+
+        <!-- 4. HIPAA & Security -->
+        <div class="doc-section" id="hipaa-security">
+            <h2>🔒 HIPAA Compliance & Security</h2>
+
+            <h3>Regulatory Framework</h3>
+            <p>TORQ-e implements HIPAA Security Rule requirements including administrative safeguards, physical safeguards, technical safeguards, and organizational policies.</p>
+
+            <h3>Minimum Necessary Principle</h3>
+            <div class="callout warning">
+                <strong>Core HIPAA Requirement:</strong> The system enforces that each role accesses only the minimum amount of data necessary to perform their function. Card 4 receives aggregate data only. Card 5 receives complete data but only for authorized investigators.
+            </div>
+
+            <h4>Data Access Enforcement</h4>
+            <ul>
+                <li><strong>Card 1 & 2 (Members/Providers):</strong> Only their own records visible</li>
+                <li><strong>Card 4 (Government):</strong> Aggregate metrics only, no individual PII</li>
+                <li><strong>Card 5 (Analysts):</strong> Complete records with strict audit logging</li>
+            </ul>
+
+            <h3>De-Identification & Masking</h3>
+            <p>The system supports both data masking and encryption for sensitive fields:</p>
+            <ul>
+                <li><strong>Masking (viewable but obscured):</strong> SSN → XXX-XX-6789, NPI → *****7890, Name → J*** D***</li>
+                <li><strong>Encryption (not viewable):</strong> AES-128 Fernet encryption for complete fields</li>
+                <li><strong>Rule-Based:</strong> Masks are applied according to role permissions and business context</li>
+            </ul>
+
+            <h3>Immutable Audit Trail</h3>
+            <p>Every action is logged with immutable records containing:</p>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>WHO</td>
+                        <td>User ID and role</td>
+                        <td>analyst_jane, DataAnalyst</td>
+                    </tr>
+                    <tr>
+                        <td>WHAT</td>
+                        <td>Action type and affected entities</td>
+                        <td>QUERY_CLAIMS, Member ID 12345</td>
+                    </tr>
+                    <tr>
+                        <td>WHEN</td>
+                        <td>Timestamp with timezone</td>
+                        <td>2026-04-25T14:32:15Z</td>
+                    </tr>
+                    <tr>
+                        <td>WHY</td>
+                        <td>Justification for the action</td>
+                        <td>"Fraud investigation case INV-2026-001"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Meta-Audit Concept</h3>
+            <p>Accessing the audit trail itself is logged as an action. This prevents unauthorized review of audit logs and creates a complete chain of custody for all PII access.</p>
+
+            <div class="callout note">
+                <strong>Example:</strong> If analyst_jane views the audit log for a sensitive claim, that action (VIEW_AUDIT_TRAIL on claim_12345) is itself logged with analyst_jane as the actor.
+            </div>
+
+            <h3>Encryption & Key Management</h3>
+            <ul>
+                <li><strong>Algorithm:</strong> Fernet (AES-128) symmetric encryption</li>
+                <li><strong>Key Storage:</strong> TORQ_E_ENCRYPTION_KEY environment variable (rotate periodically)</li>
+                <li><strong>Encrypted Fields:</strong> SSN, member names, provider NPIs in sensitive contexts</li>
+                <li><strong>Key Rotation:</strong> Support for re-keying data when keys are compromised</li>
+            </ul>
+
+            <h3>Role-Based Access Control (RBAC)</h3>
+            <p>The system enforces RBAC through a permission matrix:</p>
+
+            <h4>Roles & Permissions Matrix</h4>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>VIEW_AGGREGATE</th>
+                        <th>VIEW_INDIVIDUAL</th>
+                        <th>VIEW_PII</th>
+                        <th>CREATE_INVESTIGATION</th>
+                        <th>REQUEST_CORRECTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Member</td>
+                        <td>Own Only</td>
+                        <td>Own Only</td>
+                        <td>Own Only</td>
+                        <td>❌</td>
+                        <td>Own Records</td>
+                    </tr>
+                    <tr>
+                        <td>Provider</td>
+                        <td>Own Network</td>
+                        <td>Own Network</td>
+                        <td>Own Network</td>
+                        <td>❌</td>
+                        <td>Own Claims</td>
+                    </tr>
+                    <tr>
+                        <td>Government Stakeholder</td>
+                        <td>✅ All</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Data Analyst / Investigator</td>
+                        <td>✅ All</td>
+                        <td>✅ All</td>
+                        <td>✅ All</td>
+                        <td>✅</td>
+                        <td>✅</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Data Retention & Purging</h3>
+            <ul>
+                <li><strong>Active Records:</strong> Retained for operational period (typically 3+ years)</li>
+                <li><strong>Audit Trail:</strong> Retained for 7 years (HIPAA requirement)</li>
+                <li><strong>Purging:</strong> Compliance automated process with documented retention schedules</li>
+                <li><strong>Right to Erasure:</strong> Members can request deletion of their personal data (with regulatory exceptions)</li>
+            </ul>
+
+            <h3>Security Monitoring & Incident Response</h3>
+            <ul>
+                <li><strong>Anomaly Detection:</strong> Alerts for unusual access patterns (bulk downloads, after-hours access, etc.)</li>
+                <li><strong>Incident Logging:</strong> All security events recorded with timestamp and context</li>
+                <li><strong>Breach Notification:</strong> Automatic notification workflow if unauthorized access detected</li>
+                <li><strong>Regular Audits:</strong> Quarterly review of access logs and permissions</li>
+            </ul>
+        </div>
+
+        <!-- 5. Data Governance -->
+        <div class="doc-section" id="data-governance">
+            <h2>🔄 Data Governance & Quality Management</h2>
+
+            <h3>Source Management System</h3>
+            <p>TORQ-e implements centralized source management for all data inputs, with version control, quality tracking, and reliability scoring.</p>
+
+            <h3>Data Source Lifecycle</h3>
+            <ul>
+                <li><strong>Registration:</strong> New sources are registered with metadata (name, owner, contact, frequency)</li>
+                <li><strong>Validation:</strong> Initial data quality assessment (schema compliance, completeness, accuracy)</li>
+                <li><strong>Monitoring:</strong> Continuous quality scoring during operational use</li>
+                <li><strong>Flagging:</strong> Automatic alerts when quality degrades below thresholds</li>
+                <li><strong>Remediation:</strong> Governance team works with source owners to resolve issues</li>
+                <li><strong>Deprecation:</strong> Graceful retirement of unreliable sources with data migration plans</li>
+            </ul>
+
+            <h3>Confidence Scoring Framework</h3>
+            <p>Each piece of data receives a confidence score combining three dimensions:</p>
+
+            <div class="architecture-box">
+                <h4>Confidence Score = Quality × Completeness × Freshness</h4>
+                <p>Result: 0.0 (unreliable) to 1.0 (highly reliable)</p>
+            </div>
+
+            <h4>Quality Dimension</h4>
+            <ul>
+                <li>Source reliability track record</li>
+                <li>Schema compliance percentage</li>
+                <li>Historical error rate</li>
+                <li>Validation rule pass rate</li>
+            </ul>
+
+            <h4>Completeness Dimension</h4>
+            <ul>
+                <li>Required fields populated</li>
+                <li>No null values in critical columns</li>
+                <li>Data type consistency</li>
+                <li>Reference integrity (foreign keys valid)</li>
+            </ul>
+
+            <h4>Freshness Dimension</h4>
+            <ul>
+                <li>Days since last verification: 1.0 (0-7 days) → 0.5 (30 days) → 0.0 (180+ days)</li>
+                <li>Publication lag from source</li>
+                <li>Staleness of referenced data</li>
+            </ul>
+
+            <h3>River Path Algorithm</h3>
+            <p>Multi-source lookup cascade for fault tolerance and data coverage:</p>
+
+            <div class="code-block">
+For member_lookup(member_id):
+  1. Try Primary Source (highest quality)
+  2. If not found, cascade to Secondary Source A
+  3. If not found, cascade to Secondary Source B
+  4. If not found, try historical archive
+  5. If still not found, return "not found" with audit note
+  6. For each step, record confidence score
+  7. Return best-confidence result with source lineage
+            </div>
+
+            <div class="callout note">
+                <strong>Advantage:</strong> Continues operation even if primary source fails or lags. Users always see best-available data with confidence context.
+            </div>
+
+            <h3>Governance Log</h3>
+            <p>Centralized log of all governance actions including flagging, striking sources, and remediation:</p>
+            <ul>
+                <li><strong>Flagged Issues:</strong> Card 4 users flag data quality concerns</li>
+                <li><strong>Source Strikes:</strong> Formal removal of unreliable sources</li>
+                <li><strong>Corrections:</strong> Card 5 data corrections with approval status</li>
+                <li><strong>Remediation Tracking:</strong> Follow-up actions and resolution status</li>
+                <li><strong>Audit Trail:</strong> Complete WHO/WHAT/WHEN/WHY for all governance actions</li>
+            </ul>
+
+            <h3>Data Quality Thresholds</h3>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Threshold</th>
+                        <th>Action</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Confidence &gt; 0.70</td>
+                        <td>✅ Approve</td>
+                        <td>High quality, use with confidence</td>
+                    </tr>
+                    <tr>
+                        <td>Confidence 0.40-0.70</td>
+                        <td>⚠️ Caution</td>
+                        <td>Medium quality, verify independently</td>
+                    </tr>
+                    <tr>
+                        <td>Confidence &lt; 0.40</td>
+                        <td>🚫 Flag</td>
+                        <td>Low quality, escalate to Card 5</td>
+                    </tr>
+                    <tr>
+                        <td>Completeness &lt; 70%</td>
+                        <td>🚫 Alert</td>
+                        <td>Source failing validation rules</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 6. API Reference -->
+        <div class="doc-section" id="api-reference">
+            <h2>🔌 API Reference</h2>
+
+            <h3>Card 5 Endpoints</h3>
+
+            <h4>1. Explore Claims Data</h4>
+            <div class="code-block">POST /api/card5/explore-claims
+
+Request:
+{
+  "member_id": "MEM-123456",
+  "date_range": "2026-01-01 to 2026-04-25",
+  "service_types": ["inpatient", "emergency"],
+  "include_pii": true
+}
+
+Response:
+{
+  "claims": [
+    {
+      "claim_id": "CLM-789",
+      "member_name": "Jane Doe",
+      "member_ssn": "123-45-6789",
+      "service_date": "2026-03-15",
+      "provider_npi": "1234567890",
+      "service_type": "inpatient",
+      "amount": "$5,000.00",
+      "status": "paid"
+    }
+  ],
+  "patterns": "3 inpatient claims in 60 days (unusual frequency)",
+  "confidence_score": 0.92,
+  "veracity": "HIGH",
+  "audit_note": "Explored by analyst_jane for fraud investigation case INV-2026-001"
+}
+            </div>
+
+            <h4>2. Compute Outlier Scores</h4>
+            <div class="code-block">POST /api/card5/outlier-detection
+
+Request:
+{
+  "dataset_scope": "all_claims",
+  "metric": "claim_amount",
+  "time_window": "30_days",
+  "threshold_zscore": 2.5
+}
+
+Response:
+{
+  "outliers": [
+    {
+      "claim_id": "CLM-456",
+      "zscore": 3.2,
+      "amount": "$25,000.00",
+      "expected_range": "$2,000 - $8,000",
+      "risk_flag": "high"
+    }
+  ],
+  "summary": "12 claims identified with Z-score > 2.5",
+  "confidence_score": 0.88,
+  "audit_note": "Outlier analysis for fraud investigation"
+}
+            </div>
+
+            <h4>3. Navigate Relationship Graph</h4>
+            <div class="code-block">POST /api/card5/network-explorer
+
+Request:
+{
+  "start_entity": {"type": "member", "id": "MEM-123456"},
+  "depth": 2,
+  "relationship_types": ["claims", "co-billing"]
+}
+
+Response:
+{
+  "graph": {
+    "nodes": [
+      {"id": "MEM-123456", "type": "member", "label": "Jane Doe"},
+      {"id": "PROV-789", "type": "provider", "label": "ABC Medical Center"}
+    ],
+    "edges": [
+      {"source": "MEM-123456", "target": "PROV-789", "type": "claims", "count": 5}
+    ]
+  },
+  "patterns": "Member connected to 4 providers with high-frequency claims pattern",
+  "confidence_score": 0.85,
+  "audit_note": "Network analysis for relationship investigation"
+}
+            </div>
+
+            <h4>4. Create Investigation</h4>
+            <div class="code-block">POST /api/card5/investigation/create
+
+Request:
+{
+  "case_name": "Suspected Provider Overbilling - ABC Medical",
+  "allegation_type": "fraud_suspected",
+  "initial_findings": "Provider submitted 50 claims for same service code in 30 days"
+}
+
+Response:
+{
+  "investigation_id": "INV-2026-001",
+  "status": "active",
+  "created_by": "analyst_jane",
+  "created_at": "2026-04-25T14:32:15Z",
+  "message": "Investigation workspace created with immutable audit logging enabled"
+}
+            </div>
+
+            <h4>5. Request Data Correction</h4>
+            <div class="code-block">POST /api/card5/data-correction/request
+
+Request:
+{
+  "record_id": "CLM-789",
+  "field": "service_date",
+  "current_value": "2026-03-15",
+  "corrected_value": "2026-03-20",
+  "justification": "Member claim record shows incorrect date; verified with provider"
+}
+
+Response:
+{
+  "correction_request_id": "CORR-2026-042",
+  "status": "pending_approval",
+  "submitted_by": "analyst_jane",
+  "submitted_at": "2026-04-25T14:35:00Z",
+  "audit_entry_id": "AUDIT-2026-5432",
+  "message": "Correction request logged with immutable audit trail"
+}
+            </div>
+
+            <h3>HTTP Status Codes</h3>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>200</td>
+                        <td>Success</td>
+                        <td>Tool executed successfully, results returned</td>
+                    </tr>
+                    <tr>
+                        <td>400</td>
+                        <td>Bad Request</td>
+                        <td>Invalid parameters in request</td>
+                    </tr>
+                    <tr>
+                        <td>401</td>
+                        <td>Unauthorized</td>
+                        <td>User not authenticated</td>
+                    </tr>
+                    <tr>
+                        <td>403</td>
+                        <td>Forbidden</td>
+                        <td>User lacks permission for this action</td>
+                    </tr>
+                    <tr>
+                        <td>404</td>
+                        <td>Not Found</td>
+                        <td>Requested record does not exist</td>
+                    </tr>
+                    <tr>
+                        <td>500</td>
+                        <td>Server Error</td>
+                        <td>Internal system error, contact support</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 7. Operations & Deployment -->
+        <div class="doc-section" id="operations">
+            <h2>⚙️ Operations & Deployment</h2>
+
+            <h3>System Requirements</h3>
+            <ul>
+                <li><strong>Python:</strong> 3.10 or higher</li>
+                <li><strong>Database:</strong> PostgreSQL 13+ (or SQLAlchemy-compatible database)</li>
+                <li><strong>FastAPI:</strong> 0.104+</li>
+                <li><strong>Python Packages:</strong> fastapi, sqlalchemy, cryptography, pydantic</li>
+                <li><strong>Environment:</strong> Linux/macOS/Windows with Docker support recommended</li>
+            </ul>
+
+            <h3>Installation & Setup</h3>
+            <div class="code-block">
+# Clone repository
+git clone https://github.com/your-org/torqe.git
+cd torqe
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+export TORQ_E_DATABASE_URL="postgresql://user:password@localhost/torqe"
+export TORQ_E_ENCRYPTION_KEY="your-encryption-key"
+export TORQ_E_CLAUDE_API_KEY="your-claude-api-key"
+
+# Initialize database
+python -m database init_db
+
+# Start server
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+            </div>
+
+            <h3>Docker Deployment</h3>
+            <div class="code-block">
+# Build image
+docker build -t torqe:latest .
+
+# Run container
+docker run -e TORQ_E_DATABASE_URL="postgresql://..." \
+           -e TORQ_E_ENCRYPTION_KEY="..." \
+           -e TORQ_E_CLAUDE_API_KEY="..." \
+           -p 8000:8000 \
+           torqe:latest
+            </div>
+
+            <h3>Environment Configuration</h3>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Description</th>
+                        <th>Required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TORQ_E_DATABASE_URL</td>
+                        <td>Database connection string (PostgreSQL recommended)</td>
+                        <td>✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>TORQ_E_ENCRYPTION_KEY</td>
+                        <td>Fernet encryption key for PII fields</td>
+                        <td>✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>TORQ_E_CLAUDE_API_KEY</td>
+                        <td>Anthropic Claude API key for intelligent analysis</td>
+                        <td>✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>TORQ_E_API_VERSION</td>
+                        <td>API version (default: 1.0.0)</td>
+                        <td>❌ No</td>
+                    </tr>
+                    <tr>
+                        <td>TORQ_E_LOG_LEVEL</td>
+                        <td>Logging level: DEBUG, INFO, WARNING, ERROR (default: INFO)</td>
+                        <td>❌ No</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Monitoring & Logging</h3>
+            <ul>
+                <li><strong>Application Logs:</strong> FastAPI logs all requests and responses with timestamps</li>
+                <li><strong>Audit Logs:</strong> SQLAlchemy ORM captures all data access in audit_trail_entry table</li>
+                <li><strong>Error Tracking:</strong> Stack traces logged with context for debugging</li>
+                <li><strong>Health Endpoint:</strong> GET /api/card5/health returns system status</li>
+                <li><strong>Performance Metrics:</strong> Query execution times logged for optimization</li>
+            </ul>
+
+            <div class="code-block">
+# Check system health
+curl http://localhost:8000/api/card5/health
+
+Response:
+{
+  "status": "operational",
+  "database": "connected",
+  "services": ["card1", "card2", "card4", "card5"],
+  "timestamp": "2026-04-25T14:40:00Z"
+}
+            </div>
+
+            <h3>Backup & Disaster Recovery</h3>
+            <ul>
+                <li><strong>Daily Backups:</strong> Automated database backups with retention (30 days minimum)</li>
+                <li><strong>Encryption Key Backups:</strong> Secure backup of TORQ_E_ENCRYPTION_KEY in vault</li>
+                <li><strong>Recovery Testing:</strong> Monthly restore tests to verify backup integrity</li>
+                <li><strong>RTO/RPO:</strong> Recovery Time Objective 4 hours, Recovery Point Objective 24 hours</li>
+            </ul>
+
+            <h3>Performance Optimization</h3>
+            <ul>
+                <li><strong>Database Indexing:</strong> Indexes on member_id, claim_id, provider_npi, created_at</li>
+                <li><strong>Query Caching:</strong> Cache aggregate metrics (1-hour TTL)</li>
+                <li><strong>Pagination:</strong> Large result sets paginated (default 100 records per page)</li>
+                <li><strong>Connection Pooling:</strong> SQLAlchemy connection pool with 10 connections</li>
+            </ul>
+        </div>
+
+        <!-- 8. Support & Resources -->
+        <div class="doc-section" id="support">
+            <h2>❓ Support & Resources</h2>
+
+            <h3>Getting Help</h3>
+            <ul>
+                <li><strong>Documentation:</strong> This page and linked resources</li>
+                <li><strong>Tutorial:</strong> Comprehensive 7-section guide with workflows and best practices</li>
+                <li><strong>FAQ:</strong> Searchable answers to common questions</li>
+                <li><strong>Email Support:</strong> Contact support@torqe.health for technical issues</li>
+                <li><strong>Chat Support:</strong> Real-time assistance via in-app chat</li>
+            </ul>
+
+            <h3>Common Issues & Resolution</h3>
+
+            <h4>Permission Denied Error</h4>
+            <div class="callout warning">
+                <strong>Problem:</strong> "User lacks permission for this action"<br>
+                <strong>Solution:</strong> Verify your role and the specific permission required. Card 4 users cannot create investigations (Card 5 only). Check with your administrator if permissions should be adjusted.
+            </div>
+
+            <h4>Audit Trail Not Found</h4>
+            <div class="callout warning">
+                <strong>Problem:</strong> Cannot retrieve audit log for an action<br>
+                <strong>Solution:</strong> Audit trails are immutable and retained for 7 years. Older records may be archived. Check the action timestamp and contact support if record should exist.
+            </div>
+
+            <h4>Data Discrepancies</h4>
+            <div class="callout warning">
+                <strong>Problem:</strong> Data shows different values in different cards<br>
+                <strong>Solution:</strong> Check confidence scores for each source. Different cards may show different subsets of data due to access restrictions. See source documentation for freshness.
+            </div>
+
+            <h4>Investigation Creation Failed</h4>
+            <div class="callout warning">
+                <strong>Problem:</strong> Cannot create investigation<br>
+                <strong>Solution:</strong> Only Card 5 (Data Analyst) role can create investigations. Card 4 users should escalate via the Flag Issue workflow.
+            </div>
+
+            <h3>Documentation & Knowledge Base</h3>
+            <ul>
+                <li><strong>API Documentation:</strong> FastAPI auto-generated docs at /docs (Swagger UI)</li>
+                <li><strong>System Architecture:</strong> See "System Architecture" section above</li>
+                <li><strong>Compliance Guide:</strong> See "HIPAA Compliance & Security" section</li>
+                <li><strong>Data Governance:</strong> See "Data Governance & Quality Management" section</li>
+            </ul>
+
+            <h3>Feedback & Feature Requests</h3>
+            <p>Help us improve TORQ-e:</p>
+            <ul>
+                <li>Report bugs or issues via email (support@torqe.health) with details and reproduction steps</li>
+                <li>Request features by describing your use case and desired functionality</li>
+                <li>Suggest documentation improvements to help other users</li>
+                <li>Participate in user groups for best practices sharing</li>
+            </ul>
+
+            <h3>Training & Certification</h3>
+            <ul>
+                <li><strong>Getting Started Tutorial:</strong> 7-section comprehensive guide for new users</li>
+                <li><strong>Role-Specific Training:</strong> Card 4-specific and Card 5-specific workflows</li>
+                <li><strong>HIPAA Compliance Training:</strong> Required annual refresher for all users</li>
+                <li><strong>Advanced Topics:</strong> Investigation techniques, fraud detection, data quality management</li>
+            </ul>
+
+            <h3>System Status & Maintenance</h3>
+            <ul>
+                <li><strong>Health Dashboard:</strong> System status available at /api/card5/health endpoint</li>
+                <li><strong>Maintenance Windows:</strong> Scheduled monthly on 2nd Sunday, 2-3am (minimal impact)</li>
+                <li><strong>Status Updates:</strong> Subscribe to status@torqe.health for maintenance notifications</li>
+                <li><strong>Incident Response:</strong> Critical issues addressed within 4 hours of detection</li>
+            </ul>
+
+            <h3>Contact Information</h3>
+            <div class="architecture-box">
+                <h4>TORQ-e Support Team</h4>
+                <p>📧 <strong>Email:</strong> support@torqe.health</p>
+                <p>💬 <strong>Chat:</strong> Available in-app during business hours</p>
+                <p>📞 <strong>Phone:</strong> (555) TORQ-E01 (Emergency only)</p>
+                <p>🕐 <strong>Hours:</strong> Monday-Friday, 8am-6pm EST</p>
+            </div>
+
+            <h3>Version History & Release Notes</h3>
+            <ul>
+                <li><strong>v1.0.0 (Current):</strong> Initial release with Cards 1, 2, 4, 5 fully operational. Phase 5 (HIPAA Compliance) complete. Phase 6 (Documentation) in progress.</li>
+                <li><strong>v1.1.0 (Planned):</strong> Card 3 (Plan Administrator) implementation</li>
+                <li><strong>v1.2.0 (Planned):</strong> Advanced analytics dashboard for Card 4</li>
+                <li><strong>v2.0.0 (Planned):</strong> Multi-state deployment support and expanded HIPAA enterprise features</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 2rem; margin-top: 3rem; color: #666; border-top: 1px solid var(--border-color);">
+            <p><strong>TORQ-e: Medicaid Clarity System</strong></p>
+            <p>HIPAA-Compliant | Fraud Investigation | Data Governance</p>
+            <p>Version 1.0.0 | © 2026 TORQ-e Systems</p>
+            <p style="font-size: 0.85rem; margin-top: 1rem;">This documentation is comprehensive and living. Last updated: 2026-04-25</p>
+        </div>
+    </div>
+
+    <script>
+        // Load header dynamically
+        fetch('card4-5-header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+            })
+            .catch(error => console.log('Header not found (development mode):', error));
+
+        // Search functionality
+        const searchInput = document.getElementById('docSearch');
+        const docSections = document.querySelectorAll('.doc-section');
+        const tocSection = document.querySelector('.toc-section');
+        const searchInfo = document.getElementById('searchResultCount');
+
+        searchInput.addEventListener('keyup', function(e) {
+            const searchTerm = this.value.toLowerCase();
+            let visibleCount = 0;
+            let matchCount = 0;
+
+            // Remove previous highlights
+            document.querySelectorAll('.search-highlight').forEach(el => {
+                el.outerHTML = el.textContent;
+            });
+
+            if (searchTerm === '') {
+                docSections.forEach(section => section.classList.remove('hidden'));
+                tocSection.classList.remove('hidden');
+                searchInfo.textContent = 'All sections visible';
+                return;
+            }
+
+            docSections.forEach(section => {
+                const sectionText = section.innerText.toLowerCase();
+                if (sectionText.includes(searchTerm)) {
+                    section.classList.remove('hidden');
+                    visibleCount++;
+
+                    // Highlight matches
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    section.innerHTML = section.innerHTML.replace(regex, '<span class="search-highlight">$1</span>');
+                    matchCount++;
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+
+            const tocText = tocSection.innerText.toLowerCase();
+            if (tocText.includes(searchTerm)) {
+                tocSection.classList.remove('hidden');
+            } else {
+                tocSection.classList.add('hidden');
+            }
+
+            if (visibleCount === 0) {
+                searchInfo.innerHTML = '<span class="no-results">No matching sections found</span>';
+            } else {
+                searchInfo.textContent = `${visibleCount} section${visibleCount !== 1 ? 's' : ''} found`;
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

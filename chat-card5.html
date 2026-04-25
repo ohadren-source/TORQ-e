@@ -306,20 +306,8 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <a href="landing.html" class="home-link">← Home</a>
-        <div class="header-left">
-            <img src="/static/branding/logo/TdST.png" alt="TORQ-e Logo" class="logo">
-            <div>
-                <h1>TORQ-e Data Analyst & Fraud Investigation</h1>
-                <p>Advanced fraud detection, pattern analysis, and case management</p>
-            </div>
-        </div>
-        <div class="header-right">
-            <strong id="userName">Welcome</strong>
-            <small>Card 5: UBADA</small>
-        </div>
-    </div>
+    <!-- Standardized Card 4/5 Header (auto-loads card4-5-header.html) -->
+    <div id="header-container"></div>
 
     <div class="dev-notice">
         ✅ Card 5 backend ready. Full data access, outlier detection, network analysis, investigation cases, data corrections.
@@ -356,8 +344,17 @@
     <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.csv,.xlsx,.xls,.txt,.json">
 
     <script>
-        const username = sessionStorage.getItem('username') || 'Analyst';
-        document.getElementById('userName').textContent = username;
+        // Load standardized header
+        fetch('card4-5-header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+                // Update username in header after header loads
+                const username = sessionStorage.getItem('username') || 'Analyst';
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl) userNameEl.textContent = username;
+            })
+            .catch(error => console.log('Header not found (development mode):', error));
     </script>
 </body>
 </html>
