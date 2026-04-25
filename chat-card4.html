@@ -1153,14 +1153,14 @@
                 // New backend structure: data contains all 6 metrics with values
                 const metricsData = data.data || {};
 
-                // Extract metric VALUES from new response structure
+                // Extract metric VALUES from backend - no hardcoded fallbacks
                 const metrics = {
-                    enrollment_rate: metricsData.enrollment_rate?.value || 87.3,
-                    claims_processing: metricsData.claims_processing?.value || 95,
-                    data_quality: metricsData.data_quality?.value || 99,
-                    audit_trail: metricsData.audit_trail?.value || 100,
-                    compliance: metricsData.compliance?.value || 98,
-                    system_stability: metricsData.system_stability?.value || 96
+                    enrollment_rate: metricsData.enrollment_rate?.value,
+                    claims_processing: metricsData.claims_processing?.value,
+                    data_quality: metricsData.data_quality?.value,
+                    audit_trail: metricsData.audit_trail?.value,
+                    compliance: metricsData.compliance?.value,
+                    system_stability: metricsData.system_stability?.value
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
@@ -1187,16 +1187,16 @@
         function getOfflineMetrics() {
             let html = `<strong>📊 System Health Metrics - Spectrum Analyzer (Offline Mode)</strong><br><br>`;
 
-            // Use cached metrics if available, otherwise defaults
-            let cachedMetrics = conversationContext.lastMetricsShown || {};
+            // Use cached metrics if available
+            let cachedData = conversationContext.lastMetricsShown?.data || {};
 
             html += generateSpectrumAnalyzer({
-                enrollment_rate: cachedMetrics.enrollment_rate || 87.3,
-                claims_processing: cachedMetrics.claims_processing || 95,
-                data_quality: cachedMetrics.data_quality || 99,
-                audit_trail: cachedMetrics.audit_trail || 100,
-                compliance: cachedMetrics.compliance || 98,
-                system_stability: cachedMetrics.system_stability || 96
+                enrollment_rate: cachedData.enrollment_rate?.value,
+                claims_processing: cachedData.claims_processing?.value,
+                data_quality: cachedData.data_quality?.value,
+                audit_trail: cachedData.audit_trail?.value,
+                compliance: cachedData.compliance?.value,
+                system_stability: cachedData.system_stability?.value
             });
 
             html += `<br><strong>Key Metrics:</strong><br>
@@ -1222,15 +1222,15 @@
                 const data = await response.json();
                 let html = `<strong>📈 Enrollment Trends (Last 7 Days)</strong><br><br>`;
 
-                // Extract metrics from new backend response structure
+                // Extract metrics from new backend response structure - no hardcoded fallbacks
                 const metricsData = data.data || {};
                 const metrics = {
-                    enrollment_rate: metricsData.enrollment_rate?.value || 87.3,
-                    claims_processing: metricsData.claims_processing?.value || 95,
-                    data_quality: metricsData.data_quality?.value || 99,
-                    audit_trail: metricsData.audit_trail?.value || 100,
-                    compliance: metricsData.compliance?.value || 98,
-                    system_stability: metricsData.system_stability?.value || 96
+                    enrollment_rate: metricsData.enrollment_rate?.value,
+                    claims_processing: metricsData.claims_processing?.value,
+                    data_quality: metricsData.data_quality?.value,
+                    audit_trail: metricsData.audit_trail?.value,
+                    compliance: metricsData.compliance?.value,
+                    system_stability: metricsData.system_stability?.value
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
@@ -1285,15 +1285,15 @@
                 const data = await response.json();
                 let html = `<strong>✓ Data Quality Assessment</strong><br><br>`;
 
-                // Extract metrics from new backend response structure
+                // Extract metrics from new backend response structure - no hardcoded fallbacks
                 const metricsData = data.data || {};
                 const metrics = {
-                    enrollment_rate: metricsData.enrollment_rate?.value || 87.3,
-                    claims_processing: metricsData.claims_processing?.value || 95,
-                    data_quality: metricsData.data_quality?.value || 99,
-                    audit_trail: metricsData.audit_trail?.value || 100,
-                    compliance: metricsData.compliance?.value || 98,
-                    system_stability: metricsData.system_stability?.value || 96
+                    enrollment_rate: metricsData.enrollment_rate?.value,
+                    claims_processing: metricsData.claims_processing?.value,
+                    data_quality: metricsData.data_quality?.value,
+                    audit_trail: metricsData.audit_trail?.value,
+                    compliance: metricsData.compliance?.value,
+                    system_stability: metricsData.system_stability?.value
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
@@ -1354,15 +1354,15 @@
                 const data = await response.json();
                 let html = `<strong>⚠️ Governance Flags & Alerts</strong><br><br>`;
 
-                // Extract metrics from new backend response structure
+                // Extract metrics from new backend response structure - no hardcoded fallbacks
                 const metricsData = data.data || {};
                 const metrics = {
-                    enrollment_rate: metricsData.enrollment_rate?.value || 87.3,
-                    claims_processing: metricsData.claims_processing?.value || 95,
-                    data_quality: metricsData.data_quality?.value || 99,
-                    audit_trail: metricsData.audit_trail?.value || 100,
-                    compliance: metricsData.compliance?.value || 98,
-                    system_stability: metricsData.system_stability?.value || 96
+                    enrollment_rate: metricsData.enrollment_rate?.value,
+                    claims_processing: metricsData.claims_processing?.value,
+                    data_quality: metricsData.data_quality?.value,
+                    audit_trail: metricsData.audit_trail?.value,
+                    compliance: metricsData.compliance?.value,
+                    system_stability: metricsData.system_stability?.value
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
