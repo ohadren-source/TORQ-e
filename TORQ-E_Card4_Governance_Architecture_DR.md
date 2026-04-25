@@ -1115,7 +1115,37 @@ System is COHERENT across all dimensions
 - 🟡 YELLOW (70-89%) - Caution
 - 🔴 RED (0-69%) - Critical
 
-**Status:** ✅ LIVE on Railway, tested with Spectrum Analyzer interactive features
+**Interaction Model:**
+- All three sections start **collapsed (▶ icon)**
+- User expands by clicking section header
+- Chevron rotates to indicate expanded state (▼)
+
+**Data Source Citations:**
+- **Section 1 (Coherence Level):** Plain text source only
+  - Fine print (italicized): "For detailed data sources and removable citations, go to Stability Strength (Equalizer)"
+  - No URLs in this view (keeps Coherence clean)
+
+- **Section 2 (Stability Strength):** Full URL citations with session removal
+  - Each URL displayed on separate line (not pipe-separated)
+  - X button next to each URL for session removal
+  - Click X → "Are you sure?" confirmation modal
+  - Confirmed removal → Source removed from session (sessionStorage)
+  - Real government sources: eMedNY, CMS Data, State DOH, 42 CFR, NIST, OMB
+
+- **Section 3 (Combined View):** Full URL citations with session removal
+  - Same layout as Section 2 (includes Spectrum function)
+  - URLs one per line with X removal buttons
+  - Session removal available
+
+**Session-Level Removal Implementation:**
+- Removed sources stored in `sessionStorage.removedSources` (array of URLs)
+- Removed sources filtered from display on breakdown expansion
+- Removal is temporary (cleared when session ends/tab closes)
+- No server calls, no permanent changes
+- Each removal requires user confirmation ("Are you sure?")
+- If all sources removed from a metric, shows: "*All sources removed from session*"
+
+**Status:** ✅ LIVE on Railway with interactive Spectrum Analyzer + session source governance
 
 ### Database Integration
 

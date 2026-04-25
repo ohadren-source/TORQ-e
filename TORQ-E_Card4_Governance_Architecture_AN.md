@@ -26,11 +26,19 @@ The core of Card 4 is the **Coherence Level Spectrum**—a visual system showing
 
 All three views show the same underlying health data. Pick the one that answers your question fastest. **Each metric is clickable** to drill into data sources and calculation logic.
 
+**All sections start collapsed (▶). Click any section header to expand (▼).**
+
 #### **View 1: Coherence Level** (The Single Light)
 ```
+▶ 🎯 Coherence Level  [Click to expand]
+
+[Expanded view:]
          🟢 
         95%
      COHERENT
+     
+*For detailed data sources and removable 
+citations, go to Stability Strength (Equalizer)*
 ```
 
 **One number. One color.**
@@ -38,9 +46,9 @@ All three views show the same underlying health data. Pick the one that answers 
 - 🟡 **YELLOW (70-89%)** = System is wavering, some parts struggling  
 - 🔴 **RED (0-69%)** = System is fragmented, urgent action needed
 
-**Click to expand:** See the traffic light visual indicating which dimension is the concern.
+**Fine print note:** Points you to Stability Strength section if you want to see data sources or remove them from your session.
 
-**Use this when:** You need yes/no confidence fast. "Are we healthy?" → Look at one light.
+**Use this when:** You need yes/no confidence fast. "Are we healthy?" → Click to expand, see one light.
 
 #### **View 2: Stability Strength (The Equalizer)**
 
@@ -66,20 +74,31 @@ All three views show the same underlying health data. Pick the one that answers 
     ▄▄▄▄▄▄▄░ (progress bar)
 ```
 
+**Starts collapsed (▶). Click section header to expand (▼) and see all 6 metrics.**
+
 **Layout:** Full-width rectangles stacked vertically for easy scanning
 - **Left:** Traffic light (🟢/🟡/🔴)
 - **Center:** Metric name + percentage value
 - **Right:** Progress bar showing strength
 - **Each rectangle is clickable**
 
-**When you click a metric:**
+**When you click a metric to expand:**
 1. **Equalizer visualization** appears (5 bars representing the value strength)
-2. **Real data source citations** with clickable links:
-   - [eMedNY Portal](https://www.emedny.org/) | [CMS Data](https://data.cms.gov/) | [State DOH](https://www.health.ny.gov/)
-3. **Calculation logic** (the exact formula used)
-4. **Detailed breakdown** (specific numbers and recent activity)
+2. **Real data source citations** displayed one per line with ✕ button:
+   ```
+   eMedNY Portal ✕
+   CMS Data ✕
+   State DOH ✕
+   ```
+3. **Session removal:** Click ✕ next to any source → "Are you sure?" confirmation
+   - If yes: Source removed from this session only
+   - Removed sources won't appear in future expansions (until you refresh/close tab)
+4. **Calculation logic** (the exact formula used)
+5. **Detailed breakdown** (specific numbers and recent activity)
 
-**Use this when:** You need to know which specific system is struggling AND want to verify the data. "Where's the problem and who says so?" → Click any rectangle.
+**Use this when:** You need to know which specific system is struggling AND want to verify the data with full transparency. "Where's the problem and who says so?" → Click any rectangle.
+
+**Session removal is temporary:** When you close the browser or tab, all sources are back. Want to permanently exclude a source? Contact admin directly.
 
 #### **View 3: Combined View** (Both Together)
 
@@ -100,10 +119,14 @@ All three views show the same underlying health data. Pick the one that answers 
 
 **Coherence % at top + all six metrics below (same clickable rectangles)**
 
+**Starts collapsed (▶). Click section header to expand (▼).**
+
 **When you click a metric in Combined View:**
 1. Shows **BOTH** traffic light AND equalizer visuals
-2. Shows plain text sources (no URLs in this view)
-3. Full calculation details
+2. **Real data source citations with session removal** (one URL per line with ✕ button)
+   - Click ✕ → "Are you sure?" confirmation
+   - Removes from session (temporary, until page refresh)
+3. Full calculation logic and detailed breakdown
 
 **Use this when:** You want the complete picture with maximum context. "Show me everything." → Combined view provides all three layers at once.
 
