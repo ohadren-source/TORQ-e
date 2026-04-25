@@ -784,18 +784,19 @@
             const msg = query.toLowerCase();
 
             // Route to appropriate handler
-            if (msg.includes('metric') || msg.includes('health') || msg.includes('status')) {
+            if (msg.includes('metric') || msg.includes('health') || msg.includes('status') || msg.includes('efficiency') || msg.includes('breakdown') || msg.includes('performance')) {
                 return await handleMetricsQuery(query);
-            } else if (msg.includes('trend') || msg.includes('enrollment') || msg.includes('volume')) {
+            } else if (msg.includes('trend') || msg.includes('enrollment') || msg.includes('volume') || msg.includes('growth') || msg.includes('member')) {
                 return await handleTrendQuery(query);
-            } else if (msg.includes('quality') || msg.includes('accuracy') || msg.includes('data')) {
+            } else if (msg.includes('quality') || msg.includes('accuracy') || msg.includes('data') || msg.includes('validation') || msg.includes('audit')) {
                 return await handleQualityQuery(query);
-            } else if (msg.includes('governance') || msg.includes('flag') || msg.includes('alert') || msg.includes('issue')) {
+            } else if (msg.includes('governance') || msg.includes('flag') || msg.includes('alert') || msg.includes('issue') || msg.includes('compliance')) {
                 return await handleGovernanceQuery(query);
             } else if (msg.includes('help') || msg.includes('what can')) {
                 return getHelpMessage();
             } else {
-                return getDefaultResponse();
+                // Default: try to fetch metrics anyway
+                return await handleMetricsQuery(query);
             }
         }
 
