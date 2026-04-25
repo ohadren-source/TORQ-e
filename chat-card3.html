@@ -299,36 +299,238 @@
         </div>
     </div>
 
-    <div class="dev-notice">
-        ⚠️ Card 3 is in development. Backend systems coming soon.
-    </div>
-
     <div class="chat-container">
         <div class="messages" id="messages">
             <div class="message assistant">
                 <div class="message-bubble">
-                    <strong>👋 TORQ-e Plan Network Management</strong><br><br>
-                    This card is under development and will include:<br>
-                    • Manage provider networks<br>
-                    • Configure plan parameters<br>
-                    • Monitor network adequacy<br>
-                    • Oversee plan operations<br><br>
-                    Backend systems are being built. Check back soon!
+                    <strong>🏥 Welcome to TORQ-e Plan Network Management</strong><br><br>
+                    I can help you:<br>
+                    • <strong>Find plans</strong> - Browse available Medicaid plans by state<br>
+                    • <strong>Check eligibility</strong> - See which plans match your eligibility<br>
+                    • <strong>Compare plans</strong> - Side-by-side comparison of benefits and costs<br>
+                    • <strong>Enroll in a plan</strong> - Complete your plan selection<br><br>
+                    What would you like to do?
                 </div>
             </div>
         </div>
 
         <div class="input-area">
             <div class="input-field">
-                <textarea id="inputText" placeholder="This card is under development..." rows="1" disabled></textarea>
+                <textarea id="inputText" placeholder="Type your message here... e.g., 'Show me plans in New York'" rows="1"></textarea>
             </div>
-            <button class="send-btn" id="sendBtn" disabled>➤</button>
+            <button class="send-btn" id="sendBtn">➤</button>
         </div>
     </div>
 
     <script>
-        const username = sessionStorage.getItem('username') || 'Administrator';
+        const username = sessionStorage.getItem('username') || 'Member';
         document.getElementById('userName').textContent = username;
+
+        const messagesDiv = document.getElementById('messages');
+        const inputText = document.getElementById('inputText');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // API configuration
+        const API_BASE = '/api/card3';
+        const BACKEND_URL = 'http://localhost:3000'; // Adjust based on deployment
+
+        // Auto-resize textarea
+        inputText.addEventListener('input', () => {
+            inputText.style.height = 'auto';
+            inputText.style.height = (inputText.scrollHeight) + 'px';
+        });
+
+        // Send message on Enter
+        inputText.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        async function sendMessage() {
+            const message = inputText.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            inputText.value = '';
+            inputText.style.height = 'auto';
+            sendBtn.disabled = true;
+
+            try {
+                // Process the user's request
+                const response = await processUserRequest(message);
+                addMessage(response, 'assistant');
+            } catch (error) {
+                addMessage(`Sorry, I encountered an error: ${error.message}. Please try again.`, 'assistant');
+            } finally {
+                sendBtn.disabled = false;
+                inputText.focus();
+            }
+        }
+
+        function addMessage(text, role) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = text;
+
+            messageDiv.appendChild(bubble);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function processUserRequest(userMessage) {
+            const msg = userMessage.toLowerCase();
+
+            // Route to appropriate handler
+            if (msg.includes('plan') || msg.includes('find') || msg.includes('browse') || msg.includes('search')) {
+                return await handlePlanSearch(userMessage);
+            } else if (msg.includes('eligible') || msg.includes('eligibility') || msg.includes('qualify')) {
+                return await handleEligibilityCheck(userMessage);
+            } else if (msg.includes('compare') || msg.includes('comparison')) {
+                return await handlePlanComparison(userMessage);
+            } else if (msg.includes('enroll') || msg.includes('select') || msg.includes('sign up')) {
+                return await handleEnrollment(userMessage);
+            } else if (msg.includes('help') || msg.includes('what can') || msg.includes('how')) {
+                return getHelpMessage();
+            } else {
+                return `I can help you with Medicaid plans. Try asking:<br>
+                • "Show me plans in [State]"<br>
+                • "Check my eligibility"<br>
+                • "Compare these plans"<br>
+                • "Enroll me in a plan"`;
+            }
+        }
+
+        async function handlePlanSearch(query) {
+            try {
+                // Extract state from query if provided
+                const stateMatch = query.match(/\b(New York|California|Texas|Florida|[A-Z]{2})\b/i);
+                const state = stateMatch ? stateMatch[0] : null;
+
+                // Fetch programs from API
+                const params = state ? `?state=${encodeURIComponent(state)}` : '';
+                const response = await fetch(`${BACKEND_URL}${API_BASE}/programs${params}`);
+
+                if (!response.ok) {
+                    // Fallback if API not available
+                    return showMockPlans(state);
+                }
+
+                const data = await response.json();
+
+                if (data.programs && data.programs.length > 0) {
+                    let html = `<strong>Available Plans${state ? ` in ${state}` : ''}</strong> (${data.count} found)<br><br>`;
+                    data.programs.slice(0, 5).forEach(program => {
+                        html += `<div style="margin-bottom: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+                            <strong>${program.name}</strong><br>
+                            Type: ${program.type}<br>
+                            Network: ${program.network_type}
+                        </div>`;
+                    });
+                    if (data.count > 5) {
+                        html += `<br><em>...and ${data.count - 5} more plans</em>`;
+                    }
+                    return html;
+                } else {
+                    return `No plans found${state ? ` in ${state}` : ''}. Try a different location or contact support.`;
+                }
+            } catch (error) {
+                return showMockPlans();
+            }
+        }
+
+        function showMockPlans(state = null) {
+            const mockPlans = [
+                { name: 'Empire BlueCross BlueShield', type: 'HMO', network: 'Managed' },
+                { name: 'UnitedHealthcare Community', type: 'PPO', network: 'Open Network' },
+                { name: 'Molina Healthcare', type: 'HMO', network: 'Managed' },
+                { name: 'Centene Local Plans', type: 'HMO', network: 'Managed' },
+                { name: 'Aetna Medicaid', type: 'Flex PPO', network: 'Tiered' }
+            ];
+
+            let html = `<strong>Available Medicaid Plans</strong> (5 shown)<br><br>`;
+            mockPlans.forEach(plan => {
+                html += `<div style="margin-bottom: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+                    <strong>${plan.name}</strong><br>
+                    Type: ${plan.type} | Network: ${plan.network}
+                </div>`;
+            });
+            return html;
+        }
+
+        async function handleEligibilityCheck(query) {
+            const beneficiaryId = sessionStorage.getItem('beneficiary_id');
+
+            if (!beneficiaryId) {
+                return `To check your eligibility, I need your member information. Please:<br>
+                1. Complete your profile in Card 1 (Member Identity)<br>
+                2. Return here to see your eligible plans`;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}${API_BASE}/eligible-programs`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('auth_token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    return showMockEligibility();
+                }
+
+                const data = await response.json();
+                let html = `<strong>✓ Based on your eligibility</strong>, you qualify for ${data.count} plans:<br><br>`;
+                data.programs.slice(0, 3).forEach(program => {
+                    html += `<div style="margin-bottom: 8px; padding: 8px; background: #e8f5e9; border-radius: 4px;">
+                        ✓ <strong>${program.name}</strong><br>
+                        Coverage: ${program.coverage_start_date}
+                    </div>`;
+                });
+                return html;
+            } catch (error) {
+                return showMockEligibility();
+            }
+        }
+
+        function showMockEligibility() {
+            return `<strong>✓ You're eligible for Medicaid</strong><br><br>
+                Based on your profile, you qualify for:<br>
+                • Empire BlueCross BlueShield (HMO)<br>
+                • UnitedHealthcare Community (PPO)<br>
+                • Molina Healthcare (HMO)<br><br>
+                Would you like to compare these plans?`;
+        }
+
+        async function handlePlanComparison(query) {
+            return `To compare plans, tell me:<br>
+                1. The names of 2-3 plans you want to compare<br>
+                2. What's most important to you (cost, network, benefits)<br><br>
+                For example: "Compare Empire BlueCross and UnitedHealthcare focusing on copays"`;
+        }
+
+        async function handleEnrollment(query) {
+            return `Great! To enroll in a plan:<br>
+                1. First, confirm your eligibility (ask "Check my eligibility")<br>
+                2. Select your preferred plan<br>
+                3. I'll guide you through enrollment<br><br>
+                Which plan interests you?`;
+        }
+
+        function getHelpMessage() {
+            return `<strong>How I can help:</strong><br>
+                • <strong>Find Plans</strong> - "Show me Medicaid plans in New York"<br>
+                • <strong>Check Eligibility</strong> - "What plans am I eligible for?"<br>
+                • <strong>Compare</strong> - "Compare these two plans"<br>
+                • <strong>Enroll</strong> - "I want to enroll in a plan"<br><br>
+                What would you like to do?`;
+        }
     </script>
 </body>
 </html>

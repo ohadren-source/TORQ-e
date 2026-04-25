@@ -235,4 +235,4 @@ async def analyze_claim_for_fraud(
         return FraudSignalResponse(**analysis)
 
     except Exception as e:
-        raise HTTPExcept
+        raise HTTPException(status_code=500, detail=str(e))
