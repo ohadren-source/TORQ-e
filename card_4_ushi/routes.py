@@ -1,11 +1,11 @@
 """
 Card 4 (USHI) - Government Stakeholder API Routes
-Expose 5 Claude tools for government operations
+Expose 5 Claude tools for government operations with REAL data from public repositories
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Body
+from fastapi import APIRouter, HTTPException, Depends, Body, Request
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional, List, Dict
 import json
 
 from database import get_db
@@ -20,6 +20,20 @@ from .query_engine import (
 router = APIRouter(prefix="/api/card4", tags=["Card 4 - USHI (Government)"])
 
 # ============================================================================
+# DEPENDENCY: Get Public Data Schema from App State
+# ============================================================================
+
+def get_public_data_schema(request: Request) -> Optional[Dict]:
+    """
+    Retrieve public_data_schema from app.state.
+    Populated by data_crawler.py on startup.
+    """
+    try:
+        return getattr(request.app.state, 'public_data_schema', None)
+    except:
+        return None
+
+# ============================================================================
 # TOOL 1: QUERY AGGREGATE METRICS
 # ============================================================================
 
@@ -28,10 +42,11 @@ async def get_metrics(
     metric_type: str = Body(...),  # enrollment_rate, denial_rate, processing_time, approval_rate
     date_range_days: int = Body(30),
     filter_by: Optional[str] = Body(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
-    Query system-wide aggregate metrics (HIPAA-compliant)
+    Query system-wide aggregate metrics from REAL public repositories (HIPAA-compliant)
 
     Returns only aggregate counts/percentages, never individual records
     """
@@ -40,7 +55,8 @@ async def get_metrics(
             metric_type=metric_type,
             date_range_days=date_range_days,
             filter_by=filter_by,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema
         )
 
         return {
@@ -62,10 +78,11 @@ async def get_metrics(
 async def detect_signals(
     entity_type: str = Body("provider"),  # provider, member, claim_pattern
     threshold_sigma: float = Body(2.0),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
-    Detect statistical anomalies (fraud signals)
+    Detect statistical anomalies (fraud signals) from REAL data sources
 
     Returns outliers + patterns (aggregate, HIPAA-compliant)
     Recommends escalation to Card 5 (UBADA) for detailed investigation
@@ -74,7 +91,8 @@ async def detect_signals(
         result = await detect_fraud_signals(
             entity_type=entity_type,
             threshold_sigma=threshold_sigma,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema
         )
 
         return {
@@ -95,10 +113,11 @@ async def detect_signals(
 @router.post("/data-quality")
 async def check_data_quality(
     domain: str = Body("enrollment"),  # enrollment, claims, provider_data
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
-    Assess cross-source data consistency
+    Assess cross-source data consistency from REAL public repositories
 
     Reports agreement rates between sources (eMedNY vs MCO vs SSA, etc.)
     Identifies conflict types and recommendations
@@ -106,7 +125,8 @@ async def check_data_quality(
     try:
         result = await assess_data_quality(
             domain=domain,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema
         )
 
         return {
@@ -128,7 +148,8 @@ async def get_governance_log(
     filter_by: Optional[str] = None,
     days_back: int = 30,
     limit: int = 50,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Access immutable governance audit trail
@@ -141,7 +162,8 @@ async def get_governance_log(
             filter_by=filter_by,
             days_back=days_back,
             limit=limit,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema
         )
 
         return {
@@ -167,12 +189,13 @@ async def create_flag(
     justification: str = Body(...),
     evidence: List[str] = Body(...),
     flagged_by: str = Body(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Create governance flag (create governance action)
 
-    Creates immutable record for audit trail
+    Creates immutable record for audit trail with reference to real data sources
     """
     try:
         result = await flag_data_issue(
@@ -183,7 +206,8 @@ async def create_flag(
             justification=justification,
             evidence=evidence,
             flagged_by=flagged_by,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema
         )
 
         return {

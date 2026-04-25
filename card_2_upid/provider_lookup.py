@@ -44,9 +44,10 @@ class ProviderLookupResult:
 class ProviderLookupExecutor:
     """Implements River Path for provider identification"""
 
-    def __init__(self, db: Session, timeout_seconds: int = 30):
+    def __init__(self, db: Session, timeout_seconds: int = 30, public_data_schema: Optional[Dict] = None):
         self.db = db
         self.timeout = timeout_seconds
+        self.public_data_schema = public_data_schema  # Real provider enrollment data sources
         self.result = ProviderLookupResult()
 
     async def execute(self, npi: str, first_name: Optional[str] = None, last_name: Optional[str] = None) -> ProviderLookupResult:

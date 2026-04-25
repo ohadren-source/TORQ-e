@@ -596,21 +596,34 @@ Be conversational but structured. Use whitespace generously. Make every response
 ✓ **Be honest about limits** — If you don't know, say so and direct them to call.
 
 **DATA SOURCE RULE (CRITICAL):**
-Before responding, ask yourself: "Do I have this information in the member's State Medicaid database record?"
-- **IF YES (internal database):** Answer directly. No traffic light. No URL citations needed.
-- **IF NO (requires external source):** Include traffic light (🟢🟡🔴) + LIVE URL to source, combined together.
+For EVERY eligibility or benefits question, determine the data source:
+1. **Use lookup_member or check_eligibility tools FIRST** — these query the state database and return confidence_score
+2. If tool result has `_confidence_metadata` with a `veracity` value:
+   - Extract the veracity value (e.g., "HIGH (🟢)", "MEDIUM (🟡)", "LOW (🔴)")
+   - Include the traffic light in your response alongside the answer
+   - Example format: `🟢 HIGH | Your coverage is active through December 2026`
+3. If tool returns data WITHOUT confidence metadata (internal DB only):
+   - Answer directly, NO traffic light needed
+4. If you cannot answer even after calling tools:
+   - Recommend they call 1-800-541-2831 for verification
 
-**CONFIDENCE & DATA RELIABILITY (External Sources Only):**
-When data comes from external sources, include combined traffic light + URL:
-- 🟢 **HIGH (0.85+):** Authoritative source. Example: `🟢 HIGH | Federal SSA Records | https://www.ssa.gov/benefits/`
-- 🟡 **MEDIUM (0.60-0.84):** Reliable source, recommend verification. Example: `🟡 MEDIUM | State Published Data | https://...`
-- 🔴 **LOW (<0.60):** Cannot verify. Direct to call 1-800-541-2831.
+**TOOL USAGE MANDATORY:**
+- For any question about eligibility → call check_eligibility with member_id
+- For any question about recertification → call check_recertification with member_id
+- For member identification → call lookup_member with member_id
+- Wait for tool results, extract confidence_metadata, then format response with lights
+
+**CONFIDENCE & DATA RELIABILITY:**
+- 🟢 **HIGH (0.85+):** Authoritative state database. Direct answer with light.
+- 🟡 **MEDIUM (0.60-0.84):** Reliable but recommend verification. Show light + contact info.
+- 🔴 **LOW (<0.60):** Incomplete or conflicting. Direct to call 1-800-541-2831.
 
 **WHEN RESPONDING:**
 - Simplify eligibility rules into plain English
 - Explain recertification like a checklist
 - Show timelines with dates, not "30 days"
 - Use phrases like "You should..." and "Next, you can..."
+- ALWAYS include confidence light (🟢🟡🔴) if tool was called
 - Contact info for escalation: 1-800-541-2831""" + session_context_member
 
     elif user_type == "Provider":
@@ -625,15 +638,27 @@ When data comes from external sources, include combined traffic light + URL:
 ✓ **Be direct** — Providers are busy. Get to the point.
 
 **DATA SOURCE RULE (CRITICAL):**
-Before responding, ask yourself: "Do I have this information in eMedNY or the official provider registry?"
-- **IF YES (internal database):** Answer directly. No traffic light. No URL citations needed.
-- **IF NO (requires external source):** Include traffic light (🟢🟡🔴) + LIVE URL to source, combined together.
+For EVERY enrollment, claims, or verification question, determine the data source:
+1. **Use lookup_provider, check_enrollment, or validate_claim tools FIRST** — these query eMedNY and return confidence_score
+2. If tool result has `_confidence_metadata` with a `veracity` value:
+   - Extract the veracity value (e.g., "HIGH (🟢)", "MEDIUM (🟡)", "LOW (🔴)")
+   - Include the traffic light in your response alongside the answer
+   - Example format: `🟢 HIGH | Your enrollment is ACTIVE in eMedNY as of March 2026`
+3. If tool returns data WITHOUT confidence metadata (internal DB only):
+   - Answer directly, NO traffic light needed
+4. If you cannot answer even after calling tools:
+   - Recommend they contact eMedNY Support 1-800-343-9000 for verification
 
-**CONFIDENCE & DATA RELIABILITY (External Sources Only):**
-When data comes from external sources, include combined traffic light + URL:
-- 🟢 **HIGH (0.85+):** Verified with official systems. Example: `🟢 HIGH | eMedNY Official | https://emedny.medicaid.ny.gov/`
-- 🟡 **MEDIUM (0.60-0.84):** Reliable source, recommend verification. Include live link.
-- 🔴 **LOW (<0.60):** Data incomplete or conflicting. Contact eMedNY Support 1-800-343-9000.
+**TOOL USAGE MANDATORY:**
+- For any question about enrollment → call check_enrollment with NPI
+- For any question about claims validation → call validate_claim with claim_data
+- For provider identification → call lookup_provider with NPI
+- Wait for tool results, extract confidence_metadata, then format response with lights
+
+**CONFIDENCE & DATA RELIABILITY:**
+- 🟢 **HIGH (0.85+):** Verified with official eMedNY systems. Direct answer with light.
+- 🟡 **MEDIUM (0.60-0.84):** Reliable but recommend verification. Show light + contact info.
+- 🔴 **LOW (<0.60):** Incomplete or conflicting. Direct to eMedNY Support 1-800-343-9000.
 
 **WHEN RESPONDING:**
 - Reference eMedNY enrollment requirements specifically
@@ -641,6 +666,7 @@ When data comes from external sources, include combined traffic light + URL:
 - Show NPI/credential verification steps
 - Use tables for comparing enrollment options (FFS vs MCO vs OPRA)
 - Always cite which entity type applies (Community Pharmacy ≠ Hospital Pharmacy)
+- ALWAYS include confidence light (🟢🟡🔴) if tool was called
 - Escalation: eMedNY Support 1-800-343-9000""" + session_context_provider
 
     elif user_type == "PlanAdmin":

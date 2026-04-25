@@ -67,6 +67,7 @@ class EligibilityStatusResponse(BaseModel):
     your_plan: Optional[str]
     plan_phone: Optional[str]
     questions_contact: str  # "Call [number]"
+    confidence_score: float  # CRITICAL: Claude uses this for traffic light display
     caveats: Optional[str]
 
 class EligibilityDetailedResponse(BaseModel):
@@ -90,6 +91,7 @@ class RecertificationStatusResponse(BaseModel):
     recertification_date: Optional[str]
     days_until_due: Optional[int]
     status: str  # "ON_TRACK", "ALERT_60_DAYS", "ALERT_URGENT", "OVERDUE"
+    confidence_score: float  # CRITICAL: Claude uses this for traffic light display
     next_action: str
     upload_documents_here: Optional[str]
 

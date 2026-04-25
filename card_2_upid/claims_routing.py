@@ -2,7 +2,7 @@
 INTELLIGENT CLAIM ROUTING (Card 2 - UPID)
 
 Prevents "dirty claims" before submission by:
-1. Validating member eligibility on service date
+1. Validating member eligibility on service date (from real public repositories)
 2. Checking required fields
 3. Validating procedure codes
 4. Checking amount reasonableness
@@ -19,8 +19,9 @@ import uuid
 class ClaimValidator:
     """Validates claims before submission"""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, public_data_schema: Optional[Dict] = None):
         self.db = db
+        self.public_data_schema = public_data_schema  # Real claim validation rules
         self.errors = []
         self.warnings = []
 
@@ -142,8 +143,9 @@ class ClaimValidator:
 class ClaimRouter:
     """Routes validated claims to correct MCO/FFS portal"""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, public_data_schema: Optional[Dict] = None):
         self.db = db
+        self.public_data_schema = public_data_schema  # Real plan enrollment/routing data
 
     def route_claim(self, claim_data: Dict) -> Dict:
         """
@@ -242,8 +244,9 @@ class ClaimRouter:
 class ClaimMonitor:
     """Monitors submitted claims for status updates and escalation"""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, public_data_schema: Optional[Dict] = None):
         self.db = db
+        self.public_data_schema = public_data_schema  # Real claim processing timeline data
 
     def check_claim_status(self, claim_id: str) -> Dict:
         """

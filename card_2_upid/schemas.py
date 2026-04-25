@@ -65,6 +65,7 @@ class ProviderEnrollmentStatusResponse(BaseModel):
     mco_enrollments: Dict  # MCO name -> status
     total_plans: int
     credentials_valid: bool
+    confidence_score: float  # CRITICAL: Claude uses this for traffic light display
     message_for_provider: str
     next_steps: Optional[str]
 
@@ -73,6 +74,7 @@ class ClaimValidationResponse(BaseModel):
     valid: bool
     errors: List[str]
     warnings: List[str]
+    confidence_score: float  # CRITICAL: Claude uses this for traffic light display
     action: str  # SUBMIT or REJECT
     message: str
 

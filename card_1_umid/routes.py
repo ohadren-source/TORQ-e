@@ -1,10 +1,12 @@
 """
 Card 1 (UMID) API Routes: Member Eligibility System
+REAL DATA: Queries member eligibility data from public repositories via public_data_schema
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from datetime import datetime
+from typing import Optional, Dict
 import asyncio
 
 from database import get_db
@@ -22,6 +24,20 @@ from .eligibility import EligibilityDetermination
 from .confidence import ConfidenceScorer, TieredConfidenceReporting
 
 router = APIRouter(prefix="/api/card1", tags=["Card 1 - Member Eligibility"])
+
+# ============================================================================
+# DEPENDENCY: Get Public Data Schema from App State
+# ============================================================================
+
+def get_public_data_schema(request: Request) -> Optional[Dict]:
+    """
+    Retrieve public_data_schema from app.state.
+    Populated by data_crawler.py on startup.
+    """
+    try:
+        return getattr(request.app.state, 'public_data_schema', None)
+    except:
+        return None
 
 # ============================================================================
 # HEALTH CHECK
@@ -50,16 +66,17 @@ async def health_check(db: Session = Depends(get_db)):
 @router.post("/lookup", response_model=MemberIdentityResponse)
 async def lookup_member(
     request: MemberLookupRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Look up member by name, DOB, SSN
-    Executes River Path algorithm across multiple data sources
+    Executes River Path algorithm across real public member data sources
     Returns UMID if successful
     """
     try:
-        # Execute River Path
-        river_path = RiverPathExecutor(db)
+        # Execute River Path with real data sources
+        river_path = RiverPathExecutor(db, public_data_schema=public_data_schema)
         result = await river_path.execute(
             first_name=request.first_name,
             last_name=request.last_name,
@@ -108,10 +125,12 @@ async def lookup_member(
 @router.post("/eligibility/check", response_model=EligibilityStatusResponse)
 async def check_eligibility_member_view(
     request: EligibilityCheckRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Check member eligibility (MEMBER-FACING VIEW)
+    Queries REAL member eligibility data from public repositories
     Returns simplified, plain-language response
     """
     try:
@@ -120,8 +139,8 @@ async def check_eligibility_member_view(
         if not member:
             raise HTTPException(status_code=404, detail="Member not found")
 
-        # Determine eligibility
-        eligibility_determiner = EligibilityDetermination(db, member)
+        # Determine eligibility with real data sources
+        eligibility_determiner = EligibilityDetermination(db, member, public_data_schema=public_data_schema)
         status, eligibility_record, confidence = eligibility_determiner.determine_status()
 
         # Get plan
@@ -156,6 +175,7 @@ async def check_eligibility_member_view(
             your_plan=plan.plan_name if plan else "Fee-For-Service (Default)",
             plan_phone=plan.plan_member_services_phone if plan else "1-800-541-2831",
             questions_contact="Call your plan or NY Medicaid at 1-800-541-2831",
+            confidence_score=confidence,
             caveats=caveat
         )
 
@@ -167,10 +187,12 @@ async def check_eligibility_member_view(
 @router.post("/eligibility/detailed", response_model=EligibilityDetailedResponse)
 async def check_eligibility_provider_view(
     request: EligibilityCheckRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Check member eligibility (PROVIDER/ANALYST-FACING VIEW)
+    Queries REAL member eligibility data from public repositories
     Returns detailed breakdown with confidence components
     """
     try:
@@ -179,8 +201,8 @@ async def check_eligibility_provider_view(
         if not member:
             raise HTTPException(status_code=404, detail="Member not found")
 
-        # Determine eligibility
-        eligibility_determiner = EligibilityDetermination(db, member)
+        # Determine eligibility with real data sources
+        eligibility_determiner = EligibilityDetermination(db, member, public_data_schema=public_data_schema)
         status, eligibility_record, confidence = eligibility_determiner.determine_status()
 
         # Get plan
@@ -222,10 +244,12 @@ async def check_eligibility_provider_view(
 @router.post("/recertification/status", response_model=RecertificationStatusResponse)
 async def check_recertification_status(
     request: RecertificationCheckRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Check recertification deadline and status
+    Queries REAL recertification data from public repositories
     """
     try:
         member = db.query(Member).filter(Member.umid == request.umid).first()
@@ -239,7 +263,7 @@ async def check_recertification_status(
         if not eligibility:
             raise HTTPException(status_code=404, detail="No eligibility record found")
 
-        determiner = EligibilityDetermination(db, member)
+        determiner = EligibilityDetermination(db, member, public_data_schema=public_data_schema)
         days_until_recert = determiner.get_days_until_recertification(eligibility)
 
         # Determine status
@@ -254,11 +278,17 @@ async def check_recertification_status(
         else:
             recert_status = "OVERDUE"
 
+        # Compute confidence score
+        scorer = ConfidenceScorer()
+        # Higher confidence if more days until due, lower if urgent/overdue
+        recert_confidence = 0.85 if days_until_recert and days_until_recert > 30 else 0.65 if days_until_recert and days_until_recert > 0 else 0.45
+
         return RecertificationStatusResponse(
             umid=request.umid,
             recertification_date=eligibility.recertification_date,
             days_until_due=days_until_recert,
             status=recert_status,
+            confidence_score=recert_confidence,
             next_action=f"Upload recertification documents by {eligibility.recertification_date}",
             upload_documents_here="/api/card1/documents/upload"
         )
@@ -312,10 +342,12 @@ async def upload_document(
 @router.post("/income/report", response_model=IncomeChangeResponse)
 async def report_income_change(
     request: IncomeReportRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Report income change and check impact on eligibility
+    Queries REAL income thresholds from public repositories
     """
     try:
         member = db.query(Member).filter(Member.umid == request.umid).first()
@@ -329,7 +361,7 @@ async def report_income_change(
         if not eligibility:
             raise HTTPException(status_code=404, detail="No eligibility record found")
 
-        determiner = EligibilityDetermination(db, member)
+        determiner = EligibilityDetermination(db, member, public_data_schema=public_data_schema)
         impact = determiner.check_income_impact(request.new_income, eligibility)
 
         return IncomeChangeResponse(

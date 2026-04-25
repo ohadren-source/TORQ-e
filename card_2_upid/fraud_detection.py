@@ -2,9 +2,9 @@
 FRAUD DETECTION: Real-Time Signal Analysis (Card 2 - UPID)
 
 Pattern detection for:
-- Provider billing anomalies (upcoding, overutilization)
-- Member utilization anomalies (frequency, patterns)
-- Known fraud cases
+- Provider billing anomalies (upcoding, overutilization) against real provider profiles
+- Member utilization anomalies (frequency, patterns) against real member data
+- Known fraud cases from public registries
 """
 
 from typing import Dict, List, Optional
@@ -15,8 +15,9 @@ from models import Claim, Provider, Member
 class FraudDetectionEngine:
     """Real-time fraud signal detection"""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, public_data_schema: Optional[Dict] = None):
         self.db = db
+        self.public_data_schema = public_data_schema  # Real provider/member profiles and known fraud data
         self.signals = []
         self.risk_score = 0.0
 

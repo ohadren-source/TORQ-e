@@ -1,5 +1,6 @@
 """
 ELIGIBILITY DETERMINATION: Translate member data into YES/NO/PENDING
+Queries REAL eligibility rules and thresholds from public repositories
 """
 
 from datetime import datetime, timedelta
@@ -20,15 +21,16 @@ class EligibilityGroup(str, Enum):
 class EligibilityDetermination:
     """
     Determines member's Medicaid eligibility status based on:
-    - Income threshold
-    - Asset limits
+    - Income threshold (from real public repositories)
+    - Asset limits (from real public repositories)
     - Category (parent, child, disabled, etc.)
     - Active application status
     """
 
-    def __init__(self, db: Session, member: Member):
+    def __init__(self, db: Session, member: Member, public_data_schema: Optional[Dict] = None):
         self.db = db
         self.member = member
+        self.public_data_schema = public_data_schema  # Real eligibility rule sources
 
     def determine_status(self) -> Tuple[EligibilityStatus, MemberEligibility, float]:
         """

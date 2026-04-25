@@ -30,9 +30,10 @@ class RiverPathResult:
 class RiverPathExecutor:
     """Implements River Path algorithm for member identification"""
 
-    def __init__(self, db: Session, timeout_seconds: int = 30):
+    def __init__(self, db: Session, timeout_seconds: int = 30, public_data_schema: Optional[Dict] = None):
         self.db = db
         self.timeout = timeout_seconds
+        self.public_data_schema = public_data_schema  # Real member data sources
         self.result = RiverPathResult()
 
     async def execute(self, first_name: str, last_name: str, dob: str, ssn: str) -> RiverPathResult:

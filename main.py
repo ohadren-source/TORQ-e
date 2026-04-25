@@ -21,6 +21,7 @@ import os
 
 from config import settings
 from database import init_db
+from data_crawler import discover_public_data
 from card_1_umid import router as card1_router
 from card_2_upid import router as card2_router
 from card_3_uhwp import router as card3_router
@@ -29,6 +30,7 @@ from card_5_ubada import router as card5_router
 from chat import router as chat_router
 from governance import router as governance_router
 from source_management import router as source_router
+import json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -50,7 +52,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize database on startup
+# Initialize database and discover public data on startup
 @app.on_event("startup")
 async def startup_event():
     logger.info("Initializing TORQ-E database...")
@@ -60,6 +62,30 @@ async def startup_event():
     except Exception as e:
         logger.error(f"❌ Database initialization failed: {e}")
         raise
+
+    logger.info("Discovering available public data from repositories...")
+    try:
+        public_data_schema = await discover_public_data()
+
+        # Store schema in app state for use by card endpoints
+        app.state.public_data_schema = public_data_schema
+
+        # Save schema to file for reference
+        with open("public_data_schema.json", "w") as f:
+            json.dump(public_data_schema, f, indent=2)
+
+        logger.info(f"✅ Public data discovery complete:")
+        logger.info(f"   - URLs visited: {public_data_schema['total_urls_visited']}")
+        logger.info(f"   - Data sources found: {public_data_schema['total_data_sources_discovered']}")
+        logger.info(f"   - Tables: {public_data_schema['summary']['tables']}")
+        logger.info(f"   - Downloads: {public_data_schema['summary']['downloads']}")
+        logger.info(f"   - APIs: {public_data_schema['summary']['apis']}")
+        logger.info(f"   - Dashboards: {public_data_schema['summary']['dashboards']}")
+        logger.info(f"   - Schema saved to: public_data_schema.json")
+
+    except Exception as e:
+        logger.error(f"❌ Public data discovery failed: {e}")
+        logger.warning("Continuing startup without public data schema (will use mocks until fixed)")
 
 # Include Card routes
 app.include_router(card1_router)
