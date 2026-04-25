@@ -449,14 +449,14 @@
         }
 
         async function handlePlanSearch(query) {
+            // Determine count to show (3, 5, or requested number)
+            const countMatch = query.match(/(\d+)/);
+            const requestedCount = countMatch ? Math.min(parseInt(countMatch[1]), 10) : 5;
+
             try {
                 // Extract state from query if provided
                 const stateMatch = query.match(/\b(New York|California|Texas|Florida|[A-Z]{2})\b/i);
                 const state = stateMatch ? stateMatch[0] : null;
-
-                // Determine count to show (3, 5, or requested number)
-                const countMatch = query.match(/(\d+)/);
-                const requestedCount = countMatch ? Math.min(parseInt(countMatch[1]), 10) : 5;
 
                 // Fetch programs from API
                 const params = state ? `?state=${encodeURIComponent(state)}` : '';

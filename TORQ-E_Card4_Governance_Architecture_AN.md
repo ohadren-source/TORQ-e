@@ -1,6 +1,11 @@
 # TORQ-E Card 4: System Health & Governance Dashboard
 ## Architecture for Audience (AN)
 
+**Status:** ✅ LIVE & LOCKED (2026-04-25)
+**Version:** 1.0.0 FROZEN  
+**QA Status:** All test queries validated ✓
+**Deployment:** https://torq-e-production.up.railway.app/chat-card4.html
+
 ---
 
 ## What is Card 4?
