@@ -357,6 +357,42 @@ function river_path_lookup(query, sources_priority_list):
 | Sensitive field missing (income) | Escalate to tier 2 | "Need to provide income documents" | In-person |
 | Data >6 months old | Mark as stale, escalate | "Need to recertify" | Recertification queue |
 
+### Data Source Clarity: Internal DB vs External Repository (Added April 25, 2026)
+
+**Rule:** Claude asks one question before responding: "Do I have this data in the official internal database?"
+
+**IF YES (Internal Database — State Medicaid, eMedNY, etc.):**
+- Answer directly
+- No confidence light (🟢🟡🔴)
+- No URLs
+- Example: "You are enrolled. Your coverage is active through June 30, 2026."
+
+**IF NO (Requires External Source — Federal data, public repositories, third-party systems):**
+- MUST include traffic light + LIVE URL combined
+- Light reflects confidence in external source
+- URL is actionable (user can click and verify)
+- Format: `🟢 HIGH | Source Name | https://...`
+- Example: `🟢 HIGH | Federal SSA Wage Records | https://www.ssa.gov/benefits/` 
+
+**Why This Matters:**
+- Transparency: User immediately knows whether answer comes from official state system (trust it) or external source (verify it)
+- Accountability: Every external claim has a live URL the user can click
+- Clarity: No hedging between confidence and source — they're combined into one signal
+- No URL Alone: A bare URL without confidence = unclear. No confidence light without URL = incomplete.
+- Combined: `🟢 + URL` tells the whole story in one statement
+
+**Card 3 Exception (WHUP Plan Administrator):**
+Card 3 **always** displays traffic light + URL because plan administrative data is **always external**. Plan networks, enrollment, claims data, and network adequacy metrics come from MCO systems, not state databases.
+- Every response includes 🟢🟡🔴 + URL
+- Format: `🟢 HIGH | [MCO Name] Network System | https://...`
+- Plan admin can click and verify directly with their MCO
+
+**Implementation:**
+- Claude's system prompts include this rule (Cards 1 & 2 conditional; Card 3 always)
+- Backend returns source metadata (internal vs external)
+- Frontend renders combined confidence + URL
+- Cards 4, 5: Backend enforces same rule for governance and fraud investigation
+
 ### Confidence Scoring (ClaudeShannon++ Framework)
 
 See **CLAUDESHANNON_PLUS_PLUS_CONFIDENCE_FRAMEWORK.md** for full details.
@@ -502,6 +538,102 @@ Each persona has a unique River Path because each asks different questions:
 - River Path: Billing patterns → Peer comparison → Outcome verification
 - Success = Fraud risk score + evidence
 - Escalation = "Investigation case created"
+
+---
+
+### Session Context & Authentication Management (Added April 25, 2026)
+
+**DECISION:** All five cards (UMID, UPID, WHUP, USHI, UBADA) store authenticated user identity in sessionStorage using card-specific keys that match their system IDs.
+
+**REASONING:**
+
+The problem: When users log in to Card 1 (UMID member portal), they provide their Member ID. The system stores it. Then when they ask "Am I eligible?", the chat system asks them for their Member ID *again* — because the session context never reached the AI's system prompt.
+
+Root cause: Login pages stored identity as generic `'username'`, but Claude's chat integration read from `'umid'`. Mismatch. Identity was lost between login and chat.
+
+This breaks the Bridge Test: the authentication commitment ("you're logged in") didn't survive the follow-up question.
+
+**ARCHITECTURE:**
+
+Each card now uses a consistent pattern:
+
+```
+Login Flow:
+┌─────────────────────────────────────────────────────────┐
+│ User enters ID string (any string in demo mode)         │
+│ Login page stores:                                       │
+│   • username (display: "Welcome, john-123")             │
+│   • [CARD_ID] (for backend: umid/upid/whup_id/etc)     │
+│   • userType (Member/Provider/PlanAdmin/etc)            │
+│   • cardNumber (1-5)                                    │
+│ Redirect to chat/dashboard page                         │
+└─────────────────────────────────────────────────────────┘
+
+Chat/Dashboard Flow:
+┌─────────────────────────────────────────────────────────┐
+│ Page loads, reads [CARD_ID] from sessionStorage         │
+│ If [CARD_ID] exists:                                    │
+│   • Display: "Welcome back, [username]"                 │
+│   • Pass [CARD_ID] to API payload                       │
+│   • Pass to Claude system prompt (Cards 1, 2)           │
+│ Card 1 (UMID):                                          │
+│   Claude reads umid from payload                        │
+│   System prompt: "User authenticated as UMID: xxx"      │
+│   Claude never asks for Member ID again                 │
+│ Card 2 (UPID):                                          │
+│   Claude reads upid from payload                        │
+│   System prompt: "User authenticated as UPID: xxx"      │
+│   Claude never asks for Provider ID again               │
+│ Cards 3, 4, 5:                                          │
+│   [CARD_ID] available in sessionStorage for backend     │
+│   Used for authorization + audit logging               │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Implementation:**
+
+| Card | ID Key | Source | Usage |
+|------|--------|--------|-------|
+| 1 (UMID) | `umid` | login-card1.html | Claude system prompt (no duplicate ID request) |
+| 2 (UPID) | `upid` | login-card2.html | Claude system prompt (no duplicate ID request) |
+| 3 (WHUP) | `whup_id` | login-card3.html | Backend authorization + audit trail |
+| 4 (USHI) | `ushi_id` | login-card4.html | Backend authorization + HIPAA audit logging |
+| 5 (UBADA) | `ubada_id` | login-card5.html | Backend authorization + fraud investigation audit |
+
+**Demo Mode Behavior:**
+
+All cards accept any string as valid authentication. The identity is *labeled* (UMID vs UPID vs USHI), but not *verified*. In production, each ID would be validated against the authoritative database (State Medicaid Registry for UMID, eMedNY for UPID, etc.).
+
+**Why This Matters:**
+
+1. **River Path Consistency:** The authentication commitment must survive follow-up. User logs in → identity persists → no re-ask.
+
+2. **Auditable Receipts:** Every API call can now include the authenticated identity. When Bob Pollock asks "Who accessed this data?", the system has the receipt: identity X made request Y at time Z.
+
+3. **HIPAA Compliance:** Cards 4 & 5 require audit trails. This architecture enables it: every data access is logged with identity + timestamp.
+
+4. **System Clarity:** A developer reading `sessionStorage.getItem('umid')` immediately knows: this page handles Member authentication. No guessing, no translation layer.
+
+5. **Bridge Test:** The phrase "you're logged in" is deployed and survives follow-up. No retreat. No caveat. Identity persists through the session.
+
+**Testing:**
+
+1. Log in to any card with any string
+2. Verify sessionStorage contains the correct key + value
+3. Perform an action (ask a question, load a dashboard)
+4. Verify the identity reaches the backend/Claude without re-asking
+5. Log in with a different identity, verify isolation (old identity doesn't persist)
+
+**Monitoring:**
+
+- Track: % of chat requests that include session identity (target: 100%)
+- Track: % of duplicate ID requests (target: 0% for Cards 1 & 2)
+- Track: sessionStorage key mismatches (target: 0%)
+- Log: every session created (identity X, card Y, timestamp Z)
+
+**Future Evolution (Patchability):**
+
+When production auth is implemented, only the backend validation changes. The frontend sessionStorage pattern remains. No re-architecture needed. This is the Patch Doctrine: the decision admits its own replacement.
 
 ---
 
