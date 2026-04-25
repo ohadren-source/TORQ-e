@@ -9,7 +9,7 @@ Card 1 (UMID): Member Eligibility System [LIVE]
 Card 2 (UPID): Provider System [LIVE]
 Card 3 (UHWP): Plan Administrator [NOT IN THIS DEMO]
 Card 4 (USHI): Government Stakeholder [In Development]
-Card 5 (UBADA): Data Analyst & Fraud Investigation [In Development]
+Card 5 (UBADA): Data Analyst & Fraud Investigation [Backend Ready]
 """
 
 from fastapi import FastAPI
@@ -24,6 +24,7 @@ from database import init_db
 from card_1_umid import router as card1_router
 from card_2_upid import router as card2_router
 from card_4_ushi import router as card4_router
+from card_5_ubada import router as card5_router
 from chat import router as chat_router
 from governance import router as governance_router
 from source_management import router as source_router
@@ -63,6 +64,7 @@ async def startup_event():
 app.include_router(card1_router)
 app.include_router(card2_router)
 app.include_router(card4_router)
+app.include_router(card5_router)
 
 # Include Chat router (Claude API integration)
 app.include_router(chat_router)
@@ -124,7 +126,7 @@ async def root():
             },
             "5": {
                 "name": "UBADA (Data Analyst/Fraud)",
-                "status": "🔨 IN DEVELOPMENT"
+                "status": "🔨 BACKEND READY"
             }
         }
     }

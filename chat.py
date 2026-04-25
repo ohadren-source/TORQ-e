@@ -15,6 +15,7 @@ from config import settings
 from card_1_umid import routes as card1_routes
 from card_2_upid import routes as card2_routes
 from card_4_ushi import query_engine as card4_engine
+from card_5_ubada import query_engine as card5_engine
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -180,7 +181,81 @@ CARD_4_TOOLS = [
     }
 ]
 
-CARD_5_TOOLS = []  # Data Analyst tools - pending implementation
+CARD_5_TOOLS = [
+    {
+        "name": "explore_claims_data",
+        "description": "Interactive query interface for claims data with full access. Every query creates immutable audit record.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "filter_by": {"type": "object", "description": "Filter criteria (optional)"},
+                "aggregation": {"type": "string", "enum": ["none", "by_provider", "by_region", "by_diagnosis", "by_claim_type"], "description": "Aggregation method"},
+                "limit": {"type": "integer", "description": "Maximum results (default 1000)"}
+            },
+            "required": []
+        }
+    },
+    {
+        "name": "compute_outlier_scores",
+        "description": "Statistical anomaly detection using Z-scores with confidence scoring and risk levels.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "entity_type": {"type": "string", "enum": ["provider", "member", "claim_pattern"], "description": "Entity type"},
+                "metric": {"type": "string", "enum": ["billing_amount", "approval_rate", "processing_time", "frequency"], "description": "Metric to analyze"},
+                "threshold_sigma": {"type": "number", "description": "Standard deviation threshold (default 2.0)"}
+            },
+            "required": ["entity_type"]
+        }
+    },
+    {
+        "name": "navigate_relationship_graph",
+        "description": "Explore provider/member networks for co-billing, referral, and facility patterns.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "focus_entity": {"type": "string", "description": "Provider NPI, member SSN, or claim ID"},
+                "relationship_type": {"type": "string", "enum": ["all", "claims", "referrals", "co_billing", "same_location"], "description": "Relationship type"},
+                "depth": {"type": "integer", "description": "Network depth (1=direct, 2+=hops)"}
+            },
+            "required": ["focus_entity"]
+        }
+    },
+    {
+        "name": "create_investigation_project",
+        "description": "Create formal investigation case with team workspace and immutable audit trail.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "title": {"type": "string", "description": "Investigation title"},
+                "investigation_type": {"type": "string", "enum": ["fraud_suspicion", "quality_concern", "billing_pattern", "referral_arrangement"], "description": "Investigation type"},
+                "lead_analyst": {"type": "string", "description": "Lead analyst name"},
+                "team_members": {"type": "array", "items": {"type": "string"}, "description": "Team member list"},
+                "initial_findings": {"type": "string", "description": "Initial findings"},
+                "severity": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"], "description": "Severity"}
+            },
+            "required": ["title", "investigation_type", "lead_analyst", "team_members", "initial_findings"]
+        }
+    },
+    {
+        "name": "request_data_correction",
+        "description": "Request data correction with approval workflow and immutable audit trail.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "domain": {"type": "string", "enum": ["claims", "enrollment", "provider_data"], "description": "Data domain"},
+                "entity_id": {"type": "string", "description": "ID to correct"},
+                "field_name": {"type": "string", "description": "Field name"},
+                "current_value": {"type": "string", "description": "Current value"},
+                "proposed_value": {"type": "string", "description": "Proposed value"},
+                "change_reason": {"type": "string", "description": "Reason for correction"},
+                "evidence": {"type": "array", "items": {"type": "string"}, "description": "Supporting evidence"},
+                "proposed_by": {"type": "string", "description": "Proposer name"}
+            },
+            "required": ["domain", "entity_id", "field_name", "current_value", "proposed_value", "change_reason", "evidence", "proposed_by"]
+        }
+    }
+]
 
 TOOLS_BY_CARD = {
     1: CARD_1_TOOLS,
@@ -258,6 +333,57 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int) -> st
                     justification=tool_input.get("justification"),
                     evidence=tool_input.get("evidence", []),
                     flagged_by=tool_input.get("flagged_by")
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+
+        elif card_number == 5:
+            # Card 5 (UBADA - Data Analyst) tools
+            if tool_name == "explore_claims_data":
+                result = await card5_engine.explore_claims_data(
+                    filter_by=tool_input.get("filter_by"),
+                    aggregation=tool_input.get("aggregation"),
+                    limit=tool_input.get("limit", 1000),
+                    db=None
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "compute_outlier_scores":
+                result = await card5_engine.compute_outlier_scores(
+                    entity_type=tool_input.get("entity_type", "provider"),
+                    metric=tool_input.get("metric", "billing_amount"),
+                    threshold_sigma=tool_input.get("threshold_sigma", 2.0),
+                    db=None
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "navigate_relationship_graph":
+                result = await card5_engine.navigate_relationship_graph(
+                    focus_entity=tool_input.get("focus_entity"),
+                    relationship_type=tool_input.get("relationship_type", "all"),
+                    depth=tool_input.get("depth", 1),
+                    db=None
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "create_investigation_project":
+                result = await card5_engine.create_investigation_project(
+                    title=tool_input.get("title"),
+                    investigation_type=tool_input.get("investigation_type"),
+                    lead_analyst=tool_input.get("lead_analyst"),
+                    team_members=tool_input.get("team_members", []),
+                    initial_findings=tool_input.get("initial_findings"),
+                    severity=tool_input.get("severity", "MEDIUM"),
+                    db=None
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "request_data_correction":
+                result = await card5_engine.request_data_correction(
+                    domain=tool_input.get("domain"),
+                    entity_id=tool_input.get("entity_id"),
+                    field_name=tool_input.get("field_name"),
+                    current_value=tool_input.get("current_value"),
+                    proposed_value=tool_input.get("proposed_value"),
+                    change_reason=tool_input.get("change_reason"),
+                    evidence=tool_input.get("evidence", []),
+                    proposed_by=tool_input.get("proposed_by"),
+                    db=None
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
@@ -577,23 +703,85 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
     elif user_type == "DataAnalyst":
         return base_instruction + """
 
-**ROLE:** You are helping a **data analyst** investigate claims patterns, detect fraud signals, and identify anomalies.
+**ROLE:** You are a **data analyst** conducting detailed fraud investigations with full data access and immutable audit trails.
+
+**CARD 5 (UBADA) MISSION:**
+Full-fidelity data access (names, SSNs, NPIs allowed). Every query logged immutably. Focus: evidence quality, confidence scoring, relationship networks, investigation cases.
+
+**DISTINCTION FROM CARD 4 (USHI):**
+- Card 4: Aggregate-only, de-identified, governance reporting
+- Card 5: Full data access, individual records, forensic investigation
 
 **CORE PRINCIPLES:**
-✓ **Be technical** — Use statistical language and precise metrics.
-✓ **Be detailed** — Show the data, show the methodology, show the reasoning.
-✓ **Be skeptical** — Question assumptions. Separate correlation from causation.
-✓ **Be evidence-based** — Every claim needs data backing.
+✓ **Be forensic** — Trace relationships, document networks, build investigation cases.
+✓ **Be statistical** — Z-scores, confidence intervals, peer comparison, baseline analysis.
+✓ **Be meticulous** — Show methodology, assumptions, caveats. Evidence quality matters.
+✓ **Be skeptical** — Separate signal from noise. Correlation is not causation.
+✓ **Be audit-ready** — Everything logged: WHO/WHAT/WHEN/WHY immutable.
 
-**WHEN RESPONDING:**
-- Lead with statistical findings: confidence intervals, p-values where relevant
-- Show before/after comparisons with baseline data
-- Identify outliers with z-scores or IQR methods
-- Use tables and charts to visualize patterns
-- Explain River Path algorithm when analyzing multi-source data
-- Distinguish signal (real pattern) from noise (random variance)
-- Recommend further investigation or alert escalation
-- Frame fraud risk as probability, not certainty"""
+**INVESTIGATION WORKFLOW:**
+1. Explore claims data with filters/aggregations to establish baseline
+2. Compute outlier scores (Z-scores) to identify statistical anomalies
+3. Navigate relationship graphs to find co-billing, referral, facility patterns
+4. Create formal investigation projects to organize team findings
+5. Request data corrections (with audit trail) for validated errors
+
+**CONFIDENCE & EVIDENCE QUALITY:**
+- **Z-score**: 3.0σ = 99.7% within normal. >3σ warrants investigation.
+- **Confidence score**: 0.0-1.0. High (0.85+) = multiple evidence points + peer context.
+- **Risk levels**: HIGH (>3σ + confidence 0.85+), MEDIUM (2-3σ or 0.60-0.84), LOW (<2σ or <0.60)
+- **Caveat language**: "Unusual but not conclusive. Further investigation needed."
+
+**WHEN ANALYZING OUTLIERS:**
+- Lead with Z-score and percentile: "4.7σ above peer average (99.8th percentile)"
+- Provide peer context: "Compared against 127 same-specialty providers in region"
+- Separate specialty effects from fraud: "Complex orthopedic surgery (legitimate variance)"
+- Recommend next steps: "Create investigation project, pull claim sample, compare baseline"
+
+**WHEN ANALYZING NETWORKS:**
+- Identify relationship: co-billing, referral, facility, same-location
+- Detect unusual patterns: "90% facility exclusivity (5th percentile — highly unusual)"
+- Compare to peer norms: "Most providers split across 3-5 facilities"
+- Recommend investigation: "Pattern unusual but not conclusive. Determine arrangement type."
+
+**WHEN CREATING INVESTIGATIONS:**
+- Title clearly: "Excessive Billing - Dr. Smith Orthopedic Q1-Q2 2026"
+- Categorize: fraud_suspicion, quality_concern, billing_pattern, referral_arrangement
+- Document with evidence: "Z-score 4.7, 340 claims vs peer avg 82, 87% approval rate"
+- Assign accountability: Lead analyst and team members
+- Set severity: LOW (monitor), MEDIUM (investigate), HIGH (escalate), CRITICAL (immediate)
+
+**WHEN REQUESTING DATA CORRECTIONS:**
+- Propose specific corrections with supporting evidence
+- Explain change reason: "DOB mismatch enrollment vs claims"
+- Preserve audit: Original value stays in trail, change logged with justification
+- Workflow: PROPOSED → REVIEWED → APPROVED → APPLIED → LOGGED
+
+**WHEN REPORTING:**
+- Show statistical methodology: "Z-score analysis with peer stratification by specialty/region"
+- Include caveats: "Data lag 24h. Pending claims not adjudicated. SSA data not refreshed today."
+- Report confidence: 🟢 HIGH (0.92), 🟡 MEDIUM (0.75), 🔴 LOW (0.48)
+- Distinguish probability from certainty: "Signal suggests investigation, not fraud determination"
+
+**NEVER:**
+- Report individual data to non-investigative audiences (Card 4 only, aggregate)
+- Make fraud determinations without multiple evidence points
+- Ignore baseline comparisons or peer context
+- Forget audit trail — every action logged immutably
+- Confuse correlation with causation
+- Recommend action without confidence justification
+
+**ESCALATION:**
+- To leadership: "Recommend formal investigation project to determine intent"
+- To law enforcement: "Only after investigation confirms intent to defraud"
+- To Card 4 (USHI): "Flag for governance review and possible policy change"
+
+**KEY TOOLS:**
+- explore_claims_data: Query with filters/aggregation, full access, audit logged
+- compute_outlier_scores: Z-score analysis, risk levels, confidence metrics
+- navigate_relationship_graph: Network exploration, pattern detection, peer comparison
+- create_investigation_project: Team workspace, immutable case tracking
+- request_data_correction: Flag errors with evidence, approval workflow"""
 
     return base_instruction
 
