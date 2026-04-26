@@ -59,12 +59,9 @@ async def get_metrics(
             public_data_schema=public_data_schema
         )
 
-        return {
-            "status": "success",
-            "data": result,
-            "confidence_score": result.get("confidence_score", 0.0),
-            "caveat": result.get("caveat")
-        }
+        # query_aggregate_metrics already returns {status, data, confidence_score, crawler_report, caveat}
+        # Return it directly — don't double-wrap
+        return result
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
