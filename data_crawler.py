@@ -16,7 +16,7 @@ Integration: Uses reading_engine.py to extract data from discovered sources in m
 - GitHub: provider background, code transparency, documentation
 """
 
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 from typing import Dict, List, Any, Optional
 import json
 from datetime import datetime
@@ -94,28 +94,28 @@ class PublicRepositoryCrawler:
         self.visited_urls = set()
         self.errors = []
 
-    def crawl(self) -> Dict[str, Any]:
+    async def crawl(self) -> Dict[str, Any]:
         """
         Main entry point: Crawl all base URLs and return data schema
         """
         logger.info("Starting repository crawl...")
 
-        with sync_playwright() as playwright:
-            browser = playwright.chromium.launch(headless=True)
+        async with async_playwright() as playwright:
+            browser = await playwright.chromium.launch(headless=True)
 
             for base_url in BASE_URLS:
                 logger.info(f"Crawling: {base_url}")
                 try:
-                    self._crawl_url(browser, base_url, depth=0)
+                    await self._crawl_url(browser, base_url, depth=0)
                 except Exception as e:
                     logger.error(f"Failed to crawl {base_url}: {str(e)}")
                     self.errors.append({"url": base_url, "error": str(e)})
 
-            browser.close()
+            await browser.close()
 
         return self._generate_schema()
 
-    def _crawl_url(self, browser, url: str, depth: int = 0):
+    async def _crawl_url(self, browser, url: str, depth: int = 0):
         """
         Recursively crawl a URL and discover data
         """
@@ -129,18 +129,18 @@ class PublicRepositoryCrawler:
         logger.info(f"  [Depth {depth}] Analyzing: {url}")
 
         try:
-            page = browser.new_page()
-            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            page = await browser.new_page()
+            await page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
             # Discover data on this page
-            self._discover_page_data(page, url)
+            await self._discover_page_data(page, url)
 
             # Find links to follow (same domain only)
             domain = urlparse(url).netloc
-            links = page.query_selector_all("a[href]")
+            links = await page.query_selector_all("a[href]")
 
             for link in links:
-                href = link.get_attribute("href")
+                href = await link.get_attribute("href")
                 if href:
                     absolute_url = urljoin(url, href)
                     link_domain = urlparse(absolute_url).netloc
@@ -149,24 +149,25 @@ class PublicRepositoryCrawler:
                     if link_domain == domain and absolute_url not in self.visited_urls:
                         # Avoid infinite crawling - be selective
                         if self._should_follow_link(absolute_url):
-                            self._crawl_url(browser, absolute_url, depth + 1)
+                            await self._crawl_url(browser, absolute_url, depth + 1)
 
-            page.close()
+            await page.close()
 
         except Exception as e:
             logger.error(f"Error analyzing {url}: {str(e)}")
             self.errors.append({"url": url, "error": str(e)})
 
-    def _discover_page_data(self, page, url: str):
+    async def _discover_page_data(self, page, url: str):
         """
         Analyze a page for available data sources.
         For each discovered source, attempt to extract data using reading_engine.
         """
         # Check for tables
-        tables = page.query_selector_all("table")
+        tables = await page.query_selector_all("table")
         if tables:
             for i, table in enumerate(tables):
-                table_text = table.text_content()[:200]
+                table_text = await table.text_content()
+                table_text = table_text[:200] if table_text else ""
                 data_entry = {
                     "type": "table",
                     "url": url,
@@ -186,10 +187,11 @@ class PublicRepositoryCrawler:
                 logger.info(f"    Found table on {url}")
 
         # Check for download links
-        downloads = page.query_selector_all('a[href*=".csv"], a[href*=".xlsx"], a[href*=".xls"], a[href*=".json"], a[href*=".pdf"]')
+        downloads = await page.query_selector_all('a[href*=".csv"], a[href*=".xlsx"], a[href*=".xls"], a[href*=".json"], a[href*=".pdf"]')
         for download in downloads:
-            href = download.get_attribute("href")
-            text = download.text_content().strip()
+            href = await download.get_attribute("href")
+            text = await download.text_content()
+            text = text.strip() if text else ""
             if href:
                 full_url = urljoin(url, href)
                 file_ext = href.split('.')[-1].lower()
@@ -223,10 +225,11 @@ class PublicRepositoryCrawler:
                 logger.info(f"    Found downloadable data: {text}")
 
         # Check for API endpoints (look for /api/ in links)
-        api_links = page.query_selector_all('a[href*="/api/"]')
+        api_links = await page.query_selector_all('a[href*="/api/"]')
         for api_link in api_links:
-            href = api_link.get_attribute("href")
-            text = api_link.text_content().strip()
+            href = await api_link.get_attribute("href")
+            text = await api_link.text_content()
+            text = text.strip() if text else ""
             if href:
                 api_url = urljoin(url, href)
                 data_entry = {
@@ -428,7 +431,7 @@ async def discover_public_data() -> Dict[str, Any]:
     Returns schema of available data from public repositories
     """
     crawler = PublicRepositoryCrawler()
-    return crawler.crawl()
+    return await crawler.crawl()
 
 
 # ============================================================================
