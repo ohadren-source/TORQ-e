@@ -768,9 +768,14 @@
             messageDiv.className = `message ${role}`;
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            // Decode any escaped Unicode sequences (safety net for Claude output)
-            const decoded = JSON.parse('"' + text.replace(/"/g, '\\"') + '"');
-            bubble.innerHTML = decoded;
+            // Safely handle escaped Unicode and control characters
+            try {
+                const decoded = JSON.parse('"' + text.replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t') + '"');
+                bubble.innerHTML = decoded;
+            } catch (e) {
+                // Fallback: just use the text as-is if JSON parsing fails
+                bubble.innerHTML = text;
+            }
             messageDiv.appendChild(bubble);
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
