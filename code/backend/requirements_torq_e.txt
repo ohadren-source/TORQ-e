@@ -14,8 +14,8 @@ PyGithub==2.1.1
 # Web Scraping
 beautifulsoup4==4.12.2
 
-# Browser Automation
-playwright==1.40.0
+# HTTP Client (replaced browser automation)
+httpx==0.25.2
 
 # Google Cloud
 google-cloud-vision==3.5.0
