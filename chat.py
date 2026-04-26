@@ -17,6 +17,16 @@ from card_2_upid import routes as card2_routes
 from card_4_ushi import query_engine as card4_engine
 from card_5_ubada import query_engine as card5_engine
 
+def _fix_surrogates(s: str) -> str:
+    """
+    Convert surrogate pairs / lone surrogates in a Python string into proper Unicode.
+    e.g. '\ud83d\udcd6' -> '\U0001F4D6' (📖)
+    This is needed when strings come from JS/JSON with UTF-16 surrogate encoding.
+    """
+    # Re-encode as UTF-16 surrogate-tolerant then decode as real Unicode
+    return s.encode('utf-16', 'surrogatepass').decode('utf-16')
+
+
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -450,12 +460,13 @@ def _prepare_tool_result_for_claude(result: dict, card_number: int, tool_name: s
             "_confidence_metadata": metadata  # Claude will see this and use it
         }
 
-        return json.dumps(augmented_result)
+        raw = json.dumps(augmented_result)
+        return _fix_surrogates(raw)
 
     except Exception as e:
         logger.warning(f"Could not prepare confidence metadata: {e}")
         # Fallback: return result as-is if metadata extraction fails
-        return json.dumps(result)
+        return _fix_surrogates(json.dumps(result))
 
 
 # ============================================================================
@@ -483,9 +494,11 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
     # System prompt tailored to user type (with optional session context)
     system_prompt = get_system_prompt(chat_msg.userType, chat_msg.cardNumber, chat_msg.umid, chat_msg.provider_id)
+    # Fix any surrogate pairs so emojis survive the Anthropic API (UTF-8 transport)
+    system_prompt = _fix_surrogates(system_prompt)
 
     # Initialize message history (in production, this would come from a database)
-    messages = [{"role": "user", "content": chat_msg.message}]
+    messages = [{"role": "user", "content": _fix_surrogates(chat_msg.message)}]
 
     async def generate_response():
         """Generator that yields SSE-formatted text and handles agentic loop"""
