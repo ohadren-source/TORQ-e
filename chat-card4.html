@@ -687,14 +687,8 @@
         <div class="messages" id="messages">
             <div class="message assistant">
                 <div class="message-bubble">
-                    <strong>👋 TORQ-e Government Stakeholder Operations</strong><br><br>
-                    This card will provide:<br>
-                    • Program oversight and monitoring<br>
-                    • Compliance tracking<br>
-                    • Performance metrics<br>
-                    • Regulatory reporting<br>
-                    • System-wide analytics<br><br>
-                    Backend ready. Ask about: metrics, trends, data quality, governance flags.
+                    <strong>Card 4: Government Stakeholder Operations</strong><br><br>
+                    Ready. Ask your question.
                 </div>
             </div>
         </div>
@@ -1169,14 +1163,7 @@
                 const enrollmentConf = metricsData.enrollment_rate?.confidence_score || 0;
                 const overallConf = data.confidence_score || 0;
 
-                html += `<br><strong>Details:</strong><br>`;
-                html += `• Overall Confidence Score: ${(overallConf * 100).toFixed(1)}%<br>`;
-                html += `• Enrollment Data Confidence: ${(enrollmentConf * 100).toFixed(1)}%<br>`;
-                html += `• Freshness: Real-time from public repositories<br>`;
-                html += `• Trend: Stable<br>`;
-                html += `• Sources: ${metricsData.enrollment_rate?.sources?.length || 0} active data sources<br><br>`;
-                html += `<button onclick="elaborateMetrics('metrics')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>`;
-                html += `Ask me about: trends, data quality, governance flags.`;
+                html += `<br><button onclick="elaborateMetrics('metrics')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
@@ -1199,12 +1186,7 @@
                 system_stability: cachedData.system_stability?.value
             });
 
-            html += `<br><strong>Key Metrics:</strong><br>
-                • Claims Processing: 2,450 per minute<br>
-                • Active Members: 1,250,000<br>
-                • Audit Trail Integrity: 100%<br>
-                • Data Freshness: 2 minutes old<br><br>
-                <button onclick="elaborateMetrics('metrics')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            html += `<br><button onclick="elaborateMetrics('metrics')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
             return html;
         }
@@ -1234,13 +1216,7 @@
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
-                html += `<br><strong>Trend Details:</strong><br>`;
-                html += `• New Members: ${data.new_members || '12,500'}<br>`;
-                html += `• Transfers: ${data.transfers || '3,200'}<br>`;
-                html += `• Disenrollments: ${data.disenrollments || '1,800'}<br>`;
-                html += `• Net Growth: ${data.net_growth || '+7,900'}<br>`;
-                html += `• Most popular plan: ${data.top_plan || 'Molina Healthcare'}<br><br>`;
-                html += `<button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+                html += `<br><button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
@@ -1262,13 +1238,7 @@
                 compliance: cachedMetrics.compliance || 98,
                 system_stability: cachedMetrics.system_stability || 96
             });
-            html += `<br><strong>Trend Details:</strong><br>
-                • New Members: 12,500<br>
-                • Transfers: 3,200<br>
-                • Disenrollments: 1,800<br>
-                • Net Growth: +7,900<br>
-                • Most popular plan: Molina Healthcare (HMO)<br><br>
-                <button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            html += `<br><button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
             return html;
         }
 
@@ -1297,17 +1267,7 @@
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
-                html += `<br><strong>Quality Metrics:</strong><br>`;
-                html += `<div style="padding: 8px; background: ${getStatusColor(data.quality_score)}; border-radius: 4px; color: white; margin-bottom: 8px;">
-                    Overall Quality Score: <strong>${data.quality_score || 99}%</strong>
-                </div>`;
-                html += `• Completeness: ${data.completeness || 99}%<br>`;
-                html += `• Accuracy: ${data.accuracy || 99.5}%<br>`;
-                html += `• Timeliness: ${data.timeliness || 100}%<br>`;
-                html += `• Audit Trail Valid: ${data.audit_valid ? 'YES ✓' : 'ISSUES'}<br>`;
-                html += `• CMS Compliance Ready: ${data.cms_ready ? 'YES ✓' : 'Needs work'}<br>`;
-                html += `• Last audit: ${data.last_audit || '2 hours ago'}<br><br>`;
-                html += `<button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+                html += `<br><button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
@@ -1319,26 +1279,17 @@
             let html = `<strong>✓ Data Quality Assessment (Offline Mode)</strong><br><br>`;
 
             // Use cached metrics if available
-            let cachedMetrics = conversationContext.lastMetricsShown || {};
+            let cachedData = conversationContext.lastMetricsShown?.data || {};
 
             html += generateSpectrumAnalyzer({
-                enrollment_rate: cachedMetrics.enrollment_rate || 87.3,
-                claims_processing: cachedMetrics.claims_processing || 95,
-                data_quality: cachedMetrics.data_quality || 99,
-                audit_trail: cachedMetrics.audit_trail || 100,
-                compliance: cachedMetrics.compliance || 98,
-                system_stability: cachedMetrics.system_stability || 96
+                enrollment_rate: cachedData.enrollment_rate?.value,
+                claims_processing: cachedData.claims_processing?.value,
+                data_quality: cachedData.data_quality?.value,
+                audit_trail: cachedData.audit_trail?.value,
+                compliance: cachedData.compliance?.value,
+                system_stability: cachedData.system_stability?.value
             });
-            html += `<br><strong>Quality Metrics:</strong><br>
-                <div style="padding: 8px; background: #4CAF50; border-radius: 4px; color: white; margin-bottom: 8px;">
-                    Overall Quality Score: <strong>99%</strong>
-                </div>
-                • Completeness: 99%<br>
-                • Accuracy: 99.5%<br>
-                • Timeliness: 100%<br>
-                • Audit Trail Valid: YES ✓<br>
-                • CMS Compliance Ready: YES ✓<br><br>
-                <button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            html += `<br><button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
             return html;
         }
 
@@ -1366,20 +1317,7 @@
                 };
 
                 html += generateSpectrumAnalyzer(metrics);
-                html += `<br><strong>Alert Status:</strong><br>`;
-                if (data.alerts && data.alerts.length > 0) {
-                    data.alerts.forEach(alert => {
-                        html += `<div style="padding: 8px; background: #fff3cd; border-left: 4px solid #ffc107; margin-bottom: 8px; border-radius: 4px;">
-                            <strong>${alert.severity}</strong>: ${alert.message}
-                        </div>`;
-                    });
-                } else {
-                    html += `<div style="padding: 8px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 4px;">
-                        ✓ No active governance flags
-                    </div>`;
-                }
-                html += `<br><em>System is operating within compliance boundaries.</em><br><br>`;
-                html += `<button onclick="elaborateMetrics('governance')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+                html += `<br><button onclick="elaborateMetrics('governance')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
 
                 return html;
             } catch (error) {
@@ -1391,22 +1329,17 @@
             let html = `<strong>⚠️ Governance Flags & Alerts (Offline Mode)</strong><br><br>`;
 
             // Use cached metrics if available
-            let cachedMetrics = conversationContext.lastMetricsShown || {};
+            let cachedData = conversationContext.lastMetricsShown?.data || {};
 
             html += generateSpectrumAnalyzer({
-                enrollment_rate: cachedMetrics.enrollment_rate || 87.3,
-                claims_processing: cachedMetrics.claims_processing || 95,
-                data_quality: cachedMetrics.data_quality || 99,
-                audit_trail: cachedMetrics.audit_trail || 100,
-                compliance: cachedMetrics.compliance || 98,
-                system_stability: cachedMetrics.system_stability || 96
+                enrollment_rate: cachedData.enrollment_rate?.value,
+                claims_processing: cachedData.claims_processing?.value,
+                data_quality: cachedData.data_quality?.value,
+                audit_trail: cachedData.audit_trail?.value,
+                compliance: cachedData.compliance?.value,
+                system_stability: cachedData.system_stability?.value
             });
-            html += `<br><strong>Alert Status:</strong><br>
-                <div style="padding: 8px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 4px;">
-                    ✓ No active governance flags
-                </div><br>
-                <em>System is operating within compliance boundaries.</em><br><br>
-                <button onclick="elaborateMetrics('governance')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            html += `<br><button onclick="elaborateMetrics('governance')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
             return html;
         }
 
@@ -1414,23 +1347,17 @@
             let html = `<strong>How I Can Help:</strong><br><br>`;
 
             // Use cached metrics if available
-            let cachedMetrics = conversationContext.lastMetricsShown || {};
+            let cachedData = conversationContext.lastMetricsShown?.data || {};
 
             html += generateSpectrumAnalyzer({
-                enrollment_rate: cachedMetrics.enrollment_rate || 87.3,
-                claims_processing: cachedMetrics.claims_processing || 95,
-                data_quality: cachedMetrics.data_quality || 99,
-                audit_trail: cachedMetrics.audit_trail || 100,
-                compliance: cachedMetrics.compliance || 98,
-                system_stability: cachedMetrics.system_stability || 96
+                enrollment_rate: cachedData.enrollment_rate?.value,
+                claims_processing: cachedData.claims_processing?.value,
+                data_quality: cachedData.data_quality?.value,
+                audit_trail: cachedData.audit_trail?.value,
+                compliance: cachedData.compliance?.value,
+                system_stability: cachedData.system_stability?.value
             });
-            html += `<br><strong>Examples:</strong><br>
-                • <strong>Metrics</strong> - "Show me system health" or "What's the overall status?"<br>
-                • <strong>Trends</strong> - "What are enrollment trends?" or "Claims volume?"<br>
-                • <strong>Quality</strong> - "Check data quality" or "Is our data audit-ready?"<br>
-                • <strong>Governance</strong> - "Any alerts?" or "Governance flags?"<br><br>
-                <button onclick="elaborateMetrics('help')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>
-                What would you like to know?`;
+            html += `<br><button onclick="elaborateMetrics('help')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
             return html;
         }
 
@@ -1438,23 +1365,17 @@
             let html = `<strong>Card 4: Government Stakeholder Operations</strong><br><br>`;
 
             // Use cached metrics if available
-            let cachedMetrics = conversationContext.lastMetricsShown || {};
+            let cachedData = conversationContext.lastMetricsShown?.data || {};
 
             html += generateSpectrumAnalyzer({
-                enrollment_rate: cachedMetrics.enrollment_rate || 87.3,
-                claims_processing: cachedMetrics.claims_processing || 95,
-                data_quality: cachedMetrics.data_quality || 99,
-                audit_trail: cachedMetrics.audit_trail || 100,
-                compliance: cachedMetrics.compliance || 98,
-                system_stability: cachedMetrics.system_stability || 96
+                enrollment_rate: cachedData.enrollment_rate?.value,
+                claims_processing: cachedData.claims_processing?.value,
+                data_quality: cachedData.data_quality?.value,
+                audit_trail: cachedData.audit_trail?.value,
+                compliance: cachedData.compliance?.value,
+                system_stability: cachedData.system_stability?.value
             });
-            html += `<br>I can help with:<br>
-                • System metrics and health<br>
-                • Enrollment and claims trends<br>
-                • Data quality assessment<br>
-                • Governance flags and alerts<br><br>
-                <button onclick="elaborateMetrics('default')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>
-                Ask me about any of these, or type "help" for examples.`;
+            html += `<br><button onclick="elaborateMetrics('default')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
             return html;
         }
 
@@ -1466,29 +1387,70 @@
         }
 
         function elaborateMetrics(type) {
-            // DISABLED: No hardcoded elaboration text
-            // If real data exists, elaboration will be generated from actual metrics
-            // Until then: silence is better than lies
+            // UNIFIED APPROACH: Take user's original prompt and ask Claude directly
+            elaborateWithClaude();
+        }
 
-            const elaborationHtml = `<div style="background: #fff3cd; border-left: 4px solid #ff9800; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
-                <strong>⚠️ Elaboration Pending Real Data</strong><br>
-                Detailed analysis will be available once the data crawler successfully retrieves metrics from the 9 NY health repositories. Currently: no data sources found.
-            </div>`;
+        async function elaborateWithClaude() {
+            // Get the user's original prompt/question from conversation
+            const userMessages = document.querySelectorAll('.message.user .message-bubble');
+            const lastUserMessage = userMessages[userMessages.length - 1];
 
+            if (!lastUserMessage) {
+                alert('No user message found');
+                return;
+            }
+
+            const userPrompt = lastUserMessage.textContent.trim();
+
+            // Show loading state
             const buttons = document.querySelectorAll('button[onclick*="elaborateMetrics"]');
             const lastButton = buttons[buttons.length - 1];
 
-            if (lastButton) {
-                const container = lastButton.parentElement;
-                const existing = container.querySelector('[data-elaboration]');
-                if (existing) {
-                    existing.remove();
-                } else {
-                    const div = document.createElement('div');
-                    div.setAttribute('data-elaboration', 'true');
-                    div.innerHTML = elaborationHtml;
-                    lastButton.parentElement.appendChild(div);
+            if (!lastButton) return;
+
+            const container = lastButton.parentElement;
+            const existing = container.querySelector('[data-elaboration]');
+
+            if (existing) {
+                existing.remove();
+                return;
+            }
+
+            const div = document.createElement('div');
+            div.setAttribute('data-elaboration', 'true');
+            div.innerHTML = `<div style="background: #f0f8ff; border-left: 4px solid #2d6a4f; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
+                <em>Consulting Claude...</em>
+            </div>`;
+            container.appendChild(div);
+
+            try {
+                // Call Claude with the user's original prompt
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: userPrompt,
+                        context: "You are Card 4 (USHI - Government Stakeholder Operations) in the TORQ-e Medicaid system. Provide direct analysis of the user's question. Be honest about data limitations."
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Claude API error');
                 }
+
+                const data = await response.json();
+                const claudeResponse = data.response || data.message || 'No response from Claude';
+
+                // Update elaboration with Claude's response
+                div.innerHTML = `<div style="background: #f0f8ff; border-left: 4px solid #2d6a4f; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
+                    ${claudeResponse}
+                </div>`;
+
+            } catch (error) {
+                div.innerHTML = `<div style="background: #ffebee; border-left: 4px solid #f44336; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
+                    <strong>Error:</strong> Could not reach Claude: ${error.message}
+                </div>`;
             }
         }
     </script>
