@@ -485,7 +485,9 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     system_prompt = get_system_prompt(chat_msg.userType, chat_msg.cardNumber, chat_msg.umid, chat_msg.provider_id)
 
     # Initialize message history (in production, this would come from a database)
-    messages = [{"role": "user", "content": chat_msg.message}]
+    # Sanitize message to prevent Unicode encoding errors
+    clean_message = chat_msg.message.encode('utf-8', errors='ignore').decode('utf-8')
+    messages = [{"role": "user", "content": clean_message}]
 
     async def generate_response():
         """Generator that yields SSE-formatted text and handles agentic loop"""
@@ -557,13 +559,15 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             # Execute tools and add results to message history
             for tool_call in tool_calls:
                 result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
+                # Sanitize result to prevent Unicode encoding errors
+                clean_result = result.encode('utf-8', errors='ignore').decode('utf-8') if isinstance(result, str) else str(result)
                 messages.append({
                     "role": "user",
                     "content": [
                         {
                             "type": "tool_result",
                             "tool_use_id": tool_call["id"],
-                            "content": result
+                            "content": clean_result
                         }
                     ]
                 })
