@@ -109,4 +109,4 @@ class FraudSignalResponse(BaseModel):
     risk_score: float
     risk_level: str  # LOW, MEDIUM, HIGH
     signals: List[str]
-    r
+    recommendations: List[str]
