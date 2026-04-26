@@ -31,7 +31,10 @@ BASE_URLS = [
 
     # Card 4 & 5: Government Stakeholder & Fraud Investigation
     "https://omig.ny.gov/",
-    "https://its.ny.gov/"
+    "https://its.ny.gov/",
+
+    # All Cards: Medicaid Policy & Reference
+    "https://www.health.ny.gov/health_care/medicaid/program/update/main.htm"
 ]
 
 MAX_CRAWL_DEPTH = 2
