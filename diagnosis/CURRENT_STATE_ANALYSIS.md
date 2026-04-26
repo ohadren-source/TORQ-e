@@ -76,7 +76,7 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 
 ---
 
-### 🧢 CHAPEAU 3: UHWP (Plan Administrator) — "Is this provider in my network?"
+### 🧢 CHAPEAU 3: WHUP (Plan Administrator) — "Is this provider in my network?"
 
 **Primary Question Driver**: Is this provider in my network? Out of network?
 
@@ -204,7 +204,7 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 |---------|---|---|---|---|
 | UMID | This site | Eligibility check | NY State of Health | Wrong place, must redirect |
 | UPID | This site | Enroll/Submit claims | EMEDNY + this site | Split between systems |
-| UHWP | This site | Network management | Provider Directory + claims system | Multiple login/access points |
+| WHUP | This site | Network management | Provider Directory + claims system | Multiple login/access points |
 | USHI | This site | Efficiency data | Health Data NY + EMEDNY + quality reports | 3+ separate systems |
 | UBADA | This site | Fraud detection | CMS NPPES + OIG + state licensing + claims system | 4+ separate systems |
 
@@ -297,7 +297,7 @@ Current state = **Information broadcast across fragmented systems**
 Needed state = **Unified identity, real-time verification, integrated operations, fraud detection**
 
 **TORQ-e solves this by**:
-- ✅ One identity per person (UMID, UPID, UHWP, USHI, UBADA)
+- ✅ One identity per person (UMID, UPID, WHUP, USHI, UBADA)
 - ✅ Real-time data integration (all systems connected)
 - ✅ Task-oriented workflows (not information broadcast)
 - ✅ Fraud detection tools (pattern analysis + risk scoring)

@@ -16,7 +16,7 @@
 - ✅ Release notes published
 - ✅ **Status:** READY FOR QA (Carol, Selam, Bob)
 
-### Card 3 (UHWP) - Plan Network Management
+### Card 3 (WHUP) - Plan Network Management
 - ✅ Fixed `requestedCount` scope error (was in try block, accessed in catch)
 - ✅ Fixed "(5 shown)" display bug (now shows actual count)
 - ✅ **Refactored routing from question-type hardcoding to context-driven:**

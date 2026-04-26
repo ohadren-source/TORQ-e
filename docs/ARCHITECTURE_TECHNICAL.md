@@ -36,7 +36,7 @@ TORQ-e is a unified identity and fraud detection platform for NY Medicaid. Core 
         │ (1) CMS NPPES        │
         │ (2) OIG Exclusions   │ ┌─ UMID_RECORDS
         │ (3) State Licensing  │ ├─ UPID_RECORDS
-        │ (4) IRS/EIN Lookup   │ ├─ UHWP_RECORDS
+        │ (4) IRS/EIN Lookup   │ ├─ WHUP_RECORDS
         │ (5) EMEDNY Claims    │ ├─ USHI_RECORDS
         │ (6) Eligibility Algo │ ├─ UBADA_RECORDS
         │ (7) Fraud Patterns   │ ├─ IDENTIFIER_MAPPINGS
@@ -78,7 +78,7 @@ UPID_RECORDS (Provider)
   ├─ TIMESTAMP: verified_at, created_at, updated_at
   └─ BOOLEAN: preferred_upid_locked, is_active
 
-UHWP_RECORDS (Plan)
+WHUP_RECORDS (Plan)
   ├─ UUID: uhwp (PK)
   ├─ BYTEA: plan_name_encrypted
   ├─ VARCHAR: parent_ein, ny_state_plan_id (UNIQUE), cms_plan_id (UNIQUE)
@@ -590,7 +590,7 @@ class CacheLayer:
             return json.loads(cached)
         
         # Cache miss: query database
-        plan = db.query(UHWP_RECORDS).get(uhwp)
+        plan = db.query(WHUP_RECORDS).get(uhwp)
         network = db.query(ProviderNetwork).filter_by(plan_id=uhwp).all()
         
         result = {

@@ -523,7 +523,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                         if event.delta.type == "text_delta":
                             assistant_message += event.delta.text
                         elif event.delta.type == "input_json_delta":
-                            if tool_calls:
+                            if tool_calls and event.delta.partial_json:
                                 tool_calls[-1]["input"].update(
                                     json.loads(event.delta.partial_json)
                                 )

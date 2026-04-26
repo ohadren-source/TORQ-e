@@ -54,7 +54,7 @@
 
 ## CARD-BY-CARD MAPPING
 
-### CARD 3 (UHWP - Plan Network Management)
+### CARD 3 (WHUP - Plan Network Management)
 
 **API Response includes:**
 - `clarity`: Network adequacy status (green/yellow/red based on 75%-85%-100% thresholds)

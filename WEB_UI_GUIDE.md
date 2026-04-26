@@ -18,7 +18,7 @@ The entry point. Shows all 5 cards with descriptions and links.
 **5 Cards (clickable):**
 1. UMID — Member Eligibility
 2. UPID — Provider Enrollment & Claims
-3. UHWP — Plan Network Management
+3. WHUP — Plan Network Management
 4. USHI — Government Stakeholder Operations
 5. UBADA — Data Analyst & Fraud Investigation
 
@@ -288,7 +288,7 @@ Displayed below TORQ-e title on landing page:
 On each card (bottom):
 - UMID: Universal Member Identification
 - UPID: Universal Provider Identification
-- UHWP: Universal Health & Wellness Program
+- WHUP: Universal Health & Wellness Program
 - USHI: Universal Stakeholder Identity
 - UBADA: Universal Business/Data Analyst
 

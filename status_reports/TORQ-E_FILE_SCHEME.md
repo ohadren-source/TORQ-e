@@ -88,7 +88,7 @@
 
 ---
 
-## CARD 3: UHWP (Plan Network Management)
+## CARD 3: WHUP (Plan Network Management)
 
 ### Frontend (HTML)
 ```
@@ -186,7 +186,7 @@
 /code/specs/
 ├── UMID_SPECIFICATION.txt
 ├── UPID_SPECIFICATION.txt
-├── UHWP_SPECIFICATION.txt
+├── WHUP_SPECIFICATION.txt
 ├── USHI_SPECIFICATION.txt
 ├── UBADA_SPECIFICATION.txt
 
@@ -201,7 +201,7 @@
 /docs/journeys/
 ├── UMID_JOURNEY_BLUEPRINT.txt
 ├── UPID_JOURNEY_BLUEPRINT.txt
-├── UHWP_JOURNEY_BLUEPRINT.txt
+├── WHUP_JOURNEY_BLUEPRINT.txt
 ├── USHI_JOURNEY_BLUEPRINT.txt
 ├── UBADA_JOURNEY_BLUEPRINT.txt
 ```

@@ -76,7 +76,7 @@
 
 ---
 
-### CARD 3 (UHWP - Unified Health & Wellness Program): ❌ UNCLEAR & UNIMPLEMENTED
+### CARD 3 (WHUP - Unified Health & Wellness Program): ❌ UNCLEAR & UNIMPLEMENTED
 
 **Intended Function:** Answer plan administrator: "Who's in my network? Are we adequate?"
 

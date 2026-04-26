@@ -47,7 +47,7 @@ TORQ-e doesn't replace any of those systems.
 TORQ-e sits on top and creates **one unified identity** that flows through all of them:
 - **UMID** (Universal Member ID) — Never changes. Follows a person across their entire Medicaid life.
 - **UPID** (Universal Provider ID) — Never changes. Follows a provider across every network they're enrolled in.
-- **UHWP** (Universal Health & Wellness Program) — Never changes. Tracks plan enrollment and network status.
+- **WHUP** (Universal Health & Wellness Program) — Never changes. Tracks plan enrollment and network status.
 - **USHI** (Universal Stakeholder ID) — Never changes. Gives government oversight the full picture.
 - **UBADA** (Universal Business/Data Analyst ID) — Never changes. Gives fraud investigators the tools to detect patterns.
 
@@ -146,7 +146,7 @@ When something fails, the member knows why. The provider knows why. The analyst 
 │  │     └────────────────┘  └─────────────────────────┘ │  │
 │  │     ┌────────────────┐  ┌─────────────────────────┐ │  │
 │  │     │ Plan Admin     │  │ Analyst Dashboard       │ │  │
-│  │     │ (UHWP)         │  │ (UBADA)                 │ │  │
+│  │     │ (WHUP)         │  │ (UBADA)                 │ │  │
 │  │     └────────────────┘  └─────────────────────────┘ │  │
 │  └──────────────────────────────────────────────────────┘  │
 │                           ▲                                 │
@@ -178,7 +178,7 @@ When something fails, the member knows why. The provider knows why. The analyst 
 │  │              │ │              │ │              │       │
 │  │ 1. CMS NPPES │ │ UMID_RECORDS │ │ Session      │       │
 │  │ 2. OIG List  │ │ UPID_RECORDS │ │ Cache        │       │
-│  │ 3. State Lic │ │ UHWP_RECORDS │ │ Eligibility  │       │
+│  │ 3. State Lic │ │ WHUP_RECORDS │ │ Eligibility  │       │
 │  │ 4. IRS/EIN   │ │ USHI_RECORDS │ │ Cache        │       │
 │  │ 5. EMEDNY    │ │ UBADA_RECORDS│ │              │       │
 │  │ Claims       │ │ Mappings     │ │              │       │
@@ -521,7 +521,7 @@ Each persona has a unique River Path because each asks different questions:
 - Success = Enrollment status + routing rules
 - Escalation = "Apply through eMedNY directly"
 
-**Card 3: UHWP (Plan Admin)**
+**Card 3: WHUP (Plan Admin)**
 - Question: "Who's in my network?"
 - River Path: Plan member roster → Provider directory → Network adequacy
 - Success = Network status + member counts

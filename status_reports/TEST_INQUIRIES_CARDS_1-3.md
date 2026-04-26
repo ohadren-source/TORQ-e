@@ -75,7 +75,7 @@ Expected Response:
 
 ---
 
-## CARD 3: UHWP (Plan Network)
+## CARD 3: WHUP (Plan Network)
 ### Session: Active in chat (no special session requirement)
 
 **Test 1: Show Plans by State**

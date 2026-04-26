@@ -56,7 +56,7 @@ Not a wordplay on River Path. "The Nile Claim River" is the actual foundational 
    - Has: backend, basic confidence (3-tier), HTML chat, tools
    - Missing: signal-over-noise framework, caveat generation, veracity UI, Claude integration clarity
    
-3. **Card 3 (UHWP - Plan Admin):** 0% complete
+3. **Card 3 (WHUP - Plan Admin):** 0% complete
    - No backend directory exists
    - HTML stub only
    

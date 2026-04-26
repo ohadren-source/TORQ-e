@@ -22,7 +22,7 @@ TORQ-e is a unified system for New York State Medicaid. It solves one critical p
 
 ### 3. **Plan Administrator** (Insurance company managing benefits)
 - Wants: "Is this person in my network? How many people are enrolled?"
-- Gets: **UHWP** (Universal Health+Wellness Program)
+- Gets: **WHUP** (Universal Health+Wellness Program)
 - Maps to the specific plan (e.g., Fidelis Care, Anthem, EmblemHealth)
 
 ### 4. **Government Stakeholder** (State employee overseeing the program)
@@ -122,14 +122,14 @@ Same scenario, but Dr. Smith has red flags:
 │                                                                 │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
 │  │   Members    │  │  Providers   │  │    Plans     │          │
-│  │   (UMID)     │  │   (UPID)     │  │   (UHWP)     │          │
+│  │   (UMID)     │  │   (UPID)     │  │   (WHUP)     │          │
 │  └──────────────┘  └──────────────┘  └──────────────┘          │
 │         │                  │                   │                │
 │         └──────────────────┼───────────────────┘                │
 │                            │                                    │
 │                ┌───────────▼───────────┐                        │
 │                │   Central Database    │                        │
-│                │  (UMID, UPID, UHWP   │                        │
+│                │  (UMID, UPID, WHUP   │                        │
 │                │   Records + Mappings) │                        │
 │                └───────────┬───────────┘                        │
 │                            │                                    │

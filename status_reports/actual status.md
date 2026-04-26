@@ -24,7 +24,7 @@ Full System Status
 Card	Status	Real Data Wiring
 1 (UMID) - Member Eligibility	✅ Complete	Routes pass schema to river_path, eligibility, confidence functions
 2 (UPID) - Provider System	✅ Complete	Routes pass schema to provider_lookup, claims_routing, fraud_detection
-3 (UHWP) - Plan Network Management	✅ Complete	Routes pass schema to real plan source discovery functions
+3 (WHUP) - Plan Network Management	✅ Complete	Routes pass schema to real plan source discovery functions
 4 (USHI) - Government Stakeholder	✅ Complete	Routes pass schema to query_engine real data functions
 5 (UBADA) - Fraud Investigation	✅ Ready	Backend already queries real data
 Architecture Pattern (Consistent Across All Cards)

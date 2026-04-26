@@ -221,7 +221,7 @@ This cleaner structure makes the data far more suitable for searchable FAQs and 
    - Formatting: Tables for enrollment options, claim codes, NPI verification steps
    - Tone: Clinical/billing language, actionable troubleshooting
 
-3. **Card 3: UHWP (Plan Admin)**
+3. **Card 3: WHUP (Plan Admin)**
    - Core Principles: Data-driven, comparative, forward-looking, executive-ready
    - Formatting: KPIs first, tables for benchmarks, trend analysis
    - Tone: Dashboard-level summaries with drill-down capability
@@ -688,7 +688,7 @@ DR system (append-only, attributed, justified logging) solved the "things disapp
 
 ### Change 13: Explicitly Scope Demo to Cards 1, 2, 4, 5 (Card 3 Excluded)
 **Scope:** DEMO SCOPE CLARIFICATION  
-**What:** Card 3 (UHWP - Plan Administrator) is NOT implemented in this demo  
+**What:** Card 3 (WHUP - Plan Administrator) is NOT implemented in this demo  
 **Why:** Card 3 is the simplest/least valuable card (read-only plan metrics dashboard). Demo focuses on the harder, more essential cards: member eligibility (1), provider systems (2), government oversight (4), and data governance/fraud investigation (5). Card 3 can be built later with the same patterns established by the other four.
 **How:** Updated main.py to explicitly state demo scope. Updated endpoint listing to show Card 3 as "NOT IN THIS DEMO".
 **Files Modified:** main.py  
@@ -818,7 +818,7 @@ Added PART 6: UBADA Data Analyst Architecture (4,200+ lines) covering:
 |------|------|----------|---|---|---|---|
 | **1** | UMID | Member Eligibility | ✅ | ✅ | ✅ | LIVE |
 | **2** | UPID | Provider System | ✅ | ✅ | ✅ | LIVE |
-| **3** | UHWP | Plan Admin | ⏳ | ❌ | ⚠️ | Excluded from demo |
+| **3** | WHUP | Plan Admin | ⏳ | ❌ | ⚠️ | Excluded from demo |
 | **4** | USHI | Government Stakeholder | ✅ | ❌ | ❌ | SPEC COMPLETE |
 | **5** | UBADA | Data Analyst | ✅ | ❌ | ❌ | SPEC COMPLETE |
 
@@ -889,7 +889,7 @@ All architectural specifications now complete and documented:
 |---|---|---|
 | **Card 1 (UMID)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 2 | ✅ LIVE |
 | **Card 2 (UPID)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 2 + PART 4 | ✅ LIVE |
-| **Card 3 (UHWP)** | N/A (Excluded from demo) | ⏳ DEFERRED |
+| **Card 3 (WHUP)** | N/A (Excluded from demo) | ⏳ DEFERRED |
 | **Card 4 (USHI)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 5 | ✅ SPEC COMPLETE |
 | **Card 5 (UBADA)** | TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 6 | ✅ SPEC COMPLETE |
 | **HIPAA Compliance** | HIPAA_TO_TORQ-E_MAPPING.md | ✅ DOCUMENTED |
@@ -1248,7 +1248,7 @@ Added to landing.html header (below definition):
 ---
 
 ## Out of Scope (Deferred)
-- Card 3 (UHWP) — Plan Administrator dashboard
+- Card 3 (WHUP) — Plan Administrator dashboard
   - Reason: Demo focuses on complex architectural cards (1, 2, 4, 5)
   - Can be implemented later using same patterns
   - Low priority: read-only dashboard vs. governance-heavy Cards 4 & 5

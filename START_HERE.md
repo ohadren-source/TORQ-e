@@ -16,7 +16,7 @@ https://torq-e-production.up.railway.app/
 **Landing Page:** Shows all 5 cards with descriptions and links
 - UMID (Universal Member Identification) — Members check eligibility
 - UPID (Universal Provider Identification) — Providers manage claims
-- UHWP (Universal Health & Wellness Program) — Plan admins oversee networks
+- WHUP (Universal Health & Wellness Program) — Plan admins oversee networks
 - USHI (Universal Stakeholder Identity) — Government stakeholders monitor
 - UBADA (Universal Business/Data Analyst) — Analysts investigate fraud
 
@@ -112,7 +112,7 @@ The "river" ensures we find providers in the system they're enrolled in, because
 - Intelligent routing to correct portal
 - Fraud detection (patterns, anomalies, overutilization)
 
-### Card 3: UHWP — Plan Network Management 📋 PLANNED
+### Card 3: WHUP — Plan Network Management 📋 PLANNED
 
 **Who uses it:** Plan administrators, network managers
 

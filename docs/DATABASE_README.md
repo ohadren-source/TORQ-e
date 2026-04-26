@@ -2,7 +2,7 @@
 
 ## Overview
 
-The TORQ-e database is the persistent store for all five universal identifier systems (UMID, UPID, UHWP, USHI, UBADA) and their mappings to legacy Medicaid identifiers. The design prioritizes identity persistence (identifiers never change despite name/address/ownership changes), audit traceability, and support for fragmented data source integration.
+The TORQ-e database is the persistent store for all five universal identifier systems (UMID, UPID, WHUP, USHI, UBADA) and their mappings to legacy Medicaid identifiers. The design prioritizes identity persistence (identifiers never change despite name/address/ownership changes), audit traceability, and support for fragmented data source integration.
 
 **Design Philosophy:** Use existing identifiers where they exist (MPI for members, provider IDs for providers, government credentials for stakeholders/analysts). Never force data migration. For new entities without existing records, generate new universal IDs through tiered verification.
 
@@ -146,7 +146,7 @@ INDEXES:
 
 ---
 
-### 3. UHWP_RECORDS (Plan Identities)
+### 3. WHUP_RECORDS (Plan Identities)
 
 Stores managed care plan metadata and performance metrics.
 
@@ -374,7 +374,7 @@ INDEXES:
 
 1. **Member Login**: `SELECT * FROM UMID_RECORDS WHERE umid = ? AND is_active = true`
 2. **Provider Verification**: `SELECT * FROM UPID_RECORDS WHERE upid = ? AND verified_at IS NOT NULL`
-3. **Plan Lookup**: `SELECT * FROM UHWP_RECORDS WHERE cms_plan_id = ?`
+3. **Plan Lookup**: `SELECT * FROM WHUP_RECORDS WHERE cms_plan_id = ?`
 4. **Legacy ID Resolution**: `SELECT universal_id FROM IDENTIFIER_MAPPINGS WHERE legacy_id_hash = ? AND is_primary = true`
 5. **Access Control Check**: `SELECT data_access_scope FROM USHI_RECORDS WHERE ushi = ? AND authority_level <= ?`
 6. **OIG Exclusion Status**: `SELECT oig_exclusion_status FROM UPID_RECORDS WHERE upid = ?`

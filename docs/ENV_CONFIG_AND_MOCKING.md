@@ -186,7 +186,7 @@ TEST PROVIDERS (UPID):
 - upid: 33333333-3333-3333-3333-333333333333
   Name: XYZ Fraud Clinic | NPI: 9876543210 | Type: Individual | OIG Status: EXCLUDED
 
-TEST PLANS (UHWP):
+TEST PLANS (WHUP):
 - uhwp: 44444444-4444-4444-4444-444444444444
   Name: Fidelis Care HMO | NY Plan ID: FID-001 | CMS: H1234 | Members: 245,000
   
@@ -277,7 +277,7 @@ Response (Test Mode):
 
 Before flipping to prod, ensure these are connected:
 
-- [ ] TORQ-e database live with real UMID/UPID/UHWP/USHI/UBADA records
+- [ ] TORQ-e database live with real UMID/UPID/WHUP/USHI/UBADA records
 - [ ] CMS NPPES database integration (provider verification)
 - [ ] State DMV/ID verification integration (member identity)
 - [ ] EMEDNY claims database read access

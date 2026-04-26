@@ -145,7 +145,7 @@ TORQ-e is built on three pillars that distinguish it from all existing Medicaid 
 
 | Component | Reason |
 |---|---|
-| Card 3 (UHWP) Plan Administrator | Read-only dashboard; lower priority than governance cards 4 & 5 |
+| Card 3 (WHUP) Plan Administrator | Read-only dashboard; lower priority than governance cards 4 & 5 |
 
 ---
 

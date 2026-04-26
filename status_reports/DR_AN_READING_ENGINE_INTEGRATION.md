@@ -235,7 +235,7 @@ Each Card endpoint receives:
 CURRENT STATE (Mock Data):
 Card 1 (UMID) → RiverPathExecutor → hardcoded member responses
 Card 2 (UPID) → ProviderLookupExecutor → hardcoded provider responses
-Card 3 (UHWP) → Plans query → hardcoded plan lists
+Card 3 (WHUP) → Plans query → hardcoded plan lists
 Card 4 (USHI) → Metrics/Fraud detection → hardcoded metrics
 Card 5 (UBADA) → Fraud investigation → hardcoded cases
 
@@ -244,7 +244,7 @@ Card 1 (UMID) → Search public_data_schema for member data
                 → Return real member records + confidence
 Card 2 (UPID) → Search public_data_schema for provider enrollment
                 → Return real provider details + confidence
-Card 3 (UHWP) → Search public_data_schema for MCO plans
+Card 3 (WHUP) → Search public_data_schema for MCO plans
                 → Return real plan options + confidence
 Card 4 (USHI) → Analyze public_data_schema for governance metrics
                 → Return real aggregate statistics

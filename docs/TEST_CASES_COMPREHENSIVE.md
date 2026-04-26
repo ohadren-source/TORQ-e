@@ -184,8 +184,8 @@ WHERE preferred_umid_locked = true AND preferred_umid_locked_at IS NOT NULL;
 
 **Steps**:
 1. Member clicks "What's Covered?"
-2. System retrieves: UMID → plan assignment (UHWP)
-3. System retrieves: UHWP record → coverage details
+2. System retrieves: UMID → plan assignment (WHUP)
+3. System retrieves: WHUP record → coverage details
 4. System formats copay schedule
 
 **Expected Result**:
@@ -445,9 +445,9 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 ---
 
-## Category 3: Plan Administrator (UHWP) Tests
+## Category 3: Plan Administrator (WHUP) Tests
 
-### UHWP-001: Plan Admin Checks Provider Network Status
+### WHUP-001: Plan Admin Checks Provider Network Status
 **Priority**: P1 High
 
 **Preconditions**:
@@ -479,7 +479,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 ---
 
-### UHWP-002: Plan Admin Checks Member Enrollment
+### WHUP-002: Plan Admin Checks Member Enrollment
 **Priority**: P1 High
 
 **Preconditions**:
@@ -508,7 +508,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 ---
 
-### UHWP-003: Plan Admin Reviews Quality Metrics (HEDIS/CAHPS)
+### WHUP-003: Plan Admin Reviews Quality Metrics (HEDIS/CAHPS)
 **Priority**: P1 High
 
 **Preconditions**:
@@ -518,7 +518,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 **Steps**:
 1. Plan admin navigates to quality metrics
-2. System retrieves UHWP_RECORDS: hedis_score_latest, cahps_score_latest
+2. System retrieves WHUP_RECORDS: hedis_score_latest, cahps_score_latest
 3. System compares to benchmarks
 
 **Expected Result**:
@@ -984,7 +984,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 4. **System flow**:
    - Provider searches: "Is John Doe eligible and in my network?"
-   - System queries: UMID_RECORDS + UHWP network status
+   - System queries: UMID_RECORDS + WHUP network status
    - System returns: "Yes, John Doe eligible. Covered under Fidelis Care. Copay: $15."
 
 5. **Provider submits claim**:
@@ -995,7 +995,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 **Expected Result**:
 - Member and provider can reference each other (no duplicate identities)
-- System maintains referential integrity (UMID → UHWP → UPID)
+- System maintains referential integrity (UMID → WHUP → UPID)
 - Claim successfully submitted and tracked
 - Audit trail shows full interaction path
 
@@ -1019,7 +1019,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 **Expected Result**:
 - Stakeholder can see provider activity from system-wide view
-- UHWP, UMID, UPID data integrated seamlessly
+- WHUP, UMID, UPID data integrated seamlessly
 - No fragmentation or duplicate records
 
 ---

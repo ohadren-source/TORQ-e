@@ -12,7 +12,7 @@ TORQ-E is a unified identity system that transforms Medicaid enrollment, eligibi
 
 - **Card 1 (UMID):** Member Unified Identity & Eligibility ✅ LIVE
 - **Card 2 (UPID):** Provider Unified Identity & Claims ✅ LIVE
-- **Card 3 (UHWP):** Plan Administrator Network Management 📋 PLANNED
+- **Card 3 (WHUP):** Plan Administrator Network Management 📋 PLANNED
 - **Card 4 (USHI):** Government Stakeholder Operations 📋 PLANNED
 - **Card 5 (UBADA):** Data Analyst & Fraud Detection 📋 PLANNED
 

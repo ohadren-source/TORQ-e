@@ -70,7 +70,7 @@ Card 2 returns confidence but lacks the sophisticated signal-over-noise weightin
 
 ---
 
-## CARD 3 (UHWP - Plan Admin): 0% Complete
+## CARD 3 (WHUP - Plan Admin): 0% Complete
 
 ### What IS:
 ❌ **Backend:** No card_3_uhwp directory exists  

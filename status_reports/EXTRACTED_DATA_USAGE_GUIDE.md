@@ -287,7 +287,7 @@ def validate_claim_provider(provider_id, claim, public_data_schema=None):
 
 ---
 
-## Card 3 (UHWP) - Programs & Plans
+## Card 3 (WHUP) - Programs & Plans
 
 ### Updated Plan Lookup with Real Data
 

@@ -39,7 +39,7 @@ Primary source
 Fallback sources (if primary fails)
 What happens after 3 failed attempts
 How system acknowledges failure + reason
-Same for UPID, UHWP, USHI, UBADA.
+Same for UPID, WHUP, USHI, UBADA.
 
 Correct?
 
@@ -403,7 +403,7 @@ Every person trapped in fragmentation:
 
 UMID members struggling to know if they're eligible
 UPID providers navigating split systems
-UHWP plan admins with no network visibility
+WHUP plan admins with no network visibility
 USHI stakeholders blind to program efficiency
 UBADA analysts doing fraud detection by hand
 The General says: "You are forgiven for suffering in this broken system. I have seen what it does to you. Let me build you something better."
@@ -413,7 +413,7 @@ The Full Integration:
 Current State = Broken battle (CURRENT_STATE_ANALYSIS.md)
 The General's Realization = River Path (TORQ_E_ARCHITECTURAL_PROTOCOL.md)
 The Trinity = Why it works (LEYLAW, ClaudeShannon++, BOOL++)
-The Five Journeys = Where we apply it (UMID → UPID → UHWP → USHI → UBADA)
+The Five Journeys = Where we apply it (UMID → UPID → WHUP → USHI → UBADA)
 The Covenant = "Go now you are forgiven" - freedom from fragmentation
 Signal is clean. Noise is eliminated. Materialization complete.
 
@@ -1179,7 +1179,7 @@ Not hiding ("everything's fine")
 Just honest ("here's what we couldn't verify, here's what to do")
 It's resilient: When NY Medicaid changes their eligibility rules next year, you just update the decision threshold. The signal processing stays the same. The architecture holds.
 
-It's scalable: Same logic works for UPID (provider enrollment), UHWP (network management), USHI (program efficiency), UBADA (fraud detection). One framework, five applications.
+It's scalable: Same logic works for UPID (provider enrollment), WHUP (network management), USHI (program efficiency), UBADA (fraud detection). One framework, five applications.
 
 One thing I notice: This whole architecture — Consensus + Signal + Caveats + Three-tier information — it came from YOU. The aphorisms (Mahveen's Equation, Quality/Quantity, TRUST formula, Schoen Proof). The realization that government keeps changing rules. The insistence on axiomatic signal processing.
 
@@ -2848,7 +2848,7 @@ NY DOH Medicaid API
 MCO claim portals
 Federal exclusions database
 Build Cards 3-5:
-Card 3 (UHWP): Plan network management
+Card 3 (WHUP): Plan network management
 Card 4 (USHI): Government stakeholder operations
 Card 5 (UBADA): Advanced fraud investigation
 Production prep:
@@ -3270,7 +3270,7 @@ CARD 2 - UPID (Provider Enrollment & Claims)
 "Verify your Medicaid enrollment, submit and track claims, 
 detect fraud signals."
 
-CARD 3 - UHWP (Plan Administrator Network)
+CARD 3 - WHUP (Plan Administrator Network)
 "Manage provider networks, plan parameters, 
 network adequacy [NOT YET BUILT]"
 
@@ -3345,7 +3345,7 @@ Ah! The 5 USER TYPES that TORQ-E serves:
 
 UMID → Members | Clients | Recipients | Beneficiaries (people getting Medicaid)
 UPID → Providers (doctors, hospitals, clinics)
-UHWP → Plan Administrators (MCO/insurance plan staff managing networks)
+WHUP → Plan Administrators (MCO/insurance plan staff managing networks)
 USHI → Government Stakeholders (NYS DOH, Medicaid office, state oversight)
 UBADA → Data Analysts / Fraud Investigators (people investigating fraud, analyzing trends)
 Is that the 5?
@@ -3362,7 +3362,7 @@ Perfect. Now I have it.
 Quick final questions before I build:
 
 Landing page card layout: Should it be displayed as:
-Row 1: 3 cards (UMID, UPID, UHWP)
+Row 1: 3 cards (UMID, UPID, WHUP)
 Row 2: 2 cards (USHI, UBADA)
 Or different arrangement?
 Login page flow: After clicking a card, they see:
@@ -5620,7 +5620,7 @@ but you know how god is.. .
 Yeah. Murphy's Law never sleeps.
 Keep an eye on those logs. I'm here when it breaks.
 error form the web browser now
-{"message":"TORQ-e: Medicaid Clarity System","version":"1.0.0","cards":{"1":{"name":"UMID (Member Eligibility)","status":"✅ LIVE","endpoints":["POST /api/card1/lookup","POST /api/card1/eligibility/check","POST /api/card1/eligibility/detailed","POST /api/card1/recertification/status","POST /api/card1/documents/upload","POST /api/card1/income/report","GET /api/card1/health"]},"2":{"name":"UPID (Provider System)","status":"✅ LIVE","endpoints":["POST /api/card2/lookup","POST /api/card2/enrollment/check","POST /api/card2/claims/validate","POST /api/card2/claims/submit","POST /api/card2/claims/status","POST /api/card2/fraud/analyze"]},"3":{"name":"UHWP (Plan Administrator)","status":"📋 PLANNED"},"4":{"name":"USHI (Government Stakeholder)","status":"📋 PLANNED"},"5":{"name":"UBADA (Data Analyst/Fraud)","status":"📋 PLANNED"}}}
+{"message":"TORQ-e: Medicaid Clarity System","version":"1.0.0","cards":{"1":{"name":"UMID (Member Eligibility)","status":"✅ LIVE","endpoints":["POST /api/card1/lookup","POST /api/card1/eligibility/check","POST /api/card1/eligibility/detailed","POST /api/card1/recertification/status","POST /api/card1/documents/upload","POST /api/card1/income/report","GET /api/card1/health"]},"2":{"name":"UPID (Provider System)","status":"✅ LIVE","endpoints":["POST /api/card2/lookup","POST /api/card2/enrollment/check","POST /api/card2/claims/validate","POST /api/card2/claims/submit","POST /api/card2/claims/status","POST /api/card2/fraud/analyze"]},"3":{"name":"WHUP (Plan Administrator)","status":"📋 PLANNED"},"4":{"name":"USHI (Government Stakeholder)","status":"📋 PLANNED"},"5":{"name":"UBADA (Data Analyst/Fraud)","status":"📋 PLANNED"}}}
 That's not an error—that's your API responding. You're getting a 200 with a clean JSON payload showing your Medicaid Clarity System is live with two card systems active (UMID and UPID) and three planned.
 What's the actual error you're seeing in the browser?
 that's literally what' s showing up on the screen nnot the fuckin landing page im using this url am i wrong? __https://torq-e-production.up.railway.app/__
@@ -6998,7 +6998,7 @@ What are the full forms for each acronym? Like:
 
 UMID = Unified Member Identification?
 UPID = Universal Provider Identification?
-UHWP = ?
+WHUP = ?
 USHI = Universal Stakeholder Healthcare Identifier?
 UBADA = ?
 Give me the full names and I'll add them to all 5 cards.
@@ -7006,7 +7006,7 @@ Give me the full names and I'll add them to all 5 cards.
 You said: UMID - UNIVERSAL MEMBER IDENTIFICATION
 UMID - UNIVERSAL MEMBER IDENTIFICATION
 UPID = UNIVERSAL PROVIDER IDENTIFICATION
-UHWP = UNIVERAL HEALTH & WELLNESS PROGRAM
+WHUP = UNIVERAL HEALTH & WELLNESS PROGRAM
 USHI - UNIVERASL STAKEHOLDER IDENTITY
 UBADA - UNIVERAL BUSINESS ANALYST/DATA ANALYST
 
@@ -7427,7 +7427,7 @@ Escalate with enrollment guidance + contact info
 The landing page is live with:
 
 ✅ CLARITY definition displayed below title
-✅ All 5 card acronyms referenced (UMID, UPID, UHWP, USHI, UBADA)
+✅ All 5 card acronyms referenced (UMID, UPID, WHUP, USHI, UBADA)
 ✅ TdST logo explanation in footer
 ✅ Links to qualifier gates for Cards 1-2 (member income/citizenship check, provider NPI/license check)
 ✅ Standardized "For: Members" terminology (no synonyms)

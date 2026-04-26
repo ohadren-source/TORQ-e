@@ -89,7 +89,7 @@ Cards 1-3 operate as **authenticated, state-aware systems** (vs. Card 4-5's conv
 **What Cards 1-3 Are:**
 - **Card 1 (UMID):** Member authentication → Shows member eligibility/coverage status
 - **Card 2 (UPID):** Provider authentication → Shows claims processing health
-- **Card 3 (UHWP):** Plan network conversations → Shows plan adequacy/network status
+- **Card 3 (WHUP):** Plan network conversations → Shows plan adequacy/network status
 
 **Modified Lighthouse Design:**
 
@@ -131,7 +131,7 @@ NO REMOVAL UI FOR USERS
 |------|----------------------|-----------------|--------------|-----------------|
 | 1 (UMID) | Member eligibility, enrollment status, recertification risk | Medicaid record, verification timestamp, income documentation | View only | Can change data source verification method |
 | 2 (UPID) | Claims processing health, validation pass rate, fraud detection sensitivity | Claims database, fraud engine version, provider verification timestamp | View only | Can adjust fraud detection thresholds |
-| 3 (UHWP) | Network adequacy, plan compliance, provider count by specialty | Network registry, plan formulary version, CMS file timestamp | View only | Can update network definitions, formulary versions |
+| 3 (WHUP) | Network adequacy, plan compliance, provider count by specialty | Network registry, plan formulary version, CMS file timestamp | View only | Can update network definitions, formulary versions |
 
 ---
 

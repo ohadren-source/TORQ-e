@@ -234,7 +234,7 @@ Card 4's existence means:
 - Should have Elaborate buttons
 - Should respect session provider authentication
 
-**For Card 3 (UHWP):**
+**For Card 3 (WHUP):**
 - Should include Spectrum Analyzer (plan network health)
 - Should use context-driven routing ✓ (just fixed)
 - Should have Elaborate buttons
