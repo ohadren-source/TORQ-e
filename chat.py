@@ -538,7 +538,12 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             # Tool calls exist: Execute them (silently, no streaming)
             # Add assistant's tool calls to message history
-            assistant_content = [{"type": "text", "text": assistant_message}]
+            assistant_content = []
+
+            # Only add text block if there's actual text (Claude rejects empty text blocks)
+            if assistant_message:
+                assistant_content.append({"type": "text", "text": assistant_message})
+
             for tool_call in tool_calls:
                 assistant_content.append({
                     "type": "tool_use",
