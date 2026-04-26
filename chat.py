@@ -432,11 +432,11 @@ def _prepare_tool_result_for_claude(result: dict, card_number: int, tool_name: s
 
                 # Determine veracity level
                 if confidence_score >= 0.85:
-                    metadata["veracity"] = "HIGH (🟢)"
+                    metadata["veracity"] = "HIGH"
                 elif confidence_score >= 0.60:
-                    metadata["veracity"] = "MEDIUM (🟡)"
+                    metadata["veracity"] = "MEDIUM"
                 else:
-                    metadata["veracity"] = "LOW (🔴)"
+                    metadata["veracity"] = "LOW"
 
             if "caveats" in result:
                 metadata["caveat"] = result.get("caveats")
