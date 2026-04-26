@@ -489,13 +489,13 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     messages = [{"role": "user", "content": chat_msg.message}]
 
     async def generate_response():
-        """Generator that yields SSE-formatted text and handles agentic loop"""
+        """Generator that yields SSE-formatted text and handles agentic loop with ABOUT_FACE validation"""
         nonlocal messages
         tool_call_count = 0
         max_tool_calls = 5
 
         while tool_call_count < max_tool_calls:
-            # Stream response from Claude
+            # Stream response from Claude (collect full response first)
             response = client.messages.create(
                 model="claude-sonnet-4-6",
                 max_tokens=1024,
@@ -505,16 +505,15 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                 stream=True
             )
 
-            # Process streaming response
+            # STEP 1: Collect full response (text + tool_calls)
             assistant_message = ""
             tool_calls = []
 
             for event in response:
-                # Handle content blocks
                 if event.type == "content_block_start":
                     if hasattr(event.content_block, "type"):
                         if event.content_block.type == "text":
-                            pass  # Text streaming begins
+                            pass
                         elif event.content_block.type == "tool_use":
                             tool_calls.append({
                                 "id": event.content_block.id,
@@ -526,24 +525,40 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                     if hasattr(event.delta, "type"):
                         if event.delta.type == "text_delta":
                             assistant_message += event.delta.text
-                            # Only yield text if NO tool calls will follow
-                            # Filter through ABOUT_FACE to remove meta-speak
-                            if not tool_calls:
-                                filtered_text = about_face(event.delta.text)
-                                if filtered_text:  # Only yield if text remains after filtering
-                                    yield f"data: {json.dumps({'text': filtered_text})}\n\n"
                         elif event.delta.type == "input_json_delta":
-                            # Accumulate JSON input for tool use
                             if tool_calls:
                                 tool_calls[-1]["input"].update(
                                     json.loads(event.delta.partial_json)
                                 )
 
-            # If no tool calls, we're done streaming
+            # STEP 2: Evaluate response against ABOUT_FACE
+            # If there's text AND no tool_calls, validate the text first
+            if assistant_message and not tool_calls:
+                filtered_text = about_face(assistant_message)
+
+                # If ABOUT_FACE filtered out the entire message, it was pure meta-speak
+                # This shouldn't happen if Claude follows the system prompt, but if it does, skip
+                if filtered_text:
+                    yield f"data: {json.dumps({'text': filtered_text})}\n\n"
+                return
+
+            # If there are tool_calls but the preceding text contains meta-speak about the tools
+            # (e.g., "I'll pull all six metrics" before making the calls), silently execute
+            if tool_calls and assistant_message:
+                # Check if the text is pure meta-speak about the tools
+                filtered_text = about_face(assistant_message)
+                if not filtered_text:
+                    # Pure meta-speak detected - don't stream it, just execute tools silently
+                    pass
+                else:
+                    # Text has some substance - keep it for the conversation history
+                    pass
+
+            # No tool calls? Stream and return
             if not tool_calls:
                 return
 
-            # Process tool calls (agentic loop)
+            # STEP 3: Execute tool calls (agentic loop continues)
             assistant_content = [{"type": "text", "text": assistant_message}]
             for tool_call in tool_calls:
                 assistant_content.append({
@@ -573,23 +588,26 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
         # If max tool calls reached, do one final Claude response to synthesize results
         if tool_call_count >= max_tool_calls and tool_calls:
-            # Make one final call to Claude to summarize all tool results
             response = client.messages.create(
                 model="claude-sonnet-4-6",
                 max_tokens=1024,
                 system=system_prompt,
-                tools=None,  # No more tools, just synthesis
+                tools=None,
                 messages=messages,
                 stream=True
             )
 
-            # Stream the final synthesis (filtered through ABOUT_FACE)
+            # Collect final response
+            final_text = ""
             for event in response:
                 if event.type == "content_block_delta":
                     if hasattr(event.delta, "type") and event.delta.type == "text_delta":
-                        filtered_text = about_face(event.delta.text)
-                        if filtered_text:  # Only yield if text remains after filtering
-                            yield f"data: {json.dumps({'text': filtered_text})}\n\n"
+                        final_text += event.delta.text
+
+            # Validate final response against ABOUT_FACE
+            filtered_final = about_face(final_text)
+            if filtered_final:
+                yield f"data: {json.dumps({'text': filtered_final})}\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
