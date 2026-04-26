@@ -215,7 +215,7 @@
                 <div class="password-note">Password authentication enabled in production</div>
             </div>
 
-            <button class="btn" id="loginBtn">Enter as Data Analyst</button>
+            <button class="btn" id="loginBtn">ENTER AS BUSINESS ANALYST&#x2F;&#x2F;DATA ANALYST</button>
 
             <div class="footer-link">
                 <a href="tutorial-card5.html" style="margin-right: 16px;">📖 Tutorial</a>
@@ -246,4 +246,10 @@
 
         usernameInput.addEventListener('input', () => {
             loginBtn.disabled = !usernameInput.value.trim();
-    
+        });
+
+        // Initialize button state
+        loginBtn.disabled = !usernameInput.value.trim();
+    </script>
+</body>
+</html>
