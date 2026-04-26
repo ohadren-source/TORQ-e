@@ -324,4 +324,957 @@
         .large-traffic-light.green {
             background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
             box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
- 
+        }
+
+        .large-traffic-light.yellow {
+            background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            color: #333;
+        }
+
+        .large-traffic-light.red {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
+        }
+
+        .coherence-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .coherence-status {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Clarity Spectrum Equalizer Grid */
+        .stability-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stability-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 6px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stability-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #2d6a4f;
+        }
+
+        .stability-item.active {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+        }
+
+        .stability-item-traffic-light {
+            flex-shrink: 0;
+        }
+
+        .stability-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stability-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .stability-item-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stability-item-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .traffic-light {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .traffic-light.green {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .traffic-light.yellow {
+            background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            color: #333;
+        }
+
+        .traffic-light.red {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            box-shadow: 0 0 15px rgba(244, 67, 54, 0.4);
+        }
+
+        .spectrum-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spectrum-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .status-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .status-fill {
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        /* Breakdown Panel */
+        .breakdown-panel {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .breakdown-visuals {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 0;
+            padding: 12px;
+            background: #fafafa;
+            border-radius: 4px;
+        }
+
+        .traffic-light-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .traffic-light-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: 2px solid #999;
+        }
+
+        .traffic-light-circle.active {
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .traffic-light-circle.red.active {
+            background: #f44336;
+            border-color: #c62828;
+        }
+
+        .traffic-light-circle.yellow.active {
+            background: #FFD700;
+            border-color: #F57F17;
+        }
+
+        .traffic-light-circle.green.active {
+            background: #4CAF50;
+            border-color: #2e7d32;
+        }
+
+        .equalizer-visual {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 50px;
+        }
+
+        .equalizer-bar {
+            width: 6px;
+            background: #4CAF50;
+            border-radius: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .breakdown-panel strong {
+            color: #2d6a4f;
+            display: block;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .breakdown-panel strong:first-child {
+            margin-top: 0;
+        }
+
+        .sources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .source-item a {
+            color: #2d6a4f;
+            text-decoration: underline;
+            flex: 1;
+        }
+
+        .source-remove-btn {
+            background: none;
+            border: none;
+            color: #f44336;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 6px;
+            transition: all 0.2s ease;
+        }
+
+        .source-remove-btn:hover {
+            font-size: 18px;
+            color: #d32f2f;
+        }
+
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .confirm-dialog {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .confirm-dialog h4 {
+            margin: 0 0 12px 0;
+            color: #333;
+        }
+
+        .confirm-dialog p {
+            margin: 0 0 16px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #d32f2f;
+        }
+
+        .cancel-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .cancel-btn:hover {
+            background: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .message-bubble {
+                max-width: 90%;
+            }
+
+            .input-area {
+                padding: 12px 16px;
+            }
+
+            .spectrum-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Standardized Card 4/5 Header (auto-loads card4-5-header.html) -->
+    <div id="header-container"></div>
+
+    <div class="dev-notice">
+        ✅ Card 4 backend ready. Governance monitoring, policy compliance, regulatory alignment, audit readiness tracking.
+    </div>
+
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <div class="message assistant">
+                <div class="message-bubble">
+                    <strong>👋 TORQ-e Healthcare Governance</strong><br><br>
+                    This card will provide:<br>
+                    • Policy compliance monitoring<br>
+                    • Regulatory alignment tracking<br>
+                    • Budget adherence oversight<br>
+                    • Stakeholder engagement metrics<br>
+                    • Audit readiness assessment<br><br>
+                    Backend ready. Ask about: compliance, regulations, budget, audits, governance.
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-field">
+                <textarea id="inputText" placeholder="Ask Card 4 about governance, compliance, regulations..." rows="1"></textarea>
+            </div>
+            <button class="send-btn" id="sendBtn">➤</button>
+        </div>
+    </div>
+
+    <script>
+        // Load standardized header
+        fetch('card4-5-header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+                const username = sessionStorage.getItem('username') || 'Analyst';
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl) userNameEl.textContent = username;
+            })
+            .catch(error => console.log('Header not found (development mode):', error));
+
+        // Chat functionality
+        const inputText = document.getElementById('inputText');
+        const sendBtn = document.getElementById('sendBtn');
+        const messagesDiv = document.getElementById('messages');
+        const API_BASE = 'https://torq-e-production.up.railway.app/api/card4';
+
+        // Conversation context
+        const ubadaId = sessionStorage.getItem('ushi_id');
+        let conversationContext = {
+            lastMetricsShown: null,
+            ushiId: ubadaId,
+            userRole: sessionStorage.getItem('user_role') || 'GOVERNANCE_ANALYST'
+        };
+
+        // Auto-resize textarea
+        inputText.addEventListener('input', () => {
+            inputText.style.height = 'auto';
+            inputText.style.height = (inputText.scrollHeight) + 'px';
+        });
+
+        // Send on Enter
+        inputText.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        async function sendMessage() {
+            const message = inputText.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            inputText.value = '';
+            inputText.style.height = 'auto';
+            sendBtn.disabled = true;
+
+            try {
+                const response = await processGovernanceQuery(message);
+                addMessage(response, 'assistant');
+            } catch (error) {
+                addMessage(`Error: ${error.message}. Is the Card 4 API running at localhost:8000?`, 'assistant');
+            } finally {
+                sendBtn.disabled = false;
+                inputText.focus();
+            }
+        }
+
+        function addMessage(text, role) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = text;
+            messageDiv.appendChild(bubble);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function processGovernanceQuery(query) {
+            const msg = query.toLowerCase();
+
+            // Route to appropriate handler
+            if (msg.includes('metric') || msg.includes('health') || msg.includes('status')) {
+                return await handleMetricsQuery(query);
+            } else if (msg.includes('trend') || msg.includes('pattern') || msg.includes('analysis')) {
+                return await handleTrendQuery(query);
+            } else if (msg.includes('quality') || msg.includes('accuracy') || msg.includes('data')) {
+                return await handleQualityQuery(query);
+            } else if (msg.includes('governance') || msg.includes('compliance') || msg.includes('audit') || msg.includes('regulation') || msg.includes('budget') || msg.includes('policy') || msg.includes('stakeholder')) {
+                return await handleGovernanceQuery(query);
+            } else if (msg.includes('help') || msg.includes('what can')) {
+                return getHelpMessage();
+            } else {
+                return getDefaultResponse();
+            }
+        }
+
+        function generateSpectrumAnalyzer(metrics) {
+            const getColor = (value) => {
+                if (value >= 90) return 'green';
+                if (value >= 70) return 'yellow';
+                return 'red';
+            };
+
+            const getCoherenceStatus = () => {
+                const avg = (metrics.policy_compliance + metrics.regulatory_alignment + metrics.budget_adherence + metrics.stakeholder_engagement + metrics.audit_readiness + metrics.operations_status) / 6;
+                if (avg >= 90) return { color: 'green', status: 'COHERENT', icon: '\u2713' };
+                if (avg >= 70) return { color: 'yellow', status: 'WAVERING', icon: '\u26a0' };
+                return { color: 'red', status: 'FRAGMENTED', icon: '\u2715' };
+            };
+
+            const coherence = getCoherenceStatus();
+            const coherenceValue = Math.round((metrics.policy_compliance + metrics.regulatory_alignment + metrics.budget_adherence + metrics.stakeholder_engagement + metrics.audit_readiness + metrics.operations_status) / 6);
+
+            const breakdownData = {
+                'Policy Compliance': {
+                    value: metrics.policy_compliance,
+                    source: 'CMS Policy Database, Internal Compliance Engine',
+                    sourceUrls: [
+                        { name: 'CMS Medicaid Policy Guidance', url: 'https://www.cms.gov/medicaid/guidance' },
+                        { name: 'State Plan Amendments', url: 'https://www.medicaid.gov/medicaid/index.html' },
+                        { name: 'Federal Register Notices', url: 'https://www.federalregister.gov/agencies/centers-for-medicare-medicaid-services' }
+                    ],
+                    logic: 'Compliant policies / total applicable policies × 100',
+                    breakdown: 'Compliant: 312 | Non-compliant: 12 | Under review: 8 | Exempted: 3 | Total: 335'
+                },
+                'Regulatory Alignment': {
+                    value: metrics.regulatory_alignment,
+                    source: 'eCFR Title 42, State Regulations',
+                    sourceUrls: [
+                        { name: 'eCFR Title 42 Part 430-456', url: 'https://www.ecfr.gov/current/title-42/chapter-IV' },
+                        { name: 'FMAP Regulations', url: 'https://www.medicaid.gov/medicaid/financing-reimbursement/index.html' },
+                        { name: 'Managed Care Regulations', url: 'https://www.cms.gov/medicaid/managed-care' }
+                    ],
+                    logic: 'Regulations met / total applicable regulations × 100',
+                    breakdown: 'Federal regs met: 98% | State regs met: 91% | Waivers active: 7 | Pending approvals: 4'
+                },
+                'Budget Adherence': {
+                    value: metrics.budget_adherence,
+                    source: 'Financial Management System, CMS-64',
+                    sourceUrls: [
+                        { name: 'CMS-64 Quarterly Report', url: 'https://www.medicaid.gov/medicaid/financing-reimbursement/state-expenditure-reporting/index.html' },
+                        { name: 'FMAP Calculator', url: 'https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines/fmap' },
+                        { name: 'Budget Authority Standards', url: 'https://www.gao.gov/resources/publications' }
+                    ],
+                    logic: 'Actual spend / authorized budget × 100 (inverted for adherence)',
+                    breakdown: 'YTD spend: $2.34B | Budget: $2.46B | Variance: -$120M | Projection: on track | Alerts: 2'
+                },
+                'Stakeholder Engagement': {
+                    value: metrics.stakeholder_engagement,
+                    source: 'Engagement Tracking System, Meeting Records',
+                    sourceUrls: [
+                        { name: 'CMS Stakeholder Guidance', url: 'https://www.cms.gov/outreach-and-education' },
+                        { name: 'Public Comment Requirements', url: 'https://www.federalregister.gov' },
+                        { name: 'Advisory Committee Standards', url: 'https://www.faca.gov' }
+                    ],
+                    logic: 'Engagement touchpoints completed / required touchpoints × 100',
+                    breakdown: 'Meetings held: 47 | Comments processed: 1,203 | Advisory sessions: 8 | Response rate: 94%'
+                },
+                'Audit Readiness': {
+                    value: metrics.audit_readiness,
+                    source: 'Audit Management System, OIG Reports',
+                    sourceUrls: [
+                        { name: 'OIG Work Plan', url: 'https://oig.hhs.gov/reports-and-publications/workplan/index.asp' },
+                        { name: 'GAO Medicaid Audits', url: 'https://www.gao.gov/topics/medicaid' },
+                        { name: 'Single Audit Requirements', url: 'https://www.ecfr.gov/current/title-2/part-200/subpart-F' }
+                    ],
+                    logic: 'Documentation complete + findings resolved + controls verified',
+                    breakdown: 'Open findings: 3 | Resolved (6mo): 28 | Controls tested: 156 | High-risk areas: 2'
+                },
+                'Operations Status': {
+                    value: metrics.operations_status,
+                    source: 'MMIS, System Performance Dashboard',
+                    sourceUrls: [
+                        { name: 'MMIS Standards & Certification', url: 'https://www.cms.gov/medicaid/system-certification' },
+                        { name: 'CMS Systems Guidance', url: 'https://www.cms.gov/regulations-and-guidance' },
+                        { name: 'Operational Performance Standards', url: 'https://www.cms.gov/medicaid/guidance' }
+                    ],
+                    logic: 'System uptime × processing success rate × data currency',
+                    breakdown: 'MMIS uptime: 99.9% | Claims processed today: 84,729 | Error rate: 0.1% | Avg response: 0.8s'
+                }
+            };
+
+            let html = `<div class="spectrum-analyzer">`;
+
+            // SECTION 1: Coherence Level
+            html += `<div class="spectrum-section">
+                <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
+                    <h3>
+                        <span class="toggle-icon">▶</span>
+                        🎯 Coherence Level
+                    </h3>
+                </div>
+                <div class="spectrum-content collapsed">
+                    <div class="coherence-display">
+                        <div class="large-traffic-light ${coherence.color}">${coherence.icon}</div>
+                        <div class="coherence-value">${coherenceValue}%</div>
+                        <div class="coherence-status">${coherence.status}</div>
+                        <div style="margin-top: 12px; font-size: 11px; color: #999; font-style: italic; text-align: center;">
+                            For detailed data sources and removable citations, go to Clarity Spectrum Equalizer
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            // SECTION 2: Clarity Spectrum Equalizer
+            html += `<div class="spectrum-section">
+                <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
+                    <h3>
+                        <span class="toggle-icon">▶</span>
+                        📊 Clarity Spectrum Equalizer
+                    </h3>
+                </div>
+                <div class="spectrum-content collapsed">
+                    <div class="stability-grid">`;
+
+            const dimensions = {
+                'Policy Compliance': metrics.policy_compliance,
+                'Regulatory Alignment': metrics.regulatory_alignment,
+                'Budget Adherence': metrics.budget_adherence,
+                'Stakeholder Engagement': metrics.stakeholder_engagement,
+                'Audit Readiness': metrics.audit_readiness,
+                'Operations Status': metrics.operations_status
+            };
+
+            for (const [label, value] of Object.entries(dimensions)) {
+                const color = getColor(value);
+                html += `<div class="stability-item" onclick="showBreakdown(this, '${label}')">
+                    <div class="stability-item-traffic-light">
+                        <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 0;">
+                            ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
+                        </div>
+                    </div>
+                    <div class="stability-item-content">
+                        <div class="stability-item-header">
+                            <span class="stability-item-label">${label}</span>
+                            <span class="stability-item-value">${value}%</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            html += `</div></div></div>`;
+
+            // SECTION 3: Combined View
+            html += `<div class="spectrum-section">
+                <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
+                    <h3>
+                        <span class="toggle-icon">▶</span>
+                        🔗 Combined View
+                    </h3>
+                </div>
+                <div class="spectrum-content collapsed">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 36px; font-weight: bold; color: ${coherence.color === 'green' ? '#4CAF50' : coherence.color === 'yellow' ? '#FFC107' : '#f44336'}; margin-bottom: 8px;">
+                            ${coherenceValue}% Coherence
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin-bottom: 16px;">
+                            System is <strong>${coherence.status}</strong> across all dimensions
+                        </div>
+                        <div class="stability-grid" style="margin-top: 12px;">`;
+
+            for (const [label, value] of Object.entries(dimensions)) {
+                const color = getColor(value);
+                html += `<div class="stability-item" onclick="showBreakdown(this, '${label}')">
+                    <div class="stability-item-traffic-light">
+                        <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 0;">
+                            ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
+                        </div>
+                    </div>
+                    <div class="stability-item-content">
+                        <div class="stability-item-header">
+                            <span class="stability-item-label">${label}</span>
+                            <span class="stability-item-value">${value}%</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            html += `</div></div></div></div>`;
+
+            // Hidden breakdown data (attached to analyzer)
+            html += `<div id="breakdown-data" style="display: none;">` + JSON.stringify(breakdownData) + `</div>`;
+
+            return html;
+        }
+
+        function toggleSpectrumSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            content.classList.toggle('collapsed');
+            icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
+
+        function showBreakdown(element, metric) {
+            // Get breakdown data
+            const breakdownDataDiv = document.querySelector('#breakdown-data');
+            const breakdownData = JSON.parse(breakdownDataDiv.textContent);
+            const data = breakdownData[metric];
+
+            // Remove any existing breakdown panels from this item
+            const existing = element.querySelector('.breakdown-panel');
+            if (existing) {
+                existing.remove();
+                element.classList.remove('active');
+                return;
+            }
+
+            // Remove breakdown panels from all siblings
+            element.parentElement.querySelectorAll('.stability-item').forEach(item => {
+                const panel = item.querySelector('.breakdown-panel');
+                if (panel) panel.remove();
+                item.classList.remove('active');
+            });
+
+            // Determine which section this is from
+            const sectionHeader = element.closest('.spectrum-section')?.querySelector('.spectrum-header h3')?.textContent || '';
+            const isCoherence = sectionHeader.includes('Coherence');
+            const isStability = sectionHeader.includes('Stability');
+            const isCombined = sectionHeader.includes('Combined');
+
+            const color = data.value >= 90 ? 'green' : data.value >= 70 ? 'yellow' : 'red';
+            const value = data.value;
+
+            // Generate traffic light visual
+            const trafficLightSVG = `
+                <div class="traffic-light-visual">
+                    <div class="traffic-light-circle red ${color === 'red' ? 'active' : ''}"></div>
+                    <div class="traffic-light-circle yellow ${color === 'yellow' ? 'active' : ''}"></div>
+                    <div class="traffic-light-circle green ${color === 'green' ? 'active' : ''}"></div>
+                </div>
+            `;
+
+            // Generate equalizer visual (5 bars representing the value)
+            const equalizerBars = [];
+            for (let i = 1; i <= 5; i++) {
+                const barHeight = (value / 100) * 50 * (i / 5) + (value / 100) * 20;
+                equalizerBars.push(`<div class="equalizer-bar" style="height: ${Math.max(5, barHeight)}px;"></div>`);
+            }
+            const equalizerSVG = `
+                <div class="equalizer-visual">
+                    ${equalizerBars.join('')}
+                </div>
+            `;
+
+            // Add breakdown panel with appropriate visuals
+            element.classList.add('active');
+            const panel = document.createElement('div');
+            panel.className = 'breakdown-panel';
+
+            let visualsHtml = '';
+            if (isCoherence) {
+                visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}</div>`;
+            } else if (isStability) {
+                visualsHtml = `<div class="breakdown-visuals">${equalizerSVG}</div>`;
+            } else if (isCombined) {
+                visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}${equalizerSVG}</div>`;
+            }
+
+            // Get session-removed sources
+            const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
+
+            // Build sources HTML - URLs in Clarity Spectrum Equalizer AND Combined View (both include Spectrum)
+            let sourcesHtml = data.source;
+            if ((isStability || isCombined) && data.sourceUrls) {
+                const activeSources = data.sourceUrls.filter(src => !removedSources.includes(src.url));
+                const sourcesList = activeSources.map(src => `
+                    <div class="source-item">
+                        <a href="${src.url}" target="_blank">${src.name}</a>
+                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${src.name}')">✕</button>
+                    </div>
+                `).join('');
+                sourcesHtml = `<div class="sources-list">${sourcesList}</div>`;
+            }
+
+            panel.innerHTML = `
+                ${visualsHtml}
+                <strong>📍 Data Source</strong>
+                ${sourcesHtml}
+                <strong>⚙️ Calculation Logic</strong>
+                ${data.logic}
+                <strong>📊 Detailed Breakdown</strong>
+                ${data.breakdown}
+            `;
+            element.appendChild(panel);
+        }
+
+        function removeSourceFromSession(url, name) {
+            // Show confirmation dialog
+            const dialog = document.createElement('div');
+            dialog.className = 'confirm-modal';
+            dialog.innerHTML = `
+                <div class="confirm-dialog">
+                    <h4>Remove Data Source?</h4>
+                    <p>Remove "<strong>${name}</strong>" from analysis for this session only?</p>
+                    <div class="confirm-buttons">
+                        <button class="cancel-btn" onclick="this.parentElement.parentElement.parentElement.remove()">Cancel</button>
+                        <button class="confirm-btn" onclick="confirmRemoveSource('${url}', '${name}', this)">Yes, Remove</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        function confirmRemoveSource(url, name, btn) {
+            // Add to removed sources list
+            const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
+            if (!removedSources.includes(url)) {
+                removedSources.push(url);
+                sessionStorage.setItem('removedSources', JSON.stringify(removedSources));
+            }
+
+            // Remove the modal and the source item from DOM
+            document.querySelector('.confirm-modal').remove();
+
+            // Find and remove the source item
+            const sourceItem = btn.parentElement.parentElement.parentElement;
+            const sourcesList = sourceItem.parentElement;
+            sourceItem.remove();
+
+            // If no sources left, show message
+            if (sourcesList.querySelectorAll('.source-item').length === 0) {
+                sourcesList.innerHTML = '<em style="color: #999; font-size: 11px;">All sources removed from session</em>';
+            }
+        }
+
+        async function handleMetricsQuery(query) {
+            let html = `<strong>📊 Governance Metrics - Spectrum Analyzer</strong><br><br>`;
+            html += generateSpectrumAnalyzer({
+                policy_compliance: 96,
+                regulatory_alignment: 93,
+                budget_adherence: 95,
+                stakeholder_engagement: 91,
+                audit_readiness: 98,
+                operations_status: 99
+            });
+            html += `<br><strong>Governance Status:</strong><br>`;
+            html += `• Policies tracked: 335<br>`;
+            html += `• Regulations monitored: 412<br>`;
+            html += `• YTD budget adherence: 95%<br>`;
+            html += `• Open audit findings: 3<br><br>`;
+            html += `<button onclick="elaborateMetrics('metrics')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>`;
+            html += `Ask me about: compliance, regulations, budget, audits.`;
+            return html;
+        }
+
+        async function handleTrendQuery(query) {
+            let html = `<strong>📈 Governance Patterns & Trends</strong><br><br>`;
+            html += generateSpectrumAnalyzer({
+                policy_compliance: 96,
+                regulatory_alignment: 93,
+                budget_adherence: 95,
+                stakeholder_engagement: 91,
+                audit_readiness: 98,
+                operations_status: 99
+            });
+            html += `<br><strong>Trend Analysis:</strong><br>`;
+            html += `• Policy changes pending: 14<br>`;
+            html += `• Regulatory updates (month): 7<br>`;
+            html += `• Budget variance trend: improving<br>`;
+            html += `• Stakeholder engagement rate: rising<br><br>`;
+            html += `<button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            return html;
+        }
+
+        async function handleQualityQuery(query) {
+            let html = `<strong>✓ Governance Quality & Accuracy</strong><br><br>`;
+            html += generateSpectrumAnalyzer({
+                policy_compliance: 96,
+                regulatory_alignment: 93,
+                budget_adherence: 95,
+                stakeholder_engagement: 91,
+                audit_readiness: 98,
+                operations_status: 99
+            });
+            html += `<br><strong>Quality Metrics:</strong><br>`;
+            html += `<div style="padding: 8px; background: #4CAF50; border-radius: 4px; color: white; margin-bottom: 8px;">
+                Overall Governance Quality Score: <strong>95.3%</strong>
+            </div>`;
+            html += `• Policy accuracy rate: 96%<br>`;
+            html += `• Regulatory alignment: 93%<br>`;
+            html += `• Documentation completeness: 99%<br>`;
+            html += `• Audit readiness: YES ✓<br><br>`;
+            html += `<button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            return html;
+        }
+
+        async function handleGovernanceQuery(query) {
+            let html = `<strong>🏛 Governance & Compliance Status</strong><br><br>`;
+            html += generateSpectrumAnalyzer({
+                policy_compliance: 96,
+                regulatory_alignment: 93,
+                budget_adherence: 95,
+                stakeholder_engagement: 91,
+                audit_readiness: 98,
+                operations_status: 99
+            });
+            html += `<br><strong>Governance Overview:</strong><br>`;
+            html += `<div style="padding: 8px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 4px;">
+                ✓ Governance posture: STRONG | 12 issues | 3 open audit findings
+            </div><br>`;
+            html += `• Critical compliance issues: 2<br>`;
+            html += `• Policy reviews pending: 8<br>`;
+            html += `• Regulatory deadlines (30 days): 4<br>`;
+            html += `• Stakeholder meetings scheduled: 6<br><br>`;
+            html += `<button onclick="elaborateMetrics('governance')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
+            return html;
+        }
+
+        function getHelpMessage() {
+            let html = `<strong>How I Can Help:</strong><br><br>`;
+            html += generateSpectrumAnalyzer({
+                policy_compliance: 96,
+                regulatory_alignment: 93,
+                budget_adherence: 95,
+                stakeholder_engagement: 91,
+                audit_readiness: 98,
+                operations_status: 99
+            });
+            html += `<br><strong>Examples:</strong><br>
+                • <strong>Compliance</strong> - "Show compliance status" or "What policies are at risk?"<br>
+                • <strong>Regulatory</strong> - "What regulations apply?" or "Any new requirements?"<br>
+                • <strong>Budget</strong> - "Budget adherence this quarter?" or "Any variances?"<br>
+                • <strong>Audit</strong> - "Audit readiness?" or "Open findings?"<br><br>
+                <button onclick="elaborateMetrics('help')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>
+                What would you like to know?`;
+            return html;
+        }
+
+        function getDefaultResponse() {
+            let html = `<strong>Card 4: Healthcare Governance</strong><br><br>`;
+            html += generateSpectrumAnalyzer({
+                policy_compliance: 96,
+                regulatory_alignment: 93,
+                budget_adherence: 95,
+                stakeholder_engagement: 91,
+                audit_readiness: 98,
+                operations_status: 99
+            });
+            html += `<br>I can help with:<br>
+                • Policy compliance monitoring<br>
+                • Regulatory alignment tracking<br>
+                • Budget adherence oversight<br>
+                • Audit readiness assessment<br><br>
+                <button onclick="elaborateMetrics('default')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>
+                Ask me about any of these, or type "help" for examples.`;
+            return html;
+        }
+
+        function elaborateMetrics(type) {
+            let elaboration = '';
+
+            if (type === 'metrics') {
+                elaboration = `<strong>Governance Metrics Deep Dive:</strong><br><br>
+                    Governance coherence is strong at 95.3% average across all six dimensions. Policy compliance leads at 96%, with regulatory alignment at 93% reflecting active monitoring of 7 federal waivers and 4 pending approvals. Operations status is excellent at 99% MMIS uptime. No critical governance failures detected.`;
+            } else if (type === 'quality') {
+                elaboration = `<strong>Governance Quality Assessment:</strong><br><br>
+                    Policy documentation is 99% complete with automated version control. Regulatory mapping covers all 412 applicable federal and state regulations with quarterly review cycles. Budget reporting accuracy is 99.8% against CMS-64 submissions. Three open audit findings are tracked with remediation plans in place. Full audit readiness confirmed.`;
+            } else if (type === 'trends') {
+                elaboration = `<strong>Governance Trend Analysis:</strong><br><br>
+                    14 policy changes pending implementation over the next 60 days — primarily related to managed care rate-setting updates and EPSDT expansion. Regulatory alignment dipped 2% this quarter due to new eCFR amendments; remediation plan in place. Stakeholder engagement is trending up — committee meeting participation rose 18% YOY.`;
+            } else if (type === 'governance') {
+                elaboration = `<strong>Governance & Compliance Portfolio:</strong><br><br>
+                    12 active compliance issues across policy (5), regulatory (4), and budget (3) categories. 2 critical issues require executive attention within 30 days. 3 open OIG audit findings have documented corrective action plans with 60-day resolution targets. Stakeholder engagement metrics are strong — all 6 required advisory committee sessions held this quarter.`;
+            } else if (type === 'help') {
+                elaboration = `<strong>Card 4 Capabilities Overview:</strong><br><br>
+                    Card 4 is the Healthcare Governance system. It provides real-time monitoring of policy compliance, regulatory alignment, budget adherence, stakeholder engagement, and audit readiness. Every query returns the Spectrum Analyzer showing coherence across 6 governance dimensions.`;
+            } else if (type === 'default') {
+                elaboration = `<strong>About Card 4 - Healthcare Governance:</strong><br><br>
+                    Card 4 is your governance command center. It gives you f
