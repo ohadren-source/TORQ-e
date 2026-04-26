@@ -519,7 +519,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             # Get response from Claude
             response = client.messages.create(
                 model="claude-sonnet-4-6",
-                max_tokens=4096,
+                max_tokens=16000,
                 system=system_prompt,
                 tools=tools if tools else None,
                 messages=messages,
@@ -614,7 +614,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
         # Loop exhausted — force a final synthesis response from Claude
         final_response = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=4096,
+            max_tokens=16000,
             system=system_prompt,
             messages=messages
         )
