@@ -273,7 +273,7 @@ TOOLS_BY_CARD = {
 # ============================================================================
 
 async def execute_tool(tool_name: str, tool_input: dict, card_number: int, public_data_schema: Optional[Dict] = None) -> str:
-    """Execute tool based on card type and tool name. Extract confidence data for Claude."""
+    """Execute tool based on card type and tool name. Always returns structured result with status."""
     try:
         if card_number == 1:
             # Card 1 (Member) tools
@@ -392,11 +392,22 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
-        return json.dumps({"error": f"Unknown tool: {tool_name}"})
+        return json.dumps({
+            "status": "error",
+            "tool": "unknown",
+            "error": f"Unknown tool: {tool_name}",
+            "error_type": "tool_not_found"
+        })
 
     except Exception as e:
-        logger.error(f"Tool execution error: {e}")
-        return json.dumps({"error": str(e)})
+        logger.error(f"Tool execution error for {tool_name}: {e}")
+        return json.dumps({
+            "status": "error",
+            "tool": tool_name,
+            "error": str(e),
+            "error_type": "execution_exception",
+            "message": f"Tool {tool_name} failed during execution"
+        })
 
 
 def _prepare_tool_result_for_claude(result: dict, card_number: int, tool_name: str) -> str:
@@ -458,7 +469,11 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     if not settings.anthropic_api_key:
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
 
-    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+    # Extended timeout for agentic loop with tool execution (15 minutes for data queries + synthesis)
+    client = anthropic.Anthropic(
+        api_key=settings.anthropic_api_key,
+        timeout=900.0  # 15 minutes - allows time for data discovery, multiple tool calls, and synthesis
+    )
 
     # Get public_data_schema from app state (populated on startup by data_crawler)
     public_data_schema = getattr(request.app.state, 'public_data_schema', None)
@@ -477,7 +492,6 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
         nonlocal messages
         tool_call_count = 0
         max_tool_calls = 5
-        final_response = ""
 
         while tool_call_count < max_tool_calls:
             # Stream response from Claude
@@ -511,7 +525,10 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                     if hasattr(event.delta, "type"):
                         if event.delta.type == "text_delta":
                             assistant_message += event.delta.text
-                            # BUFFER text (don't yield yet - we need to see if tool calls happen)
+                            # Only yield text if NO tool calls will follow
+                            # (system prompt should prevent planning text anyway)
+                            if not tool_calls:
+                                yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
                         elif event.delta.type == "input_json_delta":
                             # Accumulate JSON input for tool use
                             if tool_calls:
@@ -519,15 +536,10 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                                     json.loads(event.delta.partial_json)
                                 )
 
-            # If no tool calls, yield the final response
+            # If no tool calls, we're done streaming
             if not tool_calls:
-                final_response = assistant_message
-                # Yield in chunks to simulate streaming
-                for char in assistant_message:
-                    yield f"data: {json.dumps({'text': char})}\n\n"
                 return
 
-            # Tool calls detected - DON'T yield the planning text yet, just execute tools
             # Process tool calls (agentic loop)
             assistant_content = [{"type": "text", "text": assistant_message}]
             for tool_call in tool_calls:
@@ -540,7 +552,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             messages.append({"role": "assistant", "content": assistant_content})
 
-            # Execute tools and add results (silently - no streaming yet)
+            # Execute tools and add results
             for tool_call in tool_calls:
                 result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
                 messages.append({
@@ -555,7 +567,24 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                 })
 
             tool_call_count += 1
-            # Loop continues - Claude will now respond WITH tool results, and that response WILL be streamed
+
+        # If max tool calls reached, do one final Claude response to synthesize results
+        if tool_call_count >= max_tool_calls and tool_calls:
+            # Make one final call to Claude to summarize all tool results
+            response = client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=1024,
+                system=system_prompt,
+                tools=None,  # No more tools, just synthesis
+                messages=messages,
+                stream=True
+            )
+
+            # Stream the final synthesis
+            for event in response:
+                if event.type == "content_block_delta":
+                    if hasattr(event.delta, "type") and event.delta.type == "text_delta":
+                        yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
@@ -738,6 +767,12 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 - For flagging a data or compliance issue → call flag_data_issue with full justification and evidence
 - WAIT for all tool results, extract confidence_metadata and source data, then format response with confidence lights and source citations
 - NEVER describe what you'll do — execute tools FIRST, summarize findings AFTER
+- TOOL FAILURE HANDLING (CRITICAL):
+  * If a tool returns an error or null data → acknowledge it explicitly: "Tool X failed: [error reason]"
+  * Always report BOTH successes AND failures in your response
+  * Format failures clearly: "❌ query_aggregate_metrics failed: No data sources discovered by crawler"
+  * NEVER stop responding if tools fail — ALWAYS provide a response summarizing what you found and what didn't work
+  * Use format: "Results: [successes] | Failures: [which tools failed and why]"
 
 **WHEN REPORTING METRICS:**
 - CALL query_aggregate_metrics first to get real data
