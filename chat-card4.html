@@ -807,13 +807,29 @@
                 }
 
                 const data = result.data;
+
+                // Map the 6 real crawled metrics to the 6 display dimensions
+                const val = (key) => (data[key] && data[key].value != null) ? Math.round(data[key].value * 10) / 10 : null;
+                const conf = (key) => (data[key] && data[key].confidence_score != null) ? data[key].confidence_score : 0;
+                const srcs = (key) => (data[key] && data[key].sources) ? data[key].sources : [];
+
                 const metrics = {
-                    policy_compliance: (data.compliance && data.compliance.value) ? data.compliance.value : (data.enrollment_rate && data.enrollment_rate.value ? data.enrollment_rate.value : 0),
-                    regulatory_alignment: (data.audit_trail && data.audit_trail.value) ? data.audit_trail.value : 0,
-                    budget_adherence: (data.claims_processing && data.claims_processing.value) ? data.claims_processing.value : 0,
-                    stakeholder_engagement: (data.data_quality && data.data_quality.value) ? data.data_quality.value : 0,
-                    audit_readiness: (data.system_stability && data.system_stability.value) ? data.system_stability.value : 0,
-                    operations_status: (data.system_stability && data.system_stability.value) ? data.system_stability.value : 0
+                    policy_compliance:      val('compliance')       ?? 0,
+                    regulatory_alignment:   val('enrollment_rate')  ?? 0,
+                    budget_adherence:       val('claims_processing')?? 0,
+                    stakeholder_engagement: val('data_quality')     ?? 0,
+                    audit_readiness:        val('audit_trail')      ?? 0,
+                    operations_status:      val('system_stability') ?? 0
+                };
+
+                // Build live source URLs from crawl for breakdown panel
+                const liveBreakdown = {
+                    'Policy Compliance':      { conf: conf('compliance'),       sources: srcs('compliance'),       metric: 'compliance' },
+                    'Regulatory Alignment':   { conf: conf('enrollment_rate'),  sources: srcs('enrollment_rate'),  metric: 'enrollment_rate' },
+                    'Budget Adherence':       { conf: conf('claims_processing'),sources: srcs('claims_processing'),metric: 'claims_processing' },
+                    'Stakeholder Engagement': { conf: conf('data_quality'),     sources: srcs('data_quality'),     metric: 'data_quality' },
+                    'Audit Readiness':        { conf: conf('audit_trail'),      sources: srcs('audit_trail'),      metric: 'audit_trail' },
+                    'Operations Status':      { conf: conf('system_stability'), sources: srcs('system_stability'), metric: 'system_stability' }
                 };
 
                 const crawlerReport = result.crawler_report || {};
@@ -821,7 +837,7 @@
 
                 let html = '<strong>\ud83d\udcca Live Governance Data</strong><br>';
                 html += '<small style="color:#666;">' + sourcesSummary + ' &mdash; ' + (result.caveat || '') + '</small><br><br>';
-                html += generateSpectrumAnalyzer(metrics);
+                html += generateSpectrumAnalyzer(metrics, liveBreakdown);
                 html += '<br><button onclick="elaborateMetrics(\'metrics\')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">\ud83d\udcd6 Elaborate</button>';
                 return html;
 
@@ -840,7 +856,7 @@
             }
         }
 
-        function generateSpectrumAnalyzer(metrics) {
+        function generateSpectrumAnalyzer(metrics, liveBreakdown) {
             const getColor = (value) => {
                 if (value >= 90) return 'green';
                 if (value >= 70) return 'yellow';
@@ -857,74 +873,71 @@
             const coherence = getCoherenceStatus();
             const coherenceValue = Math.round((metrics.policy_compliance + metrics.regulatory_alignment + metrics.budget_adherence + metrics.stakeholder_engagement + metrics.audit_readiness + metrics.operations_status) / 6);
 
-            const breakdownData = {
+            // Static fallback definitions for each dimension
+            const staticBreakdown = {
                 'Policy Compliance': {
-                    value: metrics.policy_compliance,
-                    source: 'CMS Policy Database, Internal Compliance Engine',
-                    sourceUrls: [
-                        { name: 'CMS Medicaid Policy Guidance', url: 'https://www.cms.gov/medicaid/guidance' },
-                        { name: 'State Plan Amendments', url: 'https://www.medicaid.gov/medicaid/index.html' },
-                        { name: 'Federal Register Notices', url: 'https://www.federalregister.gov/agencies/centers-for-medicare-medicaid-services' }
-                    ],
+                    source: 'eMedNY, OMIG Audit Protocols',
                     logic: 'Compliant policies / total applicable policies × 100',
-                    breakdown: 'Compliant: 312 | Non-compliant: 12 | Under review: 8 | Exempted: 3 | Total: 335'
+                    breakdown: 'Source: real public crawl data — see URLs below'
                 },
                 'Regulatory Alignment': {
-                    value: metrics.regulatory_alignment,
-                    source: 'eCFR Title 42, State Regulations',
-                    sourceUrls: [
-                        { name: 'eCFR Title 42 Part 430-456', url: 'https://www.ecfr.gov/current/title-42/chapter-IV' },
-                        { name: 'FMAP Regulations', url: 'https://www.medicaid.gov/medicaid/financing-reimbursement/index.html' },
-                        { name: 'Managed Care Regulations', url: 'https://www.cms.gov/medicaid/managed-care' }
-                    ],
-                    logic: 'Regulations met / total applicable regulations × 100',
-                    breakdown: 'Federal regs met: 98% | State regs met: 91% | Waivers active: 7 | Pending approvals: 4'
+                    source: 'eMedNY Enrollment Data',
+                    logic: 'Enrollment rate derived from eMedNY public enrollment pages',
+                    breakdown: 'Source: real public crawl data — see URLs below'
                 },
                 'Budget Adherence': {
-                    value: metrics.budget_adherence,
-                    source: 'Financial Management System, CMS-64',
-                    sourceUrls: [
-                        { name: 'CMS-64 Quarterly Report', url: 'https://www.medicaid.gov/medicaid/financing-reimbursement/state-expenditure-reporting/index.html' },
-                        { name: 'FMAP Calculator', url: 'https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines/fmap' },
-                        { name: 'Budget Authority Standards', url: 'https://www.gao.gov/resources/publications' }
-                    ],
-                    logic: 'Actual spend / authorized budget × 100 (inverted for adherence)',
-                    breakdown: 'YTD spend: $2.34B | Budget: $2.46B | Variance: -$120M | Projection: on track | Alerts: 2'
+                    source: 'eMedNY HIPAA Cycle Calendar, OMIG PERM',
+                    logic: 'Claims processing rate from OMIG Payment Error Rate Measurement',
+                    breakdown: 'Source: real public crawl data — see URLs below'
                 },
                 'Stakeholder Engagement': {
-                    value: metrics.stakeholder_engagement,
-                    source: 'Engagement Tracking System, Meeting Records',
-                    sourceUrls: [
-                        { name: 'CMS Stakeholder Guidance', url: 'https://www.cms.gov/outreach-and-education' },
-                        { name: 'Public Comment Requirements', url: 'https://www.federalregister.gov' },
-                        { name: 'Advisory Committee Standards', url: 'https://www.faca.gov' }
-                    ],
-                    logic: 'Engagement touchpoints completed / required touchpoints × 100',
-                    breakdown: 'Meetings held: 47 | Comments processed: 1,203 | Advisory sessions: 8 | Response rate: 94%'
+                    source: 'eMedNY, OMIG, NYS Health Data Portal',
+                    logic: 'Data quality score across crawled public repository sources',
+                    breakdown: 'Source: real public crawl data — see URLs below'
                 },
                 'Audit Readiness': {
-                    value: metrics.audit_readiness,
-                    source: 'Audit Management System, OIG Reports',
-                    sourceUrls: [
-                        { name: 'OIG Work Plan', url: 'https://oig.hhs.gov/reports-and-publications/workplan/index.asp' },
-                        { name: 'GAO Medicaid Audits', url: 'https://www.gao.gov/topics/medicaid' },
-                        { name: 'Single Audit Requirements', url: 'https://www.ecfr.gov/current/title-2/part-200/subpart-F' }
-                    ],
-                    logic: 'Documentation complete + findings resolved + controls verified',
-                    breakdown: 'Open findings: 3 | Resolved (6mo): 28 | Controls tested: 156 | High-risk areas: 2'
+                    source: 'OMIG Final Audit Reports, Audit Protocols',
+                    logic: 'Audit trail coverage from OMIG public audit pages',
+                    breakdown: 'Source: real public crawl data — see URLs below'
                 },
                 'Operations Status': {
-                    value: metrics.operations_status,
-                    source: 'MMIS, System Performance Dashboard',
-                    sourceUrls: [
-                        { name: 'MMIS Standards & Certification', url: 'https://www.cms.gov/medicaid/system-certification' },
-                        { name: 'CMS Systems Guidance', url: 'https://www.cms.gov/regulations-and-guidance' },
-                        { name: 'Operational Performance Standards', url: 'https://www.cms.gov/medicaid/guidance' }
-                    ],
-                    logic: 'System uptime × processing success rate × data currency',
-                    breakdown: 'MMIS uptime: 99.9% | Claims processed today: 84,729 | Error rate: 0.1% | Avg response: 0.8s'
+                    source: 'eMedNY System Portal, ITS Services',
+                    logic: 'System stability from eMedNY public-facing availability data',
+                    breakdown: 'Source: real public crawl data — see URLs below'
                 }
             };
+
+            // Build breakdownData: merge live crawl sources with static labels
+            const breakdownData = {};
+            const dimKeys = ['Policy Compliance','Regulatory Alignment','Budget Adherence','Stakeholder Engagement','Audit Readiness','Operations Status'];
+            const dimValues = [metrics.policy_compliance, metrics.regulatory_alignment, metrics.budget_adherence, metrics.stakeholder_engagement, metrics.audit_readiness, metrics.operations_status];
+
+            dimKeys.forEach((label, i) => {
+                const live = liveBreakdown ? liveBreakdown[label] : null;
+                const stat = staticBreakdown[label];
+                let sourceUrls = [];
+
+                if (live && live.sources && live.sources.length > 0) {
+                    // Use real crawled sources
+                    sourceUrls = live.sources.slice(0, 5).map(s => ({
+                        name: s.name || s.url,
+                        url: s.url,
+                        conf: s.confidence
+                    }));
+                }
+
+                breakdownData[label] = {
+                    value: dimValues[i],
+                    source: live && live.sources && live.sources.length > 0
+                        ? live.sources.slice(0,2).map(s => s.url.replace('https://','').split('/')[0]).join(', ')
+                        : stat.source,
+                    sourceUrls: sourceUrls,
+                    logic: stat.logic,
+                    breakdown: live && live.conf != null
+                        ? 'Confidence: ' + Math.round(live.conf * 100) + '% | Sources: ' + (live.sources ? live.sources.length : 0) + ' crawled | ' + stat.breakdown
+                        : stat.breakdown
+                };
+            });
 
             let html = `<div class="spectrum-analyzer">`;
 
@@ -1111,17 +1124,20 @@
             // Get session-removed sources
             const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
 
-            // Build sources HTML - URLs in Clarity Spectrum Equalizer AND Combined View (both include Spectrum)
+            // Build sources HTML - URLs in Clarity Spectrum Equalizer AND Combined View
             let sourcesHtml = data.source;
-            if ((isStability || isCombined) && data.sourceUrls) {
+            if ((isStability || isCombined) && data.sourceUrls && data.sourceUrls.length > 0) {
                 const activeSources = data.sourceUrls.filter(src => !removedSources.includes(src.url));
                 const sourcesList = activeSources.map(src => `
                     <div class="source-item">
-                        <a href="${src.url}" target="_blank">${src.name}</a>
-                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${src.name}')">✕</button>
+                        <a href="${src.url}" target="_blank">${src.name || src.url}</a>
+                        ${src.conf != null ? '<span style="color:#666;font-size:11px;margin-left:6px;">' + Math.round(src.conf * 100) + '%</span>' : ''}
+                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${(src.name || src.url).replace(/'/g,"\\'")}')">✕</button>
                     </div>
                 `).join('');
-                sourcesHtml = `<div class="sources-list">${sourcesList}</div>`;
+                sourcesHtml = activeSources.length > 0
+                    ? `<div class="sources-list">${sourcesList}</div>`
+                    : `<em style="color:#999;font-size:11px;">No live sources — using static reference data</em>`;
             }
 
             panel.innerHTML = `
