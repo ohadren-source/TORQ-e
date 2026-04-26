@@ -103,6 +103,37 @@ async def query_aggregate_metrics(
         }
 
 
+def _source_confidence(source: Dict) -> float:
+    """
+    Score a crawled source by domain (from URL) + quality bonuses.
+    Crawler sets type="metrics"|"table"|"download" — not useful for confidence.
+    Domain is the authoritative signal.
+    """
+    url = source.get("url", "").lower()
+    source_type = source.get("type", "").lower()
+    has_text = bool(source.get("text_snippet", ""))
+
+    # Domain-based base score
+    if "emedny.org" in url:
+        base = 0.85
+    elif "omig.ny.gov" in url:
+        base = 0.80
+    elif "health.data.ny.gov" in url:
+        base = 0.75
+    elif "its.ny.gov" in url:
+        base = 0.70
+    else:
+        base = 0.60
+
+    # Quality bonuses
+    if source_type == "table" and has_text:
+        base += 0.10   # Structured table with content
+    elif has_text:
+        base += 0.05   # Plain page with extracted text
+
+    return min(base, 0.95)
+
+
 async def _get_metric_value(public_data_schema: Dict, metric_name: str) -> Dict:
     """
     Extract real metric value from public_data_schema discovered data.
@@ -112,31 +143,21 @@ async def _get_metric_value(public_data_schema: Dict, metric_name: str) -> Dict:
     """
     matching_sources = _find_matching_sources(public_data_schema, metric_name)
 
-    # Calculate confidence based on source types
-    confidence_map = {
-        "emedny.org": 0.95,
-        "health.ny.gov": 0.85,
-        "dashboard": 0.75,
-        "report": 0.70,
-        "archive": 0.55
-    }
-
     confidences = []
     sources_list = []
 
     for source in matching_sources:
-        source_type = source.get("type", "").lower()
         source_url = source.get("url", "")
+        source_type = source.get("type", "").lower()
 
-        # Get confidence for this source
-        conf = confidence_map.get(source_type, 0.65)
+        conf = _source_confidence(source)
         confidences.append(conf)
 
         sources_list.append({
             "name": source.get("description", "Unknown"),
             "url": source_url,
             "type": source_type,
-            "confidence": conf
+            "confidence": round(conf, 2)
         })
 
     avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
