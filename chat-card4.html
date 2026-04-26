@@ -858,16 +858,16 @@
 
         function generateSpectrumAnalyzer(metrics, liveBreakdown) {
             const getColor = (value) => {
-                if (value >= 90) return 'green';
-                if (value >= 70) return 'yellow';
+                if (value >= 65) return 'green';
+                if (value >= 50) return 'yellow';
                 return 'red';
             };
 
             const getCoherenceStatus = () => {
                 const avg = (metrics.policy_compliance + metrics.regulatory_alignment + metrics.budget_adherence + metrics.stakeholder_engagement + metrics.audit_readiness + metrics.operations_status) / 6;
-                if (avg >= 90) return { color: 'green', status: 'COHERENT', icon: '\u2713' };
-                if (avg >= 70) return { color: 'yellow', status: 'WAVERING', icon: '\u26a0' };
-                return { color: 'red', status: 'FRAGMENTED', icon: '\u2715' };
+                if (avg >= 65) return { color: 'green', status: 'COHERENT', icon: '\u2713' };
+                if (avg >= 50) return { color: 'yellow', status: 'MONITORING', icon: '\u26a0' };
+                return { color: 'red', status: 'INCOHERENT', icon: '\u2715' };
             };
 
             const coherence = getCoherenceStatus();
@@ -1080,7 +1080,7 @@
             // Determine which section this is from
             const sectionHeader = element.closest('.spectrum-section')?.querySelector('.spectrum-header h3')?.textContent || '';
             const isCoherence = sectionHeader.includes('Coherence');
-            const isStability = sectionHeader.includes('Stability');
+            const isStability = sectionHeader.includes('Equalizer');
             const isCombined = sectionHeader.includes('Combined');
 
             const color = data.value >= 90 ? 'green' : data.value >= 70 ? 'yellow' : 'red';
@@ -1125,19 +1125,36 @@
             const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
 
             // Build sources HTML - URLs in Clarity Spectrum Equalizer AND Combined View
+            // For Coherence: no sources shown
+            const pageTitle = (url) => {
+                try {
+                    const u = new URL(url);
+                    const path = u.pathname.replace(/\/$/, '').split('/').filter(Boolean);
+                    if (path.length === 0) return u.hostname;
+                    // Humanize last path segment
+                    const last = path[path.length - 1]
+                        .replace(/[-_]/g, ' ')
+                        .replace(/\.\w+$/, '')
+                        .replace(/\b\w/g, c => c.toUpperCase());
+                    return u.hostname.replace('www.', '') + (last ? ' — ' + last : '');
+                } catch(e) { return url; }
+            };
+
             let sourcesHtml = data.source;
             if ((isStability || isCombined) && data.sourceUrls && data.sourceUrls.length > 0) {
                 const activeSources = data.sourceUrls.filter(src => !removedSources.includes(src.url));
                 const sourcesList = activeSources.map(src => `
                     <div class="source-item">
-                        <a href="${src.url}" target="_blank">${src.name || src.url}</a>
+                        <a href="${src.url}" target="_blank">${pageTitle(src.url)}</a>
                         ${src.conf != null ? '<span style="color:#666;font-size:11px;margin-left:6px;">' + Math.round(src.conf * 100) + '%</span>' : ''}
-                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${(src.name || src.url).replace(/'/g,"\\'")}')">✕</button>
+                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${pageTitle(src.url).replace(/'/g,"\\'")}')">✕</button>
                     </div>
                 `).join('');
                 sourcesHtml = activeSources.length > 0
                     ? `<div class="sources-list">${sourcesList}</div>`
                     : `<em style="color:#999;font-size:11px;">No live sources — using static reference data</em>`;
+            } else if (isCoherence) {
+                sourcesHtml = '';
             }
 
             panel.innerHTML = `
