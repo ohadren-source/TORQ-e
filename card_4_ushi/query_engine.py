@@ -87,28 +87,13 @@ async def query_aggregate_metrics(
             "system_stability": await _get_metric_value(public_data_schema, "system_stability")
         }
 
-        # Include a sample of real crawled text so Claude can read actual page content
-        # Limit to top 5 sources with text snippets to keep payload manageable
-        sample_texts = []
-        for src in public_data_schema.get("discovered_data", []):
-            snippet = src.get("text_snippet", "")
-            if snippet:
-                sample_texts.append({
-                    "url": src.get("url", ""),
-                    "type": src.get("type", ""),
-                    "excerpt": snippet[:800]  # 800 chars per source
-                })
-            if len(sample_texts) >= 5:
-                break
-
         return {
             "status": "success",
             "data": all_metrics,
             "confidence_score": _calculate_overall_confidence(all_metrics),
             "timestamp": datetime.utcnow().isoformat(),
             "crawler_report": crawler_status,
-            "crawled_page_excerpts": sample_texts,
-            "caveat": "All metrics sourced from real public repositories (emedny.org, omig.ny.gov, health.data.ny.gov, its.ny.gov). Excerpts from real crawled pages included above."
+            "caveat": "All metrics sourced from real public repositories (emedny.org, health.ny.gov, MCO dashboards)"
         }
 
     except Exception as e:
@@ -127,45 +112,30 @@ async def _get_metric_value(public_data_schema: Dict, metric_name: str) -> Dict:
     """
     matching_sources = _find_matching_sources(public_data_schema, metric_name)
 
-    # Calculate confidence based on source domain (authoritative government sources score higher)
-    def _source_confidence(source: dict) -> float:
-        url = source.get("url", "").lower()
-        src_type = source.get("type", "").lower()
-        has_text = bool(source.get("text_snippet"))
-        # Domain-based confidence
-        if "emedny.org" in url:
-            base = 0.85
-        elif "omig.ny.gov" in url:
-            base = 0.80
-        elif "health.data.ny.gov" in url:
-            base = 0.75
-        elif "health.ny.gov" in url:
-            base = 0.75
-        elif "its.ny.gov" in url:
-            base = 0.70
-        else:
-            base = 0.60
-        # Tables and pages with real extracted text score higher
-        if src_type == "table" and has_text:
-            base = min(0.95, base + 0.10)
-        elif has_text:
-            base = min(0.90, base + 0.05)
-        return round(base, 2)
+    # Calculate confidence based on source types
+    confidence_map = {
+        "emedny.org": 0.95,
+        "health.ny.gov": 0.85,
+        "dashboard": 0.75,
+        "report": 0.70,
+        "archive": 0.55
+    }
 
     confidences = []
     sources_list = []
 
     for source in matching_sources:
+        source_type = source.get("type", "").lower()
         source_url = source.get("url", "")
 
         # Get confidence for this source
-        conf = _source_confidence(source)
+        conf = confidence_map.get(source_type, 0.65)
         confidences.append(conf)
 
         sources_list.append({
             "name": source.get("description", "Unknown"),
             "url": source_url,
-            "type": source.get("type", "unknown"),
+            "type": source_type,
             "confidence": conf
         })
 
@@ -234,57 +204,37 @@ def _generate_metric_value(metric_name: str, source_count: int, confidence: floa
 def _extract_metric_value(metric_name: str, sources: List[Dict]) -> Optional[float]:
     """
     Extract actual numeric value for metric from source data.
-    Searches text_snippet, findings, and raw_data for metric-relevant percentages.
+    Searches in source findings/raw_data for metric-relevant numbers.
     """
-    import re
-
-    metric_keywords = {
-        "enrollment_rate": ["enrollment", "enrolled", "members", "beneficiar"],
-        "claims_processing": ["claims", "processing", "process", "payment", "reimbursement"],
-        "data_quality": ["quality", "accuracy", "error rate", "data quality"],
-        "audit_trail": ["audit", "audit trail", "governance", "log"],
-        "compliance": ["compliance", "compliant", "regulation", "regulatory"],
-        "system_stability": ["uptime", "availability", "stability", "system"]
-    }
-    keywords = metric_keywords.get(metric_name, [metric_name.replace("_", " ")])
-
+    # Try to find numeric values in the discovered source data
     for source in sources:
-        # Search in text_snippet (real crawled page text)
-        text_snippet = source.get("text_snippet", "")
         findings = source.get("findings", {})
         raw_data = source.get("raw_data", "")
 
-        for text in [text_snippet, raw_data]:
-            if not isinstance(text, str) or not text:
-                continue
-            text_lower = text.lower()
-            if not any(kw in text_lower for kw in keywords):
-                continue
-            # Find percentages near keyword mentions
-            for kw in keywords:
-                idx = text_lower.find(kw)
-                if idx == -1:
-                    continue
-                # Search a window of 200 chars around the keyword
-                window = text[max(0, idx-50):idx+150]
-                percentages = re.findall(r'(\d{1,3}(?:\.\d{1,2})?)\s*%', window)
-                if percentages:
-                    val = float(percentages[0])
-                    if 0.0 < val <= 100.0:
-                        return val
-
-        # Check structured findings
+        # Look for metric-specific patterns in findings
         if isinstance(findings, dict):
+            # Direct match in findings
             if metric_name in findings:
                 val = findings[metric_name]
                 if isinstance(val, (int, float)):
                     return float(val)
+
+            # Look for percentage values
             for key in findings:
-                if any(kw in key.lower() for kw in keywords):
+                if metric_name.replace("_", " ") in key.lower():
                     val = findings[key]
                     if isinstance(val, (int, float)):
                         return float(val)
 
+        # Parse raw text for percentages
+        if isinstance(raw_data, str) and metric_name.replace("_", " ") in raw_data.lower():
+            # Very basic extraction - look for patterns like "X%" or "X.X%"
+            import re
+            percentages = re.findall(r'(\d+\.?\d*)\s*%', raw_data)
+            if percentages:
+                return float(percentages[0])
+
+    # If no real value found, return None
     return None
 
 
@@ -358,55 +308,20 @@ def _find_matching_sources(
     filter_by: Optional[str] = None
 ) -> List[Dict]:
     """
-    Find data sources that are relevant to the requested metric.
-    Checks (in priority order):
-      1. metrics_found dict (set by reading_engine-integrated crawler)
-      2. description text
-      3. text_snippet content
-    Returns all sources, sorted so those with text_snippet come first.
+    Find data sources in schema that match the requested metric.
     """
     if not public_data_schema or not public_data_schema.get("discovered_data"):
         return []
 
-    # Map metric_type to the keyword tags the crawler uses in metrics_found
-    metric_tag_map = {
-        "enrollment_rate": ["enrollment"],
-        "claims_processing": ["processing", "denial"],
-        "data_quality": ["quality"],
-        "audit_trail": ["compliance"],
-        "compliance": ["compliance"],
-        "system_stability": ["stability", "fraud"],
-    }
-    tags = metric_tag_map.get(metric_type, metric_type.lower().split("_"))
-    # Also split on underscore for fallback keyword matching
-    keywords = list(set(tags + metric_type.lower().split("_")))
-
     matching = []
+    metric_keywords = metric_type.lower().split("_")
+
     for source in public_data_schema.get("discovered_data", []):
-        matched = False
-
-        # 1. Check metrics_found dict (reading_engine crawler sets this)
-        metrics_found = source.get("metrics_found", {})
-        if isinstance(metrics_found, dict) and any(tag in metrics_found for tag in tags):
-            matched = True
-
-        # 2. Check description text
-        if not matched:
-            description = source.get("description", "").lower()
-            if any(kw in description for kw in keywords):
-                matched = True
-
-        # 3. Check text_snippet (only if short check — avoid scanning 2000 chars for every source)
-        if not matched:
-            snippet = source.get("text_snippet", "").lower()[:500]
-            if any(kw in snippet for kw in keywords):
-                matched = True
-
-        if matched:
+        description = source.get("description", "").lower()
+        # Match if any keyword appears in description
+        if any(keyword in description for keyword in metric_keywords):
             matching.append(source)
 
-    # Sort: sources with real text_snippet first (they'll give better confidence scores)
-    matching.sort(key=lambda s: (0 if s.get("text_snippet") else 1))
     return matching
 
 
@@ -486,82 +401,6 @@ async def assess_data_quality(
     if not public_data_schema:
         return {
             "error": "Public data schema not loaded",
-            "domain": domain
-        }
-
-    matching_sources = _find_matching_sources(public_data_schema, domain)
-
-    return {
-        "domain": domain,
-        "sources_found": len(matching_sources),
-        "status": "real_data",
-        "sources": [
-            {
-                "url": s.get("url"),
-                "type": s.get("type"),
-                "format": s.get("format")
-            }
-            for s in matching_sources
-        ],
-        "note": "Data quality assessment based on availability and freshness of public repository sources."
-    }
-
-
-# ============================================================================
-# TOOL 4: VIEW GOVERNANCE LOG
-# ============================================================================
-
-async def view_governance_log(
-    filter_by: Optional[str] = None,
-    days_back: int = 30,
-    limit: int = 50,
-    db: Session = None
-) -> Dict:
-    """
-    Access immutable governance audit trail.
-    """
-
-    return {
-        "status": "governance_log",
-        "filter": filter_by,
-        "days_back": days_back,
-        "limit": limit,
-        "note": "Governance log tracks all data source changes, flags, and approvals immutably.",
-        "entries": []  # Would be populated from database in real implementation
-    }
-
-
-# ============================================================================
-# TOOL 5: FLAG DATA ISSUE
-# ============================================================================
-
-async def flag_data_issue(
-    issue_type: str,
-    domain: str,
-    title: str,
-    description: str,
-    justification: str,
-    evidence: List[str],
-    flagged_by: str,
-    db: Session = None
-) -> Dict:
-    """
-    Create immutable governance flag for data quality issues.
-    """
-
-    flag_id = f"FLAG-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
-
-    return {
-        "flag_id": flag_id,
-        "status": "created",
-        "issue_type": issue_type,
-        "domain": domain,
-        "title": title,
-        "flagged_by": flagged_by,
-        "timestamp": datetime.utcnow().isoformat(),
-        "note": "Flag created and logged to immutable audit trail. Governance team notified."
-    }
-a not loaded",
             "domain": domain
         }
 
