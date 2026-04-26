@@ -933,8 +933,8 @@
                         : stat.source,
                     sourceUrls: sourceUrls,
                     logic: stat.logic,
-                    breakdown: live && live.conf != null
-                        ? 'Confidence: ' + Math.round(live.conf * 100) + '% | Sources: ' + (live.sources ? live.sources.length : 0) + ' crawled | ' + stat.breakdown
+                    breakdown: live && live.sources != null
+                        ? 'Sources: ' + (live.sources ? live.sources.length : 0) + ' crawled | ' + stat.breakdown
                         : stat.breakdown
                 };
             });
@@ -1149,7 +1149,6 @@
                 const sourcesList = activeSources.map(src => `
                     <div class="source-item">
                         <a href="${src.url}" target="_blank">${pageTitle(src.url)}</a>
-                        ${src.conf != null ? '<span style="color:#666;font-size:11px;margin-left:6px;">' + Math.round(src.conf * 100) + '%</span>' : ''}
                         <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${pageTitle(src.url).replace(/'/g,"\\'")}')">✕</button>
                     </div>
                 `).join('');

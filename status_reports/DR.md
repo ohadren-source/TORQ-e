@@ -1,5 +1,5 @@
 # TORQ-e Design Review — DR.md
-**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 4)**
+**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 5)**
 **Motto: MOVE STEADFAST && BREAK IT DOWN.**
 
 ---
@@ -83,6 +83,8 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 
 - **Audit Trail** — Was 0.0 confidence. Fix deployed: added `"audit"` pattern to crawler + `METRIC_ALIASES` map in query engine so OMIG audit/PERM pages now register as audit_trail sources. Pending visual verification post-deploy.
 - **Claims domain** — 0 dedicated sources. Claims processing metric inferred from OMIG PERM pages.
+- **Equalizer bar heights** — Fixed. Was: overflow formula made all bars render at max. Now: `Math.max(3, (value/100) * 45 * (i/5))` — staircase scaling within 45px. Pending visual verification.
+- **Breakdown panel color thresholds** — Fixed. Was: 90/70. Now: 65/50 matching NYS Medicaid spectrum. Pending visual verification.
 
 ---
 
@@ -109,9 +111,8 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 - **Status:** DONE. Verified visually. `pageTitle()` working.
 
 ### Traffic light vs equalizer mismatch
-- **Problem:** Traffic light shows correct color for metric value but equalizer bars render at wrong height (appear full green regardless of value)
-- **Fix:** Not yet done — next up
-- **Root cause:** Equalizer bar height calculation needs to use the metric value, not default to max
+- **Status:** Fix deployed — pending visual verification.
+- Two bugs fixed in one edit: bar height formula now scales correctly within container, breakdown panel thresholds aligned to 65/50.
 
 ### Source confidence label confusion
 - **Problem:** 90% per-source confidence score looks like the metric value to users
