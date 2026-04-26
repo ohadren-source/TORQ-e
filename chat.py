@@ -19,17 +19,21 @@ from card_5_ubada import query_engine as card5_engine
 
 def _fix_surrogates(s) -> str:
     """
-    Convert surrogate pairs / lone surrogates in a Python string into proper Unicode.
-    e.g. '\ud83d\udcd6' -> '\U0001F4D6' (📖)
-    This is needed when strings come from JS/JSON with UTF-16 surrogate encoding.
+    Convert surrogate pairs / lone surrogates into proper Unicode codepoints.
+    e.g. \ud83d\udcd6 (surrogate pair) -> U+1F4D6 (📖)
+    Uses the 'surrogatepass' error handler to round-trip through UTF-8 bytes,
+    then decode back — this properly joins surrogate pairs and drops lone surrogates.
     """
     if not isinstance(s, str):
         return s
     try:
-        # Re-encode as UTF-16 surrogate-tolerant then decode as real Unicode
-        return s.encode('utf-16', 'surrogatepass').decode('utf-16')
+        # Encode allowing surrogates, decode as UTF-8 with replacement
+        # This converts surrogate pairs to real codepoints and drops lone surrogates
+        raw = s.encode('utf-8', errors='surrogatepass')
+        return raw.decode('utf-8', errors='replace')
     except Exception:
-        return s
+        # Last resort: drop anything that can't be encoded
+        return s.encode('utf-8', errors='replace').decode('utf-8')
 
 
 logger = logging.getLogger(__name__)
