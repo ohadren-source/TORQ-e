@@ -1425,31 +1425,56 @@
             container.appendChild(div);
 
             try {
-                // Call Claude with the user's original prompt
-                const response = await fetch('/api/chat', {
+                // Call Claude via proper /api/chat/stream endpoint with ChatMessage structure
+                const response = await fetch('/api/chat/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        prompt: userPrompt,
-                        context: "You are Card 4 (USHI - Government Stakeholder Operations) in the TORQ-e Medicaid system. Provide direct analysis of the user's question. Be honest about data limitations."
+                        message: userPrompt,
+                        userType: "GovernmentStakeholder",
+                        cardNumber: 4,
+                        sessionId: conversationContext.ushiId || null
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error('Claude API error');
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
-                const data = await response.json();
-                const claudeResponse = data.response || data.message || 'No response from Claude';
+                // Read streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let claudeResponse = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    // Parse SSE format if needed
+                    if (chunk.includes('data:')) {
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                const data = line.substring(5).trim();
+                                if (data) {
+                                    claudeResponse += data;
+                                }
+                            }
+                        }
+                    } else {
+                        claudeResponse += chunk;
+                    }
+                }
 
                 // Update elaboration with Claude's response
                 div.innerHTML = `<div style="background: #f0f8ff; border-left: 4px solid #2d6a4f; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
-                    ${claudeResponse}
+                    ${claudeResponse || 'No response from Claude'}
                 </div>`;
 
             } catch (error) {
                 div.innerHTML = `<div style="background: #ffebee; border-left: 4px solid #f44336; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">
-                    <strong>Error:</strong> Could not reach Claude: ${error.message}
+                    <strong>Error:</strong> ${error.message}
                 </div>`;
             }
         }
