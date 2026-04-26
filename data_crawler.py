@@ -1,6 +1,6 @@
 """
 DATA CRAWLER SERVICE - TORQ-E
-Scrapy + httpx + BeautifulSoup + Splash stack
+httpx + BeautifulSoup + Scrapy + Splash stack
 Real data extraction from public Medicaid repositories
 NO DUMMY DATA - ONLY REAL PUBLIC REPOSITORY DATA
 """
@@ -14,6 +14,23 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 import json
 import re
+
+# Scrapy imports
+try:
+    import scrapy
+    from scrapy.crawler import CrawlerProcess
+    from scrapy.http import Request as ScrapyRequest
+    HAS_SCRAPY = True
+except ImportError:
+    HAS_SCRAPY = False
+
+# Splash imports (via scrapy-splash or direct HTTP to Splash server)
+try:
+    import requests as _requests
+    SPLASH_URL = "http://localhost:8050"
+    HAS_SPLASH = True
+except ImportError:
+    HAS_SPLASH = False
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +69,10 @@ class DataCrawler:
 
     async def crawl(self) -> Dict[str, Any]:
         """
-        Main entry point: Crawl all base URLs using Scrapy + BeautifulSoup + httpx
+        Main entry point: Crawl all base URLs using httpx + BeautifulSoup + Scrapy + Splash stack
         Extract real data from public repositories
         """
-        logger.info("Starting data crawler with Scrapy + BeautifulSoup + httpx stack...")
+        logger.info("Starting data crawler with httpx + BeautifulSoup + Scrapy + Splash stack...")
 
         headers = {
             "User-Agent": USER_AGENT,
@@ -77,7 +94,145 @@ class DataCrawler:
                         "timestamp": datetime.utcnow().isoformat()
                     })
 
+        # --- ENGINE 3: SCRAPY structured crawl (sync, runs after httpx pass) ---
+        if HAS_SCRAPY:
+            try:
+                scrapy_data = self._run_scrapy_crawl()
+                self.discovered_data.extend(scrapy_data)
+                self.sources_with_extracted_data += len(scrapy_data)
+                logger.info(f"✅ Scrapy pass complete: {len(scrapy_data)} additional sources")
+            except Exception as e:
+                logger.warning(f"⚠️  Scrapy pass failed: {e}")
+                self.errors.append({"engine": "scrapy", "error": str(e), "timestamp": datetime.utcnow().isoformat()})
+        else:
+            logger.warning("Scrapy not installed — skipping Scrapy engine pass")
+
+        # --- ENGINE 4: SPLASH for JavaScript-heavy pages ---
+        js_heavy_urls = [
+            "https://health.data.ny.gov",
+            "https://omig.ny.gov/"
+        ]
+        for url in js_heavy_urls:
+            try:
+                splash_data = self._fetch_via_splash(url)
+                if splash_data:
+                    self.discovered_data.append(splash_data)
+                    self.sources_with_extracted_data += 1
+                    logger.info(f"✅ Splash fetched: {url}")
+            except Exception as e:
+                logger.warning(f"⚠️  Splash failed for {url}: {e}")
+                self.errors.append({"engine": "splash", "url": url, "error": str(e), "timestamp": datetime.utcnow().isoformat()})
+
         return self._generate_schema()
+
+    def _run_scrapy_crawl(self) -> List[Dict[str, Any]]:
+        """
+        Run a Scrapy spider synchronously to extract structured data
+        from public Medicaid repositories.
+        Returns list of discovered data entries.
+        """
+        if not HAS_SCRAPY:
+            return []
+
+        collected = []
+
+        class TorqeSpider(scrapy.Spider):
+            name = "torqe_medicaid"
+            start_urls = BASE_URLS
+            custom_settings = {
+                "ROBOTSTXT_OBEY": True,
+                "DOWNLOAD_DELAY": 0.5,
+                "DEPTH_LIMIT": 2,
+                "LOG_ENABLED": False,
+            }
+
+            def parse(self, response):
+                # Extract tables
+                for i, table in enumerate(response.css("table")[:5]):
+                    headers = table.css("th::text").getall()
+                    rows = table.css("tr")
+                    if rows:
+                        collected.append({
+                            "type": "table",
+                            "url": response.url,
+                            "description": f"Scrapy Table #{i+1}: {' '.join(headers)[:200]}",
+                            "format": "HTML",
+                            "row_count": len(rows),
+                            "discovered_at": datetime.utcnow().isoformat(),
+                            "confidence": 0.88,
+                            "engine": "scrapy"
+                        })
+
+                # Extract download links
+                for link in response.css("a[href$='.csv'], a[href$='.xlsx'], a[href$='.json'], a[href$='.pdf'], a[href$='.xml']")[:5]:
+                    href = link.attrib.get("href", "")
+                    text = link.css("::text").get("").strip()
+                    if href:
+                        ext = href.split(".")[-1].lower()
+                        collected.append({
+                            "type": "download",
+                            "url": response.urljoin(href),
+                            "description": f"{text} ({ext})",
+                            "format": ext.upper(),
+                            "page_url": response.url,
+                            "discovered_at": datetime.utcnow().isoformat(),
+                            "confidence": 0.82,
+                            "engine": "scrapy"
+                        })
+
+                # Follow internal links
+                for href in response.css("a::attr(href)").getall()[:10]:
+                    yield response.follow(href, self.parse)
+
+        process = CrawlerProcess(settings={"LOG_ENABLED": False})
+        process.crawl(TorqeSpider)
+        process.start()
+
+        return collected
+
+    def _fetch_via_splash(self, url: str) -> Optional[Dict[str, Any]]:
+        """
+        Use Splash to render JavaScript-heavy pages and extract content.
+        Splash runs at localhost:8050 (docker: scrapinghub/splash).
+        """
+        if not HAS_SPLASH:
+            return None
+
+        try:
+            splash_endpoint = f"{SPLASH_URL}/render.html"
+            params = {
+                "url": url,
+                "wait": 2,          # seconds to wait for JS to execute
+                "timeout": 20,
+                "resource_timeout": 10
+            }
+            resp = _requests.get(splash_endpoint, params=params, timeout=25)
+            resp.raise_for_status()
+
+            soup = BeautifulSoup(resp.text, "lxml")
+            title = soup.find("title")
+            text_preview = soup.get_text()[:500]
+
+            # Count tables and downloads in rendered content
+            tables = soup.find_all("table")
+            downloads = soup.find_all("a", href=re.compile(r"\.(csv|xlsx|json|pdf|xml)$", re.IGNORECASE))
+
+            return {
+                "type": "dynamic",
+                "url": url,
+                "description": f"Splash-rendered: {title.text.strip() if title else url} | {len(tables)} tables, {len(downloads)} downloads",
+                "format": "HTML (JS-rendered)",
+                "tables_found": len(tables),
+                "downloads_found": len(downloads),
+                "text_preview": text_preview,
+                "discovered_at": datetime.utcnow().isoformat(),
+                "confidence": 0.85,
+                "engine": "splash"
+            }
+
+        except Exception as e:
+            logger.error(f"Splash render failed for {url}: {e}")
+            return None
 
     async def _crawl_url(self, client: httpx.AsyncClient, url: str, depth: int = 0):
         """
@@ -260,7 +415,13 @@ class DataCrawler:
             "discovered_data": self.discovered_data,
             "errors": self.errors,
             "reading_engine_integrated": False,
-            "crawler_stack": "Scrapy + httpx + BeautifulSoup + Splash ready",
+            "crawler_stack": "httpx + BeautifulSoup + Scrapy + Splash",
+            "engines_available": {
+                "httpx": True,
+                "beautifulsoup": True,
+                "scrapy": HAS_SCRAPY,
+                "splash": HAS_SPLASH
+            },
             "summary": summary,
 
             # Card 4 metric buckets (will be populated from discovered data)

@@ -1,7 +1,9 @@
 """
 reading_engine.py
 Consolidated reading engines for TORQ-e identity verification.
-Unified interface for PDFs, academic sources, GitHub, web pages, and dynamic content.
+Unified interface for PDFs, academic sources, GitHub, web pages, and dynamic content (Splash).
+
+Stack: httpx + BeautifulSoup + Scrapy + Splash
 
 Returns standardized verification results:
 {
@@ -33,17 +35,19 @@ except ImportError:
     HAS_PYGITHUB = False
 
 try:
-    from playwright.sync_api import sync_playwright
-    HAS_PLAYWRIGHT = True
-except ImportError:
-    HAS_PLAYWRIGHT = False
-
-try:
     import requests
     from bs4 import BeautifulSoup
     HAS_WEBPOET = True
 except ImportError:
     HAS_WEBPOET = False
+
+# Splash (JavaScript rendering — replaces any dynamic browser engine)
+SPLASH_URL = os.getenv("SPLASH_URL", "http://localhost:8050")
+try:
+    import requests as _splash_requests
+    HAS_SPLASH = True
+except ImportError:
+    HAS_SPLASH = False
 
 logger = logging.getLogger(__name__)
 
@@ -283,53 +287,64 @@ def read_web_page(url: str, parse_type: str = "general") -> dict:
 
 
 # ============================================================================
-# ENGINE 5: PLAYWRIGHT (Dynamic Content, JavaScript-Heavy Sites)
+# ENGINE 5: SPLASH (Dynamic Content, JavaScript-Heavy Sites)
 # ============================================================================
 
 def read_dynamic_page(url: str, selector: str = "body") -> dict:
     """
-    Use Playwright to load and read JavaScript-heavy pages.
+    Use Splash to render and read JavaScript-heavy pages.
+    Splash runs at localhost:8050 (docker: scrapinghub/splash).
     Use case: Real-time registries, dynamic provider databases, interactive sites.
     """
-    if not HAS_PLAYWRIGHT:
-        logger.warning("Playwright not installed. Install with: pip install playwright && playwright install")
+    if not HAS_SPLASH:
+        logger.warning("requests not installed — cannot reach Splash server.")
         return {
             "source": "dynamic",
             "confidence": 0.0,
-            "findings": "Playwright not available",
+            "findings": "Splash client not available",
             "raw_data": {},
             "timestamp": datetime.now().isoformat()
         }
 
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
-            page.goto(url, timeout=10000)
-            page.wait_for_load_state("networkidle")
+        splash_endpoint = f"{SPLASH_URL}/render.html"
+        params = {
+            "url": url,
+            "wait": 2,
+            "timeout": 20,
+            "resource_timeout": 10
+        }
+        resp = _splash_requests.get(splash_endpoint, params=params, timeout=25)
+        resp.raise_for_status()
 
-            # Extract content from specified selector
-            element = page.query_selector(selector)
-            if element:
-                content = element.inner_text()[:2000]
-            else:
-                content = page.content()[:2000]
+        soup = BeautifulSoup(resp.text, "html.parser") if HAS_WEBPOET else None
+        title = soup.find("title").text.strip() if soup and soup.find("title") else url
 
-            return {
-                "source": "dynamic",
-                "confidence": 0.8,
-                "findings": f"Loaded and parsed {url} via Playwright",
-                "raw_data": {
-                    "url": url,
-                    "selector": selector,
-                    "content": content,
-                    "title": page.title()
-                },
-                "timestamp": datetime.now().isoformat()
-            }
+        # Try to honour the selector via BeautifulSoup
+        if soup and selector != "body":
+            element = soup.select_one(selector)
+            content = element.get_text()[:2000] if element else soup.get_text()[:2000]
+        elif soup:
+            content = soup.get_text()[:2000]
+        else:
+            content = resp.text[:2000]
+
+        return {
+            "source": "dynamic",
+            "confidence": 0.85,
+            "findings": f"Loaded and parsed {url} via Splash",
+            "raw_data": {
+                "url": url,
+                "selector": selector,
+                "content": content,
+                "title": title,
+                "engine": "splash"
+            },
+            "timestamp": datetime.now().isoformat()
+        }
 
     except Exception as e:
-        logger.error(f"Playwright error: {e}")
+        logger.error(f"Splash error: {e}")
         return {
             "source": "dynamic",
             "confidence": 0.0,
@@ -383,14 +398,16 @@ def run_verification_suite(provider_name: str, npi: Optional[str] = None) -> dic
 # REQUIREMENTS
 # ============================================================================
 """
+Stack: httpx + BeautifulSoup + Scrapy + Splash
+
 Install all reading engines:
+pip install pypdf2 PyGithub requests beautifulsoup4 scrapy scrapy-splash httpx lxml
 
-pip install pypdf2 PyGithub playwright requests beautifulsoup4
-
-# Also download Playwright browsers:
-playwright install chromium
+# Run Splash via Docker:
+docker run -p 8050:8050 scrapinghub/splash
 
 Environment variables needed:
 - GITHUB_TOKEN (optional, for higher API limits)
+- SPLASH_URL (optional, default: http://localhost:8050)
 - BRAVE_API_KEY (for Brave search integration)
 """

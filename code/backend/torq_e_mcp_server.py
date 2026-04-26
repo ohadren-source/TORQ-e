@@ -154,7 +154,7 @@ MCP_TOOLS = [
     },
     {
         "name": "torq_dynamic_content",
-        "description": "Load and read JavaScript-heavy pages using Playwright. Use for real-time registries, dynamic provider databases, interactive sites.",
+        "description": "Load and read JavaScript-heavy pages using Splash. Use for real-time registries, dynamic provider databases, interactive sites.",
         "inputSchema": {
             "type": "object",
             "properties": {
