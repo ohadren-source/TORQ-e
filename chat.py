@@ -542,17 +542,35 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                             assistant_message += event.delta.text
                         elif event.delta.type == "input_json_delta":
                             if tool_calls and event.delta.partial_json:
-                                try:
-                                    parsed = json.loads(event.delta.partial_json)
-                                    tool_calls[-1]["input"].update(parsed)
-                                except json.JSONDecodeError:
-                                    # Partial JSON is incomplete - skip this chunk and wait for next one
-                                    pass
+                                # Accumulate raw JSON string — parse once complete
+                                if "_input_json" not in tool_calls[-1]:
+                                    tool_calls[-1]["_input_json"] = ""
+                                tool_calls[-1]["_input_json"] += event.delta.partial_json
+
+            # Log what we received from Claude this iteration
+            logger.info(f"[Loop {tool_call_count}] text={len(assistant_message)} chars, tool_calls={len(tool_calls)}")
+
+            # Parse accumulated tool input JSON strings
+            for tc in tool_calls:
+                if "_input_json" in tc:
+                    try:
+                        tc["input"] = json.loads(tc["_input_json"])
+                    except json.JSONDecodeError:
+                        tc["input"] = {}
+                    del tc["_input_json"]
+
+            for tc in tool_calls:
+                logger.info(f"  Tool: {tc['name']} input_keys={list(tc['input'].keys())}")
 
             # If no tool calls, task is complete - stream the response
             if not tool_calls:
-                yield f"data: {json.dumps({'text': assistant_message})}\n\n"
-                return
+                if assistant_message:
+                    yield f"data: {json.dumps({'text': assistant_message})}\n\n"
+                    return
+                else:
+                    # Claude returned no text and no tool calls — break and force synthesis
+                    logger.warning("Claude returned empty response with no tool calls — forcing synthesis")
+                    break
 
             # Tool calls exist: Execute them (silently, no streaming)
             # Add assistant's tool calls to message history
@@ -600,6 +618,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
         for block in final_response.content:
             if hasattr(block, "text"):
                 final_text += block.text
+        logger.info(f"[Synthesis] stop_reason={final_response.stop_reason}, text={len(final_text)} chars")
         payload = json.dumps({"text": final_text})
         yield "data: " + payload + "\n\n"
 
