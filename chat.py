@@ -17,14 +17,19 @@ from card_2_upid import routes as card2_routes
 from card_4_ushi import query_engine as card4_engine
 from card_5_ubada import query_engine as card5_engine
 
-def _fix_surrogates(s: str) -> str:
+def _fix_surrogates(s) -> str:
     """
     Convert surrogate pairs / lone surrogates in a Python string into proper Unicode.
     e.g. '\ud83d\udcd6' -> '\U0001F4D6' (📖)
     This is needed when strings come from JS/JSON with UTF-16 surrogate encoding.
     """
-    # Re-encode as UTF-16 surrogate-tolerant then decode as real Unicode
-    return s.encode('utf-16', 'surrogatepass').decode('utf-16')
+    if not isinstance(s, str):
+        return s
+    try:
+        # Re-encode as UTF-16 surrogate-tolerant then decode as real Unicode
+        return s.encode('utf-16', 'surrogatepass').decode('utf-16')
+    except Exception:
+        return s
 
 
 logger = logging.getLogger(__name__)
