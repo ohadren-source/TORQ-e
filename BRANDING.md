@@ -144,3 +144,32 @@ For logo usage questions or brand guideline clarifications:
 - Documentation: See ARCHITECTURE_BUSINESS_ANALYST.md or ARCHITECTURE_TECHNICAL.md
 - Questions: Contact TORQ-e project lead
 
+
+---
+
+## Favicon Setup
+
+> Source: `Teste Rosa/TdST.png` (512x512px master)
+
+### Generate variants (Python + Pillow)
+```python
+from PIL import Image
+src = "Teste Rosa/TdST.png"
+img = Image.open(src)
+for size, dest in [(512,"assets/logo-512.png"),(256,"assets/logo-256.png"),(64,"assets/logo-64.png"),(32,"assets/favicon-32.png"),(16,"assets/favicon-16.png")]:
+    img.resize((size,size), Image.Resampling.LANCZOS).save(dest)
+img.save("assets/favicon.ico", sizes=[(16,16),(32,32),(48,48),(64,64)])
+```
+
+### HTML head tags
+```html
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
+<link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+<meta name="theme-color" content="#003366">
+```
+
+### Cache busting
+```html
+<link rel="icon" href="/assets/favicon-32.png?v=2">
+```

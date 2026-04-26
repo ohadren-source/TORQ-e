@@ -203,7 +203,8 @@ class DataCrawler:
             "processing": r"processing|process|timeline|days",
             "compliance": r"compliance|compliant|audit|review",
             "fraud": r"fraud|suspicious|flagged|investigation",
-            "quality": r"quality|data quality|accuracy|error"
+            "quality": r"quality|data quality|accuracy|error",
+            "audit": r"audit report|audit trail|PERM|program integrity|audit finding|audit protocol"
         }
 
         # Clean page text — used for metric detection AND stored as text_snippet

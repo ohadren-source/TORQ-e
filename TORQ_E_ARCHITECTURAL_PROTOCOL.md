@@ -637,6 +637,52 @@ When production auth is implemented, only the backend validation changes. The fr
 
 ---
 
+## THE LIGHTHOUSE DOCTRINE (Added: 2026-04-26)
+
+### Card 4 (USHI) as the Lighthouse of Alexandria
+
+Card 4 is not just one of five cards. It is the architectural proof of concept and the propagation template simultaneously.
+
+Every decision precisecemented in Card 4 propagates to Cards 1, 2, 3, and 5 by facsimile. The design language is shared. The data source aperture is shared. The display logic is shared. Only the audience-specific surface layer changes per card.
+
+**This means:**
+
+Get Card 4 precisecemented → you have built 5 cards. The remaining 4 are Card 4 with the top layer swapped.
+
+### What Propagates (The Facsimile Layer)
+
+| Pattern | Card 4 Origin | Propagates To |
+|---------|---------------|---------------|
+| SSE line buffering (`lineBuffer` accumulator) | `chat-card4.html` | All card chat frontends |
+| Domain-based confidence scoring (`_source_confidence`) | `query_engine.py` | All card query engines |
+| `METRIC_ALIASES` keyword map | `query_engine.py` | All card query engines |
+| `pageTitle()` URL → readable name | `chat-card4.html` | All card frontends |
+| Background crawl on startup (`asyncio.create_task`) | `main.py` | Shared — already global |
+| Spectrum Analyzer thresholds (≥65 green, 50–64 yellow, <50 red) | `chat-card4.html` | Cards 3, 4, 5 (governance/data views) |
+| `_fix_surrogates()` at SSE yield points | `chat.py` | Shared — already global |
+| `max_tokens=16000` in agentic loop + synthesis | `chat.py` | Shared — already global |
+| Source X-button in Equalizer/Combined, hidden in Coherence | `chat-card4.html` | Any card with breakdown panels |
+
+### What Changes Per Card (The Surface Layer)
+
+| Element | Cards 1–2 (Member/Provider) | Cards 3, 5 (Plan/Fraud) |
+|---------|----------------------------|-------------------------|
+| Metric names | Eligibility, Claims, Coverage | Network, Fraud signals, Caseload |
+| Crawl domain weights | emedny.org primary | omig.ny.gov / health.data.ny.gov |
+| Audience label | Member / Provider | Plan Admin / Analyst |
+| Display dimensions | Member-facing KPIs | Operational KPIs |
+| Session ID key | `umid` / `upid` | `whup_id` / `ubada_id` |
+
+### Engineering Rule
+
+> Do not add complexity to Cards 1–3, 5 that does not already exist and work in Card 4.
+> 
+> If a pattern isn't precisecemented in Card 4, it does not propagate. Fix it in Card 4 first.
+
+This is the Lighthouse. Ships navigate by it. They do not each find their own light.
+
+---
+
 ## PART 3: GOVERNANCE & ACCOUNTABILITY
 
 ### What This Document Governs

@@ -443,3 +443,52 @@ Visit http://localhost:8000/ to test
 **Status:** ✅ DEPLOYED & RUNNING
 
 💥 **Deploy with confidence.** 💥
+
+---
+
+## Railway Deep Reference (Step-by-Step)
+
+> Scroll past this if you have the basics. This is the full pre-deployment checklist, commit recipe, smoke tests, troubleshooting, and rollback plan.
+
+### Pre-Deployment Checklist
+
+Verify files before pushing:
+```bash
+grep "confidence_score: float" card_1_umid/schemas.py   # expect 4 lines
+grep "confidence_score=" card_1_umid/routes.py           # expect 2 lines
+grep "confidence_score: float" card_2_upid/schemas.py   # expect 2 lines
+grep "confidence_score=" card_2_upid/routes.py           # expect 2 lines
+```
+
+### Commit Message Recipe
+```
+git commit -m "brief: what changed
+
+CARDS AFFECTED:
+- Card N: what changed and why
+
+TESTING READY: yes/no"
+```
+
+### Post-Push Smoke Tests
+```bash
+# Card 1
+curl -X POST https://torq-e-production.up.railway.app/api/card1/lookup \
+  -H "Content-Type: application/json" \
+  -d '{"first_name":"John","last_name":"Doe","date_of_birth":"1990-01-15","ssn":"123456789"}'
+
+# Card 4 health
+curl https://torq-e-production.up.railway.app/api/card4/health
+```
+
+### Troubleshooting
+- Deployment fails → Railway dashboard → Logs tab → look for Python import errors
+- Confidence scores missing → verify schemas.py copied, restart deployment
+- 404 on endpoint → check routes.py definitions match URL called
+
+### Rollback
+```bash
+git revert HEAD
+git push origin main
+# Railway auto-redeploys previous version
+```

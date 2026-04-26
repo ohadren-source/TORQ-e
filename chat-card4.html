@@ -1083,7 +1083,8 @@
             const isStability = sectionHeader.includes('Equalizer');
             const isCombined = sectionHeader.includes('Combined');
 
-            const color = data.value >= 90 ? 'green' : data.value >= 70 ? 'yellow' : 'red';
+            // NYS Medicaid thresholds: >=65 COHERENT, 50-64 MONITORING, <50 INCOHERENT
+            const color = data.value >= 65 ? 'green' : data.value >= 50 ? 'yellow' : 'red';
             const value = data.value;
 
             // Generate traffic light visual
@@ -1095,11 +1096,13 @@
                 </div>
             `;
 
-            // Generate equalizer visual (5 bars representing the value)
+            // Generate equalizer visual — bars scale to value, max bar height = 45px
             const equalizerBars = [];
             for (let i = 1; i <= 5; i++) {
-                const barHeight = (value / 100) * 50 * (i / 5) + (value / 100) * 20;
-                equalizerBars.push(`<div class="equalizer-bar" style="height: ${Math.max(5, barHeight)}px;"></div>`);
+                // Each bar is a fraction of the metric value, scaled within 45px max
+                // Bar i gets (i/5) of the full height, giving a staircase effect
+                const barHeight = Math.max(3, (value / 100) * 45 * (i / 5));
+                equalizerBars.push(`<div class="equalizer-bar" style="height: ${barHeight.toFixed(1)}px;"></div>`);
             }
             const equalizerSVG = `
                 <div class="equalizer-visual">

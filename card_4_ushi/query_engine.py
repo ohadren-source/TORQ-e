@@ -330,17 +330,30 @@ def _find_matching_sources(
 ) -> List[Dict]:
     """
     Find data sources in schema that match the requested metric.
+    Uses alias map so metric names match crawler tag vocabulary.
     """
     if not public_data_schema or not public_data_schema.get("discovered_data"):
         return []
 
-    matching = []
-    metric_keywords = metric_type.lower().split("_")
+    # Alias map: metric_name -> search keywords (any match = include)
+    METRIC_ALIASES = {
+        "audit_trail":      ["audit", "compliance", "program integrity", "perm"],
+        "compliance":       ["compliance", "compliant", "regulatory", "audit"],
+        "enrollment_rate":  ["enrollment", "enrolled", "member", "beneficiar"],
+        "claims_processing":["claims", "claim", "processing", "denial", "payment"],
+        "data_quality":     ["quality", "accuracy", "data quality", "error"],
+        "system_stability": ["stability", "system", "uptime", "its", "infrastructure"],
+    }
 
+    # Get keywords — use alias map if available, otherwise split on underscore
+    keywords = METRIC_ALIASES.get(metric_type.lower(), metric_type.lower().split("_"))
+
+    matching = []
     for source in public_data_schema.get("discovered_data", []):
         description = source.get("description", "").lower()
-        # Match if any keyword appears in description
-        if any(keyword in description for keyword in metric_keywords):
+        url = source.get("url", "").lower()
+        combined = description + " " + url
+        if any(kw in combined for kw in keywords):
             matching.append(source)
 
     return matching
