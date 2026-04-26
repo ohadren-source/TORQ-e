@@ -768,9 +768,7 @@
             messageDiv.className = `message ${role}`;
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            // Decode any escaped Unicode sequences (safety net for Claude output)
-            const decoded = JSON.parse('"' + text.replace(/"/g, '\\"') + '"');
-            bubble.innerHTML = decoded;
+            bubble.innerHTML = text;
             messageDiv.appendChild(bubble);
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
