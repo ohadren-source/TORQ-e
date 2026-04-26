@@ -1452,24 +1452,19 @@
 
                     const chunk = decoder.decode(value);
 
-                    // Parse JSON chunks from streaming response
-                    try {
-                        // Try to parse as JSON (streaming returns {"text": "..."} objects)
-                        const jsonMatch = chunk.match(/\{"text":\s*"([^"]*)"\}/g);
-                        if (jsonMatch) {
-                            jsonMatch.forEach(match => {
-                                const json = JSON.parse(match);
+                    // Parse SSE chunks: format is "data: {"text": "..."}\n\n"
+                    const lines = chunk.split('\n');
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const json = JSON.parse(line.slice(6));
                                 if (json.text) {
                                     claudeResponse += json.text;
                                 }
-                            });
-                        } else {
-                            // Fallback: treat as plain text
-                            claudeResponse += chunk;
+                            } catch (e) {
+                                // Skip malformed lines
+                            }
                         }
-                    } catch (e) {
-                        // If JSON parsing fails, treat as plain text
-                        claudeResponse += chunk;
                     }
                 }
 
