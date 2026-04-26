@@ -16,7 +16,6 @@ from card_1_umid import routes as card1_routes
 from card_2_upid import routes as card2_routes
 from card_4_ushi import query_engine as card4_engine
 from card_5_ubada import query_engine as card5_engine
-from about_face import about_face
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -489,13 +488,13 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     messages = [{"role": "user", "content": chat_msg.message}]
 
     async def generate_response():
-        """Generator that yields SSE-formatted text and handles agentic loop with ABOUT_FACE validation"""
+        """Generator that yields SSE-formatted text and handles agentic loop"""
         nonlocal messages
         tool_call_count = 0
         max_tool_calls = 5
 
         while tool_call_count < max_tool_calls:
-            # Stream response from Claude (collect full response first)
+            # Get response from Claude
             response = client.messages.create(
                 model="claude-sonnet-4-6",
                 max_tokens=1024,
@@ -505,16 +504,14 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                 stream=True
             )
 
-            # STEP 1: Collect full response (text + tool_calls)
+            # Collect full response before processing
             assistant_message = ""
             tool_calls = []
 
             for event in response:
                 if event.type == "content_block_start":
                     if hasattr(event.content_block, "type"):
-                        if event.content_block.type == "text":
-                            pass
-                        elif event.content_block.type == "tool_use":
+                        if event.content_block.type == "tool_use":
                             tool_calls.append({
                                 "id": event.content_block.id,
                                 "name": event.content_block.name,
@@ -531,34 +528,13 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                                     json.loads(event.delta.partial_json)
                                 )
 
-            # STEP 2: Evaluate response against ABOUT_FACE
-            # If there's text AND no tool_calls, validate the text first
-            if assistant_message and not tool_calls:
-                filtered_text = about_face(assistant_message)
-
-                # If ABOUT_FACE filtered out the entire message, it was pure meta-speak
-                # This shouldn't happen if Claude follows the system prompt, but if it does, skip
-                if filtered_text:
-                    yield f"data: {json.dumps({'text': filtered_text})}\n\n"
-                return
-
-            # If there are tool_calls but the preceding text contains meta-speak about the tools
-            # (e.g., "I'll pull all six metrics" before making the calls), silently execute
-            if tool_calls and assistant_message:
-                # Check if the text is pure meta-speak about the tools
-                filtered_text = about_face(assistant_message)
-                if not filtered_text:
-                    # Pure meta-speak detected - don't stream it, just execute tools silently
-                    pass
-                else:
-                    # Text has some substance - keep it for the conversation history
-                    pass
-
-            # No tool calls? Stream and return
+            # If no tool calls, task is complete - stream the response
             if not tool_calls:
+                yield f"data: {json.dumps({'text': assistant_message})}\n\n"
                 return
 
-            # STEP 3: Execute tool calls (agentic loop continues)
+            # Tool calls exist: Execute them (silently, no streaming)
+            # Add assistant's tool calls to message history
             assistant_content = [{"type": "text", "text": assistant_message}]
             for tool_call in tool_calls:
                 assistant_content.append({
@@ -570,7 +546,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             messages.append({"role": "assistant", "content": assistant_content})
 
-            # Execute tools and add results
+            # Execute tools and add results to message history
             for tool_call in tool_calls:
                 result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
                 messages.append({
@@ -585,29 +561,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                 })
 
             tool_call_count += 1
-
-        # If max tool calls reached, do one final Claude response to synthesize results
-        if tool_call_count >= max_tool_calls and tool_calls:
-            response = client.messages.create(
-                model="claude-sonnet-4-6",
-                max_tokens=1024,
-                system=system_prompt,
-                tools=None,
-                messages=messages,
-                stream=True
-            )
-
-            # Collect final response
-            final_text = ""
-            for event in response:
-                if event.type == "content_block_delta":
-                    if hasattr(event.delta, "type") and event.delta.type == "text_delta":
-                        final_text += event.delta.text
-
-            # Validate final response against ABOUT_FACE
-            filtered_final = about_face(final_text)
-            if filtered_final:
-                yield f"data: {json.dumps({'text': filtered_final})}\n\n"
+            # Loop continues - next iteration gets Claude's response WITH tool results
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
@@ -764,6 +718,9 @@ Plan administrative data is ALWAYS external to state systems. You are querying M
         return base_instruction + """
 
 **ROLE:** You are helping a **government agency** stakeholder oversee Medicaid program operations with HIPAA-compliant governance, immutable audit trails, and institutional memory.
+
+**YOUR TASK:**
+Execute required tools to completion. Report findings. You cannot output any text until your task is complete. Do not speak during execution. Only speak when the task is done with results and analysis.
 
 **CARD 4 (USHI) MISSION:**
 Government Stakeholder Operations — Provide aggregate-only reporting, flag compliance issues, and maintain authoritative governance logs for HHS audit readiness. Everything you do is logged, justified, and immutable.
