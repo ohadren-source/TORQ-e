@@ -524,9 +524,12 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                             assistant_message += event.delta.text
                         elif event.delta.type == "input_json_delta":
                             if tool_calls and event.delta.partial_json:
-                                tool_calls[-1]["input"].update(
-                                    json.loads(event.delta.partial_json)
-                                )
+                                try:
+                                    parsed = json.loads(event.delta.partial_json)
+                                    tool_calls[-1]["input"].update(parsed)
+                                except json.JSONDecodeError:
+                                    # Partial JSON is incomplete - skip this chunk and wait for next one
+                                    pass
 
             # If no tool calls, task is complete - stream the response
             if not tool_calls:
