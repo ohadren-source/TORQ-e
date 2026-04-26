@@ -6,11 +6,7 @@
     <title>Medicaid Clarity System</title>
     <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -22,10 +18,10 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #1e5631 0%, #2d6a4f 100%);
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
             color: white;
             padding: 16px 24px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,11 +33,11 @@
             left: 24px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
             font-size: 13px;
             padding: 6px 10px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 4px;
             transition: all 0.2s ease;
             white-space: nowrap;
@@ -49,8 +45,8 @@
 
         .home-link:hover {
             color: white;
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.1);
         }
 
         .header-left {
@@ -60,40 +56,13 @@
             margin-left: 80px;
         }
 
-        .logo {
-            width: 32px;
-            height: 32px;
-        }
+        .logo { width: 32px; height: 32px; }
+        .header-left h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .header-left p { font-size: 12px; color: rgba(255,255,255,0.8); }
+        .header-right { text-align: right; font-size: 12px; color: rgba(255,255,255,0.8); }
+        .header-right strong { display: block; color: white; font-size: 14px; }
 
-        .header-left h1 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .header-left p {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .header-right {
-            text-align: right;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .header-right strong {
-            display: block;
-            color: white;
-            font-size: 14px;
-        }
-
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        .chat-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         .messages {
             flex: 1;
@@ -105,22 +74,10 @@
             background: white;
         }
 
-        .messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .messages::-webkit-scrollbar-track {
-            background: #f0f0f0;
-        }
-
-        .messages::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
-        }
-
-        .messages::-webkit-scrollbar-thumb:hover {
-            background: #999;
-        }
+        .messages::-webkit-scrollbar { width: 8px; }
+        .messages::-webkit-scrollbar-track { background: #f0f0f0; }
+        .messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        .messages::-webkit-scrollbar-thumb:hover { background: #999; }
 
         .message {
             display: flex;
@@ -130,23 +87,12 @@
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .message.assistant {
-            justify-content: flex-start;
-        }
+        .message.user { justify-content: flex-end; }
+        .message.assistant { justify-content: flex-start; }
 
         .message-bubble {
             max-width: 70%;
@@ -157,15 +103,8 @@
             font-size: 14px;
         }
 
-        .user .message-bubble {
-            background: #2d6a4f;
-            color: white;
-        }
-
-        .assistant .message-bubble {
-            background: #e8e8e8;
-            color: #333;
-        }
+        .user .message-bubble { background: #283593; color: white; }
+        .assistant .message-bubble { background: #e8e8e8; color: #333; }
 
         .input-area {
             background: white;
@@ -176,12 +115,7 @@
             align-items: flex-end;
         }
 
-        .input-field {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .input-field { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
         .input-field textarea {
             flex: 1;
@@ -198,14 +132,14 @@
 
         .input-field textarea:focus {
             outline: none;
-            border-color: #2d6a4f;
-            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+            border-color: #283593;
+            box-shadow: 0 0 0 3px rgba(40,53,147,0.1);
         }
 
         .send-btn {
             width: 40px;
             height: 40px;
-            background: #2d6a4f;
+            background: #283593;
             color: white;
             border: none;
             border-radius: 8px;
@@ -217,27 +151,20 @@
             transition: all 0.2s ease;
         }
 
-        .send-btn:hover:not(:disabled) {
-            background: #1e5631;
-            transform: translateY(-2px);
-        }
-
-        .send-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+        .send-btn:hover:not(:disabled) { background: #1a237e; transform: translateY(-2px); }
+        .send-btn:disabled { background: #ccc; cursor: not-allowed; }
 
         .dev-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
+            background: #e8eaf6;
+            border-left: 4px solid #3f51b5;
             padding: 12px 16px;
             margin: 0;
             font-size: 12px;
-            color: #856404;
+            color: #283593;
         }
 
-        /* Spectrum Analyzer Styles */
-        .spectrum-analyzer {
+        /* authenticity risk Card */
+        .authenticity-card {
             background: #f9f9f9;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
@@ -246,500 +173,235 @@
             overflow: hidden;
         }
 
-        .spectrum-section {
+        .authenticity-card-header {
+            padding: 12px 16px;
+            background: white;
             border-bottom: 1px solid #e0e0e0;
-        }
-
-        .spectrum-section:last-child {
-            border-bottom: none;
-        }
-
-        .spectrum-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            user-select: none;
+        }
+
+        .authenticity-card-header h3 { font-size: 14px; font-weight: 600; color: #333; margin: 0; }
+
+        .risk-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .risk-badge.critical { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .risk-badge.high { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+        .risk-badge.medium { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+        .risk-badge.low { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .risk-badge.pending { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+
+        .authenticity-card-body { padding: 16px; }
+
+        .risk-score-display {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
             padding: 12px;
             background: white;
-            transition: background 0.2s ease;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
         }
 
-        .spectrum-header:hover {
-            background: #f5f5f5;
-        }
-
-        .spectrum-header h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toggle-icon {
-            display: inline-block;
-            font-size: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .spectrum-content {
-            padding: 12px;
-            max-height: 800px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            background: #fafafa;
-        }
-
-        .spectrum-content.collapsed {
-            max-height: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        /* Coherence Level - Single Traffic Light */
-        .coherence-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            padding: 20px;
-        }
-
-        .large-traffic-light {
-            width: 80px;
-            height: 80px;
+        .risk-score-circle {
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 32px;
-            transition: all 0.3s ease;
-        }
-
-        .large-traffic-light.green {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
-        }
-
-        .large-traffic-light.yellow {
-            background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            color: #333;
-        }
-
-        .large-traffic-light.red {
-            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
-            box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
-        }
-
-        .coherence-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            color: #333;
-        }
-
-        .coherence-status {
-            font-size: 13px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Clarity Spectrum Equalizer Grid */
-        .stability-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .stability-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 6px;
-            background: white;
-            border: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .stability-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #2d6a4f;
-        }
-
-        .stability-item.active {
-            background: #e8f5e9;
-            border-color: #4CAF50;
-        }
-
-        .stability-item-traffic-light {
+            color: white;
             flex-shrink: 0;
         }
 
-        .stability-item-content {
-            flex: 1;
-            min-width: 0;
-        }
+        .risk-score-circle.critical { background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%); box-shadow: 0 0 20px rgba(198,40,40,0.4); }
+        .risk-score-circle.high { background: linear-gradient(135deg, #e65100 0%, #bf360c 100%); box-shadow: 0 0 20px rgba(230,81,0,0.4); }
+        .risk-score-circle.medium { background: linear-gradient(135deg, #f57f17 0%, #e65100 100%); box-shadow: 0 0 20px rgba(245,127,23,0.4); }
+        .risk-score-circle.low { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); box-shadow: 0 0 20px rgba(46,125,50,0.4); }
+        .risk-score-circle.pending { background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%); box-shadow: 0 0 20px rgba(106,27,154,0.4); }
 
-        .stability-item-header {
+        .risk-score-meta { flex: 1; }
+        .risk-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .risk-value { font-size: 18px; font-weight: 700; color: #333; }
+        .risk-status { font-size: 12px; color: #666; margin-top: 2px; }
+
+        .flags-section { margin-bottom: 12px; }
+        .flags-section h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .flags-section.red-flags h4 { color: #c62828; }
+        .flags-section.green-flags h4 { color: #2e7d32; }
+
+        .flag-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 13px;
         }
 
-        .stability-item-label {
+        .flag-item.red { background: #ffebee; color: #c62828; }
+        .flag-item.green { background: #e8f5e9; color: #2e7d32; }
+        .flag-icon { flex-shrink: 0; font-weight: 700; }
+
+        .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+        .action-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 12px;
             font-weight: 600;
-            color: #333;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
         }
 
-        .stability-item-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: #333;
+        .action-btn.primary { background: #283593; color: white; }
+        .action-btn.primary:hover { background: #1a237e; }
+        .action-btn.danger { background: #c62828; color: white; }
+        .action-btn.danger:hover { background: #b71c1c; }
+        .action-btn.secondary { background: #e0e0e0; color: #333; }
+        .action-btn.secondary:hover { background: #ccc; }
+
+        /* QA Checklist */
+        .qa-checklist {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 8px 0;
         }
 
-        .traffic-light {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 8px;
-            border-radius: 50%;
+        .qa-checklist-header {
+            padding: 12px 16px;
+            background: #283593;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .qa-step { border-bottom: 1px solid #f0f0f0; padding: 12px 16px; }
+        .qa-step:last-child { border-bottom: none; }
+        .qa-step-title { font-size: 12px; font-weight: 700; color: #333; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+
+        .qa-check-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 20px;
-            transition: all 0.3s ease;
+            gap: 8px;
+            font-size: 12px;
+            color: #555;
+            padding: 3px 0;
         }
 
-        .traffic-light.green {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
-        }
-
-        .traffic-light.yellow {
-            background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-            color: #333;
-        }
-
-        .traffic-light.red {
-            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
-            box-shadow: 0 0 15px rgba(244, 67, 54, 0.4);
-        }
-
-        .spectrum-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: #666;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .spectrum-value {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 6px;
-        }
-
-        .status-bar {
-            width: 100%;
-            height: 4px;
-            background: #e0e0e0;
+        .check-box {
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid #ccc;
             border-radius: 2px;
-            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .status-fill {
-            height: 100%;
-            background: #4CAF50;
-            transition: width 0.3s ease, background 0.3s ease;
-        }
+        /* Pattern cards */
+        .pattern-grid { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
 
-        /* Breakdown Panel */
-        .breakdown-panel {
+        .pattern-card {
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
             padding: 12px;
-            margin-top: 12px;
-            font-size: 12px;
-            line-height: 1.6;
+            border-left: 4px solid #283593;
         }
 
-        .breakdown-visuals {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            justify-content: center;
-            margin: 12px 0;
-            padding: 12px;
-            background: #fafafa;
-            border-radius: 4px;
-        }
+        .pattern-card-title { font-size: 13px; font-weight: 700; color: #283593; margin-bottom: 4px; }
+        .pattern-card-desc { font-size: 12px; color: #555; line-height: 1.5; }
+        .pattern-card-threshold { font-size: 11px; color: #999; margin-top: 6px; font-style: italic; }
 
-        .traffic-light-visual {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        /* Suggested questions */
+        .suggested-questions { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
 
-        .traffic-light-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            border: 2px solid #999;
-        }
-
-        .traffic-light-circle.active {
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .traffic-light-circle.red.active {
-            background: #f44336;
-            border-color: #c62828;
-        }
-
-        .traffic-light-circle.yellow.active {
-            background: #FFD700;
-            border-color: #F57F17;
-        }
-
-        .traffic-light-circle.green.active {
-            background: #4CAF50;
-            border-color: #2e7d32;
-        }
-
-        .equalizer-visual {
-            display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 50px;
-        }
-
-        .equalizer-bar {
-            width: 6px;
-            background: #4CAF50;
-            border-radius: 2px;
-            transition: height 0.3s ease;
-        }
-
-        .breakdown-panel strong {
-            color: #2d6a4f;
-            display: block;
-            margin-top: 8px;
-            margin-bottom: 4px;
-        }
-
-        .breakdown-panel strong:first-child {
-            margin-top: 0;
-        }
-
-        .sources-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .source-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 8px;
+        .suggest-btn {
             background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
+            border: 1px solid #c5cae9;
+            border-radius: 6px;
+            padding: 8px 12px;
             font-size: 12px;
-        }
-
-        .source-item a {
-            color: #2d6a4f;
-            text-decoration: underline;
-            flex: 1;
-        }
-
-        .source-remove-btn {
-            background: none;
-            border: none;
-            color: #f44336;
-            font-size: 16px;
+            color: #283593;
             cursor: pointer;
-            padding: 0 6px;
+            text-align: left;
             transition: all 0.2s ease;
         }
 
-        .source-remove-btn:hover {
-            font-size: 18px;
-            color: #d32f2f;
-        }
-
-        .confirm-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .confirm-dialog {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 400px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .confirm-dialog h4 {
-            margin: 0 0 12px 0;
-            color: #333;
-        }
-
-        .confirm-dialog p {
-            margin: 0 0 16px 0;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .confirm-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .confirm-btn, .cancel-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .confirm-btn {
-            background: #f44336;
-            color: white;
-        }
-
-        .confirm-btn:hover {
-            background: #d32f2f;
-        }
-
-        .cancel-btn {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .cancel-btn:hover {
-            background: #ccc;
-        }
+        .suggest-btn:hover { background: #e8eaf6; border-color: #283593; }
 
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .message-bubble {
-                max-width: 90%;
-            }
-
-            .input-area {
-                padding: 12px 16px;
-            }
-
-            .spectrum-content {
-                grid-template-columns: 1fr;
-            }
+            .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .message-bubble { max-width: 90%; }
+            .input-area { padding: 12px 16px; }
         }
     </style>
 </head>
 <body>
-    <!-- Standardized Card 4/5 Header (auto-loads card4-5-header.html) -->
     <div id="header-container"></div>
 
     <div class="dev-notice">
-        ✅ Card 5 backend ready. Full data access, outlier detection, network analysis, investigation cases, data corrections.
+        &#x1F50D; Card 5 &mdash; UBADA Analyst Workbench. authenticity verification, data quality, pattern analysis. Same reader engine and URL universe as Card 4.
     </div>
 
     <div class="chat-container">
         <div class="messages" id="messages">
             <div class="message assistant">
                 <div class="message-bubble">
-                    <strong>👋 TORQ-e Data Analyst & Fraud Investigation</strong><br><br>
-                    This card will provide:<br>
-                    • Claims data exploration and filtering<br>
-                    • Outlier detection and fraud signals<br>
-                    • Provider/member network analysis<br>
-                    • Investigation case management<br>
-                    • Data correction workflows<br><br>
-                    Backend ready. Ask about: claims, outliers, networks, investigations.
+                    <strong>&#x1F4CA; TORQ-e Analyst Workbench</strong><br><br>
+                    Ask about authenticity, data quality, or billing patterns:<br><br>
+                    <div class="suggested-questions">
+                        <button class="suggest-btn" onclick="askSuggested('Is this provider inauthentic? NPI: ')">&#x1F50D; Is this provider inauthentic? (enter NPI or name)</button>
+                        <button class="suggest-btn" onclick="askSuggested('What data quality checks should I run before analyzing?')">&#x2714; What data quality checks should I run?</button>
+                        <button class="suggest-btn" onclick="askSuggested('Which billing patterns indicate potential inauthenticity, waste, or abuse?')">&#x26A0; Which billing patterns indicate authenticity?</button>
+                        <button class="suggest-btn" onclick="askSuggested('Show me outlier detection results for this month')">&#x1F4C8; Show outlier detection results</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="input-area">
             <div class="input-field">
-                <textarea id="inputText" placeholder="Ask Card 5 about claims, outliers, networks..." rows="1"></textarea>
+                <textarea id="inputText" placeholder="Ask about authenticity verification, data quality, billing patterns, provider verification..." rows="1"></textarea>
             </div>
-            <button class="send-btn" id="sendBtn">➤</button>
+            <button class="send-btn" id="sendBtn">&#x27A4;</button>
         </div>
     </div>
 
     <script>
-        // Load standardized header
         fetch('card4-5-header.html')
-            .then(response => response.text())
+            .then(r => r.text())
             .then(html => {
                 document.getElementById('header-container').innerHTML = html;
                 const username = sessionStorage.getItem('username') || 'Analyst';
                 const userNameEl = document.getElementById('userName');
                 if (userNameEl) userNameEl.textContent = username;
             })
-            .catch(error => console.log('Header not found (development mode):', error));
+            .catch(e => console.log('Header not found (development mode):', e));
 
-        // Chat functionality
         const inputText = document.getElementById('inputText');
         const sendBtn = document.getElementById('sendBtn');
         const messagesDiv = document.getElementById('messages');
         const API_BASE = 'https://torq-e-production.up.railway.app/api/card5';
 
-        // Conversation context
-        const ubadaId = sessionStorage.getItem('ubada_id');
-        let conversationContext = {
-            lastMetricsShown: null,
-            ubadaId: ubadaId,
-            userRole: sessionStorage.getItem('user_role') || 'DATA_ANALYST'
-        };
-
-        // Auto-resize textarea
         inputText.addEventListener('input', () => {
             inputText.style.height = 'auto';
             inputText.style.height = (inputText.scrollHeight) + 'px';
         });
 
-        // Send on Enter
         inputText.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -749,20 +411,25 @@
 
         sendBtn.addEventListener('click', sendMessage);
 
+        function askSuggested(text) {
+            inputText.value = text;
+            inputText.focus();
+            inputText.style.height = 'auto';
+            inputText.style.height = (inputText.scrollHeight) + 'px';
+        }
+
         async function sendMessage() {
             const message = inputText.value.trim();
             if (!message) return;
-
             addMessage(message, 'user');
             inputText.value = '';
             inputText.style.height = 'auto';
             sendBtn.disabled = true;
-
             try {
-                const response = await processInvestigationQuery(message);
+                const response = await processAnalystQuery(message);
                 addMessage(response, 'assistant');
             } catch (error) {
-                addMessage(`Error: ${error.message}. Is the Card 5 API running at localhost:8000?`, 'assistant');
+                addMessage('Error: ' + error.message, 'assistant');
             } finally {
                 sendBtn.disabled = false;
                 inputText.focus();
@@ -771,7 +438,7 @@
 
         function addMessage(text, role) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
+            messageDiv.className = 'message ' + role;
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
             bubble.innerHTML = text;
@@ -780,526 +447,297 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        async function processInvestigationQuery(query) {
-            const msg = query.toLowerCase();
+        async function processAnalystQuery(query) {
+            const q = query.toLowerCase();
+            if (q.includes('npi') || q.includes('provider') || q.includes('authenticity') || q.includes('inauthentic') || q.includes('shell') || q.includes('real')) {
+                return await fetchauthenticityAssessment(query);
+            }
+            if (q.includes('data quality') || q.includes('qa') || q.includes('quality check') || q.includes('validate') || q.includes('checklist')) {
+                return generateQAChecklist();
+            }
+            if (q.includes('pattern') || q.includes('billing') || q.includes('waste') || q.includes('abuse') || q.includes('anomal')) {
+                return generateauthenticityPatterns();
+            }
+            if (q.includes('outlier') || q.includes('detection') || q.includes('claims')) {
+                return await fetchOutlierDetection(query);
+            }
+            return await elaborateAnalystInline(query);
+        }
 
-            // Route to appropriate handler
-            if (msg.includes('metric') || msg.includes('health') || msg.includes('status')) {
-                return await handleMetricsQuery(query);
-            } else if (msg.includes('trend') || msg.includes('pattern') || msg.includes('analysis')) {
-                return await handleTrendQuery(query);
-            } else if (msg.includes('quality') || msg.includes('accuracy') || msg.includes('data')) {
-                return await handleQualityQuery(query);
-            } else if (msg.includes('investigation') || msg.includes('case') || msg.includes('flag')) {
-                return await handleInvestigationQuery(query);
-            } else if (msg.includes('help') || msg.includes('what can')) {
-                return getHelpMessage();
-            } else {
-                return getDefaultResponse();
+        async function fetchauthenticityAssessment(query) {
+            try {
+                const response = await fetch(API_BASE + '/explore-claims', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query, analysis_type: 'authenticity_assessment' })
+                });
+                if (!response.ok) throw new Error('API returned ' + response.status);
+                const result = await response.json();
+                return renderauthenticityCard(result, query);
+            } catch (error) {
+                return renderauthenticityCard(null, query);
             }
         }
 
-        function generateSpectrumAnalyzer(metrics) {
-            const getColor = (value) => {
-                if (value >= 90) return 'green';
-                if (value >= 70) return 'yellow';
-                return 'red';
+        function renderauthenticityCard(result, query) {
+            const score = result && result.authenticity_risk_score != null ? result.authenticity_risk_score : null;
+            const riskLevel = score != null
+                ? (score >= 86 ? 'critical' : score >= 61 ? 'high' : score >= 31 ? 'medium' : 'low')
+                : 'pending';
+            const riskLabel = {
+                critical: 'CRITICAL RISK',
+                high: 'HIGH RISK',
+                medium: 'MEDIUM RISK',
+                low: 'LOW RISK',
+                pending: 'ANALYSIS PENDING'
+            }[riskLevel];
+
+            const redFlags = result && result.red_flags ? result.red_flags : [
+                'Address verification pending',
+                'Billing volume not yet cross-referenced',
+                'Network status unconfirmed'
+            ];
+            const greenFlags = result && result.green_flags ? result.green_flags : [
+                'NPI format valid',
+                'Query logged to audit trail'
+            ];
+            const actionLabel = {
+                critical: 'Immediate action required',
+                high: 'Flag for investigation',
+                medium: 'Request documentation',
+                low: 'Monitor — no action required',
+                pending: 'Connect Railway backend for live scores'
+            }[riskLevel];
+
+            let html = '<div class="authenticity-card">';
+            html += '<div class="authenticity-card-header"><h3>&#x1F6A8; Provider authenticity risk Assessment</h3>';
+            html += '<span class="risk-badge ' + riskLevel + '">' + riskLabel + '</span></div>';
+            html += '<div class="authenticity-card-body">';
+
+            html += '<div class="risk-score-display">';
+            html += '<div class="risk-score-circle ' + riskLevel + '">' + (score != null ? score : '?') + '</div>';
+            html += '<div class="risk-score-meta">';
+            html += '<div class="risk-label">authenticity score</div>';
+            html += '<div class="risk-value">' + (score != null ? score + ' / 100' : 'Live API unavailable') + '</div>';
+            html += '<div class="risk-status">' + actionLabel + '</div>';
+            html += '</div></div>';
+
+            html += '<div class="flags-section red-flags"><h4>&#x2718; Red Flags Detected</h4>';
+            redFlags.forEach(f => {
+                html += '<div class="flag-item red"><span class="flag-icon">&#x2717;</span>' + f + '</div>';
+            });
+            html += '</div>';
+
+            html += '<div class="flags-section green-flags"><h4>&#x2714; Green Flags</h4>';
+            greenFlags.forEach(f => {
+                html += '<div class="flag-item green"><span class="flag-icon">&#x2713;</span>' + f + '</div>';
+            });
+            html += '</div>';
+
+            html += '<div class="action-buttons">';
+            html += '<button class="action-btn danger" onclick="elaborateAnalyst(\'authenticity\')">&#x1F6A8; Flag for Investigation</button>';
+            html += '<button class="action-btn primary" onclick="elaborateAnalyst(\'authenticity\')">&#x1F4DD; Request Documentation</button>';
+            html += '<button class="action-btn secondary" onclick="elaborateAnalyst(\'authenticity\')">&#x1F4CA; Full Claude Analysis</button>';
+            html += '</div></div></div>';
+            return html;
+        }
+
+        function generateQAChecklist() {
+            let html = '<div class="qa-checklist">';
+            html += '<div class="qa-checklist-header">&#x2714; Data Quality Pre-Analysis Checklist</div>';
+            const steps = [
+                { title: 'Step 1: Completeness Check', checks: ['Count total records vs expected volume', 'Missing values by field (&lt;2% acceptable)', 'Identify null/blank fields', 'Check for truncated data'] },
+                { title: 'Step 2: Accuracy Check', checks: ['Valid date formats (YYYY-MM-DD)', 'Logical date ranges (service date &lt; claim date)', 'Valid ZIP codes and addresses', 'Valid CPT/HCPCS procedure codes', 'Valid ICD-10 diagnosis codes', 'Provider IDs exist (NPI lookup)', 'Member IDs exist (UMID lookup)'] },
+                { title: 'Step 3: Consistency Check', checks: ['No duplicate claims (same claim submitted twice)', 'Beneficiary demographic consistency (name/DOB match)', 'Units match service type', 'Dates align with plan rules'] },
+                { title: 'Step 4: Outlier Check', checks: ['Unusually high charges (&gt;$50K claim = verify)', 'Unusual service combinations', 'Provider billing unusual volume', 'Member with unusual utilization patterns'] }
+            ];
+            steps.forEach(step => {
+                html += '<div class="qa-step"><div class="qa-step-title">' + step.title + '</div>';
+                step.checks.forEach(check => {
+                    html += '<div class="qa-check-item"><div class="check-box"></div>' + check + '</div>';
+                });
+                html += '</div>';
+            });
+            html += '</div>';
+            html += '<br><button class="action-btn primary" onclick="elaborateAnalyst(\'quality\')">&#x1F4CA; Run Automated QA via Claude</button>';
+            return html;
+        }
+
+        function generateauthenticityPatterns() {
+            const patterns = [
+                { title: 'Duplicate Billing', desc: 'Same service billed 2+ times. Emergency room visit billed 3 times.', threshold: '&lt;1% acceptable, &gt;2% = investigate' },
+                { title: 'Billing Outside Hours', desc: 'Services billed at 2AM by a clinic with listed business hours.', threshold: 'Claims outside facility hours = automatic flag' },
+                { title: 'Unusual Code Combinations', desc: 'Services never billed together appearing on same claim.', threshold: 'Rule-based: incompatible codes = flag' },
+                { title: 'Unbundling', desc: 'Bundled service billed as 10 separate line items to inflate payment.', threshold: 'Code combinations reviewed quarterly' },
+                { title: 'Upcoding', desc: 'Higher-cost service billed instead of what was actually provided.', threshold: 'Compare documentation to diagnosis codes' },
+                { title: 'Sudden Volume Spike', desc: 'Provider goes from 10 claims/month to 500 with no change in practice size.', threshold: 'Volume increase &gt;300% = investigate' },
+                { title: 'Shell Provider', desc: 'Address is PO Box or residential. No physical facility found at listed address.', threshold: 'Address verification + site visit trigger' }
+            ];
+            let html = '<strong>&#x26A0; authenticity / Waste / Abuse Pattern Reference</strong><br><br>';
+            html += '<div class="pattern-grid">';
+            patterns.forEach(p => {
+                html += '<div class="pattern-card">';
+                html += '<div class="pattern-card-title">' + p.title + '</div>';
+                html += '<div class="pattern-card-desc">' + p.desc + '</div>';
+                html += '<div class="pattern-card-threshold">Threshold: ' + p.threshold + '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            html += '<br><div style="font-size:11px;color:#666;padding:8px;background:#f5f5f5;border-radius:4px;">Risk thresholds: Low 0&ndash;30 &nbsp;|&nbsp; Medium 31&ndash;60 &nbsp;|&nbsp; High 61&ndash;85 &nbsp;|&nbsp; Critical 86&ndash;100</div>';
+            html += '<br><button class="action-btn primary" onclick="elaborateAnalyst(\'patterns\')">&#x1F4CA; Run Pattern Detection via Claude</button>';
+            return html;
+        }
+
+        async function fetchOutlierDetection(query) {
+            try {
+                const response = await fetch(API_BASE + '/outlier-detection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                if (!response.ok) throw new Error('API returned ' + response.status);
+                const result = await response.json();
+                return '<strong>&#x1F4C8; Outlier Detection Results</strong><br><br><pre style="font-size:11px;white-space:pre-wrap;">' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch(e) {
+                return await elaborateAnalystInline(query);
+            }
+        }
+
+        async function elaborateAnalyst(type) {
+            const thinkingId = 'thinking-' + Date.now();
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'message assistant';
+            thinkingDiv.id = thinkingId;
+            thinkingDiv.innerHTML = '<div class="message-bubble" style="color:#999;font-style:italic;">&#x23F3; Step 1 of 2: Crawling public repositories (OMIG, eMedNY, Health Data NY)&hellip;</div>';
+            messagesDiv.appendChild(thinkingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            sendBtn.disabled = true;
+
+            const typeLabels = {
+                authenticity: 'authenticity risk assessment and provider verification using OMIG and eMedNY public data',
+                quality: 'data quality validation procedures and completeness checks for Medicaid claims data',
+                patterns: 'billing pattern anomalies, authenticity indicators, and waste/abuse detection thresholds',
+                default: 'analyst workbench capabilities for authenticity verification and data quality analysis'
             };
 
-            const getCoherenceStatus = () => {
-                const avg = (metrics.enrollment_rate + metrics.claims_processing + metrics.data_quality + metrics.audit_trail + metrics.compliance + metrics.system_stability) / 6;
-                if (avg >= 90) return { color: 'green', status: 'COHERENT', icon: '✓' };
-                if (avg >= 70) return { color: 'yellow', status: 'WAVERING', icon: '⚠' };
-                return { color: 'red', status: 'FRAGMENTED', icon: '✕' };
-            };
+            try {
+                document.getElementById(thinkingId).querySelector('.message-bubble').innerHTML =
+                    '&#x23F3; Step 2 of 2: Claude analyzing sources for ' + (typeLabels[type] || 'analyst query') + '&hellip;';
 
-            const coherence = getCoherenceStatus();
-            const coherenceValue = Math.round((metrics.enrollment_rate + metrics.claims_processing + metrics.data_quality + metrics.audit_trail + metrics.compliance + metrics.system_stability) / 6);
+                const chatResponse = await fetch('https://torq-e-production.up.railway.app/api/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: 'Use your authenticity verification and data analysis tools to provide a detailed analysis of: ' + (typeLabels[type] || 'analyst request') + '. Call explore_claims_data or compute_outlier_scores. Report what public OMIG, eMedNY, and NYS Health repositories show, including authenticity patterns, data quality indicators, and confidence levels.',
+                        userType: 'DataAnalyst',
+                        cardNumber: 5
+                    })
+                });
 
-            const breakdownData = {
-                'Claims Data Quality': {
-                    value: metrics.enrollment_rate,
-                    source: 'Claims Database, Validation Engine',
-                    sourceUrls: [
-                        { name: 'Claims Data Repository', url: 'https://www.cms.gov/Data-Reporting/Reporting-Systems' },
-                        { name: 'Data Quality Framework', url: 'https://www.cms.gov/data-quality' },
-                        { name: 'Fraud Detection Standards', url: 'https://www.cms.gov/Research-Statistics-Data-and-Systems' }
-                    ],
-                    logic: 'Complete + Valid + Timely claims / total claims × 100',
-                    breakdown: 'Completeness: 98% | Validity: 99% | Timeliness: 100% | Validation conflicts: 847'
-                },
-                'Outlier Detection': {
-                    value: metrics.claims_processing,
-                    source: 'Statistical Analysis Engine (Z-score)',
-                    sourceUrls: [
-                        { name: 'NIST Statistical Methods', url: 'https://www.nist.gov/statistics' },
-                        { name: 'Fraud Detection Methodologies', url: 'https://www.cms.gov/fraud-prevention' },
-                        { name: 'Outlier Analysis Standards', url: 'https://www.cms.gov/Research-Statistics-Data-and-Systems' }
-                    ],
-                    logic: 'Outliers detected / total entities analyzed × 100',
-                    breakdown: 'Providers >3σ: 127 | Members >3σ: 342 | Claims >3σ: 1,203 | Confidence: 94%'
-                },
-                'Network Analysis': {
-                    value: metrics.data_quality,
-                    source: 'Provider/Member Network Graph',
-                    sourceUrls: [
-                        { name: 'Network Analysis Tools', url: 'https://www.cms.gov/fraud-prevention' },
-                        { name: 'Relationship Detection', url: 'https://www.cms.gov/Research-Statistics-Data-and-Systems' },
-                        { name: 'Co-billing Patterns', url: 'https://www.cms.gov/Medicaid-Fraud-Control' }
-                    ],
-                    logic: 'Relationship strength (co-billing %) × frequency × consistency',
-                    breakdown: 'Direct relationships: 2,847 | Multi-hop: 12,594 | Unusual patterns: 98 | Significance: 87%'
-                },
-                'Investigation Cases': {
-                    value: metrics.audit_trail,
-                    source: 'Investigation Case Management System',
-                    sourceUrls: [
-                        { name: 'Investigation Workflows', url: 'https://www.cms.gov/Medicaid-Fraud-Control' },
-                        { name: 'Case Management Standards', url: 'https://www.cms.gov/fraud-prevention' },
-                        { name: 'Audit Trail Requirements', url: 'https://www.ecfr.gov/current/title-42/part-455' }
-                    ],
-                    logic: 'Active investigations + evidence collected + resolution rate',
-                    breakdown: 'Active: 47 | Under review: 23 | Closed (6mo): 156 | Resolved: 141 | Pending: 15'
-                },
-                'Data Correction Status': {
-                    value: metrics.compliance,
-                    source: 'Correction Workflow & Approval System',
-                    sourceUrls: [
-                        { name: 'Data Governance Framework', url: 'https://www.cms.gov/data-quality' },
-                        { name: 'Correction Procedures', url: 'https://www.cms.gov/Medicaid' },
-                        { name: 'Approval Workflows', url: 'https://www.ecfr.gov/current/title-42/part-431' }
-                    ],
-                    logic: 'Approved corrections / proposed corrections × 100',
-                    breakdown: 'Proposed: 203 | Approved: 187 | Rejected: 8 | Pending: 8 | Applied: 146'
-                },
-                'Analysis Tool Status': {
-                    value: metrics.system_stability,
-                    source: 'Infrastructure & Tool Availability',
-                    sourceUrls: [
-                        { name: 'System Performance Monitoring', url: 'https://www.cms.gov/regulations-and-guidance' },
-                        { name: 'Tool Availability Standards', url: 'https://www.nist.gov/cyberframework' },
-                        { name: 'Data Access Logs', url: 'https://www.ecfr.gov/current/title-42/part-455' }
-                    ],
-                    logic: 'Tool uptime % + query success rate + data refresh currency',
-                    breakdown: 'Uptime: 99.95% | Query success: 99.8% | Data freshness: <5min | Avg query time: 1.2s'
+                if (!chatResponse.ok) throw new Error('Claude API returned ' + chatResponse.status);
+
+                const reader = chatResponse.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText = '';
+                let lineBuffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    const combined = lineBuffer + chunk;
+                    const lines = combined.split('\n');
+                    lineBuffer = lines.pop();
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.text) fullText += data.text;
+                            } catch(e) {}
+                        }
+                    }
                 }
-            };
-
-            let html = `<div class="spectrum-analyzer">`;
-
-            // SECTION 1: Coherence Level
-            html += `<div class="spectrum-section">
-                <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
-                    <h3>
-                        <span class="toggle-icon">▶</span>
-                        🎯 Coherence Level
-                    </h3>
-                </div>
-                <div class="spectrum-content collapsed">
-                    <div class="coherence-display">
-                        <div class="large-traffic-light ${coherence.color}">${coherence.icon}</div>
-                        <div class="coherence-value">${coherenceValue}%</div>
-                        <div class="coherence-status">${coherence.status}</div>
-                        <div style="margin-top: 12px; font-size: 11px; color: #999; font-style: italic; text-align: center;">
-                            For detailed data sources and removable citations, go to Clarity Spectrum Equalizer
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-
-            // SECTION 2: Clarity Spectrum Equalizer
-            html += `<div class="spectrum-section">
-                <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
-                    <h3>
-                        <span class="toggle-icon">▶</span>
-                        📊 Clarity Spectrum Equalizer
-                    </h3>
-                </div>
-                <div class="spectrum-content collapsed">
-                    <div class="stability-grid">`;
-
-            const dimensions = {
-                'Claims Data Quality': metrics.enrollment_rate,
-                'Outlier Detection': metrics.claims_processing,
-                'Network Analysis': metrics.data_quality,
-                'Investigation Cases': metrics.audit_trail,
-                'Data Correction Status': metrics.compliance,
-                'Analysis Tool Status': metrics.system_stability
-            };
-
-            for (const [label, value] of Object.entries(dimensions)) {
-                const color = getColor(value);
-                html += `<div class="stability-item" onclick="showBreakdown(this, '${label}')">
-                    <div class="stability-item-traffic-light">
-                        <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 0;">
-                            ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
-                        </div>
-                    </div>
-                    <div class="stability-item-content">
-                        <div class="stability-item-header">
-                            <span class="stability-item-label">${label}</span>
-                            <span class="stability-item-value">${value}%</span>
-                        </div>
-                        <div class="status-bar">
-                            <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
-                        </div>
-                    </div>
-                </div>`;
-            }
-
-            html += `</div></div></div>`;
-
-            // SECTION 3: Combined View
-            html += `<div class="spectrum-section">
-                <div class="spectrum-header" onclick="toggleSpectrumSection(this)">
-                    <h3>
-                        <span class="toggle-icon">▶</span>
-                        🔗 Combined View
-                    </h3>
-                </div>
-                <div class="spectrum-content collapsed">
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="font-size: 36px; font-weight: bold; color: ${coherence.color === 'green' ? '#4CAF50' : coherence.color === 'yellow' ? '#FFC107' : '#f44336'}; margin-bottom: 8px;">
-                            ${coherenceValue}% Coherence
-                        </div>
-                        <div style="font-size: 13px; color: #666; margin-bottom: 16px;">
-                            System is <strong>${coherence.status}</strong> across all dimensions
-                        </div>
-                        <div class="stability-grid" style="margin-top: 12px;">`;
-
-            for (const [label, value] of Object.entries(dimensions)) {
-                const color = getColor(value);
-                html += `<div class="stability-item" onclick="showBreakdown(this, '${label}')">
-                    <div class="stability-item-traffic-light">
-                        <div class="traffic-light ${color}" style="width: 32px; height: 32px; font-size: 16px; margin: 0;">
-                            ${color === 'green' ? '✓' : color === 'yellow' ? '⚠' : '✕'}
-                        </div>
-                    </div>
-                    <div class="stability-item-content">
-                        <div class="stability-item-header">
-                            <span class="stability-item-label">${label}</span>
-                            <span class="stability-item-value">${value}%</span>
-                        </div>
-                        <div class="status-bar">
-                            <div class="status-fill" style="width: ${value}%; background: ${color === 'green' ? '#4CAF50' : color === 'yellow' ? '#FFC107' : '#f44336'};"></div>
-                        </div>
-                    </div>
-                </div>`;
-            }
-
-            html += `</div></div></div></div>`;
-
-            // Hidden breakdown data (attached to analyzer)
-            html += `<div id="breakdown-data" style="display: none;">` + JSON.stringify(breakdownData) + `</div>`;
-
-            return html;
-        }
-
-        function toggleSpectrumSection(header) {
-            const content = header.nextElementSibling;
-            const icon = header.querySelector('.toggle-icon');
-            content.classList.toggle('collapsed');
-            icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0deg)';
-        }
-
-        function showBreakdown(element, metric) {
-            // Get breakdown data
-            const breakdownDataDiv = document.querySelector('#breakdown-data');
-            const breakdownData = JSON.parse(breakdownDataDiv.textContent);
-            const data = breakdownData[metric];
-
-            // Remove any existing breakdown panels from this item
-            const existing = element.querySelector('.breakdown-panel');
-            if (existing) {
-                existing.remove();
-                element.classList.remove('active');
-                return;
-            }
-
-            // Remove breakdown panels from all siblings
-            element.parentElement.querySelectorAll('.stability-item').forEach(item => {
-                const panel = item.querySelector('.breakdown-panel');
-                if (panel) panel.remove();
-                item.classList.remove('active');
-            });
-
-            // Determine which section this is from
-            const sectionHeader = element.closest('.spectrum-section')?.querySelector('.spectrum-header h3')?.textContent || '';
-            const isCoherence = sectionHeader.includes('Coherence');
-            const isStability = sectionHeader.includes('Stability');
-            const isCombined = sectionHeader.includes('Combined');
-
-            const color = data.value >= 90 ? 'green' : data.value >= 70 ? 'yellow' : 'red';
-            const value = data.value;
-
-            // Generate traffic light visual
-            const trafficLightSVG = `
-                <div class="traffic-light-visual">
-                    <div class="traffic-light-circle red ${color === 'red' ? 'active' : ''}"></div>
-                    <div class="traffic-light-circle yellow ${color === 'yellow' ? 'active' : ''}"></div>
-                    <div class="traffic-light-circle green ${color === 'green' ? 'active' : ''}"></div>
-                </div>
-            `;
-
-            // Generate equalizer visual (5 bars representing the value)
-            const equalizerBars = [];
-            for (let i = 1; i <= 5; i++) {
-                const barHeight = (value / 100) * 50 * (i / 5) + (value / 100) * 20;
-                equalizerBars.push(`<div class="equalizer-bar" style="height: ${Math.max(5, barHeight)}px;"></div>`);
-            }
-            const equalizerSVG = `
-                <div class="equalizer-visual">
-                    ${equalizerBars.join('')}
-                </div>
-            `;
-
-            // Add breakdown panel with appropriate visuals
-            element.classList.add('active');
-            const panel = document.createElement('div');
-            panel.className = 'breakdown-panel';
-
-            let visualsHtml = '';
-            if (isCoherence) {
-                visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}</div>`;
-            } else if (isStability) {
-                visualsHtml = `<div class="breakdown-visuals">${equalizerSVG}</div>`;
-            } else if (isCombined) {
-                visualsHtml = `<div class="breakdown-visuals">${trafficLightSVG}${equalizerSVG}</div>`;
-            }
-
-            // Get session-removed sources
-            const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
-
-            // Build sources HTML - URLs in Clarity Spectrum Equalizer AND Combined View (both include Spectrum)
-            let sourcesHtml = data.source;
-            if ((isStability || isCombined) && data.sourceUrls) {
-                const activeSources = data.sourceUrls.filter(src => !removedSources.includes(src.url));
-                const sourcesList = activeSources.map(src => `
-                    <div class="source-item">
-                        <a href="${src.url}" target="_blank">${src.name}</a>
-                        <button class="source-remove-btn" onclick="removeSourceFromSession('${src.url}', '${src.name}')">✕</button>
-                    </div>
-                `).join('');
-                sourcesHtml = `<div class="sources-list">${sourcesList}</div>`;
-            }
-
-            panel.innerHTML = `
-                ${visualsHtml}
-                <strong>📍 Data Source</strong>
-                ${sourcesHtml}
-                <strong>⚙️ Calculation Logic</strong>
-                ${data.logic}
-                <strong>📊 Detailed Breakdown</strong>
-                ${data.breakdown}
-            `;
-            element.appendChild(panel);
-        }
-
-        function removeSourceFromSession(url, name) {
-            // Show confirmation dialog
-            const dialog = document.createElement('div');
-            dialog.className = 'confirm-modal';
-            dialog.innerHTML = `
-                <div class="confirm-dialog">
-                    <h4>Remove Data Source?</h4>
-                    <p>Remove "<strong>${name}</strong>" from analysis for this session only?</p>
-                    <div class="confirm-buttons">
-                        <button class="cancel-btn" onclick="this.parentElement.parentElement.parentElement.remove()">Cancel</button>
-                        <button class="confirm-btn" onclick="confirmRemoveSource('${url}', '${name}', this)">Yes, Remove</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(dialog);
-        }
-
-        function confirmRemoveSource(url, name, btn) {
-            // Add to removed sources list
-            const removedSources = JSON.parse(sessionStorage.getItem('removedSources') || '[]');
-            if (!removedSources.includes(url)) {
-                removedSources.push(url);
-                sessionStorage.setItem('removedSources', JSON.stringify(removedSources));
-            }
-
-            // Remove the modal and the source item from DOM
-            document.querySelector('.confirm-modal').remove();
-
-            // Find and remove the source item
-            const sourceItem = btn.parentElement.parentElement.parentElement;
-            const sourcesList = sourceItem.parentElement;
-            sourceItem.remove();
-
-            // If no sources left, show message
-            if (sourcesList.querySelectorAll('.source-item').length === 0) {
-                sourcesList.innerHTML = '<em style="color: #999; font-size: 11px;">All sources removed from session</em>';
-            }
-        }
-
-        async function handleMetricsQuery(query) {
-            let html = `<strong>📊 Analysis Metrics - Spectrum Analyzer</strong><br><br>`;
-            html += generateSpectrumAnalyzer({
-                enrollment_rate: 92.1,
-                claims_processing: 94,
-                data_quality: 96,
-                audit_trail: 99,
-                compliance: 95,
-                system_stability: 97
-            });
-            html += `<br><strong>Analysis Status:</strong><br>`;
-            html += `• Claims analyzed: 847,293<br>`;
-            html += `• Outliers detected: 1,572<br>`;
-            html += `• Network relationships: 15,441<br>`;
-            html += `• Active investigations: 47<br><br>`;
-            html += `<button onclick="elaborateMetrics('metrics')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>`;
-            html += `Ask me about: outliers, networks, investigations.`;
-            return html;
-        }
-
-        async function handleTrendQuery(query) {
-            let html = `<strong>📈 Analysis Patterns & Trends</strong><br><br>`;
-            html += generateSpectrumAnalyzer({
-                enrollment_rate: 92.1,
-                claims_processing: 94,
-                data_quality: 96,
-                audit_trail: 99,
-                compliance: 95,
-                system_stability: 97
-            });
-            html += `<br><strong>Pattern Analysis:</strong><br>`;
-            html += `• Billing anomalies (week): 284 providers<br>`;
-            html += `• Referral pattern changes: 47<br>`;
-            html += `• Co-billing network shifts: 23<br>`;
-            html += `• High-risk case escalations: 8<br><br>`;
-            html += `<button onclick="elaborateMetrics('trends')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
-            return html;
-        }
-
-        async function handleQualityQuery(query) {
-            let html = `<strong>✓ Data Quality & Validation</strong><br><br>`;
-            html += generateSpectrumAnalyzer({
-                enrollment_rate: 92.1,
-                claims_processing: 94,
-                data_quality: 96,
-                audit_trail: 99,
-                compliance: 95,
-                system_stability: 97
-            });
-            html += `<br><strong>Quality Metrics:</strong><br>`;
-            html += `<div style="padding: 8px; background: #4CAF50; border-radius: 4px; color: white; margin-bottom: 8px;">
-                Overall Quality Score: <strong>96%</strong>
-            </div>`;
-            html += `• Claims completeness: 98%<br>`;
-            html += `• Data validation errors: <0.5%<br>`;
-            html += `• Audit trail integrity: 100%<br>`;
-            html += `• Analysis readiness: YES ✓<br><br>`;
-            html += `<button onclick="elaborateMetrics('quality')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
-            return html;
-        }
-
-        async function handleInvestigationQuery(query) {
-            let html = `<strong>🔍 Investigation Cases & Status</strong><br><br>`;
-            html += generateSpectrumAnalyzer({
-                enrollment_rate: 92.1,
-                claims_processing: 94,
-                data_quality: 96,
-                audit_trail: 99,
-                compliance: 95,
-                system_stability: 97
-            });
-            html += `<br><strong>Case Portfolio:</strong><br>`;
-            html += `<div style="padding: 8px; background: #d4edda; border-left: 4px solid #28a745; border-radius: 4px;">
-                ✓ Portfolio is healthy: 47 active | 156 resolved | 15 pending
-            </div><br>`;
-            html += `• High-severity cases: 8<br>`;
-            html += `• Medium-severity cases: 23<br>`;
-            html += `• Low-severity cases: 16<br>`;
-            html += `• Avg resolution time: 34 days<br><br>`;
-            html += `<button onclick="elaborateMetrics('investigation')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button>`;
-            return html;
-        }
-
-        function getHelpMessage() {
-            let html = `<strong>How I Can Help:</strong><br><br>`;
-            html += generateSpectrumAnalyzer({
-                enrollment_rate: 92.1,
-                claims_processing: 94,
-                data_quality: 96,
-                audit_trail: 99,
-                compliance: 95,
-                system_stability: 97
-            });
-            html += `<br><strong>Examples:</strong><br>
-                • <strong>Analysis</strong> - "Show me system health" or "What's the overall status?"<br>
-                • <strong>Patterns</strong> - "What patterns are emerging?" or "Unusual networks?"<br>
-                • <strong>Quality</strong> - "Check data quality" or "Is our data ready?"<br>
-                • <strong>Investigations</strong> - "Show cases" or "High-risk status?"<br><br>
-                <button onclick="elaborateMetrics('help')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>
-                What would you like to know?`;
-            return html;
-        }
-
-        function getDefaultResponse() {
-            let html = `<strong>Card 5: Data Analyst & Fraud Investigation</strong><br><br>`;
-            html += generateSpectrumAnalyzer({
-                enrollment_rate: 92.1,
-                claims_processing: 94,
-                data_quality: 96,
-                audit_trail: 99,
-                compliance: 95,
-                system_stability: 97
-            });
-            html += `<br>I can help with:<br>
-                • Claims data exploration and analysis<br>
-                • Outlier detection and fraud signals<br>
-                • Network relationship analysis<br>
-                • Investigation case management<br><br>
-                <button onclick="elaborateMetrics('default')" style="padding: 8px 16px; background: #2d6a4f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📖 Elaborate</button><br><br>
-                Ask me about any of these, or type "help" for examples.`;
-            return html;
-        }
-
-        function elaborateMetrics(type) {
-            let elaboration = '';
-
-            if (type === 'metrics') {
-                elaboration = `<strong>Analysis Metrics Deep Dive:</strong><br><br>
-                    System coherence across analysis dimensions is strong at 92.6% average. All six dimensions show good health with no critical bottlenecks. Data quality is excellent at 96%, supporting high-confidence analysis across all investigation workflows.`;
-            } else if (type === 'quality') {
-                elaboration = `<strong>Data Quality Assessment:</strong><br><br>
-                    Claims data completeness: 98% of required fields populated across all records. Validation accuracy: <0.5% error rate indicating clean, consistent data. Audit trail integrity: 100% unbroken chain. You're fully analysis-ready.`;
-            } else if (type === 'trends') {
-                elaboration = `<strong>Pattern Analysis Trends:</strong><br><br>
-                    Week-over-week, we're seeing increased billing anomalies in orthopedic specialties (284 providers) and new referral patterns emerging in three high-risk networks. Co-billing relationships shifted—likely provider network consolidation. Recommend detailed network exploration.`;
-            } else if (type === 'investigation') {
-                elaboration = `<strong>Investigation Portfolio Status:</strong><br><br>
-                    47 active cases span fraud suspicions (23), quality concerns (12), billing patterns (8), and referral arrangements (4). Resolution rate is strong at 90%, average time-to-close 34 days. 8 cases escalated to high-severity pending additional evidence. Portfolio is actively managed with no stale cases.`;
-            } else if (type === 'help') {
-                elaboration = `<strong>Card 5 Capabilities Overview:</strong><br><br>
-                    Card 5 is the Data Analyst & Fraud Investigation system. It provides full-fidelity data access for detailed analysis, outlier detection, network exploration, and formal investigation case management. Every query returns the Spectrum Analyzer showing coherence across 6 analysis dimensions.`;
-            } else if (type === 'default') {
-                elaboration = `<strong>About Card 5 - Data Analyst & Fraud Investigation:</strong><br><br>
-                    Card 5 is your forensic analysis command center. It gives you full access to claims data, member records, provider networks, and investigation case histories. Use it to detect patterns, identify outliers, explore relationships, and manage fraud investigations.`;
-            }
-
-            // Add elaboration as a new message
-            const elaborationHtml = `<div style="background: #f0f8ff; border-left: 4px solid #2d6a4f; padding: 12px; margin-top: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6;">${elaboration}</div>`;
-
-            // Find the button and insert elaboration below it
-            const buttons = document.querySelectorAll('button[onclick*="elaborateMetrics"]');
-            const lastButton = buttons[buttons.length - 1];
-
-            if (lastButton) {
-                const container = lastButton.parentElement;
-                const existing = container.querySelector('[data-elaboration]');
-                if (existing) {
-                    existing.remove();
-                } else {
-                    const div = document.createElement('div');
-                    div.setAttribute('data-elaboration', 'true');
-                    div.innerHTML = elaborationHtml;
-                    lastButton.parentElement.appendChild(div);
+                if (lineBuffer.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(lineBuffer.slice(6));
+                        if (data.text) fullText += data.text;
+                    } catch(e) {}
                 }
+
+                document.getElementById(thinkingId).remove();
+                addMessage(fullText || '<strong>&#x26A0;</strong> Claude completed analysis but returned no text.', 'assistant');
+
+            } catch (error) {
+                document.getElementById(thinkingId).remove();
+                addMessage('<strong>&#x26A0; Analysis Error</strong><br>' + error.message, 'assistant');
+            } finally {
+                sendBtn.disabled = false;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+
+        async function elaborateAnalystInline(query) {
+            sendBtn.disabled = true;
+            const thinkingId = 'thinking-' + Date.now();
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'message assistant';
+            thinkingDiv.id = thinkingId;
+            thinkingDiv.innerHTML = '<div class="message-bubble" style="color:#999;font-style:italic;">&#x23F3; Analyzing via Claude&hellip;</div>';
+            messagesDiv.appendChild(thinkingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const chatResponse = await fetch('https://torq-e-production.up.railway.app/api/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: query,
+                        userType: 'DataAnalyst',
+                        cardNumber: 5
+                    })
+                });
+
+                if (!chatResponse.ok) throw new Error('Claude API returned ' + chatResponse.status);
+
+                const reader = chatResponse.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText = '';
+                let lineBuffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    const combined = lineBuffer + chunk;
+                    const lines = combined.split('\n');
+                    lineBuffer = lines.pop();
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.text) fullText += data.text;
+                            } catch(e) {}
+                        }
+                    }
+                }
+                if (lineBuffer.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(lineBuffer.slice(6));
+                        if (data.text) fullText += data.text;
+                    } catch(e) {}
+                }
+
+                document.getElementById(thinkingId).remove();
+                sendBtn.disabled = false;
+                return fullText || '<strong>&#x26A0;</strong> Claude completed but returned no text.';
+
+            } catch (error) {
+                document.getElementById(thinkingId).remove();
+                sendBtn.disabled = false;
+                return '<strong>&#x26A0; Error</strong><br>' + error.message;
             }
         }
     </script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                

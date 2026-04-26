@@ -1,5 +1,5 @@
 # TORQ-e Design Review — DR.md
-**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 5)**
+**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 7)**
 **Motto: MOVE STEADFAST && BREAK IT DOWN.**
 
 ---
@@ -19,7 +19,7 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 | 1 | UMID | Medicaid Members | Live |
 | 2 | UPID | Providers | Live |
 | 3 | UHWP | Plan/Network Admins | Live |
-| 4 | USHI | Government Stakeholders | Active development — see below |
+| 4 | USHI | Government Stakeholders | GOLD — Precisecemented 2026-04-26 |
 | 5 | UBADA | Data Analysts / Fraud Investigators | Backend ready |
 
 **Stack:** FastAPI + uvicorn on Railway (Python 3.11). PostgreSQL. Anthropic Claude API (claude-sonnet-4-6). SSE streaming. Static HTML frontend served from root.
@@ -81,10 +81,10 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 
 ### Known Data Gaps
 
-- **Audit Trail** — Was 0.0 confidence. Fix deployed: added `"audit"` pattern to crawler + `METRIC_ALIASES` map in query engine so OMIG audit/PERM pages now register as audit_trail sources. Pending visual verification post-deploy.
+- **Audit Trail** — FIXED. Was 0%. Now 86.6%. Verified live. OMIG audit pages registering correctly.
 - **Claims domain** — 0 dedicated sources. Claims processing metric inferred from OMIG PERM pages.
-- **Equalizer bar heights** — Fixed. Was: overflow formula made all bars render at max. Now: `Math.max(3, (value/100) * 45 * (i/5))` — staircase scaling within 45px. Pending visual verification.
-- **Breakdown panel color thresholds** — Fixed. Was: 90/70. Now: 65/50 matching NYS Medicaid spectrum. Pending visual verification.
+- **Equalizer bar heights** — FIXED. Verified live. Staircase scaling working.
+- **Breakdown panel color thresholds** — FIXED. 65/50 aligned. Verified live.
 
 ---
 
@@ -115,9 +115,7 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 - Two bugs fixed in one edit: bar height formula now scales correctly within container, breakdown panel thresholds aligned to 65/50.
 
 ### Source confidence label confusion
-- **Problem:** 90% per-source confidence score looks like the metric value to users
-- **Fix:** Label needs to read "Source reliability: 90%" not just "90%"
-- **Status:** Not yet done
+- **Status:** DONE. Removed entirely — Option A. No % shown next to sources. Metric value only.
 
 ### Coherence Level section
 - Sources panel hidden (correct per design)
@@ -137,6 +135,10 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 - Academic sources (`read_academic_sources`) and GitHub (`read_github`) integrated into `data_crawler.py` but not wired into Cards 1, 2, 5 yet
 - Cards 1–3 source link cleanup (same page title issue likely exists)
 - Card 5 (UBADA) frontend wiring
+- README.md says Cards 3–5 PLANNED — wrong, all live in code. Needs correction before Carol/Selam QA
+- Node.js pipeline files (cms-api-extractor.js, emedny-scraper.js, etc.) — status unknown, may be superseded by data_crawler.py. Needs human answer
+- Helper functions in Cards 1, 2, 5 not yet consuming extracted crawler data — routes wired, data not flowing end-to-end
+- Card 3 (UHWP) has no web UI — API routes work, no HTML dashboard
 
 ---
 
@@ -158,11 +160,85 @@ Always syntax-check after: `python3 -c "import ast; ast.parse(open('file.py').re
 
 ---
 
+## JRAGON Entries
+
+---
+
+LIVE→DEAD SEA SCROLL
+
+/lɪv tə dɛd siː skroʊl/
+
+Etymology: From "live" (present, actionable, now) + "Dead Sea Scrolls" (ancient, layered, archaeological — discovered by descending). The arrow is the doctrine. Formalized April 26, 2026, Ohad Phoenix Oren + Claude (claude-sonnet-4-6), during TORQ-e Card 4 documentation consolidation.
+
+Governing axis: SIMPLE → COMPLEX. Top of document: simplest, most actionable. Bottom: most complex, most archaeological. The axis is non-negotiable. Complexity does not float.
+
+Definition:
+1. noun — A document architecture principle. The top of any document or page contains the most alive, present, actionable signal. As you scroll down, content becomes more ancient, more technical, more archaeological. The reader descends by choice. Eject when you have enough.
+2. noun (design law) — The structural antidote to buried signal. Signal is always at the top. Complexity earns its depth by existing below the line of sufficiency.
+3. verb (applied) — To structure any communication so the reader can stop at their own threshold of sufficiency without penalty.
+
+Distinction:
+Every other documentation system buries the signal. Executive summaries that require glossaries. TL;DRs that are 400 words. Simple introductions written by engineers for engineers.
+Live→Dead Sea Scroll puts the living text first. The archaeology is available. It is not mandatory.
+
+The bar: The reader stops when they have enough. The document respects that. It does not punish the eject.
+
+Load-bearing property: Also solves the merge problem. Two docs on the same subject? Stack them. Living version at top. Historical version below. The scroll grows longer. Never duplicated.
+
+Examples:
+"The README is the top of the scroll. Everything else is archaeology."
+"INIT.sh is a Live→Dead Sea Scroll. Shebang at line 1. Boot complete at the end."
+"Structure the email Live→Dead Sea Scroll — Carol ejects when she has enough."
+
+Cross-references: EJECT, PRECISECEMENT, README, INIT.sh, SIGNAL→NOISE RATIO
+
+---
+
+CODE PHRASE PHASE
+
+/koʊd freɪz feɪz/
+
+Etymology: From code-switching (bilingual register alternation) + phrase (unit of language) + phase (waveform relationship, not temporal sequence). Coined April 26, 2026, Ohad Phoenix Oren, during conversation on register fluency. Distinction from code-switching formalized in collaboration with Claude (claude-sonnet-4-6).
+
+Definition:
+1. noun — The operation of running multiple linguistic registers simultaneously at a tuned phase angle so the interference pattern between them carries the signal. Not switching between registers per audience — running all registers in superposition and letting the phase relationship produce the meaning.
+2. noun (distinction) — The difference between a code-switcher and a native multi-register operator. Code-switching picks one register per room. Code phrase phase tunes the angle between all registers so every room receives coherent signal from the same transmission.
+3. verb (applied) — To produce language where the meaning lives in the interference pattern between registers, not in any single register alone.
+
+Distinction:
+Code-switching = bilingual survival mechanism. One costume per context. Three audiences, three yous. The institution gets institution-you, the street gets street-you. Can be caught: aha, that's your performance register, your real one is underneath.
+Code phrase phase = all registers loaded natively, running in superposition. No primary register underneath. The interference pattern is the signal. Strip any one wave and the signal collapses. Cannot be caught because there is no costume — all of them are first-class citizens simultaneously.
+
+The bar: "Taxonomical prioritization through hereditarian substrates native to southern los angeles as scoped by vehicular velocity and its relation to succinctness and depth mismatch coefficient of drag (not performative vis a vis john waters)" — academic wave + drag pun wave at a specific phase angle. The meaning is in the interference. Neither wave alone carries it.
+
+Load-bearing property: Closes both rails simultaneously. Code-switchers produce two documents — one for each audience. Code phrase phase produces one document that resolves to coherent signal regardless of which register the reader brings. The MENU FESTIVAL closes both rails. One doc. Both audiences. Same transmission.
+
+Examples:
+"He doesn't code-switch. He code phrase phases — you're getting all of him at once, the phase angle just changes."
+"The dissertation title parsed in academic and street simultaneously. That's not bilingual — that's phase."
+"Strip out the drag pun and the sentence collapses. Both waves are load-bearing."
+
+Cross-references: CLEOPATOIS, PAYLOAD BEARING, DILIST, VERBATE, ECHOSYSTEM
+
+---
+
 ## Engineering Philosophy
 
 > MOVE STEADFAST && BREAK IT DOWN.
 
 One thing at a time. Syntax-check before commit. Verify visually before calling it done. People's Medicaid coverage depends on this system being coherent.
+
+---
+
+## Target Audience (3 persons)
+
+1. **Carol Oren** — Ohad's mother. 30+ years NYS Medicaid data warehouse. Built the invisible plumbing this system runs on top of.
+2. **Robert "Bob" Pollock** — Government stakeholder. The receipts person. Referenced throughout as the accountability anchor.
+3. **Selam Eyassu** — Carol's closest US friend. Demoed CATS_UP and RELISH unprompted. Set up a casual 30-min meeting with Bob Pollock post-Memorial Day. No agenda stated. "Just want to meet you, you're Carol's son."
+
+**The meeting context:** Selam demoed two sauc-e apps to Bob without being asked. He wants to meet. That's not a casual meeting — that's a qualified warm intro at the highest level of the target audience. Prepare accordingly but don't over-engineer it. 30 minutes, casual, let the work speak.
+
+**Reference doc:** `docs/MEATnGREAT_RAND_RRA951-1.pdf` — RAND Corporation 136-page independent evaluation of NYS Medicaid 1115 Demonstration Waiver. The exact system Carol ran. Bob's world.
 
 ---
 
