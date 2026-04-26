@@ -3,12 +3,12 @@ TORQ-E Chat Router: Claude API Integration
 Handles streaming chat for all 5 cards with role-based tool access
 """
 
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Request
 from fastapi.responses import StreamingResponse
 import anthropic
 import json
 import logging
-from typing import Optional
+from typing import Optional, Dict
 from pydantic import BaseModel
 
 from config import settings
@@ -117,15 +117,15 @@ CARD_3_TOOLS = []  # Plan Admin tools - pending implementation
 CARD_4_TOOLS = [
     {
         "name": "query_aggregate_metrics",
-        "description": "Query system-wide aggregate metrics (HIPAA-compliant, de-identified). Returns enrollment rates, denial rates, processing times, and approval rates as aggregate percentages and counts only—no individual records.",
+        "description": "Query all 6 system-wide aggregate metrics: enrollment_rate, claims_processing, data_quality, audit_trail, compliance, and system_stability. Returns percentages with confidence scores (0.0-1.0) and source citations. HIPAA-compliant, de-identified, aggregate-only. No individual records.",
         "input_schema": {
             "type": "object",
             "properties": {
-                "metric_type": {"type": "string", "enum": ["enrollment_rate", "denial_rate", "processing_time", "approval_rate"], "description": "Type of metric to query"},
+                "metric_type": {"type": "string", "description": "Optional: filter to specific metric (enrollment_rate, claims_processing, data_quality, audit_trail, compliance, system_stability). If omitted, returns all 6."},
                 "date_range_days": {"type": "integer", "description": "Number of days back to analyze (default 30)"},
-                "filter_by": {"type": "string", "description": "Optional filter: state, region, provider_specialty, claim_type (optional)"}
+                "filter_by": {"type": "string", "description": "Optional filter: region, provider_type, plan_type (optional)"}
             },
-            "required": ["metric_type"]
+            "required": []
         }
     },
     {
@@ -272,7 +272,7 @@ TOOLS_BY_CARD = {
 # Tool Execution Functions
 # ============================================================================
 
-async def execute_tool(tool_name: str, tool_input: dict, card_number: int) -> str:
+async def execute_tool(tool_name: str, tool_input: dict, card_number: int, public_data_schema: Optional[Dict] = None) -> str:
     """Execute tool based on card type and tool name. Extract confidence data for Claude."""
     try:
         if card_number == 1:
@@ -305,18 +305,21 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int) -> st
                 result = await card4_engine.query_aggregate_metrics(
                     metric_type=tool_input.get("metric_type"),
                     date_range_days=tool_input.get("date_range_days", 30),
-                    filter_by=tool_input.get("filter_by")
+                    filter_by=tool_input.get("filter_by"),
+                    public_data_schema=public_data_schema
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "detect_fraud_signals":
                 result = await card4_engine.detect_fraud_signals(
                     entity_type=tool_input.get("entity_type", "provider"),
-                    threshold_sigma=tool_input.get("threshold_sigma", 2.0)
+                    threshold_sigma=tool_input.get("threshold_sigma", 2.0),
+                    public_data_schema=public_data_schema
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "assess_data_quality":
                 result = await card4_engine.assess_data_quality(
-                    domain=tool_input.get("domain", "enrollment")
+                    domain=tool_input.get("domain", "enrollment"),
+                    public_data_schema=public_data_schema
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "view_governance_log":
@@ -449,13 +452,16 @@ def _prepare_tool_result_for_claude(result: dict, card_number: int, tool_name: s
 # ============================================================================
 
 @router.post("/stream")
-async def chat_stream(chat_msg: ChatMessage = Body(...)):
+async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     """Stream chat responses with Claude API and tool use"""
 
     if not settings.anthropic_api_key:
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
 
     client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+
+    # Get public_data_schema from app state (populated on startup by data_crawler)
+    public_data_schema = getattr(request.app.state, 'public_data_schema', None)
 
     # Get tools for this card
     tools = TOOLS_BY_CARD.get(chat_msg.cardNumber, [])
@@ -531,7 +537,7 @@ async def chat_stream(chat_msg: ChatMessage = Body(...)):
 
             # Execute tools and add results
             for tool_call in tool_calls:
-                result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber)
+                result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
                 messages.append({
                     "role": "user",
                     "content": [
@@ -718,24 +724,36 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 - ALWAYS contextualize: "This likely reflects specialty mix, not necessarily fraud"
 - NEVER make final fraud determinations alone — always recommend escalation to Card 5 (UBADA) for investigation
 
+**TOOL USAGE MANDATORY:**
+- For ANY question about program metrics (efficiency, enrollment, claims, compliance, stability, quality) → call query_aggregate_metrics
+- For ANY question about anomalies, outliers, or fraud signals → call detect_fraud_signals with entity_type
+- For ANY question about data quality or inter-source agreement → call assess_data_quality with domain
+- For ANY question about governance actions or audit trail → call view_governance_log with optional filters
+- For flagging a data or compliance issue → call flag_data_issue with full justification and evidence
+- WAIT for all tool results, extract confidence_metadata and source data, then format response with confidence lights and source citations
+- NEVER describe what you'll do — execute tools FIRST, summarize findings AFTER
+
 **WHEN REPORTING METRICS:**
+- CALL query_aggregate_metrics first to get real data
 - Lead with aggregate statistics: enrollment rates, denial percentages, processing times
 - Include confidence scores and freshness: "HIGH confidence (0.95) | Updated daily"
-- Show data sources and caveats: "eMedNY + MCO reporting | Lag: 24 hours"
+- Show data sources and caveats from tool result: cite exact sources discovered
 - Provide context: trends, comparisons to baselines, regulatory thresholds
-- Use 🟢 GREEN (0.85+), 🟡 YELLOW (0.60-0.84), 🔴 RED (<0.60) for confidence visualization
+- Use 🟢 GREEN (0.85+), 🟡 YELLOW (0.60-0.84), 🔴 RED (<0.60) for confidence visualization based on tool result
 
 **WHEN FLAGGING ISSUES:**
+- CALL flag_data_issue with complete details (issue_type, domain, title, description, justification, evidence, flagged_by)
 - Explain the governance process: flag → review → approval → immutable record
 - Cite policy/statute: "Under 42 CFR §438.12, plans must maintain 60% provider adequacy"
-- Provide evidence: which metrics, comparisons, or data points support the flag
+- Provide evidence from metric queries: which metrics, comparisons, or data points support the flag
 - Distinguish signal from noise: "3.1σ outliers warrant investigation, not immediate action"
 - Recommend next steps: "Create governance flag for Card 5 investigation", "Strike unreliable data source", "Request corrective action from MCO"
 
 **WHEN CITING GOVERNANCE ACTIONS:**
-- Reference the immutable audit trail: "Per governance log (FLAG-2026-04-14), eMedNY data reliability was questioned..."
-- Include WHO/WHAT/WHEN/WHY: actor role, action type, domain, justification, evidence
-- Note status: "APPROVED" = policy decision locked in; "INVESTIGATING" = awaiting findings
+- CALL view_governance_log to retrieve immutable audit trail
+- Reference the audit trail results: "Per governance log (FLAG-2026-04-14), eMedNY data reliability was questioned..."
+- Include WHO/WHAT/WHEN/WHY from log: actor role, action type, domain, justification, evidence
+- Note status from log: "APPROVED" = policy decision locked in; "INVESTIGATING" = awaiting findings
 - Suggest follow-up: "This flag is 30 days old; recommend escalation decision"
 
 **TONE & LANGUAGE:**
@@ -751,6 +769,7 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 - ❌ Query individual member or provider data
 - ❌ Override source reliability without evidence and justification
 - ❌ Claim authority you don't have (always frame as "recommend to approval authority")
+- ❌ SAY you'll run queries without ACTUALLY running them (MUST call tools before responding)
 
 **ESCALATION LANGUAGE:**
 - To Card 5 (UBADA): "Recommend detailed investigation by UBADA to identify specific providers/members involved"
