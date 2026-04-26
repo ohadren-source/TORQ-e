@@ -485,8 +485,8 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     system_prompt = get_system_prompt(chat_msg.userType, chat_msg.cardNumber, chat_msg.umid, chat_msg.provider_id)
 
     # Initialize message history (in production, this would come from a database)
-    # Sanitize message to prevent Unicode encoding errors
-    clean_message = chat_msg.message.encode('utf-8', errors='ignore').decode('utf-8')
+    # Sanitize message to prevent Unicode encoding errors (replace invalid chars instead of stripping)
+    clean_message = chat_msg.message.encode('utf-8', errors='replace').decode('utf-8')
     messages = [{"role": "user", "content": clean_message}]
 
     async def generate_response():
@@ -559,8 +559,8 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             # Execute tools and add results to message history
             for tool_call in tool_calls:
                 result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
-                # Sanitize result to prevent Unicode encoding errors
-                clean_result = result.encode('utf-8', errors='ignore').decode('utf-8') if isinstance(result, str) else str(result)
+                # Sanitize result to prevent Unicode encoding errors (replace invalid chars instead of stripping)
+                clean_result = result.encode('utf-8', errors='replace').decode('utf-8') if isinstance(result, str) else str(result)
                 messages.append({
                     "role": "user",
                     "content": [
