@@ -63,9 +63,19 @@ async def startup_event():
         logger.error(f"❌ Database initialization failed: {e}")
         raise
 
-    # Crawler runs on-demand only (triggered by user action, not startup)
+    # Start background crawl — schema will be ready within ~30s of startup
     app.state.public_data_schema = None
-    logger.info("✅ Server ready. Crawler will run on-demand when triggered.")
+    import asyncio
+    async def _background_crawl():
+        try:
+            logger.info("Background crawler starting...")
+            schema = await discover_public_data()
+            app.state.public_data_schema = schema
+            logger.info(f"Background crawler complete: {schema.get('total_data_sources_discovered', 0)} sources from {schema.get('total_urls_visited', 0)} URLs")
+        except Exception as e:
+            logger.error(f"Background crawler failed: {e}")
+    asyncio.create_task(_background_crawl())
+    logger.info("✅ Server ready. Background crawl started.")
 
 # Include Card routes
 app.include_router(card1_router)
