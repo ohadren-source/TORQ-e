@@ -1,7 +1,6 @@
 """
 DATA CRAWLER SERVICE - TORQ-E
-httpx + BeautifulSoup + Scrapy + Splash stack
-Discover and map available data from public Medicaid repositories
+Playwright-based web crawler to discover and map available data from public Medicaid repositories
 NO DUMMY DATA - ONLY REAL PUBLIC REPOSITORY DATA
 
 Unified Substrate Repositories (for all Cards 1-5):
@@ -11,17 +10,13 @@ Unified Substrate Repositories (for all Cards 1-5):
 
 Integration: Uses reading_engine.py to extract data from discovered sources in multiple formats
 - PDF: research papers, regulatory docs, credentials
-- Web Pages: general content, watchdog sites, registries (httpx + BeautifulSoup)
-- Dynamic Content: JavaScript-heavy dashboards, interactive tools (Splash)
-- Structured Crawl: Scrapy spider for table/download discovery
+- Web Pages: general content, watchdog sites, registries
+- Dynamic Content: JavaScript-heavy dashboards, interactive tools
 - Academic Sources: PubMed, arXiv for research verification
 - GitHub: provider background, code transparency, documentation
 """
 
-import asyncio
-import httpx
-import requests as _requests
-from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 from typing import Dict, List, Any, Optional
 import json
 from datetime import datetime
@@ -29,19 +24,6 @@ from urllib.parse import urljoin, urlparse
 import logging
 import os
 import sys
-import re
-
-# Scrapy
-try:
-    import scrapy
-    from scrapy.crawler import CrawlerProcess
-    HAS_SCRAPY = True
-except ImportError:
-    HAS_SCRAPY = False
-
-# Splash
-SPLASH_URL = os.getenv("SPLASH_URL", "http://localhost:8050")
-HAS_SPLASH = True  # requests already imported above
 
 # Import reading_engine for multi-format data extraction
 try:
@@ -114,151 +96,137 @@ class PublicRepositoryCrawler:
 
     def crawl(self) -> Dict[str, Any]:
         """
-        Main entry point: Crawl all base URLs using httpx + BeautifulSoup + Scrapy + Splash stack
+        Main entry point: Crawl all base URLs and return data schema
         """
-        logger.info("Starting repository crawl with httpx + BeautifulSoup + Scrapy + Splash stack...")
+        logger.info("Starting repository crawl...")
 
-        # --- ENGINE 1 & 2: httpx + BeautifulSoup async pass ---
-        asyncio.run(self._crawl_all_httpx())
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
 
-        # --- ENGINE 3: Scrapy structured crawl ---
-        if HAS_SCRAPY:
-            try:
-                scrapy_data = self._run_scrapy_crawl()
-                self.discovered_data.extend(scrapy_data)
-                logger.info(f"✅ Scrapy pass: {len(scrapy_data)} additional sources")
-            except Exception as e:
-                logger.warning(f"⚠️  Scrapy pass failed: {e}")
-                self.errors.append({"engine": "scrapy", "error": str(e)})
-        else:
-            logger.warning("Scrapy not installed — skipping Scrapy engine pass")
+            for base_url in BASE_URLS:
+                logger.info(f"Crawling: {base_url}")
+                try:
+                    self._crawl_url(browser, base_url, depth=0)
+                except Exception as e:
+                    logger.error(f"Failed to crawl {base_url}: {str(e)}")
+                    self.errors.append({"url": base_url, "error": str(e)})
 
-        # --- ENGINE 4: Splash for JS-heavy URLs ---
-        js_heavy_urls = [
-            "https://health.data.ny.gov",
-            "https://omig.ny.gov/"
-        ]
-        for url in js_heavy_urls:
-            try:
-                splash_entry = self._fetch_via_splash(url)
-                if splash_entry:
-                    self.discovered_data.append(splash_entry)
-                    logger.info(f"✅ Splash fetched: {url}")
-            except Exception as e:
-                logger.warning(f"⚠️  Splash failed for {url}: {e}")
-                self.errors.append({"engine": "splash", "url": url, "error": str(e)})
+            browser.close()
 
         return self._generate_schema()
 
-    async def _crawl_all_httpx(self):
-        """Async httpx pass over all base URLs."""
-        headers = {
-            "User-Agent": "TORQ-e DataCrawler/1.0 (NYS Medicaid Data Discovery)",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        }
-        async with httpx.AsyncClient(headers=headers, timeout=30.0) as client:
-            for base_url in BASE_URLS:
-                logger.info(f"🔍 httpx crawling: {base_url}")
-                try:
-                    await self._crawl_url_httpx(client, base_url, depth=0)
-                except Exception as e:
-                    logger.error(f"❌ Failed to crawl {base_url}: {e}")
-                    self.errors.append({"url": base_url, "error": str(e)})
+    def _crawl_url(self, browser, url: str, depth: int = 0):
+        """
+        Recursively crawl a URL and discover data
+        """
+        if depth > MAX_CRAWL_DEPTH:
+            return
 
-    async def _crawl_url_httpx(self, client: httpx.AsyncClient, url: str, depth: int = 0):
-        """
-        Recursively crawl a URL using httpx + BeautifulSoup.
-        """
-        if depth > MAX_CRAWL_DEPTH or url in self.visited_urls:
+        if url in self.visited_urls:
             return
 
         self.visited_urls.add(url)
         logger.info(f"  [Depth {depth}] Analyzing: {url}")
 
         try:
-            response = await client.get(url, follow_redirects=True)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, "lxml")
+            page = browser.new_page()
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
-            self._discover_page_data_bs(soup, url)
+            # Discover data on this page
+            self._discover_page_data(page, url)
 
+            # Find links to follow (same domain only)
             domain = urlparse(url).netloc
-            for link in soup.find_all("a", href=True)[:10]:
-                href = link["href"]
-                absolute_url = urljoin(url, href)
-                link_domain = urlparse(absolute_url).netloc
-                if link_domain == domain and absolute_url not in self.visited_urls:
-                    if self._should_follow_link(absolute_url):
-                        await asyncio.sleep(0.1)
-                        await self._crawl_url_httpx(client, absolute_url, depth + 1)
+            links = page.query_selector_all("a[href]")
+
+            for link in links:
+                href = link.get_attribute("href")
+                if href:
+                    absolute_url = urljoin(url, href)
+                    link_domain = urlparse(absolute_url).netloc
+
+                    # Only follow links on same domain
+                    if link_domain == domain and absolute_url not in self.visited_urls:
+                        # Avoid infinite crawling - be selective
+                        if self._should_follow_link(absolute_url):
+                            self._crawl_url(browser, absolute_url, depth + 1)
+
+            page.close()
 
         except Exception as e:
-            logger.error(f"Error analyzing {url}: {e}")
+            logger.error(f"Error analyzing {url}: {str(e)}")
             self.errors.append({"url": url, "error": str(e)})
 
-    def _discover_page_data_bs(self, soup: BeautifulSoup, url: str):
+    def _discover_page_data(self, page, url: str):
         """
-        Analyze a BeautifulSoup page for available data sources.
+        Analyze a page for available data sources.
+        For each discovered source, attempt to extract data using reading_engine.
         """
-        # Tables
-        for i, table in enumerate(soup.find_all("table")[:5]):
-            rows = table.find_all("tr")
-            table_text = " ".join(cell.get_text().strip() for cell in rows[0].find_all(["td", "th"]))[:200] if rows else ""
-            data_entry = {
-                "type": "table",
-                "url": url,
-                "description": f"HTML Table #{i+1}: {table_text}",
-                "format": "HTML",
-                "row_count": len(rows),
-                "discovered_at": datetime.utcnow().isoformat(),
-                "confidence": 0.85,
-                "engine": "httpx+bs4"
-            }
-            if HAS_READING_ENGINE:
-                extraction = self._extract_source_data(url, "web", parse_type="general")
-                if extraction.get("raw_data"):
-                    data_entry["extracted_data"] = extraction.get("raw_data")
-                    data_entry["confidence"] = extraction.get("confidence", 0.7)
-            self.discovered_data.append(data_entry)
-            logger.info(f"    Found table on {url}")
+        # Check for tables
+        tables = page.query_selector_all("table")
+        if tables:
+            for i, table in enumerate(tables):
+                table_text = table.text_content()[:200]
+                data_entry = {
+                    "type": "table",
+                    "url": url,
+                    "description": f"HTML Table #{i+1}: {table_text}...",
+                    "format": "HTML",
+                    "discovered_at": datetime.utcnow().isoformat()
+                }
 
-        # Downloads
-        for download in soup.find_all("a", href=re.compile(r"\.(csv|xlsx|xls|json|pdf|xml)$", re.IGNORECASE))[:5]:
-            href = download.get("href", "")
-            text = download.get_text().strip()
+                # Extract table content if reading_engine available
+                if HAS_READING_ENGINE:
+                    extraction = self._extract_source_data(url, "web", parse_type="general")
+                    if extraction.get("raw_data"):
+                        data_entry["extracted_data"] = extraction.get("raw_data")
+                        data_entry["confidence"] = extraction.get("confidence", 0.7)
+
+                self.discovered_data.append(data_entry)
+                logger.info(f"    Found table on {url}")
+
+        # Check for download links
+        downloads = page.query_selector_all('a[href*=".csv"], a[href*=".xlsx"], a[href*=".xls"], a[href*=".json"], a[href*=".pdf"]')
+        for download in downloads:
+            href = download.get_attribute("href")
+            text = download.text_content().strip()
             if href:
                 full_url = urljoin(url, href)
-                file_ext = href.split(".")[-1].lower()
+                file_ext = href.split('.')[-1].lower()
                 data_entry = {
                     "type": "download",
                     "url": full_url,
                     "description": f"{text} ({file_ext})",
                     "format": file_ext.upper(),
                     "page_url": url,
-                    "discovered_at": datetime.utcnow().isoformat(),
-                    "confidence": 0.82,
-                    "engine": "httpx+bs4"
+                    "discovered_at": datetime.utcnow().isoformat()
                 }
+
+                # Extract data from PDFs using reading_engine
                 if HAS_READING_ENGINE and file_ext == "pdf":
                     try:
+                        # Download PDF temporarily
                         pdf_path = self._download_file(full_url, file_ext)
                         if pdf_path:
                             extraction = read_pdf(pdf_path)
                             data_entry["extracted_data"] = extraction.get("raw_data")
                             data_entry["confidence"] = extraction.get("confidence", 0.8)
+                            # Clean up temp file
                             try:
                                 os.remove(pdf_path)
                             except:
                                 pass
                     except Exception as e:
                         logger.warning(f"PDF extraction failed for {full_url}: {e}")
+
                 self.discovered_data.append(data_entry)
                 logger.info(f"    Found downloadable data: {text}")
 
-        # API endpoints
-        for api_link in soup.find_all("a", href=re.compile(r"/api/"))[:5]:
-            href = api_link.get("href", "")
-            text = api_link.get_text().strip()
+        # Check for API endpoints (look for /api/ in links)
+        api_links = page.query_selector_all('a[href*="/api/"]')
+        for api_link in api_links:
+            href = api_link.get_attribute("href")
+            text = api_link.text_content().strip()
             if href:
                 api_url = urljoin(url, href)
                 data_entry = {
@@ -267,118 +235,41 @@ class PublicRepositoryCrawler:
                     "description": f"API endpoint: {text}",
                     "format": "JSON/API",
                     "page_url": url,
-                    "discovered_at": datetime.utcnow().isoformat(),
-                    "confidence": 0.85,
-                    "engine": "httpx+bs4"
+                    "discovered_at": datetime.utcnow().isoformat()
                 }
+
+                # Attempt to fetch API endpoint
+                if HAS_READING_ENGINE:
+                    extraction = self._extract_source_data(api_url, "web", parse_type="general")
+                    if extraction.get("raw_data"):
+                        data_entry["extracted_data"] = extraction.get("raw_data")
+                        data_entry["confidence"] = extraction.get("confidence", 0.85)
+
                 self.discovered_data.append(data_entry)
                 logger.info(f"    Found API endpoint: {text}")
 
-        # Dashboards
-        page_text = soup.get_text().lower()
-        title_tag = soup.find("title")
-        page_title = title_tag.get_text().lower() if title_tag else ""
-        if any(kw in page_text or kw in page_title for kw in ["dashboard", "report", "statistics", "metrics", "data view"]):
+        # Check for data dashboards (look for /dashboard, /reports, /data)
+        page_text = page.text_content().lower()
+        page_title = page.title().lower()
+
+        if any(keyword in page_text or keyword in page_title for keyword in ["dashboard", "report", "statistics", "metrics", "data view"]):
             data_entry = {
                 "type": "dashboard",
                 "url": url,
-                "description": f"Data dashboard/report: {title_tag.get_text() if title_tag else url}",
+                "description": f"Data dashboard/report: {page.title()}",
                 "format": "Interactive",
-                "discovered_at": datetime.utcnow().isoformat(),
-                "confidence": 0.75,
-                "engine": "httpx+bs4"
+                "discovered_at": datetime.utcnow().isoformat()
             }
+
+            # Extract dashboard content using dynamic reader
             if HAS_READING_ENGINE:
                 extraction = read_dynamic_page(url, selector="body")
                 if extraction.get("raw_data"):
                     data_entry["extracted_data"] = extraction.get("raw_data")
-                    data_entry["confidence"] = extraction.get("confidence", 0.80)
+                    data_entry["confidence"] = extraction.get("confidence", 0.75)
+
             self.discovered_data.append(data_entry)
-            logger.info(f"    Found dashboard: {page_title}")
-
-    def _run_scrapy_crawl(self) -> List[Dict[str, Any]]:
-        """Scrapy spider pass for structured table and download extraction."""
-        if not HAS_SCRAPY:
-            return []
-
-        collected = []
-
-        class TorqeSpider(scrapy.Spider):
-            name = "torqe_integrated"
-            start_urls = BASE_URLS
-            custom_settings = {
-                "ROBOTSTXT_OBEY": True,
-                "DOWNLOAD_DELAY": 0.5,
-                "DEPTH_LIMIT": 2,
-                "LOG_ENABLED": False,
-            }
-
-            def parse(self, response):
-                for i, table in enumerate(response.css("table")[:5]):
-                    headers = table.css("th::text").getall()
-                    rows = table.css("tr")
-                    if rows:
-                        collected.append({
-                            "type": "table",
-                            "url": response.url,
-                            "description": f"Scrapy Table #{i+1}: {' '.join(headers)[:200]}",
-                            "format": "HTML",
-                            "row_count": len(rows),
-                            "discovered_at": datetime.utcnow().isoformat(),
-                            "confidence": 0.88,
-                            "engine": "scrapy"
-                        })
-                for link in response.css("a[href$='.csv'], a[href$='.xlsx'], a[href$='.json'], a[href$='.pdf']")[:5]:
-                    href = link.attrib.get("href", "")
-                    text = link.css("::text").get("").strip()
-                    if href:
-                        ext = href.split(".")[-1].lower()
-                        collected.append({
-                            "type": "download",
-                            "url": response.urljoin(href),
-                            "description": f"{text} ({ext})",
-                            "format": ext.upper(),
-                            "page_url": response.url,
-                            "discovered_at": datetime.utcnow().isoformat(),
-                            "confidence": 0.82,
-                            "engine": "scrapy"
-                        })
-                for href in response.css("a::attr(href)").getall()[:10]:
-                    yield response.follow(href, self.parse)
-
-        process = CrawlerProcess(settings={"LOG_ENABLED": False})
-        process.crawl(TorqeSpider)
-        process.start()
-        return collected
-
-    def _fetch_via_splash(self, url: str) -> Optional[Dict[str, Any]]:
-        """Use Splash to render JavaScript-heavy pages and extract content."""
-        try:
-            resp = _requests.get(
-                f"{SPLASH_URL}/render.html",
-                params={"url": url, "wait": 2, "timeout": 20, "resource_timeout": 10},
-                timeout=25
-            )
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "lxml")
-            title_tag = soup.find("title")
-            title = title_tag.get_text().strip() if title_tag else url
-            tables = soup.find_all("table")
-            downloads = soup.find_all("a", href=re.compile(r"\.(csv|xlsx|json|pdf|xml)$", re.IGNORECASE))
-            return {
-                "type": "dynamic",
-                "url": url,
-                "description": f"Splash-rendered: {title} | {len(tables)} tables, {len(downloads)} downloads",
-                "format": "HTML (JS-rendered)",
-                "tables_found": len(tables),
-                "downloads_found": len(downloads),
-                "discovered_at": datetime.utcnow().isoformat(),
-                "confidence": 0.85,
-                "engine": "splash"
-            }
-        except Exception as e:
-            logger.error(f"Splash render failed for {url}: {e}")
-            return None
+            logger.info(f"    Found dashboard: {page.title()}")
 
     def _extract_source_data(self, url: str, source_type: str, parse_type: str = "general") -> Dict[str, Any]:
         """
@@ -533,9 +424,8 @@ class PublicRepositoryCrawler:
 
 async def discover_public_data() -> Dict[str, Any]:
     """
-    FastAPI endpoint to trigger data discovery.
-    Returns schema of available data from public repositories.
-    Stack: httpx + BeautifulSoup + Scrapy + Splash
+    FastAPI endpoint to trigger data discovery
+    Returns schema of available data from public repositories
     """
     crawler = PublicRepositoryCrawler()
     return crawler.crawl()

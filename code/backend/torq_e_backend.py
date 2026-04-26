@@ -427,7 +427,7 @@ def engine_web():
 
 @app.route('/api/torq-e/engines/dynamic', methods=['POST'])
 def engine_dynamic():
-    """MCP Tool: Dynamic Content Engine (Splash)"""
+    """MCP Tool: Dynamic Content Engine (Playwright)"""
     try:
         data = request.json
         url = data.get("url")
@@ -514,7 +514,7 @@ def status():
             "academic": "Academic repositories (PubMed, arXiv, CrossRef)",
             "github": "GitHub profile analysis",
             "web": "Web page parsing (watchdog sites, registries)",
-            "dynamic": "Dynamic content via Splash"
+            "dynamic": "Dynamic content via Playwright"
         },
         "search": {
             "brave": "Brave Search API",

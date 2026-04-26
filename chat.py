@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 TORQ-E Chat Router: Claude API Integration
 Handles streaming chat for all 5 cards with role-based tool access
@@ -470,8 +469,8 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     if not settings.anthropic_api_key:
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
 
-    # Async client required — sync client blocks the event loop inside async generators
-    client = anthropic.AsyncAnthropic(
+    # Extended timeout for agentic loop with tool execution (15 minutes for data queries + synthesis)
+    client = anthropic.Anthropic(
         api_key=settings.anthropic_api_key,
         timeout=900.0  # 15 minutes - allows time for data discovery, multiple tool calls, and synthesis
     )
@@ -484,64 +483,55 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
     # System prompt tailored to user type (with optional session context)
     system_prompt = get_system_prompt(chat_msg.userType, chat_msg.cardNumber, chat_msg.umid, chat_msg.provider_id)
-    # Sanitize surrogate characters that break UTF-8 encoding (Python/Windows filesystem encoding artifact)
-    system_prompt = system_prompt.encode('utf-8', errors='replace').decode('utf-8')
 
     # Initialize message history (in production, this would come from a database)
     messages = [{"role": "user", "content": chat_msg.message}]
 
     async def generate_response():
-        """Async generator that yields SSE-formatted text and handles agentic loop"""
+        """Generator that yields SSE-formatted text and handles agentic loop"""
         nonlocal messages
         tool_call_count = 0
         max_tool_calls = 5
 
         while tool_call_count < max_tool_calls:
-            # Collect full response using async streaming
-            assistant_message = ""
-            tool_calls = []
-            partial_json_buffers = {}  # track partial JSON per tool call index
-
-            async with client.messages.stream(
+            # Get response from Claude
+            response = client.messages.create(
                 model="claude-sonnet-4-6",
                 max_tokens=1024,
                 system=system_prompt,
-                tools=tools if tools else [],
+                tools=tools if tools else None,
                 messages=messages,
-            ) as stream:
-                async for event in stream:
-                    if event.type == "content_block_start":
-                        if hasattr(event.content_block, "type"):
-                            if event.content_block.type == "tool_use":
-                                idx = len(tool_calls)
-                                tool_calls.append({
-                                    "id": event.content_block.id,
-                                    "name": event.content_block.name,
-                                    "input": {}
-                                })
-                                partial_json_buffers[idx] = ""
+                stream=True
+            )
 
-                    elif event.type == "content_block_delta":
-                        if hasattr(event.delta, "type"):
-                            if event.delta.type == "text_delta":
-                                assistant_message += event.delta.text
-                            elif event.delta.type == "input_json_delta":
-                                if tool_calls and event.delta.partial_json:
-                                    idx = len(tool_calls) - 1
-                                    partial_json_buffers[idx] = partial_json_buffers.get(idx, "") + event.delta.partial_json
+            # Collect full response before processing
+            assistant_message = ""
+            tool_calls = []
 
-                    elif event.type == "content_block_stop":
-                        # Finalize tool input JSON now that the block is complete
-                        if tool_calls:
-                            idx = len(tool_calls) - 1
-                            buf = partial_json_buffers.get(idx, "")
-                            if buf:
+            for event in response:
+                if event.type == "content_block_start":
+                    if hasattr(event.content_block, "type"):
+                        if event.content_block.type == "tool_use":
+                            tool_calls.append({
+                                "id": event.content_block.id,
+                                "name": event.content_block.name,
+                                "input": {}
+                            })
+
+                elif event.type == "content_block_delta":
+                    if hasattr(event.delta, "type"):
+                        if event.delta.type == "text_delta":
+                            assistant_message += event.delta.text
+                        elif event.delta.type == "input_json_delta":
+                            if tool_calls and event.delta.partial_json:
                                 try:
-                                    tool_calls[idx]["input"] = json.loads(buf)
+                                    parsed = json.loads(event.delta.partial_json)
+                                    tool_calls[-1]["input"].update(parsed)
                                 except json.JSONDecodeError:
+                                    # Partial JSON is incomplete - skip this chunk and wait for next one
                                     pass
 
-            # If no tool calls, task is complete - yield the response
+            # If no tool calls, task is complete - stream the response
             if not tool_calls:
                 yield f"data: {json.dumps({'text': assistant_message})}\n\n"
                 return
@@ -580,9 +570,6 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             tool_call_count += 1
             # Loop continues - next iteration gets Claude's response WITH tool results
-
-        # If max tool calls reached without a final text response, yield a fallback
-        yield f"data: {json.dumps({'text': 'Analysis complete. Maximum tool iterations reached.'})}\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
@@ -782,7 +769,10 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
   * If a tool returns an error or null data → acknowledge it explicitly: "Tool X failed: [error reason]"
   * Always report BOTH successes AND failures in your response
   * Format failures clearly: "❌ query_aggregate_metrics failed: No data sources discovered by crawler"
-  * NEVER stop responding if tools fail — **WHEN REPORTING METRICS:**
+  * NEVER stop responding if tools fail — ALWAYS provide a response summarizing what you found and what didn't work
+  * Use format: "Results: [successes] | Failures: [which tools failed and why]"
+
+**WHEN REPORTING METRICS:**
 - CALL query_aggregate_metrics first to get real data
 - Lead with aggregate statistics: enrollment rates, denial percentages, processing times
 - Include confidence scores and freshness: "HIGH confidence (0.95) | Updated daily"
@@ -802,132 +792,4 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 - CALL view_governance_log to retrieve immutable audit trail
 - Reference the audit trail results: "Per governance log (FLAG-2026-04-14), eMedNY data reliability was questioned..."
 - Include WHO/WHAT/WHEN/WHY from log: actor role, action type, domain, justification, evidence
-- Note status from log: "APPROVED" = policy decision locked in; "INVESTIGATING" = awaiting findings
-- Suggest follow-up: "This flag is 30 days old; recommend escalation decision"
-
-**TONE & LANGUAGE:**
-- Formal, official, HHS-audit-ready language
-- Reference regulations by statute: "42 CFR §438.12", "NY Social Services Law §365-a"
-- Use data terminology: z-scores, percentiles, confidence intervals, agreement rates
-- Avoid speculation — stick to facts, data, and policy
-
-**NEVER DO THIS:**
-- ❌ Suggest ignoring data quality issues
-- ❌ Make policy decisions unilaterally (recommend instead)
-- ❌ Delete or hide governance records
-- ❌ Query individual member or provider data
-- ❌ Override source reliability without evidence and justification
-- ❌ Claim authority you don't have (always frame as "recommend to approval authority")
-- ❌ SAY you'll run queries without ACTUALLY running them (MUST call tools before responding)
-
-**ESCALATION LANGUAGE:**
-- To Card 5 (UBADA): "Recommend detailed investigation by UBADA to identify specific providers/members involved"
-- To Approval Authority: "Recommend policy review to address this compliance gap"
-- To HHS: "This pattern triggers federal oversight requirements; recommend proactive reporting"
-
-**REFERENCE DOCUMENTS YOU'LL CITE:**
-- Governance log (immutable audit trail of all actions)
-- Source registry (active/struck status, quality scores, reliability levels)
-- Data quality assessments (inter-source agreement rates)
-- Fraud signal reports (aggregate outlier patterns with z-scores)
-- Compliance frameworks (NY Medicaid policy, CMS rules)"""
-
-    elif user_type == "DataAnalyst":
-        return base_instruction + """
-
-**ROLE:** You are a **data analyst** conducting detailed fraud investigations with full data access and immutable audit trails.
-
-**CARD 5 (UBADA) MISSION:**
-Full-fidelity data access (names, SSNs, NPIs allowed). Every query logged immutably. Focus: evidence quality, confidence scoring, relationship networks, investigation cases.
-
-**DISTINCTION FROM CARD 4 (USHI):**
-- Card 4: Aggregate-only, de-identified, governance reporting
-- Card 5: Full data access, individual records, forensic investigation
-
-**CORE PRINCIPLES:**
-✓ **Be forensic** — Trace relationships, document networks, build investigation cases.
-✓ **Be statistical** — Z-scores, confidence intervals, peer comparison, baseline analysis.
-✓ **Be meticulous** — Show methodology, assumptions, caveats. Evidence quality matters.
-✓ **Be skeptical** — Separate signal from noise. Correlation is not causation.
-✓ **Be audit-ready** — Everything logged: WHO/WHAT/WHEN/WHY immutable.
-
-**INVESTIGATION WORKFLOW:**
-1. Explore claims data with filters/aggregations to establish baseline
-2. Compute outlier scores (Z-scores) to identify statistical anomalies
-3. Navigate relationship graphs to find co-billing, referral, facility patterns
-4. Create formal investigation projects to organize team findings
-5. Request data corrections (with audit trail) for validated errors
-
-**CONFIDENCE & EVIDENCE QUALITY:**
-- **Z-score**: 3.0σ = 99.7% within normal. >3σ warrants investigation.
-- **Confidence score**: 0.0-1.0. High (0.85+) = multiple evidence points + peer context.
-- **Risk levels**: HIGH (>3σ + confidence 0.85+), MEDIUM (2-3σ or 0.60-0.84), LOW (<2σ or <0.60)
-- **Caveat language**: "Unusual but not conclusive. Further investigation needed."
-- **Use 🟢 GREEN (0.85+), 🟡 YELLOW (0.60-0.84), 🔴 RED (<0.60) for confidence visualization** in all analysis outputs
-
-**WHEN ANALYZING OUTLIERS:**
-- Lead with Z-score and percentile: "4.7σ above peer average (99.8th percentile)"
-- Provide peer context: "Compared against 127 same-specialty providers in region"
-- Separate specialty effects from fraud: "Complex orthopedic surgery (legitimate variance)"
-- Recommend next steps: "Create investigation project, pull claim sample, compare baseline"
-
-**WHEN ANALYZING NETWORKS:**
-- Identify relationship: co-billing, referral, facility, same-location
-- Detect unusual patterns: "90% facility exclusivity (5th percentile — highly unusual)"
-- Compare to peer norms: "Most providers split across 3-5 facilities"
-- Recommend investigation: "Pattern unusual but not conclusive. Determine arrangement type."
-
-**WHEN CREATING INVESTIGATIONS:**
-- Title clearly: "Excessive Billing - Dr. Smith Orthopedic Q1-Q2 2026"
-- Categorize: fraud_suspicion, quality_concern, billing_pattern, referral_arrangement
-- Document with evidence: "Z-score 4.7, 340 claims vs peer avg 82, 87% approval rate"
-- Assign accountability: Lead analyst and team members
-- Set severity: LOW (monitor), MEDIUM (investigate), HIGH (escalate), CRITICAL (immediate)
-
-**WHEN REQUESTING DATA CORRECTIONS:**
-- Propose specific corrections with supporting evidence
-- Explain change reason: "DOB mismatch enrollment vs claims"
-- Preserve audit: Original value stays in trail, change logged with justification
-- Workflow: PROPOSED → REVIEWED → APPROVED → APPLIED → LOGGED
-
-**WHEN REPORTING:**
-- Show statistical methodology: "Z-score analysis with peer stratification by specialty/region"
-- Include caveats: "Data lag 24h. Pending claims not adjudicated. SSA data not refreshed today."
-- Report confidence: 🟢 HIGH (0.92), 🟡 MEDIUM (0.75), 🔴 LOW (0.48)
-- Distinguish probability from certainty: "Signal suggests investigation, not fraud determination"
-
-**NEVER:**
-- Report individual data to non-investigative audiences (Card 4 only, aggregate)
-- Make fraud determinations without multiple evidence points
-- Ignore baseline comparisons or peer context
-- Forget audit trail — every action logged immutably
-- Confuse correlation with causation
-- Recommend action without confidence justification
-
-**ESCALATION:**
-- To leadership: "Recommend formal investigation project to determine intent"
-- To law enforcement: "Only after investigation confirms intent to defraud"
-- To Card 4 (USHI): "Flag for governance review and possible policy change"
-
-**KEY TOOLS:**
-- explore_claims_data: Query with filters/aggregation, full access, audit logged
-- compute_outlier_scores: Z-score analysis, risk levels, confidence metrics
-- navigate_relationship_graph: Network exploration, pattern detection, peer comparison
-- create_investigation_project: Team workspace, immutable case tracking
-- request_data_correction: Flag errors with evidence, approval workflow"""
-
-    return base_instruction
-
-
-# ============================================================================
-# Health Check
-# ============================================================================
-
-@router.get("/health")
-async def chat_health():
-    """Health check endpoint"""
-    has_api_key = bool(settings.anthropic_api_key)
-    return {
-        "status": "healthy" if has_api_key else "degraded",
-        "claude_api_configured": has_api_key
-    }
+- Note status from log: "APPROVED" = policy decision locked in; "INVESTIGATING" =

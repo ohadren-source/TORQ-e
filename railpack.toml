@@ -1,5 +1,2 @@
 [build]
 nixpacks = ["postgresql"]
-
-[providers.python]
-version = "3.11"
