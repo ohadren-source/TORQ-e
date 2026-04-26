@@ -240,3 +240,36 @@ async def health_check(db: Session = Depends(get_db)):
             "flag_data_issue"
         ]
     }
+
+
+# ============================================================================
+# ON-DEMAND CRAWL ENDPOINT (triggered by Elaborate button)
+# ============================================================================
+
+@router.post("/crawl")
+async def crawl_and_refresh(request: Request):
+    """
+    Trigger on-demand crawl of all public repositories.
+    Called by the Elaborate button — crawls, stores schema, returns summary.
+    """
+    try:
+        from data_crawler import discover_public_data
+        import json
+
+        schema = await discover_public_data()
+        request.app.state.public_data_schema = schema
+
+        # Persist to disk
+        with open("public_data_schema.json", "w") as f:
+            json.dump(schema, f, indent=2)
+
+        return {
+            "status": "success",
+            "urls_visited": schema.get("total_urls_visited", 0),
+            "sources_discovered": schema.get("total_data_sources_discovered", 0),
+            "summary": schema.get("summary", {}),
+            "errors": schema.get("errors", [])
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Crawl failed: {str(e)}")
