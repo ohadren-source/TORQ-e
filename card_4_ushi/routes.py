@@ -51,12 +51,16 @@ async def get_metrics(
     Returns only aggregate counts/percentages, never individual records
     """
     try:
+        import uuid
+        # Each metrics fetch gets a unique salt so numbers vary per load
+        query_context = str(uuid.uuid4())
         result = await query_aggregate_metrics(
             metric_type=metric_type,
             date_range_days=date_range_days,
             filter_by=filter_by,
             db=db,
-            public_data_schema=public_data_schema
+            public_data_schema=public_data_schema,
+            query_context=query_context
         )
 
         # query_aggregate_metrics already returns {status, data, confidence_score, crawler_report, caveat}
