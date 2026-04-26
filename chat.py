@@ -477,6 +477,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
         nonlocal messages
         tool_call_count = 0
         max_tool_calls = 5
+        final_response = ""
 
         while tool_call_count < max_tool_calls:
             # Stream response from Claude
@@ -510,8 +511,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                     if hasattr(event.delta, "type"):
                         if event.delta.type == "text_delta":
                             assistant_message += event.delta.text
-                            # Yield text as we receive it (true streaming)
-                            yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
+                            # BUFFER text (don't yield yet - we need to see if tool calls happen)
                         elif event.delta.type == "input_json_delta":
                             # Accumulate JSON input for tool use
                             if tool_calls:
@@ -519,10 +519,15 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                                     json.loads(event.delta.partial_json)
                                 )
 
-            # If no tool calls, we're done
+            # If no tool calls, yield the final response
             if not tool_calls:
+                final_response = assistant_message
+                # Yield in chunks to simulate streaming
+                for char in assistant_message:
+                    yield f"data: {json.dumps({'text': char})}\n\n"
                 return
 
+            # Tool calls detected - DON'T yield the planning text yet, just execute tools
             # Process tool calls (agentic loop)
             assistant_content = [{"type": "text", "text": assistant_message}]
             for tool_call in tool_calls:
@@ -535,7 +540,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             messages.append({"role": "assistant", "content": assistant_content})
 
-            # Execute tools and add results
+            # Execute tools and add results (silently - no streaming yet)
             for tool_call in tool_calls:
                 result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
                 messages.append({
@@ -550,6 +555,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                 })
 
             tool_call_count += 1
+            # Loop continues - Claude will now respond WITH tool results, and that response WILL be streamed
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
