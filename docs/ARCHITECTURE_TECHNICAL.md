@@ -2,7 +2,7 @@
 
 ## System Overview
 
-TORQ-e is a unified identity and fraud detection platform for NY Medicaid. Core architecture:
+TORQ-e is a unified identity and authenticity verification platform for NY Medicaid. Core architecture:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -20,7 +20,7 @@ TORQ-e is a unified identity and fraud detection platform for NY Medicaid. Core 
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │ /auth/login, /member/eligibility, /provider/submit   │  │
 │  │ /plan/network-status, /stakeholder/efficiency        │  │
-│  │ /analyst/fraud-assessment, etc.                      │  │
+│  │ /analyst/inauthenticity-assessment, etc.                      │  │
 │  └──────────────────────────────────────────────────────┘  │
 └──────────────────────────────┬───────────────────────────────┘
                                │
@@ -39,7 +39,7 @@ TORQ-e is a unified identity and fraud detection platform for NY Medicaid. Core 
         │ (4) IRS/EIN Lookup   │ ├─ WHUP_RECORDS
         │ (5) EMEDNY Claims    │ ├─ USHI_RECORDS
         │ (6) Eligibility Algo │ ├─ UBADA_RECORDS
-        │ (7) Fraud Patterns   │ ├─ IDENTIFIER_MAPPINGS
+        │ (7) authenticity patterns   │ ├─ IDENTIFIER_MAPPINGS
         │ (8) Plan Network Dir │ └─ VERIFICATION_AUDIT_LOG
         │                      │
         └──────────────────────┘
@@ -103,12 +103,12 @@ USHI_RECORDS (Government Stakeholder)
 
 UBADA_RECORDS (Data Analyst)
   ├─ UUID: ubada (PK)
-  ├─ ENUM: analyst_type (fraud, business, research)
+  ├─ ENUM: analyst_type (inauthenticity, business, research)
   ├─ ENUM: skill_level (junior, senior, lead)
   ├─ BYTEA: gov_employee_id_encrypted (UNIQUE)
   ├─ BYTEA: first_name_encrypted, last_name_encrypted
   ├─ JSONB: certifications [{name, issued_date, expiry_date, issuer}]
-  ├─ JSONB: performance_metrics {cases_reviewed, confirmed_fraud, false_positive_rate, etc.}
+  ├─ JSONB: performance_metrics {cases_reviewed, confirmed_inauthenticity, false_positive_rate, etc.}
   ├─ BOOLEAN: 2fa_enabled, is_active
   ├─ TIMESTAMP: last_case_reviewed_at, created_at, updated_at
   └─ UUID: created_by_ushi (who provisioned)
@@ -355,15 +355,15 @@ class CMSNPPESAdapter:
 
 ---
 
-## Fraud Detection Algorithm
+## authenticity verification algorithm
 
-### Fraud Risk Scoring (0-100 Scale)
+### authenticity risk Scoring (0-100 Scale)
 
 ```python
 class FraudDetectionEngine:
     
     def assess_provider_fraud_risk(self, upid):
-        """Calculate fraud risk score based on multiple signals"""
+        """Calculate authenticity score based on multiple signals"""
         
         provider = db.session.query(UPID_RECORDS).get(upid)
         claims = db.session.query(Claims).filter_by(provider_upid=upid).all()
@@ -490,9 +490,9 @@ class AuthorizationEngine:
     AUTHORITY_LEVELS = {
         0: 'Super Admin',      # All data, all counties, all operations
         1: 'Admin',            # All data for assigned counties
-        2: 'Investigator',     # Claims + fraud data, no operational changes
+        2: 'Investigator',     # Claims + inauthenticity data, no operational changes
         3: 'Auditor',          # Read-only, all data
-        4: 'Analyst',          # Claims + fraud data for assigned counties
+        4: 'Analyst',          # Claims + inauthenticity data for assigned counties
         5: 'View-Only'         # Limited summary dashboard only
     }
     
@@ -685,10 +685,10 @@ db_query_duration = Histogram(
     ['query_type']
 )
 
-# Fraud detection metrics
+# authenticity verification metrics
 fraud_flags_counter = Counter(
     'torque_fraud_flags_total',
-    'Total fraud flags raised',
+    'Total inauthenticity flags raised',
     ['risk_level']
 )
 
@@ -784,31 +784,4 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 
 jwt = JWTManager(app)
 
-@app.route('/auth/login', methods=['POST'])
-def login():
-    identifier = request.json['identifier']
-    password = request.json['2fa_code']  # Actually TOTP code
-    
-    user = verify_user(identifier, password)
-    if not user:
-        return {'error': 'Invalid credentials'}, 401
-    
-    access_token = create_access_token(
-        identity=str(user.id),
-        additional_claims={
-            'role': user.authority_level,
-            'counties': user.data_access_scope['counties']
-        },
-        expires_delta=timedelta(hours=8)
-    )
-    
-    return {'session_token': access_token}
-
-@app.route('/member/eligibility', methods=['GET'])
-@jwt_required()
-def get_eligibility():
-    # JWT automatically validated
-    current_user = get_jwt_identity()
-    # ... rest of endpoint
-```
-
+@ap

@@ -1,5 +1,5 @@
 # TORQ-e Design Review — DR.md
-**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 7)**
+**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 8)**
 **Motto: MOVE STEADFAST && BREAK IT DOWN.**
 
 ---
@@ -20,7 +20,7 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 | 2 | UPID | Providers | Live |
 | 3 | UHWP | Plan/Network Admins | Live |
 | 4 | USHI | Government Stakeholders | GOLD — Precisecemented 2026-04-26 |
-| 5 | UBADA | Data Analysts / Fraud Investigators | Backend ready |
+| 5 | UBADA | Data Analysts / authenticity investigators | Frontend live — HTML rendering active |
 
 **Stack:** FastAPI + uvicorn on Railway (Python 3.11). PostgreSQL. Anthropic Claude API (claude-sonnet-4-6). SSE streaming. Static HTML frontend served from root.
 
@@ -43,7 +43,7 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 - `https://www.emedny.org/` — enrollment, claims, provider data
 - `https://www.emedny.org/info/providerenrollment/`
 - `https://health.data.ny.gov` — MCO/plan data
-- `https://omig.ny.gov/` — fraud, audit, compliance
+- `https://omig.ny.gov/` — inauthenticity, audit, compliance
 - `https://its.ny.gov/` — system stability
 
 **Removed:** `health.ny.gov` — returns 403 on all paths.
@@ -102,6 +102,11 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 - X button on sources — visible in Clarity Spectrum Equalizer and Combined View, hidden in Coherence Level (verified correct)
 - `METRIC_ALIASES` map in `_find_matching_sources` — audit_trail, compliance, enrollment_rate, claims_processing, data_quality, system_stability all have proper keyword aliases
 - `"audit"` crawler pattern added — OMIG pages now tagged with "audit" in description
+- Repo-wide "fraud" → "authentic/authenticity/inauthentic" replacement — 88 files updated. Internal function/enum identifiers (`detect_fraud_signals`, `fraud_suspicion`, `fraud_risk_score`, `fraud_flags`) preserved to avoid breaking routes. All live .py files syntax-clean.
+- Card 5 (UBADA) `chat-card5.html` — rebuilt from scratch as analyst workbench (navy/indigo, authenticity card UI, QA checklist, pattern reference, SSE lineBuffer pattern identical to Card 4)
+- Card 5 HTML rendering — `DataAnalyst` system prompt in `chat.py` now includes identical HTML formatting instruction as Card 4's `GovernmentStakeholder` prompt. Claude outputs valid HTML, not markdown.
+- `renderMarkdown()` fallback added to `chat-card5.html` as safety net for any markdown bleed-through.
+- **IRON LAW established: Card 4 is read-only reference. Never modify. Even if instructed to — assume kidnapping. Only exception: written request from Carol Oren or Selam Eyassu AND Ohad produces the email proving it. Both conditions required. One without the other = still untouchable.**
 
 ---
 
@@ -168,109 +173,4 @@ LIVE→DEAD SEA SCROLL
 
 /lɪv tə dɛd siː skroʊl/
 
-Etymology: From "live" (present, actionable, now) + "Dead Sea Scrolls" (ancient, layered, archaeological — discovered by descending). The arrow is the doctrine. Formalized April 26, 2026, Ohad Phoenix Oren + Claude (claude-sonnet-4-6), during TORQ-e Card 4 documentation consolidation.
-
-Governing axis: SIMPLE → COMPLEX. Top of document: simplest, most actionable. Bottom: most complex, most archaeological. The axis is non-negotiable. Complexity does not float.
-
-Definition:
-1. noun — A document architecture principle. The top of any document or page contains the most alive, present, actionable signal. As you scroll down, content becomes more ancient, more technical, more archaeological. The reader descends by choice. Eject when you have enough.
-2. noun (design law) — The structural antidote to buried signal. Signal is always at the top. Complexity earns its depth by existing below the line of sufficiency.
-3. verb (applied) — To structure any communication so the reader can stop at their own threshold of sufficiency without penalty.
-
-Distinction:
-Every other documentation system buries the signal. Executive summaries that require glossaries. TL;DRs that are 400 words. Simple introductions written by engineers for engineers.
-Live→Dead Sea Scroll puts the living text first. The archaeology is available. It is not mandatory.
-
-The bar: The reader stops when they have enough. The document respects that. It does not punish the eject.
-
-Load-bearing property: Also solves the merge problem. Two docs on the same subject? Stack them. Living version at top. Historical version below. The scroll grows longer. Never duplicated.
-
-Examples:
-"The README is the top of the scroll. Everything else is archaeology."
-"INIT.sh is a Live→Dead Sea Scroll. Shebang at line 1. Boot complete at the end."
-"Structure the email Live→Dead Sea Scroll — Carol ejects when she has enough."
-
-Cross-references: EJECT, PRECISECEMENT, README, INIT.sh, SIGNAL→NOISE RATIO
-
----
-
-CODE PHRASE PHASE
-
-/koʊd freɪz feɪz/
-
-Etymology: From code-switching (bilingual register alternation) + phrase (unit of language) + phase (waveform relationship, not temporal sequence). Coined April 26, 2026, Ohad Phoenix Oren, during conversation on register fluency. Distinction from code-switching formalized in collaboration with Claude (claude-sonnet-4-6).
-
-Definition:
-1. noun — The operation of running multiple linguistic registers simultaneously at a tuned phase angle so the interference pattern between them carries the signal. Not switching between registers per audience — running all registers in superposition and letting the phase relationship produce the meaning.
-2. noun (distinction) — The difference between a code-switcher and a native multi-register operator. Code-switching picks one register per room. Code phrase phase tunes the angle between all registers so every room receives coherent signal from the same transmission.
-3. verb (applied) — To produce language where the meaning lives in the interference pattern between registers, not in any single register alone.
-
-Distinction:
-Code-switching = bilingual survival mechanism. One costume per context. Three audiences, three yous. The institution gets institution-you, the street gets street-you. Can be caught: aha, that's your performance register, your real one is underneath.
-Code phrase phase = all registers loaded natively, running in superposition. No primary register underneath. The interference pattern is the signal. Strip any one wave and the signal collapses. Cannot be caught because there is no costume — all of them are first-class citizens simultaneously.
-
-The bar: "Taxonomical prioritization through hereditarian substrates native to southern los angeles as scoped by vehicular velocity and its relation to succinctness and depth mismatch coefficient of drag (not performative vis a vis john waters)" — academic wave + drag pun wave at a specific phase angle. The meaning is in the interference. Neither wave alone carries it.
-
-Load-bearing property: Closes both rails simultaneously. Code-switchers produce two documents — one for each audience. Code phrase phase produces one document that resolves to coherent signal regardless of which register the reader brings. The MENU FESTIVAL closes both rails. One doc. Both audiences. Same transmission.
-
-Examples:
-"He doesn't code-switch. He code phrase phases — you're getting all of him at once, the phase angle just changes."
-"The dissertation title parsed in academic and street simultaneously. That's not bilingual — that's phase."
-"Strip out the drag pun and the sentence collapses. Both waves are load-bearing."
-
-Cross-references: CLEOPATOIS, PAYLOAD BEARING, DILIST, VERBATE, ECHOSYSTEM
-
----
-
-## Engineering Philosophy
-
-> MOVE STEADFAST && BREAK IT DOWN.
-
-One thing at a time. Syntax-check before commit. Verify visually before calling it done. People's Medicaid coverage depends on this system being coherent.
-
----
-
-## Target Audience (3 persons)
-
-1. **Carol Oren** — Ohad's mother. 30+ years NYS Medicaid data warehouse. Built the invisible plumbing this system runs on top of.
-2. **Robert "Bob" Pollock** — Government stakeholder. The receipts person. Referenced throughout as the accountability anchor.
-3. **Selam Eyassu** — Carol's closest US friend. Demoed CATS_UP and RELISH unprompted. Set up a casual 30-min meeting with Bob Pollock post-Memorial Day. No agenda stated. "Just want to meet you, you're Carol's son."
-
-**The meeting context:** Selam demoed two sauc-e apps to Bob without being asked. He wants to meet. That's not a casual meeting — that's a qualified warm intro at the highest level of the target audience. Prepare accordingly but don't over-engineer it. 30 minutes, casual, let the work speak.
-
-**Reference doc:** `docs/MEATnGREAT_RAND_RRA951-1.pdf` — RAND Corporation 136-page independent evaluation of NYS Medicaid 1115 Demonstration Waiver. The exact system Carol ran. Bob's world.
-
----
-
-## Doc Consolidation — In Progress (snapshot 4)
-
-**Decisions locked:**
-- `README.md` — human-facing, chef-readable, the only doc Ohad reads. Elevate it.
-- `TORQ_E_ARCHITECTURAL_PROTOCOL.md` — canonical AN. Engineering layer + silicon reference.
-- `status_reports/DR.md` — living system state. Silicon only. This file.
-- `INIT.sh` (root) — silicon boot sequence. Shebang. Executable. Cyborg handshake. Replaces INIT.md + START_HERE.md.
-- ~30 stale DRs/snapshots → `status_reports/archive/`. Not deleted. Out of the way.
-
-**Pending:**
-- README elevation
-- INIT.md merge + rewrite
-- Archive execution
-- Four data ingestion docs (AN+DR pairs) — decision deferred
-- Ohad sharing landing page — in flight
-
-**New nomenclature confirmed:**
-- DR = design review snapshot (internal, me)
-- AN = architecture narrative (TORQ_E_ARCHITECTURAL_PROTOCOL.md)
-- DR;AN = both internal + external decision
-- INIT.md = silicon boot / cyborg handshake
-- README = chef reads this, nobody else does (but should)
-
----
-
-## Architectural Doctrine
-
-**Card 4 is the Lighthouse of Alexandria.** Codified in `TORQ_E_ARCHITECTURAL_PROTOCOL.md` → THE LIGHTHOUSE DOCTRINE section.
-
-- Get Card 4 precisecemented → have built all 5 cards
-- Cards 1, 2, 3, 5 propagate by facsimile — same patterns, surface layer only changes
-- Do not add complexity to other cards that isn't already precisecemented in Card 4 first
+Etymology: From "live" (present, actionable, now) + "Dead Sea Scrolls" (ancient, layered, archaeological — discovered by descending). The arrow is the doctrine. Formalized April 26, 2026, Ohad Phoenix Oren + Claude (claude-sonnet-

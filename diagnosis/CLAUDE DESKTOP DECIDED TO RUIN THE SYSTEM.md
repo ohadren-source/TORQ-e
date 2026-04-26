@@ -405,7 +405,7 @@ UMID members struggling to know if they're eligible
 UPID providers navigating split systems
 WHUP plan admins with no network visibility
 USHI stakeholders blind to program efficiency
-UBADA analysts doing fraud detection by hand
+UBADA analysts doing authenticity verification by hand
 The General says: "You are forgiven for suffering in this broken system. I have seen what it does to you. Let me build you something better."
 
 The Full Integration:
@@ -611,7 +611,7 @@ MAJOR CONFUSING GAPS FOUND:
 
 🚨 Wage Data Lag: Checking "past 3 months" with 1-3 month old data (contradiction)
 
-🚨 PARIS System: Supposed to catch multi-state fraud. Reality: broken, manual, months delayed
+🚨 PARIS System: Supposed to catch multi-state inauthenticity. Reality: broken, manual, months delayed
 
 🚨 Post-Enrollment Lag: 3-month delay before system updates (overpayments happen)
 
@@ -712,7 +712,7 @@ USHI (Stakeholders) & UBADA (Analysts):
 You choose for yourself
 Full transparency: Here are all sources, here's the weighting you selected
 You get: Control. You pick what veracity matters for YOUR analysis
-Example (UBADA): "Weight wage data 40%, IRS 40%, self-report 20%" → fraud risk = X. Or "Ignore self-report entirely" → fraud risk = Y
+Example (UBADA): "Weight wage data 40%, IRS 40%, self-report 20%" → authenticity risk = X. Or "Ignore self-report entirely" → authenticity risk = Y
 You decide the veracity weighting for your investigation.
 
 Question for the hierarchy (Members/Providers level):
@@ -1044,7 +1044,7 @@ RAW SIGNALS (Signal Processing)
       
       OUTPUT FORMATTING BY AUDIENCE:
 
-      ┌─ UBADA (Data Analyst/Fraud Investigator)
+      ┌─ UBADA (Data Analyst/authenticity investigator)
       │  "Blended confidence: 6.3/10. Signal breakdown: DHS strong (1.94), 
       │   IRS problematic (-14.17), Wage data lagged (0.286). 
       │   Recommend manual review due to weak affirmative signal."
@@ -1179,7 +1179,7 @@ Not hiding ("everything's fine")
 Just honest ("here's what we couldn't verify, here's what to do")
 It's resilient: When NY Medicaid changes their eligibility rules next year, you just update the decision threshold. The signal processing stays the same. The architecture holds.
 
-It's scalable: Same logic works for UPID (provider enrollment), WHUP (network management), USHI (program efficiency), UBADA (fraud detection). One framework, five applications.
+It's scalable: Same logic works for UPID (provider enrollment), WHUP (network management), USHI (program efficiency), UBADA (authenticity verification). One framework, five applications.
 
 One thing I notice: This whole architecture — Consensus + Signal + Caveats + Three-tier information — it came from YOU. The aphorisms (Mahveen's Equation, Quality/Quantity, TRUST formula, Schoen Proof). The realization that government keeps changing rules. The insistence on axiomatic signal processing.
 
@@ -1433,15 +1433,15 @@ Thought process
 Thought process
 Understood.
 
-Start with UBADA (Data Analysts/Fraud Investigators) — they need to understand the problem deeply so they can validate TORQ-e solutions and investigate issues properly.
+Start with UBADA (Data Analysts/authenticity investigators) — they need to understand the problem deeply so they can validate TORQ-e solutions and investigate issues properly.
 
 Document should explain:
 
 Current UPID system fragmentation (5+ systems, zero integration)
-Signal gaps (where visibility breaks, where fraud hides)
+Signal gaps (where visibility breaks, where inauthenticity hides)
 How TORQ-e unifies signals across enrollment + claims + payment
 What analysts can now detect/investigate that they couldn't before
-How to use TORQ-e for fraud risk scoring, pattern detection, etc.
+How to use TORQ-e for authenticity risk scoring, pattern detection, etc.
 Should I write this? Format preference - markdown document like TORQ_E_ARCHITECTURAL_PROTOCOL, or something else?
 
 You said: do taht first and then let's get back to figure out how to get those provider cabrons some clarity.
@@ -1457,10 +1457,10 @@ View the document
 
 What I created:
 
-For UBADA (Data Analysts/Fraud Investigators) — a complete explanation of:
+For UBADA (Data Analysts/authenticity investigators) — a complete explanation of:
 
 Current fragmentation (6 disconnected systems)
-Signal gaps (where fraud hides: enrollment↔claims, FFS↔MCO, claims↔payment, auth↔claims, payment↔bank)
+Signal gaps (where inauthenticity hides: enrollment↔claims, FFS↔MCO, claims↔payment, auth↔claims, payment↔bank)
 What they CAN detect now (high-level patterns, but slowly)
 What they CANNOT detect now (real-time signals, integrated anomalies, temporal trends)
 How TORQ-E unifies signals (single UPID model, real-time data)
@@ -2661,7 +2661,7 @@ FUNCTION detect_and_prevent_fraud_signals(UPID, member_UMID, claim_data):
   
   member_fraud_signals = check_member_claim_patterns(member_UMID)
   
-  // Compile fraud risk assessment
+  // Compile authenticity assessment
   fraud_risk_score = 0
   fraud_flags = []
   
@@ -2673,15 +2673,15 @@ FUNCTION detect_and_prevent_fraud_signals(UPID, member_UMID, claim_data):
     fraud_risk_score += 25
     fraud_flags.extend(member_fraud_signals)
   
-  // Check against known fraud database
-  known_fraud = FRAUD_DATABASE.lookup(UPID, member_UMID)
-  IF known_fraud.flagged:
+  // Check against known inauthenticity database
+  known_inauthenticity = FRAUD_DATABASE.lookup(UPID, member_UMID)
+  IF known_inauthenticity.flagged:
     fraud_risk_score += 40
     fraud_flags.append("Provider/member pair previously flagged for investigation")
   
   IF fraud_risk_score >= 75:
     fraud_level = "HIGH RISK"
-    recommendation = "ESCALATE TO FRAUD INVESTIGATOR"
+    recommendation = "ESCALATE TO authenticity investigatOR"
   ELSE IF fraud_risk_score >= 40:
     fraud_level = "MEDIUM RISK"
     recommendation = "ESCALATE TO SUPERVISOR FOR REVIEW"
@@ -2716,7 +2716,7 @@ Verify FFS and MCO enrollments
 Credential verification (license, sanctions, malpractice)
 Intelligent claim routing (to correct portal)
 Automated claim monitoring with escalation
-Real-time fraud detection
+Real-time authenticity verification
 NEXT PHASE (After documentation complete):
 
 Code Card 1 (Python/Node, depending on stack preference)
@@ -2770,7 +2770,7 @@ You now have fully functional, production-ready code for:
 🛡️ Claim validation (prevents dirty claims)
 🔀 Intelligent claim routing (auto-routes to correct MCO/FFS)
 📊 Claim status monitoring with escalation
-🚨 Real-time fraud signal detection (patterns, anomalies)
+🚨 Real-time inauthenticity signal detection (patterns, anomalies)
 6 API endpoints (ready to call)
 WHAT YOU HAVE
 Item	Count	Status
@@ -2796,7 +2796,7 @@ Attempt 1: Official state system (95% confidence)
 Attempt 2: Backup system (85% confidence)
 Attempt 3: Fallback system (70% confidence)
 Escalate with caveat if all fail
-✅ Real-Time Fraud Detection
+✅ Real-Time authenticity verification
 
 Provider patterns (upcoding, overutilization)
 Member patterns (high frequency, multiple providers/day)
@@ -2850,7 +2850,7 @@ Federal exclusions database
 Build Cards 3-5:
 Card 3 (WHUP): Plan network management
 Card 4 (USHI): Government stakeholder operations
-Card 5 (UBADA): Advanced fraud investigation
+Card 5 (UBADA): Advanced authenticity investigation
 Production prep:
 Security hardening
 Performance optimization
@@ -2977,7 +2977,7 @@ What changes:
 Current: Generic persona (Sol Calarbone 8)
 New: TORQ-E Member/Provider/Analyst personas
 Member persona: Explains eligibility, recertification, income impact
-Provider persona: Explains enrollment, claim routing, fraud signals
+Provider persona: Explains enrollment, claim routing, inauthenticity signals
 Analyst persona: Deep technical information
 2. Tool Replacement
 Current tools: brave_search, google_search, analyze_image, generate_image
@@ -2989,7 +2989,7 @@ card1_check_income_impact → calls POST /api/card1/income/report
 card2_provider_lookup → calls POST /api/card2/lookup
 card2_enrollment_check → calls POST /api/card2/enrollment/check
 card2_validate_claim → calls POST /api/card2/claims/validate
-card2_fraud_analysis → calls POST /api/card2/fraud/analyze
+card2_fraud_analysis → calls POST /api/card2/inauthenticity/analyze
 3. Document Upload Button
 Current: File attachment (images/PDFs/text)
 New: Smart routing based on user type
@@ -3268,7 +3268,7 @@ upload documents, track benefits."
 
 CARD 2 - UPID (Provider Enrollment & Claims)
 "Verify your Medicaid enrollment, submit and track claims, 
-detect fraud signals."
+detect inauthenticity signals."
 
 CARD 3 - WHUP (Plan Administrator Network)
 "Manage provider networks, plan parameters, 
@@ -3278,8 +3278,8 @@ CARD 4 - USHI (Government Stakeholder Operations)
 "Program oversight, compliance monitoring, 
 performance metrics [NOT YET BUILT]"
 
-CARD 5 - UBADA (Data Analyst & Fraud Investigation)
-"Advanced fraud investigation, trend analysis, 
+CARD 5 - UBADA (Data Analyst & authenticity investigation)
+"Advanced authenticity investigation, trend analysis, 
 case management [NOT YET BUILT]"
 Okay to use these? Or change?
 
@@ -3347,7 +3347,7 @@ UMID → Members | Clients | Recipients | Beneficiaries (people getting Medicaid
 UPID → Providers (doctors, hospitals, clinics)
 WHUP → Plan Administrators (MCO/insurance plan staff managing networks)
 USHI → Government Stakeholders (NYS DOH, Medicaid office, state oversight)
-UBADA → Data Analysts / Fraud Investigators (people investigating fraud, analyzing trends)
+UBADA → Data Analysts / authenticity investigators (people investigating inauthenticity, analyzing trends)
 Is that the 5?
 
 You said: right that's the a card for each and each has their own login.
@@ -3659,7 +3659,7 @@ What it CAN'T do: enroll, process payments, change coverage
 Tutorial-card2.html (Provider)
 
 What TORQ-e is for providers
-Features: enrollment verification, claim validation, submit with auto-routing, track status, fraud analysis
+Features: enrollment verification, claim validation, submit with auto-routing, track status, inauthenticity analysis
 What it CAN'T do: process payments, appeal denials, work with non-Medicaid insurance
 Tutorial-card3.html (Plan Admin)
 
@@ -3669,7 +3669,7 @@ Tutorial-card4.html (Government Stakeholder)
 Coming soon notice with planned features
 Tutorial-card5.html (Data Analyst)
 
-Coming soon notice with planned features for fraud detection and pattern analysis
+Coming soon notice with planned features for authenticity verification and pattern analysis
 All pages include: ✅ TORQ-e logo and branding ✅ Favicon ✅ Support email: ohad.phoenix@isoccpp.org ✅ Back link to login page ✅ Responsive design
 
 Tutorial links (📖 Tutorial) now appear on each login page next to the back-to-home link. Ready for you to click through and review!
@@ -3692,7 +3692,7 @@ Backend System (Cards 1 & 2 - Live & Functional)
 ✅ River Path Algorithm - Intelligent multi-source fallback lookup (State → SSA → Household)
 ✅ Confidence Scoring System - Signal processing (0.0-1.0) to tell users when to trust answers
 ✅ Three-Tier Information Architecture - Members see simple yes/no, Providers see confidence + factors, Analysts see full breakdowns
-✅ Real-time Fraud Detection - Pattern recognition for provider billing anomalies
+✅ Real-time authenticity verification - Pattern recognition for provider billing anomalies
 ✅ Claim Validation & Auto-Routing - Intelligent direction to correct MCO/FFS portals
 
 All deployed, documented, and ready to run.
@@ -3722,7 +3722,7 @@ Member (alias: Client, Recipient, Beneficiary)
 Healthcare Provider
 Plan Administrator
 Government Stakeholder
-Data Analyst/Fraud Investigator
+Data Analyst/authenticity investigator
 ✅ Role-Based Access Control - Each persona sees different data, different tools, different interfaces
 ✅ Rebranded to "Medicaid Clarity System" - Clearer, more purposeful
 ✅ Support Infrastructure - Email support (ohad.phoenix@isoccpp.org) integrated throughout
@@ -3734,7 +3734,7 @@ You pushed back multiple times: "stop trying to solve the most complex system in
 We Designed for Real People
 Members can't understand jargon? We built confidence scoring and plain-language explanations.
 Providers juggle multiple systems? We built auto-routing and validation upfront.
-Analysts need to spot fraud? We built pattern detection and flagging.
+Analysts need to spot inauthenticity? We built pattern detection and flagging.
 Each user type got exactly what they need—no more, no less.
 
 Signal Processing at the Core
@@ -4565,7 +4565,7 @@ But the philosophy of design—making complex systems teachable, building three-
 
 Anyone can learn FastAPI.
 
-Few people can architect systems that scale from "member just heard about AI" to "fraud analyst with 10 years experience" without breaking.
+Few people can architect systems that scale from "member just heard about AI" to "authenticity analyst with 10 years experience" without breaking.
 
 That's what VBeyond is actually hiring for. Not "do you know GitHub Copilot?" but "can you design agentic SDLC systems that teams actually want to use because they understand them?"
 
@@ -5620,7 +5620,7 @@ but you know how god is.. .
 Yeah. Murphy's Law never sleeps.
 Keep an eye on those logs. I'm here when it breaks.
 error form the web browser now
-{"message":"TORQ-e: Medicaid Clarity System","version":"1.0.0","cards":{"1":{"name":"UMID (Member Eligibility)","status":"✅ LIVE","endpoints":["POST /api/card1/lookup","POST /api/card1/eligibility/check","POST /api/card1/eligibility/detailed","POST /api/card1/recertification/status","POST /api/card1/documents/upload","POST /api/card1/income/report","GET /api/card1/health"]},"2":{"name":"UPID (Provider System)","status":"✅ LIVE","endpoints":["POST /api/card2/lookup","POST /api/card2/enrollment/check","POST /api/card2/claims/validate","POST /api/card2/claims/submit","POST /api/card2/claims/status","POST /api/card2/fraud/analyze"]},"3":{"name":"WHUP (Plan Administrator)","status":"📋 PLANNED"},"4":{"name":"USHI (Government Stakeholder)","status":"📋 PLANNED"},"5":{"name":"UBADA (Data Analyst/Fraud)","status":"📋 PLANNED"}}}
+{"message":"TORQ-e: Medicaid Clarity System","version":"1.0.0","cards":{"1":{"name":"UMID (Member Eligibility)","status":"✅ LIVE","endpoints":["POST /api/card1/lookup","POST /api/card1/eligibility/check","POST /api/card1/eligibility/detailed","POST /api/card1/recertification/status","POST /api/card1/documents/upload","POST /api/card1/income/report","GET /api/card1/health"]},"2":{"name":"UPID (Provider System)","status":"✅ LIVE","endpoints":["POST /api/card2/lookup","POST /api/card2/enrollment/check","POST /api/card2/claims/validate","POST /api/card2/claims/submit","POST /api/card2/claims/status","POST /api/card2/inauthenticity/analyze"]},"3":{"name":"WHUP (Plan Administrator)","status":"📋 PLANNED"},"4":{"name":"USHI (Government Stakeholder)","status":"📋 PLANNED"},"5":{"name":"UBADA (Data Analyst/inauthenticity)","status":"📋 PLANNED"}}}
 That's not an error—that's your API responding. You're getting a 200 with a clean JSON payload showing your Medicaid Clarity System is live with two card systems active (UMID and UPID) and three planned.
 What's the actual error you're seeing in the browser?
 that's literally what' s showing up on the screen nnot the fuckin landing page im using this url am i wrong? __https://torq-e-production.up.railway.app/__
@@ -7579,8 +7579,8 @@ This file explains:
 
 ✅ How we weight data sources (0.10 to 0.98 scale)
 ✅ How we calculate confidence (Quality × Completeness × Freshness)
-✅ How signal clarity/coherence work for fraud detection
-✅ Real examples: member eligibility + fraud cases
+✅ How signal clarity/coherence work for authenticity verification
+✅ Real examples: member eligibility + inauthenticity cases
 ✅ Tiered reporting (what members/providers/analysts each see)
 ✅ Escalation thresholds and caveats
 Push this with the qualifier pages and you're live.

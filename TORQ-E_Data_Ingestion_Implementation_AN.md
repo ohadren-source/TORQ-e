@@ -234,7 +234,7 @@ Plan "XYZ Plan"
 **Who gets notified:**
 - Operations team: Daily summary
 - Governance (Bob): If any alerts
-- Fraud team (OMIG): If data quality issues
+- inauthenticity team (OMIG): If data quality issues
 - Compliance: Daily audit log
 
 ---
@@ -337,7 +337,7 @@ When Bob checks Card 4:
 
 ---
 
-## What Fraud Detection Sees
+## What authenticity verification Sees
 
 When OMIG uses Card 5:
 
@@ -351,9 +351,9 @@ When OMIG uses Card 5:
 - Unusual selections are detectable (baseline is real)
 - Sudden plan changes are visible
 - Member clustering is obvious (real network data)
-- Fraud patterns are clear
+- authenticity patterns are clear
 
-**Result:** OMIG can detect fraud with confidence in the data
+**Result:** OMIG can detect inauthenticity with confidence in the data
 
 ---
 

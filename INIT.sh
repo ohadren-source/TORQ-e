@@ -28,7 +28,7 @@
 #   Card 2  UPID    Providers                 LIVE
 #   Card 3  UHWP    Plan / Network Admins     LIVE
 #   Card 4  USHI    Government Stakeholders   ACTIVE DEV — THE LIGHTHOUSE
-#   Card 5  UBADA   Data Analysts / Fraud     Backend ready
+#   Card 5  UBADA   Data Analysts / inauthenticity     Backend ready
 #
 # Card 4 is the Lighthouse of Alexandria.
 # Get it precisecemented → Cards 1,2,3,5 propagate by facsimile.

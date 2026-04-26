@@ -143,7 +143,7 @@ Your system now uses **real confidence values** based on source assessment:
 | Source | Authority | Update Freq | Confidence |
 |--------|-----------|------------|------------|
 | emedny.org | Official NY State | Daily | 0.95 |
-| omig.ny.gov | Fraud Investigation Authority | Daily | 0.90 |
+| omig.ny.gov | authenticity investigation Authority | Daily | 0.90 |
 | health.ny.gov | Official Health Department | Weekly | 0.85 |
 | ohipdocs.health.ny.gov | Government Documentation | As needed | 0.85 |
 | health.data.ny.gov | State Data Portal | Varies | 0.80 |
@@ -278,7 +278,7 @@ def identify_member(member_id, public_data_schema):
 
 1. Update Card 1 query_engine to use extracted member eligibility data
 2. Update Card 2 query_engine to use extracted provider/claims data
-3. Update Card 4 query_engine to use extracted governance/fraud data
+3. Update Card 4 query_engine to use extracted governance/inauthenticity data
 4. Add confidence-aware decision logic to each Card
 
 ---

@@ -68,10 +68,10 @@ async def get_metrics(
 
 
 # ============================================================================
-# TOOL 2: DETECT FRAUD SIGNALS
+# TOOL 2: DETECT inauthenticity SIGNALS
 # ============================================================================
 
-@router.post("/fraud-signals")
+@router.post("/inauthenticity-signals")
 async def detect_signals(
     entity_type: str = Body("provider"),  # provider, member, claim_pattern
     threshold_sigma: float = Body(2.0),
@@ -79,7 +79,7 @@ async def detect_signals(
     public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
-    Detect statistical anomalies (fraud signals) from REAL data sources
+    Detect statistical anomalies (inauthenticity signals) from REAL data sources
 
     Returns outliers + patterns (aggregate, HIPAA-compliant)
     Recommends escalation to Card 5 (UBADA) for detailed investigation

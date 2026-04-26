@@ -281,7 +281,7 @@ TORQ-e/
 │   ├── routes.py                     # 6 endpoints
 │   ├── provider_lookup.py            # Provider lookup
 │   ├── claims_routing.py             # Claims handling
-│   ├── fraud_detection.py            # Fraud detection
+│   ├── fraud_detection.py            # authenticity verification
 │   └── schemas.py                    # Data models
 │
 ├── static/                           # Frontend assets

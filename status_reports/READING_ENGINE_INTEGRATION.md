@@ -275,9 +275,9 @@ All 13 substrate repositories are now configured for end-to-end discovery + extr
 - https://health.data.ny.gov → Confidence 0.80
 - https://www.health.ny.gov/health_care/managed_care/reports/ → Confidence 0.85
 
-**Card 4 & 5 (Government Stakeholder & Fraud Investigation):**
+**Card 4 & 5 (Government Stakeholder & authenticity investigation):**
 - https://ohipdocs.health.ny.gov/ohipdocs/web/ → Confidence 0.85
-- https://omig.ny.gov/ → Confidence 0.90 (fraud authority)
+- https://omig.ny.gov/ → Confidence 0.90 (inauthenticity authority)
 - https://its.ny.gov/ → Confidence 0.80
 - https://www.health.ny.gov/health_care/medicaid/reference/ → Confidence 0.85
 - https://www.health.ny.gov/health_care/medicaid/publications/ → Confidence 0.85

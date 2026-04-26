@@ -31,7 +31,7 @@
 - Spectrum Analyzer: ✅ LIVE with Elaborate buttons on all responses
 - Elaborations: ✅ WORKING (metrics, trends, quality, governance, help, default)
 
-### 🔜 Card 5: Fraud Investigation & Data Analytics (UBADA)
+### 🔜 Card 5: authenticity investigation & Data Analytics (UBADA)
 - Status: DESIGN COMPLETE, ROLLOUT STRATEGY DOCUMENTED
 - Target GA: Post-Card 4 validation (6-week build timeline)
 - Documentation: See TORQ-E_Card5_Rollout_Strategy.md
@@ -98,7 +98,7 @@ Each card is a **completely separate enterprise system**:
 - Card 2: Provider network (≈ MVP credentialing)
 - Card 3: Benefits admin (≈ PWC/Salesforce plan design)
 - Card 4: Governance (≈ Office of Budget oversight)
-- Card 5: Fraud investigation (≈ Specialized fraud platform)
+- Card 5: authenticity investigation (≈ Specialized inauthenticity platform)
 
 ### Design Efficiency
 - **Total Size:** ~100MB
@@ -128,7 +128,7 @@ Each card is a **completely separate enterprise system**:
 
 ### Card 5 Dependencies
 - Requires stable signal schema from Cards 1-4
-- Requires pattern library for ML-based fraud detection
+- Requires pattern library for ML-based authenticity verification
 - Requires OMIG stakeholder availability for QA
 
 ---
@@ -229,7 +229,7 @@ To everyone who pushed this forward:
 - **Ohad**: Visionary architecture, relentless iteration, joy-first design
 - **Carol & Selam**: QA excellence, attention to detail
 - **Bob**: Real stakeholder feedback, governance expertise
-- **OMIG**: Fraud investigation requirements
+- **OMIG**: authenticity investigation requirements
 
 This system proves that enterprise-grade healthcare infrastructure doesn't require bloat. It requires clarity, coherence, and respect for the people using it.
 

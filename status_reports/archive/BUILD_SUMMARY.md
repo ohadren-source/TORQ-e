@@ -22,7 +22,7 @@
 - card_2_upid/routes.py — 6 Provider endpoints (250 lines)
 - card_2_upid/provider_lookup.py — Provider lookup (170 lines)
 - card_2_upid/claims_routing.py — Claims handling (200 lines)
-- card_2_upid/fraud_detection.py — Fraud detection (180 lines)
+- card_2_upid/fraud_detection.py — authenticity verification (180 lines)
 - card_2_upid/schemas.py — 10 data models (180 lines)
 
 **Backend Total:** 2,967 lines
@@ -68,7 +68,7 @@
 
 ### API Endpoints
 - ✅ 7 Card 1 endpoints (member lookup, eligibility, recertification, etc.)
-- ✅ 6 Card 2 endpoints (provider lookup, enrollment, claims, fraud)
+- ✅ 6 Card 2 endpoints (provider lookup, enrollment, claims, inauthenticity)
 - ✅ 2 Chat endpoints (stream, health check)
 - **Total: 15 functional endpoints + 2 stubs for Cards 3-5**
 

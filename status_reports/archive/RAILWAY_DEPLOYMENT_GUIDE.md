@@ -15,7 +15,7 @@ C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e\card_1_umid\routes.py   ✅
 C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e\card_2_upid\schemas.py  ✅
 C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e\card_2_upid\routes.py   ✅
 
-# Card 5 (UBADA) - Fraud Investigation
+# Card 5 (UBADA) - authenticity investigation
 C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e\chat-card5.html         ✅
 
 # Documentation
@@ -240,7 +240,7 @@ https://torq-e-production.up.railway.app/static/cards/chat-card5.html
 
 # Verify:
 # - Dev notice shows "Card 5 backend ready"
-# - Initial message shows "Data Analyst & Fraud Investigation"
+# - Initial message shows "Data Analyst & authenticity investigation"
 # - Dimensions show Card 5 context (Claims Data Quality, Outlier Detection, etc.)
 # - Can type queries and get responses
 ```

@@ -16,7 +16,7 @@
 
 **Stakeholders:**
 - **Bob Pollock** (Enterprise Data Governance): System stability, compliance, audit integrity, overnight incident summaries
-- **OMIG Investigator** (Fraud Investigation): Fraud signals, case management, evidence chains, pattern analysis
+- **OMIG Investigator** (authenticity investigation): inauthenticity signals, case management, evidence chains, pattern analysis
 - **User 3** (eMedNY Operations): Claims processing health, operational metrics, budget tracking, enrollment trends
 
 **Core Principle:** One system, three voices. Same data. Different dimensions. Same spectrum analyzer engine, different bar configurations.
@@ -130,14 +130,14 @@ GovernanceSignal {
 }
 ```
 
-### OMIG Investigator's Data Model (Fraud)
+### OMIG Investigator's Data Model (inauthenticity)
 
 ```
 FraudSignal {
   id: string
   timestamp: datetime
   omig_dimensions: {
-    fraud_risk: SystemSignal (probability of fraud?)
+    fraud_risk: SystemSignal (probability of inauthenticity?)
     network_anomaly: SystemSignal (suspicious relationships?)
     pattern_strength: SystemSignal (how strong is the pattern?)
     evidence_confidence: SystemSignal (can we prove this?)
@@ -344,13 +344,13 @@ No critical alerts. System stable. ✓
 
 ### OMIG Investigator - Wednesday Afternoon
 
-**9:00 AM:** Arrives, opens Card 4 dashboard in "Fraud Investigator" mode.
+**9:00 AM:** Arrives, opens Card 4 dashboard in "authenticity investigator" mode.
 
 **Sees (Dashboard View):**
 
-**Top Section - Fraud Signal Spectrum (or Traffic Light):**
+**Top Section - inauthenticity Signal Spectrum (or Traffic Light):**
 ```
-[ RED ]    Fraud Risk Score (Current)
+[ RED ]    authenticity score (Current)
   ├─ 47 claims flagged overnight (high-risk)
   ├─ 8 medium-risk clusters detected
   ├─ 2 potential multi-state rings
@@ -385,7 +385,7 @@ Case #1: Potential Kickback Network
 ├─ Member: [hashed]
 ├─ Provider: Dr. Sarah Johnson
 ├─ Lab: PathLabs Inc.
-├─ Fraud Risk: RED (94% confidence)
+├─ authenticity risk: RED (94% confidence)
 ├─ Pattern: Member referred to lab 23 times in 30 days (normal: 2-3)
 │  └─ Dr. Johnson refers 340% more to PathLabs than peers
 │  └─ PathLabs billing 240% higher than peers for same tests
@@ -401,7 +401,7 @@ Case #1: Potential Kickback Network
 Case #2: Upcoding Pattern
 ├─ Claim ID: CLM-2026-045789
 ├─ Provider: Community Clinic #34
-├─ Fraud Risk: YELLOW (78% confidence)
+├─ authenticity risk: YELLOW (78% confidence)
 ├─ Pattern: Office visits coded as specialist (99% of time)
 ├─ Impact: Member overage charges, Medicaid overbilled
 ├─ Status: UNDER INVESTIGATION
@@ -411,7 +411,7 @@ Case #3: Duplicate Billing
 ├─ Claim ID: CLM-2026-045801
 ├─ Member: [hashed]
 ├─ Same service billed twice (2 days apart, same provider)
-├─ Fraud Risk: RED (99% confidence)
+├─ authenticity risk: RED (99% confidence)
 ├─ Amount: $3,200
 ├─ Status: REFERRED TO PROSECUTION
 └─ Expected resolution: [DATE]
@@ -426,7 +426,7 @@ Case #3: Duplicate Billing
 - Multi-case pattern analysis
 
 **What OMIG does:**
-- 5 minutes: Scan fraud alerts → "3 cases need prosecution, 5 need more evidence, rest monitoring"
+- 5 minutes: Scan inauthenticity alerts → "3 cases need prosecution, 5 need more evidence, rest monitoring"
 - 30 minutes: Deep dive into top 3 cases → evidence review, cross-state coordination
 - 1 hour: Refer 3 cases to DOJ, update investigation statuses
 - Done. Moving investigation forward.
@@ -534,7 +534,7 @@ Last 7 Days:
 
 ### Core Algorithm
 
-The spectrum analyzer is NOT a fraud detection algorithm. It's a **multi-dimensional signal measurement system**.
+The spectrum analyzer is NOT a authenticity verification algorithm. It's a **multi-dimensional signal measurement system**.
 
 ```python
 class SpectrumAnalyzer:
@@ -549,7 +549,7 @@ class SpectrumAnalyzer:
         
         Dimensions are flexible and role-specific:
         - GOVERNANCE: stability, compliance, audit, freshness
-        - FRAUD: fraud_risk, network_anomaly, pattern_strength, evidence
+        - inauthenticity: fraud_risk, network_anomaly, pattern_strength, evidence
         - OPERATIONS: volume, error_rate, payment_status, budget
         """
         
@@ -578,7 +578,7 @@ class SpectrumAnalyzer:
             )
         
         elif dimension == "FRAUD_RISK":
-            # Measure: How likely is this claim fraudulent?
+            # Measure: How likely is this claim inauthentic?
             billing_anomaly_score = self.calculate_billing_anomaly(claim)
             provider_deviation_score = self.calculate_provider_deviation(claim)
             member_cycling_score = self.calculate_member_cycling(claim)
@@ -670,10 +670,10 @@ class SpectrumAnalyzer:
 ### Key Principles
 
 1. **One dimension = one bar** (in spectrum) or one light (in traffic lights)
-2. **Each dimension is independent** (fraud risk doesn't affect audit integrity)
+2. **Each dimension is independent** (authenticity risk doesn't affect audit integrity)
 3. **All dimensions update in real-time** (as new claims arrive)
-4. **Dimensions are role-specific** (Bob doesn't see fraud dimensions, OMIG doesn't see budget dimensions)
-5. **Confidence is measured** (fraud signal at 94% confidence is different from 55% confidence)
+4. **Dimensions are role-specific** (Bob doesn't see inauthenticity dimensions, OMIG doesn't see budget dimensions)
+5. **Confidence is measured** (inauthenticity signal at 94% confidence is different from 55% confidence)
 6. **Sources are cited** (which claims triggered this signal?)
 
 ---
@@ -744,7 +744,7 @@ GET /api/card4/compliance-readiness
       "audit_trail": {...}
     }
 
-GET /api/card4/fraud-flags
+GET /api/card4/inauthenticity-flags
   Query params:
     - user_role (FRAUD_INVESTIGATOR)
     - risk_level (HIGH | MEDIUM | ALL)
@@ -815,13 +815,13 @@ POST /api/card4/investigation-case
 ```
 User Role: GOVERNANCE_AUTHORITY (Bob)
 ├─ Can view: System stability, compliance, audit, freshness
-├─ Can see: Fraud summaries (not details)
+├─ Can see: inauthenticity summaries (not details)
 ├─ Can see: Operations summaries (not budget details)
 ├─ Can NOT: Create investigation cases, drill into individual claims
 ├─ Data access: Aggregate only, no member PII
 
 User Role: FRAUD_INVESTIGATOR (OMIG)
-├─ Can view: All fraud dimensions and flagged claims
+├─ Can view: All inauthenticity dimensions and flagged claims
 ├─ Can see: Member ID (hashed), provider ID, claim details
 ├─ Can see: Network visualizations, cross-state coordination
 ├─ Can NOT: Modify system settings, change compliance thresholds
@@ -831,7 +831,7 @@ User Role: FRAUD_INVESTIGATOR (OMIG)
 User Role: OPERATIONS_DIRECTOR (User 3)
 ├─ Can view: Processing volume, error rate, payment status, budget
 ├─ Can see: Detailed error breakdown, provider performance
-├─ Can NOT: View fraud details, view member PII
+├─ Can NOT: View inauthenticity details, view member PII
 ├─ Can see: Operational metrics and forecasts
 ├─ Data access: Aggregate operations data, no member/claim PII
 ```
@@ -867,13 +867,13 @@ This record:
 - Cannot be deleted
 - Cannot be modified
 - Is accessible to auditors
-- Is queryable by Card 5 (fraud) if needed
+- Is queryable by Card 5 (inauthenticity) if needed
 
 ### Data Protection
 
 - Member IDs: Hashed in all logs
 - Provider IDs: Actual ID (needed for operations)
-- Claim amounts: Full precision (needed for fraud detection)
+- Claim amounts: Full precision (needed for authenticity verification)
 - Audit trails: Encrypted in transit, encrypted at rest
 
 ---
@@ -891,9 +891,9 @@ This record:
 - Time to resolve incidents
 
 **OMIG:**
-- Fraud flags per day
-- Fraud detection rate (% of actual fraud caught)
-- False positive rate (% of flags that aren't fraud)
+- inauthenticity flags per day
+- authenticity verification rate (% of actual inauthenticity caught)
+- False positive rate (% of flags that aren't inauthenticity)
 - Investigation case completion rate
 - Time from flag to prosecution referral
 - Recovery amount
@@ -945,257 +945,6 @@ Each bar clickable to expand details, citations, evidence.
 
 **Bob's perspective:** "Is the system stable and compliant? What do I need to worry about?"
 
-**Card 4 shows him:** Traffic light status + overnight incident summary + compliance readiness. That's it. He doesn't need to understand fraud detection algorithms or claims processing bottlenecks.
+**Card 4 shows him:** Traffic light status + overnight incident summary + compliance readiness. That's it. He doesn't need to understand authenticity verification algorithms or claims processing bottlenecks.
 
-**OMIG's perspective:** "Which claims are fraudulent? Can I prove it in court?"
-
-**Card 4 shows her:** Fraud signals + evidence confidence + cross-state coordination. She doesn't need system stability metrics or budget forecasts.
-
----
-
-## Implementation Details
-
-### Frontend (chat-card4.html)
-
-**Deployment:** https://torq-e-production.up.railway.app/chat-card4.html
-
-**Interface:** Conversational chat with intelligent intent routing
-
-**Intent Handlers:**
-1. **Metrics Query** → `/api/card4/metrics` 
-   - User: "Show me system health" → Returns stability%, audit integrity, active members
-   
-2. **Trend Query** → `/api/card4/metrics?metric_type=enrollment_rate`
-   - User: "What are enrollment trends?" → Returns growth patterns, transfers, disenrollments
-   
-3. **Quality Query** → `/api/card4/data-quality`
-   - User: "Is our data audit-ready?" → Returns completeness%, accuracy%, CMS readiness
-   
-4. **Governance Query** → `/api/card4/governance-log`
-   - User: "Any alerts or flags?" → Returns active governance flags and issues
-
-5. **Help/Default** → Returns guidance on available queries
-
-**Response Format:** HTML-formatted with:
-- Color-coded status boxes (GREEN=stable, YELLOW=caution, RED=critical)
-- Key metrics with contextual information
-- Confidence scores from backend
-- Data freshness indicators
-
-### Backend API (card_4_ushi/)
-
-**Location:** `/card_4_ushi/routes.py` and `/card_4_ushi/query_engine.py`
-
-**5 Primary Endpoints:**
-
-```
-POST /api/card4/metrics
-  Params: metric_type, date_range_days, filter_by
-  Returns: {
-    metric: string,
-    value: number,
-    confidence_score: 0.0-1.0,
-    sources: string[],
-    trend: string,
-    freshness: string,
-    caveat: string
-  }
-
-POST /api/card4/fraud-signals
-  Params: entity_type (provider|member|claim_pattern), threshold_sigma
-  Returns: {
-    data: FraudSignal[],
-    confidence_score: number,
-    recommendation: "Escalate to Card 5 (UBADA)"
-  }
-
-POST /api/card4/data-quality
-  Params: domain (enrollment|claims|provider_data)
-  Returns: {
-    data: {
-      completeness: percent,
-      accuracy: percent,
-      timeliness: percent,
-      audit_valid: boolean,
-      cms_ready: boolean
-    },
-    quality_score: number
-  }
-
-GET /api/card4/governance-log
-  Params: filter_by, days_back, limit
-  Returns: [
-    {
-      timestamp: datetime,
-      action: string,
-      entry_json: JSONB,
-      hash: string (immutable)
-    }
-  ]
-
-POST /api/card4/flag-issue
-  Params: issue_type, domain, title, description, justification, evidence, flagged_by
-  Returns: {
-    flag_id: string,
-    note: "Flag created and logged to immutable audit trail"
-  }
-
-GET /api/card4/health
-  Returns: {
-    status: "healthy",
-    card: "4 (USHI)",
-    tools: 5,
-    tools_available: string[]
-  }
-```
-
-### Spectrum Analyzer Component (✅ IMPLEMENTED & LIVE)
-
-**Architecture:** 3-Tier Collapsible Spectrum System
-
-#### **Tier 1: Coherence Level**
-- Single large traffic light (red/yellow/green)
-- Overall system coherence percentage
-- Status: COHERENT / WAVERING / FRAGMENTED
-- **On click:** Shows traffic light visual (3 stacked circles, active light glows)
-
-#### **Tier 2: Stability Strength (Equalizer)**
-- 6 full-width vertical rectangles, stacked
-- Layout: [Traffic Light] | [Metric Label + %] | [Progress Bar]
-- Each rectangle shows one dimension:
-  1. Enrollment Rate
-  2. Claims Processing
-  3. Data Quality
-  4. Audit Trail
-  5. Compliance
-  6. System Stability
-
-**On click of any rectangle:**
-1. **Equalizer visual appears** (5 bars representing metric strength)
-2. **URL citations displayed** with clickable links:
-   - Real government sources (eMedNY, CMS, SSA, NYS DOH)
-   - 42 CFR regulations
-   - NIST standards
-   - Each opens in new tab
-3. **Calculation logic** (exact formula)
-4. **Detailed breakdown** (specific numbers)
-
-#### **Tier 3: Combined View**
-- Large coherence % at top
-- All 6 metrics below (same clickable rectangles)
-- **On click:** Shows BOTH traffic light AND equalizer visuals
-- Plain text sources (no URLs in this view)
-
-**Visual Design:**
-```
-COHERENCE LEVEL
-[Expand/Collapse ▶]
-
-STABILITY STRENGTH (EQUALIZER)
-[Expand/Collapse ▶]
-[🟡] ENROLLMENT RATE         87.3%
-    ▄▄▄▄▄▄░░ (progress bar)
-[✓] CLAIMS PROCESSING         95%
-    ▄▄▄▄▄▄▄░ (progress bar)
-[✓] DATA QUALITY              99%
-    ▄▄▄▄▄▄▄░ (progress bar)
-[✓] AUDIT TRAIL              100%
-    ▄▄▄▄▄▄▄░ (progress bar)
-[✓] COMPLIANCE                98%
-    ▄▄▄▄▄▄▄░ (progress bar)
-[✓] SYSTEM STABILITY          96%
-    ▄▄▄▄▄▄▄░ (progress bar)
-
-COMBINED VIEW
-[Expand/Collapse ▼]
-96% Coherence
-System is COHERENT across all dimensions
-+ All 6 metrics
-```
-
-**Color Coding:**
-- 🟢 GREEN (90-100%) - Healthy
-- 🟡 YELLOW (70-89%) - Caution
-- 🔴 RED (0-69%) - Critical
-
-**Interaction Model:**
-- All three sections start **collapsed (▶ icon)**
-- User expands by clicking section header
-- Chevron rotates to indicate expanded state (▼)
-
-**Data Source Citations:**
-- **Section 1 (Coherence Level):** Plain text source only
-  - Fine print (italicized): "For detailed data sources and removable citations, go to Stability Strength (Equalizer)"
-  - No URLs in this view (keeps Coherence clean)
-
-- **Section 2 (Stability Strength):** Full URL citations with session removal
-  - Each URL displayed on separate line (not pipe-separated)
-  - X button next to each URL for session removal
-  - Click X → "Are you sure?" confirmation modal
-  - Confirmed removal → Source removed from session (sessionStorage)
-  - Real government sources: eMedNY, CMS Data, State DOH, 42 CFR, NIST, OMB
-
-- **Section 3 (Combined View):** Full URL citations with session removal
-  - Same layout as Section 2 (includes Spectrum function)
-  - URLs one per line with X removal buttons
-  - Session removal available
-
-**Session-Level Removal Implementation:**
-- Removed sources stored in `sessionStorage.removedSources` (array of URLs)
-- Removed sources filtered from display on breakdown expansion
-- Removal is temporary (cleared when session ends/tab closes)
-- No server calls, no permanent changes
-- Each removal requires user confirmation ("Are you sure?")
-- If all sources removed from a metric, shows: "*All sources removed from session*"
-
-**Status:** ✅ LIVE on Railway with interactive Spectrum Analyzer + session source governance
-
-### Database Integration
-
-**Tables Used:**
-- `data_ingestion_audit_log` - Immutable governance audit trail
-- `programs` - Medicaid plan data (for enrollment metrics)
-- `beneficiary_selections` - Enrollment decisions
-- `claims` - Claims data (for processing metrics)
-- `providers` - Provider data (for fraud signals)
-
-**Immutability Enforcement:**
-- All governance actions logged with hash verification
-- Database triggers prevent modification/deletion of audit logs
-- Timestamp immutable on creation
-
----
-
-## Testing Protocol
-
-**Query Set for QA (Carol & Selam):**
-
-1. "What's the overall system health?" → Test metrics handler
-2. "What are enrollment trends for the last 7 days?" → Test trend handler
-3. "Is our data audit-ready?" → Test quality handler
-4. "Any governance flags or alerts?" → Test governance handler
-5. "How many members enrolled and what's the denial rate?" → Test compound query
-6. "Give me a complete status report" → Test aggregation
-
-**Expected Results:**
-- ✅ Responses show real data from Railway backend
-- ✅ Confidence scores included
-- ✅ Data freshness indicators present
-- ✅ Color-coded status boxes render correctly
-- ✅ No "Offline Mode" fallbacks
-
-**Success Criteria:**
-- All 6 queries return live API data (not cached fallback)
-- Response times < 2 seconds
-- Confidence scores realistic (0.8-0.99 range)
-- No CORS errors in browser console
-
-**User 3's perspective:** "Are operations running smoothly? Are we within budget?"
-
-**Card 4 shows him:** Processing volume + error rate + payment status + budget health. He doesn't need fraud data or compliance metrics.
-
-**One system. Three voices. Each sees only what they need.**
-
----
-
-End of Card 4 Architecture (DR)
+**OMIG's perspective:** "Which claims are inauthentic? Can I prove it

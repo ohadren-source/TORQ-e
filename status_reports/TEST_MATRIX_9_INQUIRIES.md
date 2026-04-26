@@ -209,7 +209,7 @@ Is this claim valid? [claim details: member UMID123456, provider UPID654321, CPT
 
 ---
 
-## CARDS 4 & 5 - GOVERNANCE & FRAUD INVESTIGATION
+## CARDS 4 & 5 - GOVERNANCE & authenticity investigation
 
 ### Test 4: Card 4 - Query Governance Metrics
 **Objective:** Verify Card 4 Spectrum Analyzer displays and is fully interactive
@@ -282,7 +282,7 @@ Show me the investigation metrics dashboard
    - **NOT** "System Stability" but "Analysis Tool Status"
 3. ✅ 6 metric cards display with Card 5-specific sources:
    - Claims Data Quality → CMS, Validation Engine sources
-   - Outlier Detection → NIST Statistical Methods, Fraud Detection sources
+   - Outlier Detection → NIST Statistical Methods, authenticity verification sources
    - Network Analysis → Provider/Member Network, Co-billing sources
    - Investigation Cases → Investigation Case Management sources
    - Data Correction Status → Correction Workflow, Approval sources
@@ -322,8 +322,8 @@ Tell me more about investigation cases - how many are active?
    - Breakdown statistics:
      * "Active: 47 | Under review: 23 | Closed (6mo): 156 | Resolved: 141 | Pending: 15"
    - Source URLs (should be Card 5 specific):
-     * [Investigation Workflows](https://www.cms.gov/Medicaid-Fraud-Control)
-     * [Case Management Standards](https://www.cms.gov/fraud-prevention)
+     * [Investigation Workflows](https://www.cms.gov/Medicaid-inauthenticity-Control)
+     * [Case Management Standards](https://www.cms.gov/inauthenticity-prevention)
      * [Audit Trail Requirements](https://www.ecfr.gov/current/title-42/part-455)
 3. ✅ Sources are clickable links (can test in browser)
 4. ✅ Remove button (✕) works on each source with confirmation modal
@@ -380,7 +380,7 @@ All of the following must be TRUE for deployment to be considered successful:
 ✅ **Cards 4 & 5 - Architectural Parity**
 - [ ] Card 4 Spectrum Analyzer displays and is fully interactive
 - [ ] Card 5 Spectrum Analyzer displays with DIFFERENT dimensions (Claims Data Quality, Outlier Detection, Network Analysis, Investigation Cases, Data Correction Status, Analysis Tool Status)
-- [ ] Card 5 breakdown data shows CARD 5-SPECIFIC sources (CMS fraud, NIST, investigation management)
+- [ ] Card 5 breakdown data shows CARD 5-SPECIFIC sources (CMS inauthenticity, NIST, investigation management)
 - [ ] All 3 sections collapsible/expandable in both cards
 - [ ] Breakdown panels functional with traffic light visuals, equalizer visuals, and source removal
 

@@ -71,11 +71,11 @@
 **Why:**
 1. **Fixed enrollment language** - Providers don't "enroll in Medicaid," they "enroll as providers." Old language was member-focused.
 2. **Linked enrollment guidance** - Connected "can't enroll" to signup-info-card2.html with eMedNY reference.
-3. **Elevated fraud detection** - River Path algorithm is a key differentiator for providers. Was buried. Now prominent with "confidence scoring" emphasis.
+3. **Elevated authenticity verification** - River Path algorithm is a key differentiator for providers. Was buried. Now prominent with "confidence scoring" emphasis.
 4. **Added eMedNY link** - Support section now directs providers to enrollment portal.
 **How:**
 - Line 208: Changed "enroll you in Medicaid" to "enroll you as a provider" + signup link
-- Features section: Rewrote bullets to emphasize fraud detection, River Path algorithm, and confidence scoring
+- Features section: Rewrote bullets to emphasize authenticity verification, River Path algorithm, and confidence scoring
 - Support section: Added eMedNY.ny.gov link
 **Files Modified:** tutorial-card2.html  
 **Impact:** Better differentiates provider value proposition. Aligns language with provider workflows.
@@ -486,7 +486,7 @@ Updated in four documents:
      - Every governance action audited + immutable
      - Three-tier transparency
      - HHS-ready: audit trail exportable, 6+ year retention
-   - Phase 3 intro: "Build fraud investigation workspace with governance" → "Build fraud investigation workspace with HIPAA-compliant audit trail and institutional memory"
+   - Phase 3 intro: "Build authenticity investigation workspace with governance" → "Build authenticity investigation workspace with HIPAA-compliant audit trail and institutional memory"
    - Added "What Makes Card 5 Special:" section
      - Full-identified data access WITH complete audit logging
      - Every investigation step captured + immutable
@@ -535,13 +535,13 @@ Updated in four documents:
 
 **1.1 Database Schema (models.py)**
 Added 10 new ORM models:
-- GovernanceFlag — Flag data issues, fraud suspicions, compliance gaps
+- GovernanceFlag — Flag data issues, inauthenticity suspicions, compliance gaps
 - GovernanceApproval — Approval workflow for flags
 - AuditLogEntry — Immutable append-only governance audit trail
-- InvestigationProject — Fraud investigation projects (Card 5)
+- InvestigationProject — authenticity investigation projects (Card 5)
 - InvestigationComment — Collaboration on investigations
 - DataCorrection — Data fix proposals with approval workflow
-- OutlierFinding — Fraud signal findings
+- OutlierFinding — inauthenticity signal findings
 - SourceRegistry — Master list of all data sources
 - SourceAction — Immutable audit trail of source decisions
 - SourceComparison — Track source disagreements
@@ -564,7 +564,7 @@ Features:
 
 **1.3 Governance Audit Trail API (governance.py)**
 Created API for flagging, approval, and logging:
-- POST /api/governance/flag — Create governance flag (data issue, fraud, compliance gap)
+- POST /api/governance/flag — Create governance flag (data issue, inauthenticity, compliance gap)
 - GET /api/governance/flag/{id} — Retrieve flag
 - POST /api/governance/flag/{id}/approve — Approve flag (creates approval record)
 - GET /api/governance/log/search — Search immutable audit log (filters: action, actor, domain, date)
@@ -689,7 +689,7 @@ DR system (append-only, attributed, justified logging) solved the "things disapp
 ### Change 13: Explicitly Scope Demo to Cards 1, 2, 4, 5 (Card 3 Excluded)
 **Scope:** DEMO SCOPE CLARIFICATION  
 **What:** Card 3 (WHUP - Plan Administrator) is NOT implemented in this demo  
-**Why:** Card 3 is the simplest/least valuable card (read-only plan metrics dashboard). Demo focuses on the harder, more essential cards: member eligibility (1), provider systems (2), government oversight (4), and data governance/fraud investigation (5). Card 3 can be built later with the same patterns established by the other four.
+**Why:** Card 3 is the simplest/least valuable card (read-only plan metrics dashboard). Demo focuses on the harder, more essential cards: member eligibility (1), provider systems (2), government oversight (4), and data governance/authenticity investigation (5). Card 3 can be built later with the same patterns established by the other four.
 **How:** Updated main.py to explicitly state demo scope. Updated endpoint listing to show Card 3 as "NOT IN THIS DEMO".
 **Files Modified:** main.py  
 **Impact:** Clear messaging to users about what's actually built vs. what's planned
@@ -713,9 +713,9 @@ DR system (append-only, attributed, justified logging) solved the "things disapp
 **How:** 
 Added PART 5: USHI Government Stakeholder Architecture (3,200+ lines) covering:
 1. **Problem Statement** — "Blind Governance": Government officials can't see system health
-2. **What USHI Does** — Five responsibilities: compliance monitoring, fraud detection, performance tracking, data quality assessment, governance actions
+2. **What USHI Does** — Five responsibilities: compliance monitoring, authenticity verification, performance tracking, data quality assessment, governance actions
 3. **River Path Examples** — Detailed walkthrough of denial rate query across 3 data sources
-4. **Five Use Cases** — Compliance dashboard, fraud signals, performance metrics, data quality, governance actions + River Path for each
+4. **Five Use Cases** — Compliance dashboard, inauthenticity signals, performance metrics, data quality, governance actions + River Path for each
 5. **HIPAA Compliance Rules** — Aggregate + de-identified data only, minimum necessary principle, safe harbor de-identification, explicit access restrictions table
 6. **Red/Yellow/Green Veracity Visualization** — Confidence-to-color mapping (0.85-1.0 GREEN, 0.60-0.84 YELLOW, <0.60 RED) with labels, tooltips, use cases
 7. **Three-Tier Transparency UI/UX** — Tier 1 (always visible badge), Tier 2 (expandable recent changes card), Tier 3 (full searchable audit log)
@@ -726,7 +726,7 @@ Added PART 5: USHI Government Stakeholder Architecture (3,200+ lines) covering:
    - `view_governance_log` (audit trail access)
    - `flag_data_issue` (governance action creation)
 9. **Governance Actions Workflow** — Four-step process: FLAG (official) → INVESTIGATE (analyst) → APPROVE (official) → AUDIT TRAIL (recorded)
-10. **Governance Action Types** — Six types with approval chains: data quality, fraud suspicion, compliance gap, system error, data correction, policy change
+10. **Governance Action Types** — Six types with approval chains: data quality, inauthenticity suspicion, compliance gap, system error, data correction, policy change
 11. **Data Sources & Integrations** — Five primary sources: eMedNY claims, MCO reporting, historical baselines, governance audit log, provider metrics
 12. **Claude System Prompt** — Detailed system prompt for Card 4 Claude covering HIPAA, de-identification, transparency, governance, actionability
 13. **Database Models** — Three new ORM models: GovernanceFlag, GovernanceApproval, AuditLogEntry
@@ -779,9 +779,9 @@ Added PART 5: USHI Government Stakeholder Architecture (3,200+ lines) covering:
 
 **How:** 
 Added PART 6: UBADA Data Analyst Architecture (4,200+ lines) covering:
-1. **Problem Statement** — "Invisible Fraud & Lost Corrections": fraud signals not actionable, corrections disappear, no institutional memory
-2. **What UBADA Does** — Three functions: interactive data exploration, statistical fraud detection, governance & corrections
-3. **River Path Example** — Detailed fraud investigation workflow (5 phases): data exploration → peer comparison → pattern investigation → evidence documentation → stakeholder approval
+1. **Problem Statement** — "Invisible inauthenticity & Lost Corrections": inauthenticity signals not actionable, corrections disappear, no institutional memory
+2. **What UBADA Does** — Three functions: interactive data exploration, statistical authenticity verification, governance & corrections
+3. **River Path Example** — Detailed authenticity investigation workflow (5 phases): data exploration → peer comparison → pattern investigation → evidence documentation → stakeholder approval
 4. **Core Functions:**
    - Function 1: Interactive Data Explorer (3 tabs: claims table, provider network visualization, statistical analysis)
    - Function 2: Collaborative Investigation Workspace (teams, comments, attachments, decision tracking)
@@ -797,7 +797,7 @@ Added PART 6: UBADA Data Analyst Architecture (4,200+ lines) covering:
 8. **Claude System Prompt** — Detailed system prompt emphasizing confidence, evidence quality, peer comparison, and actionable recommendations
 9. **Database Models** — Four new ORM models: InvestigationProject, InvestigationComment, DataCorrection, OutlierFinding
 10. **Monitoring Metrics** — Investigation health, data quality, collaboration, risk detection metrics
-11. **The UBADA Difference** — Comparison of UBADA (confidence + evidence + institutional memory) vs external fraud detection tools (black box)
+11. **The UBADA Difference** — Comparison of UBADA (confidence + evidence + institutional memory) vs external authenticity verification tools (black box)
 
 **Files Modified:** TORQ_E_ARCHITECTURAL_PROTOCOL.md  
 **Lines Added:** 4,200+  
@@ -806,7 +806,7 @@ Added PART 6: UBADA Data Analyst Architecture (4,200+ lines) covering:
 - Complete investigation workflow documented
 - Governance + audit trail specifications aligned with Card 4
 - Claude tools for Card 5 defined and specified
-- Fraud investigation pathway clearly defined (explore → detect → escalate → track)
+- authenticity investigation pathway clearly defined (explore → detect → escalate → track)
 - All five cards (1, 2, 4, 5) now fully specified
 - Foundation for implementation ready
 
@@ -919,7 +919,7 @@ Created TORQ-E_COMPLETE_BUILD_PLAN.md (3,200+ lines) covering:
 2. **Phase 1: Shared Infrastructure** (36-44 hrs) — Database schema, RYG component, governance audit trail foundation, source management foundation
 3. **Phase 2: Card 4 (USHI)** (36-44 hrs) — Government stakeholder backend, frontend, system prompt, integration testing
 4. **Phase 3: Card 5 (UBADA)** (52-70 hrs) — Data analyst backend (explorer + graph traversal), frontend (multi-panel UI + workspace), system prompt, integration testing
-5. **Phase 4: Operational Workflows** (28-36 hrs) — Fraud escalation → investigation, source disagreement resolution, data correction approval, governance alerts
+5. **Phase 4: Operational Workflows** (28-36 hrs) — inauthenticity escalation → investigation, source disagreement resolution, data correction approval, governance alerts
 6. **Phase 5: Compliance & Security** (20-28 hrs) — HHS audit export, retention policy, security hardening
 7. **Phase 6: Documentation & Deployment** (26-34 hrs) — Architecture docs, operations manual, training, production rollout
 
@@ -935,7 +935,7 @@ Created TORQ-E_COMPLETE_BUILD_PLAN.md (3,200+ lines) covering:
 - ✅ Access control enforcement (API-level, not prompt-based)
 - ✅ De-identification verification (legal sign-off)
 - ✅ Claude tool testing strategy (30+ tests per tool)
-- ✅ Fraud signal → investigation escalation (workflow defined)
+- ✅ inauthenticity signal → investigation escalation (workflow defined)
 - ✅ Source disagreement resolution (formal process)
 - ✅ Investigation permissions model (lead/peer/viewer roles)
 - ✅ Governance log compliance export (HHS format)
@@ -1103,8 +1103,8 @@ Completely rewrote prompt from generic governance to HIPAA-compliant, audit-focu
 - NEVER attempt to query individual records
 - NEVER return PII in any form — only aggregate metrics
 - ALWAYS de-identify: "47 providers" not "names"
-- ALWAYS contextualize patterns (specialty vs fraud)
-- NEVER make final fraud determinations alone — recommend Card 5 escalation
+- ALWAYS contextualize patterns (specialty vs inauthenticity)
+- NEVER make final inauthenticity determinations alone — recommend Card 5 escalation
 
 **Reporting Patterns:**
 - Lead with aggregate statistics (rates, percentages, counts)

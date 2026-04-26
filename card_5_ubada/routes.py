@@ -1,5 +1,5 @@
 """
-Card 5 (UBADA) - Data Analyst & Fraud Investigation API Routes
+Card 5 (UBADA) - Data Analyst & authenticity investigation API Routes
 Expose 5 Claude tools for investigation and data correction
 """
 
@@ -67,7 +67,7 @@ async def detect_outliers(
     db: Session = Depends(get_db)
 ):
     """
-    Statistical anomaly detection for fraud signal identification.
+    Statistical anomaly detection for inauthenticity signal identification.
 
     Returns outliers with Z-scores, risk levels, and confidence scores.
     Focus: Evidence quality for investigation recommendations.

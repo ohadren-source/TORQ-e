@@ -236,7 +236,7 @@ Plus indicator showing:
 If Card 5 is built without veracity framework:
 - ❌ Analysts can't see why data conflicts
 - ❌ They can't distinguish signal from noise
-- ❌ False positives treated as high-confidence fraud signals
+- ❌ False positives treated as high-confidence inauthenticity signals
 - ❌ We ship the "Medicaid cluster-fuck" problem to our users
 - ❌ Later retrofit requires gutting everything
 

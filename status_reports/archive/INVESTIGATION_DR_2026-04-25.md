@@ -32,7 +32,7 @@ Full system audit of TORQ-E codebase reveals:
 - `chat-card2.html` - Provider claims chat interface
 - `chat-card3.html` - Plan network chat interface
 - `chat-card4.html` - Government governance chat interface (LOCKED v1.0.0)
-- `chat-card5.html` - Fraud investigation chat interface
+- `chat-card5.html` - authenticity investigation chat interface
 - `landing.html` - Home page (status banner removed ✓)
 - `qualifier-card1.html` - ARCHIVED but still present
 - `qualifier-card2.html` - ARCHIVED but still present
@@ -275,7 +275,7 @@ POST /api/card3/plan-comparison
 **Card 4 Endpoints (exist):**
 ```
 POST /api/card4/metrics
-POST /api/card4/fraud-signals
+POST /api/card4/inauthenticity-signals
 POST /api/card4/data-quality
 GET  /api/card4/governance-log
 ```

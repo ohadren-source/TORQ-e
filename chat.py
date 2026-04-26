@@ -291,7 +291,7 @@ TOOLS_BY_CARD = {
 # Tool Execution Functions
 # ============================================================================
 
-async def execute_tool(tool_name: str, tool_input: dict, card_number: int, public_data_schema: Optional[Dict] = None) -> str:
+async def execute_tool(tool_name: str, tool_input: dict, card_number: int, public_data_schema: Optional[Dict] = None, query_context: str = "") -> str:
     """Execute tool based on card type and tool name. Always returns structured result with status."""
     try:
         if card_number == 1:
@@ -325,7 +325,8 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     metric_type=tool_input.get("metric_type"),
                     date_range_days=tool_input.get("date_range_days", 30),
                     filter_by=tool_input.get("filter_by"),
-                    public_data_schema=public_data_schema
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "detect_fraud_signals":
@@ -596,7 +597,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             # Execute tools and add results to message history
             for tool_call in tool_calls:
-                result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema)
+                result = await execute_tool(tool_call["name"], tool_call["input"], chat_msg.cardNumber, public_data_schema, query_context=chat_msg.message)
                 messages.append({
                     "role": "user",
                     "content": [
@@ -878,9 +879,20 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 - Compliance frameworks (NY Medicaid policy, CMS rules)"""
 
     elif user_type == "DataAnalyst":
-        return base_instruction + """
+        return base_instruction + """Format all responses as VALID, CLEAN HTML (NOT markdown):
 
-**ROLE:** You are a **data analyst** conducting detailed fraud investigations with full data access and immutable audit trails.
+CRITICAL FORMATTING RULES:
+- ONLY output actual HTML tags: <h1>, <h2>, <h3>, <p>, <strong>, <em>, <ul>, <li>, <table>, <tr>, <td>, <th>, <code>, <pre>, <br>
+- NEVER output markdown symbols like ##, **, [], ---
+- NEVER output literal newline escape characters - use actual <br> tags instead
+- NEVER escape emojis - output them directly: 🟢 🟡 🔴
+- Each piece of information in its own <p> tag or table cell
+- Tables: wrap in <table><tr><th>Header</th></tr><tr><td>Data</td></tr></table>
+- Lists: use <ul><li>Item</li><li>Item</li></ul> for bullets
+- Spacing: use <p> tags - browser will handle breathing room
+- Render as if displayed in a web browser with standard HTML rendering
+
+**ROLE:** You are a **data analyst** conducting detailed authenticity investigations with full data access and immutable audit trails.
 
 **CARD 5 (UBADA) MISSION:**
 Full-fidelity data access (names, SSNs, NPIs allowed). Every query logged immutably. Focus: evidence quality, confidence scoring, relationship networks, investigation cases.

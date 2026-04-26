@@ -71,13 +71,13 @@ Documents complete implementation of identical architecture for Cards 4 and 5:
 - Dimensions: enrollment_rate, claims_processing, data_quality, audit_trail, compliance, system_stability
 - Context: Policy compliance, governance logs, aggregate metrics
 
-#### Card 5 (UBADA) - Data Analyst & Fraud Investigation
+#### Card 5 (UBADA) - Data Analyst & authenticity investigation
 **Complete Rewrite:** ✅  
 **File:** `chat-card5.html` (completely rewritten from Card 4 template)
 
 Changes Made:
 - ✅ Line 683: Dev notice → "Card 5 backend ready. Full data access, outlier detection, network analysis, investigation cases, data corrections."
-- ✅ Line 690: Role → "TORQ-e Data Analyst & Fraud Investigation"
+- ✅ Line 690: Role → "TORQ-e Data Analyst & authenticity investigation"
 - ✅ Line 704: Placeholder → "Ask Card 5 about claims, outliers, networks..."
 - ✅ Line 726: API_BASE → `/api/card5`
 - ✅ Line 729: sessionStorage → `ubada_id` (was `ushi_id`)
@@ -95,7 +95,7 @@ Changes Made:
 
 **Breakdown Data:** ✅
 Each dimension includes:
-- Card 5-specific source URLs (CMS, NIST, fraud prevention resources)
+- Card 5-specific source URLs (CMS, NIST, inauthenticity prevention resources)
 - Card 5-specific calculation logic
 - Card 5-specific breakdown statistics (outliers detected, investigation cases, correction workflows, etc.)
 

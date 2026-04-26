@@ -34,7 +34,7 @@ class ClaimStatusRequest(BaseModel):
     claim_id: str
 
 class FraudAnalysisRequest(BaseModel):
-    """Request to analyze claim for fraud"""
+    """Request to analyze claim for inauthenticity"""
     claim_data: Dict
     provider_upid: str
     member_umid: str
@@ -105,17 +105,8 @@ class ClaimStatusResponse(BaseModel):
     action: Optional[str] = None
 
 class FraudSignalResponse(BaseModel):
-    """Fraud detection results"""
+    """authenticity verification results"""
     risk_score: float
     risk_level: str  # LOW, MEDIUM, HIGH
     signals: List[str]
-    recommendation: str
-    analyst_action: str
-
-class FraudReportResponse(BaseModel):
-    """Comprehensive fraud report"""
-    total_claims_analyzed: int
-    flagged_claims: int
-    average_risk_score: float
-    high_risk_percentage: float
-    recommendation: str
+    r

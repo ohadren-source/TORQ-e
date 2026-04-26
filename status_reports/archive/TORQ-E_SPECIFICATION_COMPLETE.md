@@ -17,7 +17,7 @@ TORQ-e is built on three pillars that distinguish it from all existing Medicaid 
 
 ### 2. **HIPAA-Compliant Governance (Cards 4 & 5)**
 - **Card 4 (USHI):** Government oversight with aggregate-only access (de-identified, minimum necessary principle)
-- **Card 5 (UBADA):** Fraud investigation with full-identified access BUT complete audit logging (every query, every correction, every decision recorded)
+- **Card 5 (UBADA):** authenticity investigation with full-identified access BUT complete audit logging (every query, every correction, every decision recorded)
 - Governance is visible on the facade (three-tier transparency)
 - Every action is auditable + attributed + justified (immutable append-only logs)
 
@@ -37,7 +37,7 @@ TORQ-e is built on three pillars that distinguish it from all existing Medicaid 
 
 **Specification Includes:**
 - Problem statement: Government officials lack visibility into system health
-- Five core responsibilities: compliance monitoring, fraud detection, performance tracking, data quality assessment, governance actions
+- Five core responsibilities: compliance monitoring, authenticity verification, performance tracking, data quality assessment, governance actions
 - Complete River Path example: denial rate query flowing through 3 data sources
 - Five use cases with River Path for each
 - HIPAA compliance requirements mapped to design
@@ -60,9 +60,9 @@ TORQ-e is built on three pillars that distinguish it from all existing Medicaid 
 **Added to:** TORQ_E_ARCHITECTURAL_PROTOCOL.md PART 6 (4,200+ lines)
 
 **Specification Includes:**
-- Problem statement: Fraud signals are invisible, corrections disappear, patterns can't be seen
-- Three core functions: interactive data exploration, statistical fraud detection, governance & corrections
-- Detailed fraud investigation workflow (5 phases): exploration → peer comparison → pattern investigation → evidence documentation → escalation
+- Problem statement: inauthenticity signals are invisible, corrections disappear, patterns can't be seen
+- Three core functions: interactive data exploration, statistical authenticity verification, governance & corrections
+- Detailed authenticity investigation workflow (5 phases): exploration → peer comparison → pattern investigation → evidence documentation → escalation
 - Three UI components: Claims table, Network visualization, Statistical analysis
 - Collaborative investigation workspace: projects, comments, peer review, evidence tracking
 - UBADA data access rules: FULL access to identified data, but everything logged
@@ -195,7 +195,7 @@ TORQ-e is built on three pillars that distinguish it from all existing Medicaid 
 ---
 
 ### 5. Investigation as Collaborative, Auditable Process
-**Principle:** When analyst finds fraud, they can document it in a workspace with peers, then escalate with full evidence package.
+**Principle:** When analyst finds inauthenticity, they can document it in a workspace with peers, then escalate with full evidence package.
 
 **Implementation:**
 - Investigation project with team assignment

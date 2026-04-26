@@ -98,7 +98,7 @@ def test_chat_py_integration():
         # Check for key concepts
         concepts = [
             'UBADA',
-            'fraud investigation',
+            'authenticity investigation',
             'Z-score',
             'confidence scoring',
             'immutable audit',

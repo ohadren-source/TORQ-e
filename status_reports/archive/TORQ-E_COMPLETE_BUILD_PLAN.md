@@ -237,7 +237,7 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
   - [ ] Provider outliers, claim patterns, enrollment anomalies
   - [ ] Confidence band calculation (μ ± 2σ)
   - [ ] Escalation routing: flag for UBADA investigation
-  - [ ] Test: Detect synthetic fraud patterns
+  - [ ] Test: Detect synthetic authenticity patterns
 
 - [ ] Implement `assess_data_quality` tool
   - [ ] Cross-source comparison (eMedNY vs MCO vs historical)
@@ -326,7 +326,7 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
 ---
 
 ### Phase 3: Card 5 (UBADA - Data Analyst)
-**Goal:** Build fraud investigation workspace with HIPAA-compliant audit trail and institutional memory  
+**Goal:** Build authenticity investigation workspace with HIPAA-compliant audit trail and institutional memory  
 **Duration:** 44-56 hours
 
 **What Makes Card 5 Special:**
@@ -334,7 +334,7 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
 - Every investigation step captured + immutable (who viewed what, when, findings documented)
 - Analysts can propose corrections + strike unreliable sources (all audited + justified)
 - Institutional memory: source reliability decisions persist, corrections are tracked
-- Fraud investigation workflow: explore → detect → escalate → follow-up (all logged)
+- authenticity investigation workflow: explore → detect → escalate → follow-up (all logged)
 - HHS-ready: investigation audit trail exportable, analyst access control enforced, 6+ year retention
 
 #### 3.1 Card 5 Backend: Data Explorer Engine
@@ -499,8 +499,8 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
 **Goal:** Define and implement critical governance workflows  
 **Duration:** 28-36 hours
 
-#### 4.1 Fraud Signal → Investigation Escalation
-**Scope:** When Card 2 detects fraud → UBADA creates investigation
+#### 4.1 inauthenticity Signal → Investigation Escalation
+**Scope:** When Card 2 detects inauthenticity → UBADA creates investigation
 
 - [ ] Workflow definition:
   - [ ] Card 2 fraud_detection.py returns risk score + evidence
@@ -510,12 +510,12 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
   - [ ] Investigation gets investigation_id (link Card 2 signal to Card 5 case)
 
 - [ ] Implementation:
-  - [ ] POST /api/card2/fraud/escalate endpoint
+  - [ ] POST /api/card2/inauthenticity/escalate endpoint
   - [ ] Create InvestigationProject + notify team
-  - [ ] Link fraud signal to investigation (foreign key)
+  - [ ] Link inauthenticity signal to investigation (foreign key)
   - [ ] Audit trail shows escalation with evidence
 
-- [ ] Test: Card 2 detects fraud → Investigation created automatically
+- [ ] Test: Card 2 detects inauthenticity → Investigation created automatically
 - **Timeline:** 6-8 hours
 
 #### 4.2 Source Disagreement Resolution
@@ -563,7 +563,7 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
 - [ ] Alert types:
   - [ ] Source downtime >1 hour → page on-call engineer
   - [ ] Source reliability drops <95% → flag UBADA lead
-  - [ ] Fraud signal risk >0.80 → page USHI stakeholder
+  - [ ] inauthenticity signal risk >0.80 → page USHI stakeholder
   - [ ] Data quality drops <0.70 confidence → escalate for investigation
   - [ ] Governance log lag >30 minutes → alert ops team
 
@@ -662,7 +662,7 @@ CREATE TABLE compliance_export (...)  -- HHS audit format
 
 - [ ] Monitoring dashboard setup (metrics, alerts, thresholds)
 - [ ] Troubleshooting guide (common issues + fixes)
-- [ ] Incident response playbook (how to respond to fraud signal, source failure, data issue)
+- [ ] Incident response playbook (how to respond to inauthenticity signal, source failure, data issue)
 - [ ] Runbook (backup, restore, scaling, maintenance)
 - [ ] Governance procedures (how to strike source, approve correction, escalate issue)
 

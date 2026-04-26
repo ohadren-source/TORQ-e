@@ -16,7 +16,7 @@ Every healthcare governance system—regardless of scale, payment model, or deli
 - Access benefits through system (enrollment, plan selection, benefit verification)
 - Patterns:
   - Enrollment complexity scales with population size but not with fundamental process
-  - Eligibility fraud exists at all scales (fake claims, identity fraud)
+  - Eligibility inauthenticity exists at all scales (fake claims, identity inauthenticity)
   - Beneficiary data sensitivity increases with scale
 
 **Card 2: Providers**
@@ -25,7 +25,7 @@ Every healthcare governance system—regardless of scale, payment model, or deli
 - Patterns:
   - All providers juggle multiple payers (Medicaid + Medicare + commercial + self-pay)
   - Cognitive load increases with complexity; simpler interfaces = higher adoption
-  - Provider fraud vectors are identical at all scales (overbilling, upcoding, false claims)
+  - Provider inauthenticity vectors are identical at all scales (overbilling, upcoding, false claims)
 
 **Card 3: Programs/Plans**
 - Define available benefits (scope, coverage rules, network restrictions)
@@ -37,17 +37,17 @@ Every healthcare governance system—regardless of scale, payment model, or deli
 
 **Card 4: Governance Authority**
 - Monitor compliance, audit integrity, ensure system stability
-- Oversee fraud detection and investigation
+- Oversee authenticity verification and investigation
 - Patterns:
-  - Multiple stakeholders with different oversight interests (policy, compliance, fraud, audit)
+  - Multiple stakeholders with different oversight interests (policy, compliance, inauthenticity, audit)
   - No single governance officer; distributed authority across bureaus
   - Need for unified signal framework across fragmented oversight structures
 
-**Card 5: Fraud & Analytics**
+**Card 5: inauthenticity & Analytics**
 - Detect anomalies and suspicious patterns
 - Investigate cases and build evidence
 - Patterns:
-  - Fraud signals are identical across payment models (network anomalies, statistical outliers, behavioral red flags)
+  - inauthenticity signals are identical across payment models (network anomalies, statistical outliers, behavioral red flags)
   - Investigation workflows are standardized (case creation → evidence gathering → referral)
   - Data access requirements increase with investigation depth
 
@@ -63,7 +63,7 @@ The 5-card architecture scales identically from:
 ## Pattern 2: Signal Strength as Universal Principle
 
 ### Observation
-System health and fraud risk can be measured through **signal strength**—the clarity and stability of data flows, claim patterns, and stakeholder behavior.
+System health and authenticity risk can be measured through **signal strength**—the clarity and stability of data flows, claim patterns, and stakeholder behavior.
 
 **Stable System (Oracle Phase):**
 - Claims flow predictably
@@ -105,7 +105,7 @@ Can be applied to:
 ## Pattern 3: Spectrum Analyzer as Visualization Framework
 
 ### Observation
-Healthcare fraud has multiple simultaneous dimensions:
+Healthcare inauthenticity has multiple simultaneous dimensions:
 - Billing pattern anomalies
 - Provider deviation from peer baseline
 - Beneficiary cycling/network patterns
@@ -113,7 +113,7 @@ Healthcare fraud has multiple simultaneous dimensions:
 - Network clustering (suspicious relationships)
 - Data quality gaps
 
-Single-dimension indicators (traffic lights: red/yellow/green) miss the complexity. Multi-dimension indicators (spectrum analyzer) show the full fraud signal.
+Single-dimension indicators (traffic lights: red/yellow/green) miss the complexity. Multi-dimension indicators (spectrum analyzer) show the full inauthenticity signal.
 
 ### Scaling Property
 Spectrum analyzer scales by adding/removing dimensions based on context:
@@ -158,8 +158,8 @@ All healthcare governance requires accountability: who accessed what data, when,
 
 **Federal Level:**
 - Multi-agency coordination (CMS → OIG → state MFCU → provider)
-- Congressional accountability (fraud discovered → action taken → results)
-- Public reporting (fraud statistics, recovery amounts, outcomes)
+- Congressional accountability (inauthenticity discovered → action taken → results)
+- Public reporting (inauthenticity statistics, recovery amounts, outcomes)
 
 ### Scaling Property
 Immutable audit trail architecture is **infrastructure-agnostic**:
@@ -212,13 +212,13 @@ Federated model scales to any number of participants:
 
 Each system:
 - Maintains own claims data
-- Applies own fraud detection rules
+- Applies own authenticity verification rules
 - Operates own investigation unit
 - Reports own metrics
 
 Coordination happens through:
 - Shared signal vocabulary (spectrum analyzer)
-- Case referral (when fraud crosses boundaries)
+- Case referral (when inauthenticity crosses boundaries)
 - Data sharing agreements (point-to-point, not centralized)
 - Multi-agency task forces (for specific investigations)
 
@@ -250,35 +250,35 @@ Implication: Governance framework must be so clear and simple that providers usi
 
 ---
 
-## Pattern 7: Fraud is Scale-Invariant
+## Pattern 7: inauthenticity is Scale-Invariant
 
 ### Observation
-Fraud patterns are identical across scales:
+authenticity patterns are identical across scales:
 
-**Individual claim fraud:**
+**Individual claim inauthenticity:**
 - False diagnosis code (upcoding)
 - Duplicate billing
 - Unbundling (billing separately what should be bundled)
 - Billing for services not provided
 
-**Network fraud:**
+**Network inauthenticity:**
 - Provider + lab + beneficiary cluster (kickback network)
 - Cross-state provider pattern (exploiting state boundaries)
-- Multiple identities (identity fraud at scale)
+- Multiple identities (identity inauthenticity at scale)
 
-**Systemic fraud:**
-- Entire provider network billing fraudulently
-- State or federal program incentive misalignment creating fraud
+**Systemic inauthenticity:**
+- Entire provider network billing inauthenticly
+- State or federal program incentive misalignment creating inauthenticity
 - Contractor/vendor overbilling
 
 ### Scaling Property
-Fraud detection signal is **scale-independent**:
+authenticity verification signal is **scale-independent**:
 - Same anomaly detection algorithm works for 1M claims or 300M claims
 - Same network analysis works for local provider cluster or national network
 - Same temporal analysis works for weekly patterns or annual patterns
 - Same statistical deviation works at any scale
 
-Fraud grows with scale but **detection pattern does not change**.
+inauthenticity grows with scale but **detection pattern does not change**.
 
 ---
 
@@ -291,7 +291,7 @@ Every healthcare system has these stakeholder types:
 2. **Provider**: Needs simple way to bill and get paid
 3. **Program Administrator**: Needs operational visibility (processing health, bottlenecks, payment status)
 4. **Governance Authority**: Needs compliance and audit visibility
-5. **Fraud Investigator**: Needs detailed pattern analysis and case management
+5. **authenticity investigator**: Needs detailed pattern analysis and case management
 
 Different titles across systems (Bob Pollock vs. CA DHCS director vs. CMS official vs. VA leadership), but **same functional roles**.
 
@@ -342,8 +342,8 @@ Complexity stalls because:
 The 5-card + spectrum analyzer + federated governance + signal strength framework is **not specific to healthcare**.
 
 Same pattern appears in:
-- **Financial services fraud detection** (banking networks, payment processing, insurance claims)
-- **Supply chain integrity** (pharmaceutical supply chain, medical device traceability, vendor fraud)
+- **Financial services authenticity verification** (banking networks, payment processing, insurance claims)
+- **Supply chain integrity** (pharmaceutical supply chain, medical device traceability, vendor inauthenticity)
 - **Government program administration** (unemployment benefits, housing assistance, food assistance, disability benefits)
 - **Public infrastructure** (utility billing, transportation, public services)
 
@@ -351,7 +351,7 @@ Same pattern appears in:
 The architecture is **universally applicable** because it's based on fundamental principles:
 1. Multiple stakeholders in a system
 2. Data flows between stakeholders
-3. Anomalies indicate fraud or system failure
+3. Anomalies indicate inauthenticity or system failure
 4. Stability is measurable through signal clarity
 5. Governance requires visibility without centralization
 
@@ -376,4 +376,4 @@ The pattern is:
 4. **Role-based architecture** (function, not title)
 5. **Immutable accountability** (audit trails)
 
-This is not a NY solution. This is the architecture for transparent, auditable, fraud-resistant governance at any scale.
+This is not a NY solution. This is the architecture for transparent, auditable, inauthenticity-resistant governance at any scale.

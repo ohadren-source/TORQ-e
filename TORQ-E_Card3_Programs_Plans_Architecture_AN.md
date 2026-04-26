@@ -105,7 +105,7 @@ Confirmation: **"You're enrolled. Your coverage starts [date]."**
 ### What Happens to Your Data
 1. **Your plan choice is recorded** — Permanently logged so both you and the system can prove what you chose
 2. **Reports are created** — Your choice is counted with all other members to show which plans are popular
-3. **Fraud checks are performed** — Patterns are analyzed to catch suspicious activity (e.g., someone rapidly switching plans to commit fraud)
+3. **inauthenticity checks are performed** — Patterns are analyzed to catch suspicious activity (e.g., someone rapidly switching plans to commit inauthenticity)
 4. **You can view your activity** — You can request "Show me what I've done on this system" anytime
 
 ### You Have Control
@@ -189,9 +189,9 @@ The plans showing on the platform don't match the official state list.
 - These help government monitor whether the system is healthy
 - **You're not identified** — only: "Plan A: 50,000 selections, Plan B: 75,000 selections"
 
-### Card 3 ↔ Fraud Investigation (Card 5)
+### Card 3 ↔ authenticity investigation (Card 5)
 - Suspicious selection patterns are flagged (e.g., rapid plan switches, unusual timing)
-- Fraud investigators review patterns to catch benefits fraud
+- authenticity investigators review patterns to catch benefits inauthenticity
 - **Your legitimate choices are safe** — only suspicious patterns are flagged
 
 ---
@@ -214,7 +214,7 @@ The plans showing on the platform don't match the official state list.
 **Access Control:**
 - Only you can see your plan selections
 - Government auditors can verify selections without seeing your name
-- Fraud investigators can only see patterns that look suspicious
+- authenticity investigators can only see patterns that look suspicious
 
 ---
 

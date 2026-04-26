@@ -122,7 +122,7 @@ URL: https://torq-e-production.up.railway.app/static/cards/chat-card5.html
 Test: Ask "What is claims data quality?"
 Verify: Dimensions are Card 5 specific (Claims Data Quality, Outlier Detection, etc.)
 Verify: Dev notice says "Card 5 backend ready"
-Verify: Initial message says "Data Analyst & Fraud Investigation"
+Verify: Initial message says "Data Analyst & authenticity investigation"
 ```
 
 ---

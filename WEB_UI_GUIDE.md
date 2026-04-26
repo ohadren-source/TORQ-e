@@ -20,7 +20,7 @@ The entry point. Shows all 5 cards with descriptions and links.
 2. UPID — Provider Enrollment & Claims
 3. WHUP — Plan Network Management
 4. USHI — Government Stakeholder Operations
-5. UBADA — Data Analyst & Fraud Investigation
+5. UBADA — Data Analyst & authenticity investigation
 
 **Each card shows:**
 - Card number (1-5)
@@ -254,7 +254,7 @@ This ensures assets work in production (Railway) without relative path issues.
 5. Chat interface appears
 6. Type: "I need to submit a claim for Emily Chen, where does it go?"
 7. Claude checks provider enrollment, suggests correct MCO
-8. Can ask about claim status, fraud detection, etc.
+8. Can ask about claim status, authenticity verification, etc.
 
 ### Flow 3: Curious User (Any Card)
 
@@ -404,21 +404,4 @@ If `claude_api_configured` is `false`, ANTHROPIC_API_KEY isn't set.
 ### Phase 2 (NEXT)
 - [ ] Complete tutorial pages for Cards 3, 4, 5
 - [ ] Connect Card 3, 4, 5 chat to Claude
-- [ ] Add tool use for Cards 3, 4, 5
-- [ ] Real NY DOH API integration
-- [ ] Authentication system
-
-### Phase 3
-- [ ] Mobile-responsive design refinement
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support
-- [ ] Accessibility audit (WCAG AAA)
-- [ ] Performance optimization
-
----
-
-**Last Updated:** April 24, 2026
-
-**Status:** ✅ Cards 1-2 LIVE | 📋 Cards 3-5 Placeholder
-
-🎨 **Design with clarity. Code with purpose.** 🎨
+- [ ] Add tool use for Cards 3, 4, 

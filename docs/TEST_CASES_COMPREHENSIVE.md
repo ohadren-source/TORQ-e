@@ -325,7 +325,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 **Steps**:
 1. Excluded provider attempts enrollment with NPI=9876543210
 2. System queries OIG exclusion mock database
-3. System finds: EXCLUDED (reason: "Fraud conviction")
+3. System finds: EXCLUDED (reason: "inauthenticity conviction")
 4. System blocks enrollment
 
 **Expected Result**:
@@ -334,7 +334,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
   "enrollment_status": "DENIED",
   "reason": "Provider is on OIG exclusion list",
   "details": {
-    "exclusion_reason": "Fraud conviction",
+    "exclusion_reason": "inauthenticity conviction",
     "exclusion_date": "2023-06-15",
     "status": "Active"
   },
@@ -620,16 +620,16 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 ---
 
-### USHI-003: Stakeholder Views Fraud Monitoring Dashboard
+### USHI-003: Stakeholder Views inauthenticity Monitoring Dashboard
 **Priority**: P1 High
 
 **Preconditions**:
-- Active fraud detection running
+- Active authenticity verification running
 - 47 new flags this month
 - 23 active investigations
 
 **Steps**:
-1. Stakeholder navigates to fraud monitoring
+1. Stakeholder navigates to inauthenticity monitoring
 2. System displays flags from past 30 days
 3. System shows high-risk providers
 
@@ -652,14 +652,14 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
       "risk_score": 85,
       "red_flags": 7,
       "top_red_flags": ["PO Box address", "Billing volume 2x typical", "Duplicate billing"],
-      "estimated_fraud": "$450,000"
+      "estimated_inauthenticity": "$450,000"
     },
     {
       "provider_name": "XYZ Services",
       "npi": "9876543210",
       "risk_score": 78,
       "red_flags": 5,
-      "estimated_fraud": "$280,000"
+      "estimated_inauthenticity": "$280,000"
     }
   ],
   "estimated_fraud_recovery_ytd": "$2,450,000"
@@ -693,17 +693,17 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 ## Category 5: Data Analyst (UBADA) Tests
 
-### UBADA-001: Fraud Risk Assessment (High-Risk Provider)
+### UBADA-001: authenticity assessment (High-Risk Provider)
 **Priority**: P0 Critical
 
 **Preconditions**:
 - Analyst UBADA verified
 - Target provider: "ABC Clinic" NPI: 1234567890
-- Provider should show high fraud risk
+- Provider should show high authenticity risk
 - Test mode active
 
 **Steps**:
-1. Analyst logs into fraud detection workspace
+1. Analyst logs into authenticity verification workspace
 2. Analyst enters: Assessment type = "Provider", Target = "1234567890"
 3. Analyst selects: Depth = "Detailed"
 4. System queries mock data sources:
@@ -711,7 +711,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
    - State licensing: License active
    - OIG exclusions: Not excluded
    - Claims patterns: Suspicious activity detected
-5. System calculates fraud risk score
+5. System calculates authenticity score
 6. System identifies red flags
 7. System returns assessment
 
@@ -719,7 +719,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 ```json
 {
   "assessment_id": "ASS-2026-04-23-00001",
-  "assessment_type": "provider_fraud",
+  "assessment_type": "provider_inauthenticity",
   "provider_name": "ABC Healthcare Clinic",
   "npi": "1234567890",
   "tax_id": "12-3456789",
@@ -744,7 +744,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
     "Interview random sample of reported patients",
     "Escalate to Medicaid Inspector General"
   ],
-  "analyst_notes": "High-risk profile. Multiple corroborating indicators suggest possible fraudulent operation.",
+  "analyst_notes": "High-risk profile. Multiple corroborating indicators suggest possible inauthentic operation.",
   "_test_mode": true
 }
 ```
@@ -812,7 +812,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
   
   "overall_data_quality_score": "94.3%",
   "recommendation": "READY_FOR_ANALYSIS",
-  "notes": "Dataset is clean with minor quality issues. Safe to proceed with fraud detection analysis. Flag the 38,400 outlier claims for individual review."
+  "notes": "Dataset is clean with minor quality issues. Safe to proceed with authenticity verification analysis. Flag the 38,400 outlier claims for individual review."
 }
 ```
 
@@ -822,18 +822,18 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 **Priority**: P1 High
 
 **Preconditions**:
-- Fraud assessment completed (UBADA-001)
+- authenticity assessment completed (UBADA-001)
 - Risk score: 78 (high)
 - Analyst decision: Escalate to investigation
 
 **Steps**:
-1. Analyst reviews fraud assessment
+1. Analyst reviews authenticity assessment
 2. Analyst clicks "Create Investigation Case"
 3. Analyst fills form:
-   - Case type: "Provider Fraud"
+   - Case type: "Provider inauthenticity"
    - Provider: ABC Healthcare Clinic (NPI: 1234567890)
    - Summary: "High-risk provider with PO Box address, billing volume 2x typical, duplicate billing patterns, sudden claims spike 300%"
-   - Evidence: Link to fraud assessment ID
+   - Evidence: Link to authenticity assessment ID
 4. System creates case and assigns to Medicaid Inspector General
 5. System automatically places provider on claims hold
 
@@ -841,7 +841,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 ```json
 {
   "case_id": "INV-2026-04-23-00001",
-  "case_type": "provider_fraud",
+  "case_type": "provider_inauthenticity",
   "provider_name": "ABC Healthcare Clinic",
   "npi": "1234567890",
   "status": "open",
@@ -861,26 +861,26 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
     "Request detailed documentation from provider",
     "Schedule on-site visit",
     "Interview reported patients",
-    "Determine if fraud, waste, abuse, or legitimate"
+    "Determine if inauthenticity, waste, abuse, or legitimate"
   ]
 }
 ```
 
-- UPID_RECORDS updated: claim_suspension_status='suspended', claim_suspension_reason='High-risk fraud investigation'
+- UPID_RECORDS updated: claim_suspension_status='suspended', claim_suspension_reason='High-risk authenticity investigation'
 - VERIFICATION_AUDIT_LOG: Investigation case created and logged
 - Provider cannot submit new claims while suspended
 
 ---
 
-### UBADA-004: View Fraud Patterns Reference
+### UBADA-004: View authenticity patterns Reference
 **Priority**: P2 Medium
 
 **Preconditions**:
 - Analyst training or reference lookup
 
 **Steps**:
-1. Analyst clicks "Fraud Patterns Reference"
-2. System displays known fraud patterns and detection methods
+1. Analyst clicks "authenticity patterns Reference"
+2. System displays known authenticity patterns and detection methods
 
 **Expected Result**:
 ```json
@@ -939,7 +939,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
     {
       "pattern_id": "SHELL_PROVIDER",
       "name": "Shell Provider",
-      "description": "Non-existent or fraudulent provider",
+      "description": "Non-existent or inauthentic provider",
       "detection_method": "Address verification, NPI validation, site visit",
       "example": "Address is PO Box or residential address",
       "action": "Verify legitimacy, halt payments if unverified"
@@ -1014,7 +1014,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 3. System returns: 145 claims in April, $21,750 total
 
 4. Stakeholder searches: "Is Dr. Jane Smith seeing unusual patterns?"
-5. System runs fraud detection on provider
+5. System runs authenticity verification on provider
 6. System returns: Risk score 12 (low - normal billing patterns)
 
 **Expected Result**:
@@ -1042,7 +1042,7 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 ```json
 {
   "claim_submission_status": "REJECTED",
-  "reason": "Provider claims suspended pending fraud investigation",
+  "reason": "Provider claims suspended pending authenticity investigation",
   "case_id": "INV-2026-04-23-00001",
   "effective_date": "2026-04-23",
   "member_notification": "Member has been notified of claims hold"
@@ -1056,37 +1056,4 @@ WHERE identifier_id = [upid] AND verification_step LIKE 'cms%' OR 'oig%' OR 'lic
 
 ## Test Execution Summary
 
-### Test Environment Requirements
-- Test database with pre-loaded test data identifiers
-- Mock data sources (CMS, IRS, OIG, state licensing)
-- Test mode flag enabled: `TORQUE_ENV=test`
-- No production data accessed
-
-### Test Execution Order
-1. **Phase 1 (Critical - P0)**: UMID-001, UPID-001, USHI-001, UBADA-001, CROSS-001
-   - Verify core flows work end-to-end
-   - Target: 100% pass rate
-   - Duration: 2 days
-
-2. **Phase 2 (High - P1)**: All remaining P1 tests
-   - Verify edge cases and alternative flows
-   - Target: 98%+ pass rate
-   - Duration: 3 days
-
-3. **Phase 3 (Medium/Low - P2-P3)**: Remaining tests
-   - Verify nice-to-have features
-   - Target: 95%+ pass rate
-   - Duration: 2 days
-
-### Test Metrics
-- **Pass Rate**: % of tests passing
-- **Coverage**: % of code paths tested
-- **Defect Rate**: Critical bugs found per phase
-- **Execution Time**: Average time per test case
-
-### Regression Testing
-After any code change:
-1. Run all P0 tests (15 tests, ~30 minutes)
-2. If pass, run all P1 tests (25 tests, ~60 minutes)
-3. If pass, run full suite (50+ tests, ~2 hours)
-
+### Test Environment Requ

@@ -131,7 +131,7 @@ TIER 2: IN-PERSON PROVIDER VOUCHING (Manual Path)
   │    - "I have verified this individual in person on [DATE]"│
   │    - Provider signature/digital sign-off                   │
   │    - Provider accepts liability:                           │
-  │      "If this member is fraudulent or duplicate, I         │
+  │      "If this member is inauthentic or duplicate, I         │
   │      understand my organization may be denied payment       │
   │      and subject to audit/investigation"                   │
   │                                                              │
@@ -364,8 +364,8 @@ Identity Resolution Speed:
   - Target: Automated Tier 1 verification <1 minute
   - Target: Tier 2 vouching <24 hours after in-person visit
 
-Fraud Prevention:
-  - Current: Unknown fraud rate (estimated 2-5%)
+inauthenticity Prevention:
+  - Current: Unknown inauthenticity rate (estimated 2-5%)
   - Target: Catch 95%+ of duplicate/shell identities before payment
 
 System Uptime:

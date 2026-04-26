@@ -56,7 +56,7 @@ BASE_URLS = [
     # Card 3: Managed Care Organizations & Plans
     "https://health.data.ny.gov",
 
-    # Card 4 & 5: Government Stakeholder & Fraud Investigation
+    # Card 4 & 5: Government Stakeholder & authenticity investigation
     "https://omig.ny.gov/",
     "https://its.ny.gov/",
 ]
@@ -202,7 +202,7 @@ class DataCrawler:
             "denial": r"denial|denied|rejected|rejection",
             "processing": r"processing|process|timeline|days",
             "compliance": r"compliance|compliant|audit|review",
-            "fraud": r"fraud|suspicious|flagged|investigation",
+            "inauthenticity": r"inauthenticity|suspicious|flagged|investigation",
             "quality": r"quality|data quality|accuracy|error",
             "audit": r"audit report|audit trail|PERM|program integrity|audit finding|audit protocol"
         }
@@ -307,7 +307,7 @@ class DataCrawler:
             "data_quality": self._extract_metric("quality", "data_quality"),
             "audit_trail": self._extract_metric("audit", "audit_trail"),
             "compliance": self._extract_metric("compliance", "compliance"),
-            "system_stability": self._extract_metric("fraud", "system_stability")
+            "system_stability": self._extract_metric("inauthenticity", "system_stability")
         }
 
         return schema

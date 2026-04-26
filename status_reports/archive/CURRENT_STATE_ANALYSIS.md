@@ -95,7 +95,7 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 - ❌ Quality metrics (HEDIS, CAHPS by provider)
 - ❌ Claims trending (volume, spend, patterns)
 - ❌ Network management tools (add/remove providers)
-- ❌ Fraud alerts or red flags
+- ❌ inauthenticity alerts or red flags
 - ❌ Performance dashboards
 
 **Specific Pain Points**:
@@ -146,34 +146,34 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 
 ---
 
-### 🧢 CHAPEAU 5: UBADA (Data Analyst/Fraud Investigator) — "Is this fraud? Is this provider real?"
+### 🧢 CHAPEAU 5: UBADA (Data Analyst/authenticity investigator) — "Is this inauthenticity? Is this provider real?"
 
 **Primary Question Drivers**: 
-- Is this fraud?
+- Is this inauthenticity?
 - Is this provider real?
 
 **What The Site Offers**: ✅ INFORMATION ONLY (no tools)
 
 **User Journey - Provider Legitimacy**:
 1. Analyst needs to verify if provider is real
-2. Finds A-Z index topic "Fraud"
-3. Clicks through; gets articles on fraud prevention policy
-4. Reads about types of fraud (helpful background)
+2. Finds A-Z index topic "inauthenticity"
+3. Clicks through; gets articles on inauthenticity prevention policy
+4. Reads about types of inauthenticity (helpful background)
 5. **Can't verify the specific provider**
 6. Goes to Provider Directory to check if NPI exists
 7. That's it. Provider exists or doesn't exist.
 
-**User Journey - Fraud Pattern Detection**:
+**User Journey - authenticity pattern Detection**:
 1. Analyst needs to detect suspicious billing patterns
 2. This site offers **zero pattern analysis capability**
 3. No access to claims data
-4. No fraud detection algorithms
+4. No authenticity verification algorithms
 5. No risk scoring
 6. No red flags or alerts
 
 **What Analyst Actually Needs**:
 - ❌ Access to claims data for pattern analysis
-- ❌ Fraud risk scoring (0-100 scale)
+- ❌ authenticity risk scoring (0-100 scale)
 - ❌ Red flag detection (PO Box address, billing volume anomalies, duplicate claims)
 - ❌ Unusual service combination detection
 - ❌ Claims timeline analysis
@@ -181,18 +181,18 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 - ❌ Real-time alerts
 
 **Site Actually Provides**:
-- ✅ Educational articles on fraud types
+- ✅ Educational articles on inauthenticity types
 - ✅ Provider directory (can verify existence)
 - ❌ Everything else
 
 **Specific Pain Points**:
-- **Information-only**: Reading about fraud, can't detect it
+- **Information-only**: Reading about inauthenticity, can't detect it
 - **No data access**: Can't analyze claims for patterns
 - **No tools**: No algorithms, no risk scoring, no alerts
 - **Fragmented verification**: Must go to multiple systems to verify provider (CMS NPPES, OIG exclusions, state licensing board)
 - **Manual process**: Everything is manual lookup, no automation
 
-**Diagnosis**: Analyst has fraud education but no fraud detection capability. Can verify basic provider existence but can't investigate suspicious patterns or calculate fraud risk.
+**Diagnosis**: Analyst has inauthenticity education but no authenticity verification capability. Can verify basic provider existence but can't investigate suspicious patterns or calculate authenticity risk.
 
 ---
 
@@ -206,7 +206,7 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 | UPID | This site | Enroll/Submit claims | EMEDNY + this site | Split between systems |
 | WHUP | This site | Network management | Provider Directory + claims system | Multiple login/access points |
 | USHI | This site | Efficiency data | Health Data NY + EMEDNY + quality reports | 3+ separate systems |
-| UBADA | This site | Fraud detection | CMS NPPES + OIG + state licensing + claims system | 4+ separate systems |
+| UBADA | This site | authenticity verification | CMS NPPES + OIG + state licensing + claims system | 4+ separate systems |
 
 ### Five Key Findings
 
@@ -227,7 +227,7 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 - Newsletter format = historical, not current
 - Articles archived from 2000-2026 (outdated mixed with new)
 - Stakeholders can't see current efficiency
-- Analysts can't detect fraud in real-time
+- Analysts can't detect inauthenticity in real-time
 
 **4. Task-Hostile Design**
 - A-Z index is exhaustive but user doesn't know what they're looking for
@@ -240,7 +240,7 @@ The current NY DOH Medicaid Update website is **information-broadcast only**, de
 - Providers can't submit claims
 - Plan admins can't manage networks
 - Stakeholders can't access program data
-- Analysts can't detect fraud patterns
+- Analysts can't detect authenticity patterns
 
 ---
 
@@ -264,13 +264,13 @@ Problem: Each persona solves their problem using a different system.
          Each system has different update cadence, data formats, access models.
 ```
 
-### Why This Matters for Fraud
+### Why This Matters for inauthenticity
 
 - **Analyst can verify**: Provider NPI exists in CMS
 - **Analyst cannot detect**: All claims from that provider in real-time
 - **Analyst cannot flag**: Billing volume 2x higher than peers
 - **Analyst cannot correlate**: Claims patterns across claims system, provider verification, and eligibility data
-- **Result**: Fraud detection is manual, slow, incomplete
+- **Result**: authenticity verification is manual, slow, incomplete
 
 ### Why This Matters for Members
 
@@ -294,13 +294,13 @@ Problem: Each persona solves their problem using a different system.
 
 Current state = **Information broadcast across fragmented systems**
 
-Needed state = **Unified identity, real-time verification, integrated operations, fraud detection**
+Needed state = **Unified identity, real-time verification, integrated operations, authenticity verification**
 
 **TORQ-e solves this by**:
 - ✅ One identity per person (UMID, UPID, WHUP, USHI, UBADA)
 - ✅ Real-time data integration (all systems connected)
 - ✅ Task-oriented workflows (not information broadcast)
-- ✅ Fraud detection tools (pattern analysis + risk scoring)
+- ✅ authenticity verification tools (pattern analysis + risk scoring)
 - ✅ Operational capability (enroll, claim, verify, analyze)
 - ✅ Single source of truth (no more fragmented lookups)
 

@@ -30,7 +30,7 @@
 - ✅ Immutable audit trail integration
 
 **Backend (card_4_ushi/routes.py):**
-- ✅ 5 core endpoints (metrics, fraud-signals, data-quality, governance-log, flag-issue)
+- ✅ 5 core endpoints (metrics, inauthenticity-signals, data-quality, governance-log, flag-issue)
 - ✅ Health check endpoint
 - ✅ HIPAA-compliant aggregate metrics
 - ✅ Immutable audit logging
@@ -149,7 +149,7 @@ Card 4 measures success by actual governance outcomes, not by features built.
 ### Principle 3: WE > I
 Card 4 serves multiple stakeholders with different needs from same data:
 - Bob (Governance): Sees compliance status
-- OMIG Investigator: Sees fraud signals
+- OMIG Investigator: Sees inauthenticity signals
 - User 3 (Operations): Sees claims processing health
 - One system, three voices
 
@@ -241,7 +241,7 @@ Card 4's existence means:
 - Should have backend that matches frontend
 
 **For Card 5 (UBADA):**
-- Should include Spectrum Analyzer (fraud risk)
+- Should include Spectrum Analyzer (authenticity risk)
 - Should use context-driven routing
 - Should have Elaborate buttons
 - Should have immutable investigation trail

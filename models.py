@@ -340,7 +340,7 @@ class Claim(Base):
     appeal_submitted_date = Column(String)
     appeal_decision = Column(String)
 
-    # Fraud flags
+    # inauthenticity flags
     fraud_risk_score = Column(Float)  # 0.0 to 1.0
     fraud_flags = Column(Text)  # JSON array of flag descriptions
 
@@ -398,7 +398,7 @@ class SourceReliabilityLevel(str, enum.Enum):
     UNRELIABLE = "UNRELIABLE"        # <0.50 or struck
 
 class GovernanceFlag(Base):
-    """Governance action: Flag data issue, fraud suspicion, compliance gap, etc."""
+    """Governance action: Flag data issue, inauthenticity suspicion, compliance gap, etc."""
     __tablename__ = "governance_flags"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -485,7 +485,7 @@ class AuditLogEntry(Base):
 
 
 class InvestigationProject(Base):
-    """Fraud investigation project (Card 5)"""
+    """authenticity investigation project (Card 5)"""
     __tablename__ = "investigation_projects"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -496,7 +496,7 @@ class InvestigationProject(Base):
     description = Column(Text)
 
     # Focus
-    investigation_type = Column(String)  # "fraud", "data_quality", "pattern_analysis"
+    investigation_type = Column(String)  # "inauthenticity", "data_quality", "pattern_analysis"
     suspect_entity_type = Column(String)  # "provider", "member", "claim_pattern"
     suspect_entity_id = Column(String, index=True)  # upid, umid, claim_id
 
@@ -511,7 +511,7 @@ class InvestigationProject(Base):
     # Findings
     findings_summary = Column(Text)
     confidence_in_findings = Column(Float)  # 0.0 to 1.0
-    risk_score = Column(Float)  # Fraud likelihood
+    risk_score = Column(Float)  # inauthenticity likelihood
 
     # Workflow
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -582,7 +582,7 @@ class DataCorrection(Base):
 
 
 class OutlierFinding(Base):
-    """Fraud signal finding (statistical anomaly)"""
+    """inauthenticity signal finding (statistical anomaly)"""
     __tablename__ = "outlier_findings"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))

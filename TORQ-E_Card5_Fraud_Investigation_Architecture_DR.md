@@ -1,24 +1,24 @@
-# TORQ-E Card 5 (UBADA) - Fraud Investigation Architecture
+# TORQ-E Card 5 (UBADA) - authenticity investigation Architecture
 ## Design Reference (DR)
 
 **Card Name**: UBADA (Ultimate Behavioral Anomaly Detection & Analysis)  
-**Card Purpose**: Data Analyst & Fraud Investigation  
+**Card Purpose**: Data Analyst & authenticity investigation  
 **Status**: Backend Ready, Frontend in Development  
-**Audience**: Fraud investigators, compliance officers, CMS liaisons  
-**Data Scope**: Cross-system fraud signals, claim patterns, network analysis  
+**Audience**: authenticity investigators, compliance officers, CMS liaisons  
+**Data Scope**: Cross-system inauthenticity signals, claim patterns, network analysis  
 
 ---
 
 ## 1. Executive Summary
 
-Card 5 provides forensic-grade fraud detection and investigation tools for Medicaid governance. It extends Card 4's aggregate signal detection into deep-dive investigation workflows, offering evidence chains, network visualization, and regulatory handoff integration.
+Card 5 provides forensic-grade authenticity verification and investigation tools for Medicaid governance. It extends Card 4's aggregate signal detection into deep-dive investigation workflows, offering evidence chains, network visualization, and regulatory handoff integration.
 
-**Key differentiator**: Card 5 is *reactive* (investigates known signals) while Card 4 is *proactive* (detects signals). Together they form a closed-loop fraud prevention system.
+**Key differentiator**: Card 5 is *reactive* (investigates known signals) while Card 4 is *proactive* (detects signals). Together they form a closed-loop inauthenticity prevention system.
 
 ### Signal Flow
 ```
 Card 4 (Detection) 
-  ↓ [Fraud signal + confidence score]
+  ↓ [inauthenticity signal + confidence score]
   ↓
 Card 5 (Investigation)
   ├─→ Create Investigation Case
@@ -33,13 +33,13 @@ Card 5 (Investigation)
 ## 2. Data Models
 
 ### 2.1 DetailedFraudSignal
-Initiated by Card 4's fraud detection, enriched during Card 5 investigation.
+Initiated by Card 4's authenticity verification, enriched during Card 5 investigation.
 
 ```python
 class DetailedFraudSignal:
     signal_id: str                          # UUID from Card 4
     signal_type: "provider" | "member" | "claim_pattern" | "network"
-    fraud_type: "billing_fraud" | "identity_fraud" | "upcoding" | "phantom_billing" | "kickback_scheme"
+    fraud_type: "billing_inauthenticity" | "identity_inauthenticity" | "upcoding" | "phantom_billing" | "kickback_scheme"
     fraud_confidence_score: float           # 0.0-1.0 (from Card 4 statistical model)
     
     # Entity identification
@@ -144,7 +144,7 @@ class FraudCase:
     # Case scope
     primary_signal_id: str                  # Link to initiating signal
     related_signal_ids: List[str]           # Other correlated signals
-    case_type: "single_provider" | "network_fraud" | "member_ring" | "system_pattern"
+    case_type: "single_provider" | "network_inauthenticity" | "member_ring" | "system_pattern"
     
     # Investigation team
     assigned_investigator: str              # User ID
@@ -237,7 +237,7 @@ class FraudCase:
 All endpoints require authentication (investigator role) and are HIPAA-compliant.
 
 ### 4.1 POST `/api/card5/analyze-claim`
-**Purpose**: Initiate fraud analysis on a single claim
+**Purpose**: Initiate inauthenticity analysis on a single claim
 
 **Request**:
 ```json
@@ -280,7 +280,7 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 ```
 
 ### 4.2 POST `/api/card5/create-case`
-**Purpose**: Create fraud investigation case from signal(s)
+**Purpose**: Create authenticity investigation case from signal(s)
 
 **Request**:
 ```json
@@ -454,7 +454,7 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 ```json
 {
   "case_id": "CASE-2026-00789",
-  "conclusion": "Systematic upcoding scheme confirmed. Provider ABC and associates submitted 23 fraudulent claims totaling $47,500. Recommend referral to NY DOH and CMS for recovery.",
+  "conclusion": "Systematic upcoding scheme confirmed. Provider ABC and associates submitted 23 inauthentic claims totaling $47,500. Recommend referral to NY DOH and CMS for recovery.",
   "findings_confidence": 0.94,
   "escalate_to_cms": true,
   "escalate_to_state": "NY DOH",
@@ -478,7 +478,7 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 ```
 
 ### 4.7 GET `/api/card5/dashboard`
-**Purpose**: Fraud investigator dashboard (aggregate view)
+**Purpose**: authenticity investigator dashboard (aggregate view)
 
 **Response** (200 OK):
 ```json
@@ -500,10 +500,10 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
     "signal_trends": {
       "new_signals_this_week": 28,
       "signals_by_type": {
-        "billing_fraud": 12,
+        "billing_inauthenticity": 12,
         "upcoding": 8,
         "phantom_billing": 5,
-        "identity_fraud": 3
+        "identity_inauthenticity": 3
       }
     },
     "team_metrics": {
@@ -548,9 +548,9 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 
 ## 5. Visualization Components
 
-### 5.1 Fraud Dashboard (HTML/Chart.js)
-- Real-time fraud metrics (open cases, pending escalations, recovery status)
-- Signal trend chart (new signals/week by fraud type)
+### 5.1 inauthenticity Dashboard (HTML/Chart.js)
+- Real-time inauthenticity metrics (open cases, pending escalations, recovery status)
+- Signal trend chart (new signals/week by inauthenticity type)
 - Case severity distribution (pie chart: low/medium/high/critical)
 - Team performance metrics (cases per investigator, resolution rate)
 - Financial impact tracker (identified vs recovered amounts)
@@ -579,15 +579,15 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 ## 6. Testing Protocol
 
 ### Test Query 1: Single Claim Analysis
-**Investigator Action**: "Analyze claim CLM-2026-00123456 for fraud"  
+**Investigator Action**: "Analyze claim CLM-2026-00123456 for inauthenticity"  
 **Expected Response**:
-- Detection of fraud signal with confidence score
+- Detection of inauthenticity signal with confidence score
 - Statistical basis showing anomaly type and p-value
 - Recommendation to create investigation case
 - Related claims identified in network
 
 **Success Criteria**:
-- ✅ Fraud signal detected (confidence score > 0.70)
+- ✅ inauthenticity signal detected (confidence score > 0.70)
 - ✅ Statistical basis accurately calculated
 - ✅ Related claims identified
 - ✅ Response time < 2 seconds
@@ -635,12 +635,12 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 - ✅ Audit entries show escalation timestamp
 
 ### Test Query 5: Dashboard Metrics
-**Investigator Action**: View fraud dashboard  
+**Investigator Action**: View inauthenticity dashboard  
 **Expected Response**:
 - Total open cases: 12
 - Financial impact: $187,500 identified this month
 - Team metrics: 5 investigators, 2.4 avg caseload
-- Signal trends by fraud type
+- Signal trends by inauthenticity type
 
 **Success Criteria**:
 - ✅ Dashboard loads in < 1 second
@@ -701,11 +701,11 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| **Signal Detection Accuracy** | > 95% precision | Confirmed fraud / total signals |
+| **Signal Detection Accuracy** | > 95% precision | Confirmed inauthenticity / total signals |
 | **Investigation Throughput** | 2.4 cases/investigator/week | Dashboard metric |
 | **Case Resolution Time** | < 14 days avg | (case_closed - case_opened) |
 | **Recovery Rate** | > 70% | actual_recovery_usd / recommended_recovery_usd |
-| **False Positive Rate** | < 5% | Non-fraudulent cases / total escalations |
+| **False Positive Rate** | < 5% | Non-inauthentic cases / total escalations |
 | **Audit Trail Completeness** | 100% | Evidence chain gaps = 0 |
 | **Data Quality Score** | > 85% | Cross-validation with Card 4 metrics |
 | **System Uptime** | > 99.9% | Availability for investigators |
@@ -727,7 +727,7 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 - [ ] Audit trail integration complete
 - [ ] Regulatory report generation functional
 - [ ] Access control enforced (investigator-only)
-- [ ] Chat interface created for Card 5 (conversational fraud investigation)
+- [ ] Chat interface created for Card 5 (conversational authenticity investigation)
 - [ ] End-to-end testing protocol executed (Test Queries 1-6)
 - [ ] Railway deployment configured
 - [ ] Documentation complete (this DR + AN)
@@ -736,10 +736,10 @@ All endpoints require authentication (investigator role) and are HIPAA-compliant
 
 ## 10. Next Steps
 
-1. **Frontend Development**: Create chat-card5.html with conversational fraud investigation interface
+1. **Frontend Development**: Create chat-card5.html with conversational authenticity investigation interface
 2. **Backend Implementation**: Implement card_5_ubada/ routes and query_engine.py
 3. **Database Setup**: Deploy FraudSignal and FraudCase tables to PostgreSQL
-4. **Testing**: Execute 6 test queries with Selam (fraud investigator persona)
+4. **Testing**: Execute 6 test queries with Selam (authenticity investigator persona)
 5. **Visualization**: Integrate D3/Three.js network and Recharts timeline
 6. **Regulatory Validation**: CMS/state format review for evidence package and reports
 7. **Deployment**: Push to Railway and verify end-to-end workflow

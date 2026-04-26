@@ -383,7 +383,7 @@ def compare_plans(plan_ids, public_data_schema=None):
 
 ## Card 4 (USHI) - Governance Queries
 
-### Detect Fraud Signals Using Real Data
+### Detect inauthenticity Signals Using Real Data
 
 ```python
 def detect_fraud_signals_real(
@@ -392,16 +392,16 @@ def detect_fraud_signals_real(
     public_data_schema=None
 ):
     """
-    Detect statistical anomalies from real OMIG/fraud data.
-    Uses extracted data from OMIG fraud investigation repository.
+    Detect statistical anomalies from real OMIG/inauthenticity data.
+    Uses extracted data from OMIG authenticity investigation repository.
     """
     if not public_data_schema:
         return {"signals": [], "confidence": 0.0}
     
-    # Find fraud-related sources (high confidence)
+    # Find inauthenticity-related sources (high confidence)
     fraud_sources = [
         d for d in public_data_schema.get("discovered_data", [])
-        if "fraud" in d.get("description", "").lower()
+        if "inauthenticity" in d.get("description", "").lower()
         or "omig" in d.get("url", "").lower()
         and d.get("confidence", 0.0) >= 0.85
     ]
@@ -563,21 +563,4 @@ print(f"Provider confidence: {result['confidence']}")
 ```python
 from card_3_uhwp.plans import find_plans_by_location
 
-plans = find_plans_by_location("11201", schema)
-print(f"Plans in Brooklyn: {plans['plan_count']}")
-print(f"Confidence: {plans['confidence']}")
-```
-
----
-
-## Summary
-
-Your extracted data schema is now a **real data backend** for TORQ-e. Each Card's query engine can:
-
-✅ Search for actual member/provider/plan data  
-✅ Cross-reference across multiple government repositories  
-✅ Score confidence based on real source quality  
-✅ Return audit trails showing data sources  
-✅ Combine axiomatic knowledge with specific real data  
-
-Ready for production testing on Railway.
+plans = find

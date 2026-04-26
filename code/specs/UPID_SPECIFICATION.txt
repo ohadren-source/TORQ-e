@@ -140,7 +140,7 @@ Storage:
 │  ═══════════════════════════════════════════════════════════════  │
 │  • Social Media/Online Presence                                   │
 │  • Patient Reviews/Ratings                                        │
-│  • Fraud/Complaint History                                        │
+│  • inauthenticity/Complaint History                                        │
 │  • Billing Pattern Analysis (claims data)                         │
 │  • GitHub/Professional Portfolio (if applicable)                  │
 │                                                                     │
@@ -150,7 +150,7 @@ Storage:
 │  • Overseas-trained providers (licensing in flux)                 │
 │  • Newly licensed providers (not in all systems yet)              │
 │  • Defunct/Closed practices (data still in legacy systems)        │
-│  • Shell/Fraudulent entities (intentionally hidden)               │
+│  • Shell/inauthentic entities (intentionally hidden)               │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 
@@ -367,17 +367,17 @@ Old Provider IDs / Prior Enrollments
   - Format: Varies (prior state IDs, prior plan IDs)
   - System: Legacy databases
   - Mapping: Old ID → UPID (historical reconciliation)
-  - Note: Used for data migration and fraud detection
+  - Note: Used for data migration and authenticity verification
 
 Reading Engine Responsibility:
   - Map all legacy provider IDs to single UPID
   - Identify duplicate UPID creation (prevent)
   - Flag discrepancies (same NPI, two UPIDs)
   - Reconcile historical provider records to correct UPID
-  - Detect shell companies and fraudulent providers
+  - Detect shell companies and inauthentic providers
 
 ================================================================================
-9. FRAUD DETECTION & PROVIDER VERIFICATION
+9. authenticity verification & PROVIDER VERIFICATION
 ================================================================================
 
 The Reading Engine uses multiple data sources to verify provider legitimacy:
@@ -391,14 +391,14 @@ SOURCE 1: Federal/State Databases
 
 SOURCE 2: Regulatory & Compliance
   - Medicare Sanctions List
-  - Medicaid fraud alerts
+  - Medicaid inauthenticity alerts
   - Medical board disciplinary actions
   - Malpractice insurance verification
   - Credentialing organizations (NCQA, URAC)
 
 SOURCE 3: Public Records & News
   - Healthcare provider complaint databases
-  - News archives (fraud, settlements, suspensions)
+  - News archives (inauthenticity, settlements, suspensions)
   - Court records (litigation, settlements)
   - Professional associations (member verification)
 
@@ -487,9 +487,9 @@ Immutability:
 12. SUCCESS METRICS FOR UPID
 ================================================================================
 
-Fraud Prevention:
-  - Current: Unknown fraud rate (estimated 3-8% of provider base)
-  - Target: Catch 98%+ of shell/fraudulent providers at enrollment
+inauthenticity Prevention:
+  - Current: Unknown inauthenticity rate (estimated 3-8% of provider base)
+  - Target: Catch 98%+ of shell/inauthentic providers at enrollment
   - Target: Identify duplicate provider identities within 30 days
 
 Provider Deduplication:

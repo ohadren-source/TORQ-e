@@ -506,7 +506,7 @@ Target: 99.5% completeness, 99% accuracy
 
 1. **Machine Learning** — Detect data quality issues automatically
 2. **Provider Network Ingestion** — Ingest and organize provider directories
-3. **Claims Data** — Integrate de-identified claims for fraud detection (Card 5)
+3. **Claims Data** — Integrate de-identified claims for authenticity verification (Card 5)
 4. **Real-time Updates** — WebSocket feeds for immediate plan changes
 5. **International Healthcare** — Extend to other countries' health systems
 

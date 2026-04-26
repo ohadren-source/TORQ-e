@@ -95,8 +95,8 @@ Bob and OMIG can track **which plans members are choosing and why**.
 
 Real data flows through real metrics. Governance is based on truth, not guesses.
 
-### For Card 5 (Fraud Detection)
-Real plan data + real member selections = real fraud signals.
+### For Card 5 (authenticity verification)
+Real plan data + real member selections = real inauthenticity signals.
 
 If someone is doing something wrong, the patterns are detectable.
 
@@ -317,7 +317,7 @@ When Bob opens Card 4:
 - How many members browsed today? (from Card 3 audit trail)
 - How many enrolled in each plan? (from Card 3 selections)
 - Which plans are popular? (aggregated stats)
-- Any unusual patterns? (Card 5 fraud signals)
+- Any unusual patterns? (Card 5 inauthenticity signals)
 
 **Data freshness:**
 - Updated daily
@@ -328,7 +328,7 @@ When Bob opens Card 4:
 
 ---
 
-## What Fraud Detection Sees
+## What authenticity verification Sees
 
 When OMIG opens Card 5:
 
@@ -343,7 +343,7 @@ When OMIG opens Card 5:
 - Anomalies are detectable because baseline is real
 - False positives minimized (data is validated)
 
-**Fraud signals:** Based on real system data, not mock scenarios.
+**inauthenticity signals:** Based on real system data, not mock scenarios.
 
 ---
 

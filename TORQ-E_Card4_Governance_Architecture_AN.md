@@ -14,7 +14,7 @@
 
 Card 4 serves everyone who needs to understand system health:
 - **Bob** (Governance) — Is the system coherent and audit-ready?
-- **OMIG Investigator** (Fraud) — What fraud signals are we detecting? Which need escalation?
+- **OMIG Investigator** (inauthenticity) — What inauthenticity signals are we detecting? Which need escalation?
 - **User 3** (Operations) — Are claims processing smoothly? What's our stability across all systems?
 
 **One dashboard. One system. Three ways to look at it.**
@@ -229,23 +229,23 @@ Example patterns:
 - Unusually high billing compared to peers
 - Claims at odd times
 
-**Why Bob cares:** Billing anomalies signal fraud or system errors
-**Why OMIG cares:** Fraud starts as billing anomalies
+**Why Bob cares:** Billing anomalies signal inauthenticity or system errors
+**Why OMIG cares:** inauthenticity starts as billing anomalies
 **Why User 3 cares:** Billing problems can block payment processing
 
-### Fraud Risk
-**What it measures:** What's the overall fraud danger level?
+### authenticity risk
+**What it measures:** What's the overall inauthenticity danger level?
 
-Combines multiple fraud signals:
+Combines multiple inauthenticity signals:
 - Billing anomalies
 - Provider deviation from peers
 - Suspicious member behavior
 - Network patterns (providers clustering with labs, kickback rings)
 - Timing anomalies (unusual activity hours)
 
-**Why Bob cares:** High fraud risk means governance failure
-**Why OMIG cares:** This is their job—finding fraud
-**Why User 3 cares:** Fraud cases can delay payment processing
+**Why Bob cares:** High authenticity risk means governance failure
+**Why OMIG cares:** This is their job—finding inauthenticity
+**Why User 3 cares:** inauthenticity cases can delay payment processing
 
 ### Processing Volume
 **What it measures:** Are we handling claims at normal speed?
@@ -256,7 +256,7 @@ Combines multiple fraud signals:
 - Processing delays
 
 **Why Bob cares:** Operational efficiency is governance responsibility
-**Why OMIG cares:** Processing bottlenecks can hide fraud signals
+**Why OMIG cares:** Processing bottlenecks can hide inauthenticity signals
 **Why User 3 cares:** Volume is their primary operational metric
 
 ### Compliance Status
@@ -280,7 +280,7 @@ Combines multiple fraud signals:
 - Source data mismatches (state data doesn't match what we recorded)
 
 **Why Bob cares:** Bad data = audit failure
-**Why OMIG cares:** Bad data confuses fraud detection
+**Why OMIG cares:** Bad data confuses authenticity verification
 **Why User 3 cares:** Bad data blocks claims payment
 
 ### System Stability
@@ -292,7 +292,7 @@ Combines multiple fraud signals:
 - Error rates
 
 **Why Bob cares:** Stability is fundamental governance
-**Why OMIG cares:** System down = no fraud detection
+**Why OMIG cares:** System down = no authenticity verification
 **Why User 3 cares:** System down = no claims processing
 
 ### And More...
@@ -335,11 +335,11 @@ The spectrum can show additional dimensions depending on what you're investigati
 
 ---
 
-### OMIG Investigator's Morning (Fraud Investigation)
+### OMIG Investigator's Morning (authenticity investigation)
 
-**9:00 AM** — Scan for fraud flags
+**9:00 AM** — Scan for inauthenticity flags
 - Opens Card 4
-- Looks at **"Fraud Risk"** bar: Shows 34% (YELLOW — watch this)
+- Looks at **"authenticity risk"** bar: Shows 34% (YELLOW — watch this)
 - Clicks to expand: "12 flagged claims in queue"
 - Takes 2 minutes to review the list:
   - Claim 1: Provider billing 50% above peer average (HIGH risk)
@@ -351,7 +351,7 @@ The spectrum can show additional dimensions depending on what you're investigati
 - Top 3 high-risk flags look serious
 - Clicks **"Create Investigation Case"** for each:
   - Case 1: Provider overbilling investigation
-  - Case 2: Member ER fraud ring
+  - Case 2: Member ER inauthenticity ring
   - Case 3: Provider-lab kickback cluster
 - Takes 5 minutes.
 
@@ -430,14 +430,14 @@ Notice: **Bob, OMIG, and User 3 are all using the same dashboard. The same dimen
 They're not seeing different things. They're *focusing on different things*.
 
 - **Bob focuses on:** Compliance, stability, incidents
-- **OMIG focuses on:** Fraud risk, evidence, network anomalies
+- **OMIG focuses on:** authenticity risk, evidence, network anomalies
 - **User 3 focuses on:** Volume, budget, operational bottlenecks
 
 But the data is the same. The system is the same. The buttons work the same.
 
 If a junior OMIG analyst wants to see what an experienced OMIG senior sees, they open the same dashboard. They see the same spectrum. They can click the same buttons.
 
-If Bob wants to understand fraud signals, he clicks on **"Fraud Risk"** and learns.
+If Bob wants to understand inauthenticity signals, he clicks on **"authenticity risk"** and learns.
 
 If User 3 needs to understand a compliance issue, they click on **"Compliance Status"** and see what Bob sees.
 
@@ -451,210 +451,8 @@ If User 3 needs to understand a compliance issue, they click on **"Compliance St
 Click any dimension to expand and understand what's happening.
 
 **Examples:**
-- Click "Fraud Risk" → See all flagged claims with risk scores
+- Click "authenticity risk" → See all flagged claims with risk scores
 - Click "Processing Volume" → See queue depth, processing speed, bottlenecks
 - Click "Compliance Status" → See audit trail integrity, documentation completeness
 
-### View Incidents
-Card 4 automatically logs every problem:
-- System outages
-- Processing delays
-- Data inconsistencies
-- Unusual patterns
-
-Click **"Incidents"** to see full history with timestamps and resolutions.
-
-### Create Investigation Cases
-If you see something suspicious (high fraud risk, unusual network cluster, billing anomaly), create a case:
-
-1. Click **"New Investigation Case"**
-2. Select: Which claim(s)? Which fraud dimension? What's your suspicion?
-3. System compiles: Evidence package, peer comparisons, timeline, network visualization
-4. You review the pre-compiled evidence
-5. You make the call: Investigate further or close as false alarm
-
-### View Evidence Packages
-Every investigation case has pre-compiled evidence:
-- Claim history (full record of all claims involved)
-- Peer comparison (how does this compare to similar providers/members?)
-- Timeline visualization (when did events happen?)
-- Network graph (who is connected to whom?)
-- Audit trail (every change to these records, who made it, when)
-
-Click to expand or collapse sections. Filter by date range.
-
-### Monitor Active Cases
-See all investigation cases in progress:
-- Which ones are waiting for state coordination?
-- Which ones are ready for prosecution?
-- Which ones need additional evidence?
-
-Click any case to update notes, add evidence, change status.
-
-### Request Coordination
-If a case involves multiple states, request coordination:
-- Specify which states
-- Specify which entities (providers, members, labs)
-- Specify what information you need
-- System routes request to appropriate state MFCUs
-
-### Export Prosecution Package
-Once investigation is complete:
-- Compile final evidence summary
-- Export as PDF or document
-- Include: allegations, evidence, timeline, supporting documentation
-- Ready to send to DA (District Attorney) or federal authorities
-
----
-
-## How Data Is Displayed
-
-### Option 1: Traffic Light (Simple)
-🟢 GREEN / 🟡 YELLOW / 🔴 RED
-
-One indicator. Is the system healthy? Yes/No.
-
-### Option 2: Spectrum Analyzer (Detailed)
-Multiple bars, each showing 0-100% signal strength with color coding.
-
-### Option 3: Tabular (Detailed Numbers)
-Raw data in table format:
-- Dimension name
-- Value (0-100 or specific metric)
-- Color
-- Change from previous hour/day/week
-- Threshold
-
-### Option 4: Timeline (Temporal)
-How has each dimension changed over time?
-- Last hour
-- Last 24 hours
-- Last 7 days
-- Last 30 days
-
-Line graph showing trends.
-
-**Choose the view you want. Switch anytime.**
-
----
-
-## Data Sources
-
-Card 4 pulls data from:
-- **Claims system** — Every claim as it's processed
-- **Member database** — Eligibility, enrollment, benefit access
-- **Provider credentials** — Who's licensed, what they bill for
-- **Audit trail** — Every action in the system, immutable
-- **State data source** — Official program and plan information
-- **Error logs** — Every system problem, automatically captured
-
-**Everything is live or near-live.** You're not looking at yesterday's data; you're looking at now.
-
----
-
-## Security & Privacy
-
-### What Data Is Visible
-- Aggregated metrics (volume, timing, statistics)
-- Pattern information (network clusters, billing deviation)
-- Individual claims (when needed for investigation)
-- Audit trails (who did what, when)
-
-### What Data Is NOT Visible
-- Member names (replaced with hashed IDs)
-- Member personal information
-- Provider personal information
-- Sensitive investigation details (before prosecution)
-
-### Access Control
-**Everyone with access to Card 4 can see the same data.** No gatekeeping.
-
-If something is too sensitive to be visible, it's not in Card 4 at all.
-
-### Audit Trail of Audit Trail
-Every action you take in Card 4 is logged:
-- Who viewed what, when
-- Who created which investigation case
-- Who exported which prosecution package
-- When you exported it
-- What you exported
-
-This audit trail is immutable and queryable by oversight agencies.
-
----
-
-## Immutable Audit Trail
-
-Every action in Card 4 is permanently recorded:
-
-```json
-{
-  "timestamp": "2026-04-25T09:15:00Z",
-  "user_id": "hash(OMIG_investigator_123)",
-  "action": "INVESTIGATION_CASE_CREATED",
-  "case_id": "case-789",
-  "allegations": "Provider overbilling",
-  "system": "Card4"
-}
-
-{
-  "timestamp": "2026-04-25T09:30:00Z",
-  "user_id": "hash(OMIG_investigator_123)",
-  "action": "EVIDENCE_PACKAGE_VIEWED",
-  "case_id": "case-789",
-  "evidence_type": "BILLING_ANOMALY",
-  "system": "Card4"
-}
-
-{
-  "timestamp": "2026-04-25T17:45:00Z",
-  "user_id": "hash(OMIG_investigator_123)",
-  "action": "PROSECUTION_PACKAGE_EXPORTED",
-  "case_id": "case-789",
-  "exported_to": "DA_Office_File",
-  "system": "Card4"
-}
-```
-
-These records:
-- Cannot be modified
-- Cannot be deleted
-- Are queryable by auditors
-- Prove what happened and when
-
----
-
-## The Principle: Unified, Transparent, Accountable
-
-Card 4 operates on three principles:
-
-1. **Unified System** — One dashboard, one interface, one set of data. No hidden features or gatekeeping.
-
-2. **Transparent** — All signals visible. All data accessible. If something is too sensitive, it doesn't go in the system.
-
-3. **Accountable** — Every action is logged immutably. You can prove who did what, when, and why.
-
-An entry-level operations analyst can use Card 4 the same way Bob uses it. They might focus on different dimensions, but the system is the same.
-
----
-
-## Getting Started
-
-**First time using Card 4?**
-
-1. Click **"Traffic Light"** view to see overall system health
-2. If something's yellow or red, click it to see the spectrum analyzer and understand the dimension
-3. Click **"Recent Incidents"** to see what issues the system has detected
-4. If you need to investigate something, click **"New Investigation Case"** — the system will guide you
-
-**Experienced user?**
-
-Click **"Full Spectrum"** view and jump straight to the dimensions you care about.
-
----
-
-**Your feedback matters.** Card 4 is designed for you—Bob, OMIG, User 3, and anyone else managing Medicaid. If something is unclear, slow, confusing, or missing, tell us.
-
----
-
-End of Card 4 Architecture for Audience (AN)
+### 

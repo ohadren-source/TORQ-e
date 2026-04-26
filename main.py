@@ -9,7 +9,7 @@ Card 1 (UMID): Member Eligibility System [LIVE]
 Card 2 (UPID): Provider System [LIVE]
 Card 3 (UHWP): Plan Network Management [LIVE - Context-Driven]
 Card 4 (USHI): Government Stakeholder Governance [LIVE - Locked v1.0.0]
-Card 5 (UBADA): Data Analyst & Fraud Investigation [LIVE - Backend Ready]
+Card 5 (UBADA): Data Analyst & authenticity investigation [LIVE - Backend Ready]
 """
 
 from fastapi import FastAPI
@@ -131,7 +131,7 @@ async def root():
                     "POST /api/card2/claims/validate",
                     "POST /api/card2/claims/submit",
                     "POST /api/card2/claims/status",
-                    "POST /api/card2/fraud/analyze"
+                    "POST /api/card2/inauthenticity/analyze"
                 ]
             },
             "3": {
@@ -149,13 +149,13 @@ async def root():
                 "status": "✅ LIVE - LOCKED v1.0.0",
                 "endpoints": [
                     "POST /api/card4/metrics",
-                    "POST /api/card4/fraud-signals",
+                    "POST /api/card4/inauthenticity-signals",
                     "POST /api/card4/data-quality",
                     "GET /api/card4/governance-log"
                 ]
             },
             "5": {
-                "name": "UBADA (Data Analyst/Fraud Investigation)",
+                "name": "UBADA (Data Analyst/authenticity investigation)",
                 "status": "✅ LIVE - Backend Ready",
                 "endpoints": [
                     "POST /api/card5/create-case",

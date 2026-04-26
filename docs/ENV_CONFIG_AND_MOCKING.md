@@ -88,7 +88,7 @@ Test responses include:
   "_mock_reason": "Test environment - no EMEDNY claims integration"
 }
 
-// POST /analyst/fraud-assessment
+// POST /analyst/inauthenticity-assessment
 {
   "assessment_id": "ASS-2026-04-23-00001",
   "provider_name": "ABC Healthcare Clinic (TEST)",
@@ -184,7 +184,7 @@ TEST PROVIDERS (UPID):
   Name: ABC Healthcare Clinic | EIN: 12-3456789 | Type: Organization | Status: Active
   
 - upid: 33333333-3333-3333-3333-333333333333
-  Name: XYZ Fraud Clinic | NPI: 9876543210 | Type: Individual | OIG Status: EXCLUDED
+  Name: XYZ inauthenticity Clinic | NPI: 9876543210 | Type: Individual | OIG Status: EXCLUDED
 
 TEST PLANS (WHUP):
 - uhwp: 44444444-4444-4444-4444-444444444444
@@ -202,7 +202,7 @@ TEST STAKEHOLDERS (USHI):
 
 TEST ANALYSTS (UBADA):
 - ubada: 88888888-8888-8888-8888-888888888888
-  Name: Sarah Williams | Type: Fraud | Skill: Senior
+  Name: Sarah Williams | Type: inauthenticity | Skill: Senior
   
 - ubada: 99999999-9999-9999-9999-999999999999
   Name: Michael Chen | Type: Business | Skill: Junior
@@ -308,7 +308,7 @@ All prod calls log to audit trail:
 ```
 2026-05-15 14:30:22 | PROD | GET /member/eligibility | umid=xyz... | Result: Eligible
 2026-05-15 14:31:05 | PROD | POST /provider/verify-credentials | npi=1234567890 | Result: Verified
-2026-05-15 14:32:18 | PROD | POST /analyst/fraud-assessment | provider=abc-clinic | Result: High Risk
+2026-05-15 14:32:18 | PROD | POST /analyst/inauthenticity-assessment | provider=abc-clinic | Result: High Risk
 ```
 
 ### Step 4: Gradual Rollout
@@ -316,7 +316,7 @@ All prod calls log to audit trail:
 Don't flip all endpoints at once:
 
 **Week 1-2**: Test mode for public endpoints (member eligibility, provider network lookup)
-**Week 3**: Add analyst fraud detection in prod
+**Week 3**: Add analyst authenticity verification in prod
 **Week 4**: Add stakeholder reporting
 **Week 5**: Add claims submission (most critical)
 
@@ -399,11 +399,4 @@ TORQUE_CONFIG_ENV=prod    # Loads config/torque.yml[prod]
 |--------|-----------|-----------|
 | Real Database | ✓ Yes (test DB) | ✓ Yes (prod DB) |
 | External APIs | ✗ Mocked | ✓ Real |
-| Reading Engine | ✗ Mock responses | ✓ Real queries |
-| Data Persistence | ✓ Yes | ✓ Yes |
-| Audit Logging | ✓ Yes (test logs) | ✓ Yes (audit trail) |
-| Time to Implement | 0 minutes | Stubs only now, real integrations later |
-| Can Launch With | ✓ Yes | ✗ Not yet (integrations incomplete) |
-
-**Bottom line**: Ship with `TORQUE_ENV=test`. All endpoints work. Flip to prod later when integrations ready.
-
+| Reading Engine | �

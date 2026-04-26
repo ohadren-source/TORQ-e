@@ -14,7 +14,7 @@ TORQ-E is a unified identity system that transforms Medicaid enrollment, eligibi
 - **Card 2 (UPID):** Provider Unified Identity & Claims ✅ LIVE
 - **Card 3 (WHUP):** Plan Administrator Network Management 📋 PLANNED
 - **Card 4 (USHI):** Government Stakeholder Operations 📋 PLANNED
-- **Card 5 (UBADA):** Data Analyst & Fraud Detection 📋 PLANNED
+- **Card 5 (UBADA):** Data Analyst & authenticity verification 📋 PLANNED
 
 ---
 
@@ -202,9 +202,9 @@ Content-Type: application/json
 Response: {status, days_since_submission, expected_payment_date, escalation}
 ```
 
-#### Fraud Analysis
+#### inauthenticity Analysis
 ```bash
-POST /api/card2/fraud/analyze
+POST /api/card2/inauthenticity/analyze
 Content-Type: application/json
 
 {
@@ -232,7 +232,7 @@ Response: {risk_score, risk_level, signals, recommendation}
 #### Card 2 (UPID)
 - **Provider:** Core provider identity (NPI, UPID, credentials)
 - **ProviderMCOEnrollment:** Enrollment status in each MCO
-- **Claim:** Submitted claims with routing, status, fraud signals
+- **Claim:** Submitted claims with routing, status, inauthenticity signals
 - **ProviderAuditLog:** Query audit trail
 
 ### Key Algorithms
@@ -262,11 +262,11 @@ Routes claims to correct MCO/FFS portal with validations:
 4. Amount reasonableness check
 5. Prior authorization verification
 
-#### Fraud Detection
+#### authenticity verification
 Real-time pattern detection for:
 - Provider billing anomalies (concentration, amount variance, frequency)
 - Member utilization anomalies (multiple providers/day, high frequency)
-- Known fraud database lookup
+- Known inauthenticity database lookup
 
 ---
 
@@ -294,7 +294,7 @@ torq-e-code/
     ├── __init__.py
     ├── provider_lookup.py     # Multi-source provider lookup
     ├── claims_routing.py      # Intelligent claim routing & monitoring
-    ├── fraud_detection.py     # Real-time fraud signal analysis
+    ├── fraud_detection.py     # Real-time inauthenticity signal analysis
     ├── schemas.py             # Request/response models
     └── routes.py              # API endpoints
 ```
@@ -383,7 +383,7 @@ Fallback lookup uses NPI registry. No credentials required.
 ## Known Limitations (Current)
 
 - River Path uses simulated data sources (real APIs not yet integrated)
-- Fraud detection uses simulated patterns (real claim history not yet available)
+- authenticity verification uses simulated patterns (real claim history not yet available)
 - Document OCR not implemented (placeholder)
 - No multi-user authentication yet (assuming secure API gateway)
 
@@ -395,7 +395,7 @@ Fallback lookup uses NPI registry. No credentials required.
 - ✅ Member identity and eligibility
 - ✅ Provider enrollment verification
 - ✅ Claim submission and routing
-- ✅ Real-time fraud signal detection
+- ✅ Real-time inauthenticity signal detection
 - 🔨 Integration with real state APIs
 - 🔨 Document OCR and verification
 
@@ -409,26 +409,4 @@ Fallback lookup uses NPI registry. No credentials required.
 - 📋 Regulatory compliance monitoring
 - 📋 Performance metrics
 
-### Card 5 (Data Analyst/Fraud Investigator)
-- 📋 Advanced fraud investigation tools
-- 📋 Trend analysis and reporting
-- 📋 Case management integration
-
----
-
-## Support & Contributions
-
-For questions or issues:
-1. Check this README
-2. Review API docs at `/docs`
-3. Consult project documentation (TORQ_E_ARCHITECTURAL_PROTOCOL.md)
-
----
-
-## License
-
-Confidential - NY Department of Health
-
----
-
-**Last Updated:** April 24, 2026
+### Card 5 (Data Anal

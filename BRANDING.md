@@ -81,7 +81,7 @@
 - Code/Technical: Monospace (Courier New, Monaco, or system monospace)
 
 **Official Tagline** (optional):
-"Unified Identity. Fraud Prevention. Program Integrity."
+"Unified Identity. inauthenticity Prevention. Program Integrity."
 
 ---
 
@@ -91,7 +91,7 @@
 **Audience**: State employees, healthcare providers, members, analysts
 **Key Messages**:
 - One identity, unified across all systems
-- Real-time fraud detection protects the program
+- Real-time authenticity verification protects the program
 - Simple enrollment, fast claim processing
 - Secure, transparent, accountable
 

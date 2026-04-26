@@ -20,7 +20,7 @@ An ECHOSYSTEM is a financial health system where:
 1. **All surfaces are verified** — Every data point carries confidence, source, freshness, and caveat
 2. **The echo IS the system** — Feedback loops continuously verify what's being reported
 3. **Contradictions surface** — When sources disagree, the system shows you why
-4. **Dysfunction cannot hide** — Anomalies, errors, fraud, and gaps are visible
+4. **Dysfunction cannot hide** — Anomalies, errors, inauthenticity, and gaps are visible
 5. **Governance is transparent** — Users see who accessed what, when, and why
 
 ### The Antonym: Echo Chamber
@@ -69,10 +69,10 @@ TORQ-e is structured to **prevent echo chambers** by ensuring every role sees co
 - **Prevents:** Government flying blind, missing systemic issues, policy failures going undetected
 
 #### 5. **DATA AUDITORS & CUSTODIANS** (Card 5 - UBADA)
-- **Echo:** "Is there fraud?" → Full-access investigation with peer review and evidence tracking
+- **Echo:** "Is there inauthenticity?" → Full-access investigation with peer review and evidence tracking
 - **Verification:** Investigators compare individual cases against peers, statistical norms, historical patterns
 - **Transparency:** "Provider billing 4.7σ above peer average. Network graph shows unusual facility exclusivity (90% vs. peer norm 20%). Investigated with team, flagged for follow-up"
-- **Prevents:** Fraud going undetected, false positives, investigation shortcuts
+- **Prevents:** inauthenticity going undetected, false positives, investigation shortcuts
 
 ---
 
@@ -217,7 +217,7 @@ Contradictions between levels surface. Governance logs why they happened. System
 ### Institutional Blindness
 Without echoes, managers don't see problems until crisis:
 - Plan doesn't see provider dissatisfaction until providers leave
-- Government doesn't see fraud until it's systemic
+- Government doesn't see inauthenticity until it's systemic
 - Member doesn't see coverage gap until claim denied
 
 **ECHOSYSTEM prevents this** by forcing visibility across all surfaces.
@@ -226,7 +226,7 @@ Without echoes, managers don't see problems until crisis:
 Problems don't disappear just because nobody is looking:
 - Denial rates spike silently
 - Provider networks collapse quietly
-- Fraud grows undetected
+- inauthenticity grows undetected
 - Data quality degrades invisibly
 
 **ECHOSYSTEM prevents this** by making problems visible the moment they occur.
@@ -287,7 +287,7 @@ An ECHOSYSTEM is a financial health system where:
 1. **All surfaces are verified** — Every data point carries confidence, source, freshness, and caveat
 2. **The echo IS the system** — Feedback loops continuously verify what's being reported
 3. **Contradictions surface** — When sources disagree, the system shows you why
-4. **Dysfunction cannot hide** — Anomalies, errors, fraud, and gaps are visible
+4. **Dysfunction cannot hide** — Anomalies, errors, inauthenticity, and gaps are visible
 5. **Governance is transparent** — Users see who accessed what, when, and why
 
 ### The Antonym: Echo Chamber
@@ -336,10 +336,10 @@ TORQ-e is structured to **prevent echo chambers** by ensuring every role sees co
 - **Prevents:** Government flying blind, missing systemic issues, policy failures going undetected
 
 #### 5. **DATA AUDITORS & CUSTODIANS** (Card 5 - UBADA)
-- **Echo:** "Is there fraud?" → Full-access investigation with peer review and evidence tracking
+- **Echo:** "Is there inauthenticity?" → Full-access investigation with peer review and evidence tracking
 - **Verification:** Investigators compare individual cases against peers, statistical norms, historical patterns
 - **Transparency:** "Provider billing 4.7σ above peer average. Network graph shows unusual facility exclusivity (90% vs. peer norm 20%). Investigated with team, flagged for follow-up"
-- **Prevents:** Fraud going undetected, false positives, investigation shortcuts
+- **Prevents:** inauthenticity going undetected, false positives, investigation shortcuts
 
 ---
 
@@ -484,7 +484,7 @@ Contradictions between levels surface. Governance logs why they happened. System
 ### Institutional Blindness
 Without echoes, managers don't see problems until crisis:
 - Plan doesn't see provider dissatisfaction until providers leave
-- Government doesn't see fraud until it's systemic
+- Government doesn't see inauthenticity until it's systemic
 - Member doesn't see coverage gap until claim denied
 
 **ECHOSYSTEM prevents this** by forcing visibility across all surfaces.
@@ -493,7 +493,7 @@ Without echoes, managers don't see problems until crisis:
 Problems don't disappear just because nobody is looking:
 - Denial rates spike silently
 - Provider networks collapse quietly
-- Fraud grows undetected
+- inauthenticity grows undetected
 - Data quality degrades invisibly
 
 **ECHOSYSTEM prevents this** by making problems visible the moment they occur.

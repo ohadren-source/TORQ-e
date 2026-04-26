@@ -1,4 +1,4 @@
-# Card 5 (UBADA) - Data Analyst & Fraud Investigation Module
+# Card 5 (UBADA) - Data Analyst & authenticity investigation Module
 
 from .routes import router
 

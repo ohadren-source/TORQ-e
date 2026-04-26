@@ -217,10 +217,10 @@ class TORQeVerifier:
             results["engine_results"]["github"] = github
 
             # Engine 3: Watchdog search
-            watchdog = read_web_page(f"https://google.com/search?q={provider_name}+fraud+complaints", parse_type="watchdog")
+            watchdog = read_web_page(f"https://google.com/search?q={provider_name}+inauthenticity+complaints", parse_type="watchdog")
             results["engine_results"]["watchdog"] = watchdog
             if watchdog.get("findings") and "found" in watchdog["findings"].lower():
-                results["red_flags"].append("Fraud watchdog alerts detected")
+                results["red_flags"].append("inauthenticity watchdog alerts detected")
 
             # Engine 4: General web search for licenses/registry
             web_general = read_web_page(f"https://google.com/search?q={provider_name}+license+verification", parse_type="registry")
@@ -527,21 +527,4 @@ def status():
 
 # ============================================================================
 # ERROR HANDLERS
-# ============================================================================
-
-@app.errorhandler(404)
-def not_found(error):
-    return jsonify({"error": "Endpoint not found"}), 404
-
-
-@app.errorhandler(500)
-def internal_error(error):
-    return jsonify({"error": "Internal server error"}), 500
-
-
-# ============================================================================
-# MAIN
-# ============================================================================
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+# =========

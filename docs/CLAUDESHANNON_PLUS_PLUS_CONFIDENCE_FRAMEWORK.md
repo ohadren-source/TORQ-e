@@ -12,7 +12,7 @@
 
 TORQ-e uses a signal-processing framework called **ClaudeShannon++** to determine how much we should trust any given piece of information. This framework answers a critical question:
 
-> **"How confident are we in this eligibility determination / fraud assessment?"**
+> **"How confident are we in this eligibility determination / authenticity assessment?"**
 
 The answer is never binary (yes/no). It's probabilistic (0.0 to 1.0), with clear reasoning for every score.
 
@@ -164,7 +164,7 @@ Real-time (0 min)  | 1.0              | Claim submission, eligibility check
 < 7 days           | 0.85             | Routine member check
 < 30 days          | 0.70             | Recertification checking
 < 6 months         | 0.50             | Historical analysis
-> 6 months         | 0.30             | Fraud pattern detection only
+> 6 months         | 0.30             | authenticity pattern detection only
 > 1 year           | 0.10             | Historical research only
 > 2 years          | 0.0              | Unusable for current decisions
 ```
@@ -232,7 +232,7 @@ Three sources agree: John is eligible.
 
 ---
 
-## Part 6: Example Scoring — Fraud Detection
+## Part 6: Example Scoring — authenticity verification
 
 ### Scenario: Provider Dr. Smith shows suspicious pattern
 
@@ -271,7 +271,7 @@ Three sources agree: John is eligible.
 - Completeness: 1.0 (clear prior exclusion)
 - Freshness: 1.0 (permanent exclusion record)
 - Confidence: 0.98 × 1.0 × 1.0 = **0.98**
-- Interpretation: "Very high confidence in prior fraud history"
+- Interpretation: "Very high confidence in prior inauthenticity history"
 
 **Signal 5: Medical records don't match**
 - Quality: 0.90 (medical record documentation)
@@ -282,7 +282,7 @@ Three sources agree: John is eligible.
 
 **Step 2: Calculate coherence**
 
-| Signal | Points to Fraud? |
+| Signal | Points to inauthenticity? |
 |--------|------------------|
 | 1. High volume | ✓ Yes |
 | 2. Single nursing home | ✓ Yes |
@@ -290,12 +290,12 @@ Three sources agree: John is eligible.
 | 4. OIG history | ✓✓ YES (strongest) |
 | 5. Medical records mismatch | ✓ Yes |
 
-**Coherence = 5/5 signals support fraud conclusion = 100%**
+**Coherence = 5/5 signals support inauthenticity conclusion = 100%**
 
-**Step 3: Calculate overall fraud risk**
+**Step 3: Calculate overall authenticity risk**
 
 ```
-Fraud Risk Score = Average Signal Confidence × Coherence
+authenticity score = Average Signal Confidence × Coherence
                  = (0.903 + 0.688 + 0.72 + 0.98 + 0.598) / 5 × 1.0
                  = 0.778 × 1.0
                  = 0.778 (rounded to 78/100)
@@ -309,7 +309,7 @@ Fraud Risk Score = Average Signal Confidence × Coherence
 - ⚠ Flag provider for investigation
 - ✓ Continue processing existing claims (normal pipeline)
 - 📋 Assign to analyst for detailed review
-- ⏸ If fraud confirmed, halt future claims and recover overpayment
+- ⏸ If inauthenticity confirmed, halt future claims and recover overpayment
 
 ---
 
@@ -487,11 +487,11 @@ Result: "Data is too old. Re-verify required."
 
 ---
 
-### Pitfall 3: Fraud Detection False Positives
+### Pitfall 3: authenticity verification False Positives
 
 **Wrong approach:**
 ```
-"One weird billing pattern → Fraud alert"
+"One weird billing pattern → inauthenticity alert"
 ```
 
 **Why it fails:** Doctors have legitimate variation. Oncologists bill differently than internists. Rural providers have different patterns.
@@ -500,14 +500,14 @@ Result: "Data is too old. Re-verify required."
 ```
 Signal 1: High billing volume
   BUT: Oncology specialty = higher volume normal
-  Signal clarity = MEDIUM (not clear it's fraud)
+  Signal clarity = MEDIUM (not clear it's inauthenticity)
 
 Signal 2: Unusual service mix
   BUT: Peer review approves all procedures
   Signal clarity = LOW (contradicted by approval)
 
-Result: No fraud conclusion unless multiple independent 
-signals coherently point to fraud
+Result: No inauthenticity conclusion unless multiple independent 
+signals coherently point to inauthenticity
 ```
 
 ---
@@ -516,10 +516,10 @@ signals coherently point to fraud
 
 **Wrong approach:**
 ```
-"Our fraud detection AI says this is fraud → It must be fraud"
+"Our authenticity verification AI says this is inauthenticity → It must be inauthenticity"
 ```
 
-**Why it fails:** AI systems inherit biases from training data. They fail on edge cases. They're trained on past fraud, not future fraud.
+**Why it fails:** AI systems inherit biases from training data. They fail on edge cases. They're trained on past inauthenticity, not future inauthenticity.
 
 **ClaudeShannon++ approach:**
 ```

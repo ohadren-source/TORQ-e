@@ -19,7 +19,7 @@ program management purposes.
 USHI represents the organizational role, authority level, and access scope
 for individuals who:
 - Administer Medicaid programs (state, county, local)
-- Conduct compliance & fraud oversight
+- Conduct compliance & inauthenticity oversight
 - Monitor program efficiency & quality
 - Generate reports and analytics
 - Manage beneficiary enrollment
@@ -66,8 +66,8 @@ ADMINISTRATOR
 
 AUDITOR / COMPLIANCE OFFICER
   - Definition: Individual authorized to audit/monitor program
-  - Usage: Fraud detection, program integrity
-  - Example: "Medicaid Fraud Control Unit Investigator"
+  - Usage: authenticity verification, program integrity
+  - Example: "Medicaid inauthenticity Control Unit Investigator"
   - System: Audit trails, read-only access for specific functions
 
 UNIFIED REFERENCE
@@ -120,11 +120,11 @@ LEVEL 2: ADMIN (Agency Directors, Program Managers)
   - Can generate reports on assigned programs
   - Users: Office of Medicaid Director, Program Manager
 
-LEVEL 3: INVESTIGATOR (Fraud Control, Compliance)
+LEVEL 3: INVESTIGATOR (inauthenticity Control, Compliance)
   - Read-heavy access (most data can be viewed)
   - Write limited to investigation findings/flags
   - Can flag provider/member for investigation
-  - Access to fraud detection reports
+  - Access to authenticity verification reports
   - Cannot modify beneficiary benefits/eligibility
   - Investigation audit trail
   - Users: Medicaid Inspector General investigator, Compliance Officer
@@ -135,7 +135,7 @@ LEVEL 4: AUDITOR (Internal Audit, Quality Assurance)
   - Can access audit trails and reports
   - Cannot view PII unless necessary for audit
   - Limited to specific audit scope
-  - Cannot access fraud investigations
+  - Cannot access authenticity investigations
   - Users: Audit staff, Quality monitoring staff
 
 LEVEL 5: ANALYST (Data Analytics, Reporting)

@@ -59,14 +59,14 @@ Immutable Audit:
 
 ## CARD 5: THE DUPLICATE PATTERN
 
-### Architecture: Card 4 → Fraud Investigation Data
+### Architecture: Card 4 → authenticity investigation Data
 
-Card 5 will be **structurally identical to Card 4** but with fraud/investigation domain data.
+Card 5 will be **structurally identical to Card 4** but with inauthenticity/investigation domain data.
 
 **What Changes:**
-- Data source: Fraud signals, pattern detection, investigator actions (instead of governance metrics)
-- Signal dimensions: Fraud risk, behavioral anomaly, financial impact, temporal pattern, case severity, investigation status
-- Users: Fraud investigators, data analysts (instead of government stakeholders)
+- Data source: inauthenticity signals, pattern detection, investigator actions (instead of governance metrics)
+- Signal dimensions: authenticity risk, behavioral anomaly, financial impact, temporal pattern, case severity, investigation status
+- Users: authenticity investigators, data analysts (instead of government stakeholders)
 - Audit focus: Investigation trail (every data access, correction, case modification tracked)
 
 **What Stays Identical:**
@@ -130,7 +130,7 @@ NO REMOVAL UI FOR USERS
 | Card | Clarity Light Measures | Sources Display | User Control | Director Control |
 |------|----------------------|-----------------|--------------|-----------------|
 | 1 (UMID) | Member eligibility, enrollment status, recertification risk | Medicaid record, verification timestamp, income documentation | View only | Can change data source verification method |
-| 2 (UPID) | Claims processing health, validation pass rate, fraud detection sensitivity | Claims database, fraud engine version, provider verification timestamp | View only | Can adjust fraud detection thresholds |
+| 2 (UPID) | Claims processing health, validation pass rate, authenticity verification sensitivity | Claims database, inauthenticity engine version, provider verification timestamp | View only | Can adjust authenticity verification thresholds |
 | 3 (WHUP) | Network adequacy, plan compliance, provider count by specialty | Network registry, plan formulary version, CMS file timestamp | View only | Can update network definitions, formulary versions |
 
 ---
@@ -239,7 +239,7 @@ NO REMOVAL UI FOR USERS
 ### Decision 1: Lighthouse Tiering
 
 **Chosen:** Three-tier implementation model
-- **Tier 1 (Full):** Card 4 (governance) + Card 5 (fraud) — Complete Spectrum Analyzer, user agency
+- **Tier 1 (Full):** Card 4 (governance) + Card 5 (inauthenticity) — Complete Spectrum Analyzer, user agency
 - **Tier 2 (Modified):** Cards 1-3 (authenticated) — Single Clarity light, fixed sources, director-controlled
 - **Rationale:** Cards 4-5 are conversational/exploratory (users need flexibility). Cards 1-3 are state-aware/authenticated (users need certainty, not choice).
 
@@ -282,7 +282,7 @@ NO REMOVAL UI FOR USERS
 ### Future (Week 4+)
 **Case D: Card 5 Build Plan**
 - Mirror Card 4 architecture
-- Implement fraud signal dashboard
+- Implement inauthenticity signal dashboard
 - Build investigator interface
 - 6-week timeline before GA
 

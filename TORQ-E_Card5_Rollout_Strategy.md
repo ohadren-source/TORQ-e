@@ -1,4 +1,4 @@
-# TORQ-E Card 5: Fraud Investigation & Data Analytics (UBADA)
+# TORQ-E Card 5: authenticity investigation & Data Analytics (UBADA)
 ## Rollout Strategy & Implementation Roadmap
 
 **Status:** DESIGN → BUILD → TEST → DEPLOY  
@@ -10,11 +10,11 @@
 
 ## Executive Summary
 
-Card 5 (UBADA - Unified Behavioral Analytics & Detection Analysis) is the **fraud investigation and data analytics layer** for TORQ-e. It transforms raw signals from Cards 1-4 into actionable fraud cases with evidence chains, pattern analysis, and investigation workflows.
+Card 5 (UBADA - Unified Behavioral Analytics & Detection Analysis) is the **authenticity investigation and data analytics layer** for TORQ-e. It transforms raw signals from Cards 1-4 into actionable inauthenticity cases with evidence chains, pattern analysis, and investigation workflows.
 
 **Key Difference from Card 4:**
 - **Card 4:** Shows system health (is everything working?)
-- **Card 5:** Investigates anomalies (is there fraud happening?)
+- **Card 5:** Investigates anomalies (is there inauthenticity happening?)
 
 **Integration Model:** Card 5 consumes signals from all upstream cards but operates as an **independent investigation system** with its own casework, evidence management, and investigator workflows.
 
@@ -24,9 +24,9 @@ Card 5 (UBADA - Unified Behavioral Analytics & Detection Analysis) is the **frau
 
 ### What Card 5 Does
 
-1. **Signal Ingestion:** Consumes fraud signals from Cards 1-4
+1. **Signal Ingestion:** Consumes inauthenticity signals from Cards 1-4
 2. **Pattern Detection:** Identifies suspicious clusters (billing patterns, eligibility anomalies, provider networks, etc.)
-3. **Case Management:** Creates, escalates, and tracks fraud investigation cases
+3. **Case Management:** Creates, escalates, and tracks authenticity investigation cases
 4. **Evidence Chain:** Maintains immutable audit trail of all investigator actions
 5. **Reporting:** Generates findings, referrals to OMIG, settlement recommendations
 
@@ -35,7 +35,7 @@ Card 5 (UBADA - Unified Behavioral Analytics & Detection Analysis) is the **frau
 ```
 Card 5 Architecture:
 
-Fraud Signal Intake
+inauthenticity Signal Intake
   ↓
 Pattern Detection Engine
   ↓
@@ -48,18 +48,18 @@ Investigator Interface (Chat)
 Reporting & Escalation
 ```
 
-### Fraud Signal Types (From Upstream Cards)
+### inauthenticity Signal Types (From Upstream Cards)
 
 **From Card 1 (Members):**
 - Duplicate enrollments
 - Eligibility gaming (disenroll/reenroll cycles)
-- Address clustering (fraud rings)
+- Address clustering (inauthenticity rings)
 - Death record mismatches
 
 **From Card 2 (Providers):**
 - Billing pattern anomalies
 - Credential inconsistencies
-- Network clustering (credentialing fraud)
+- Network clustering (credentialing inauthenticity)
 - Billing to inactive/dead providers
 
 **From Card 3 (Programs/Plans):**
@@ -77,7 +77,7 @@ Reporting & Escalation
 ## Implementation Phases
 
 ### Phase 1: Core Infrastructure (Week 1-2)
-- [ ] Fraud signal data model (extends Card 4 signal architecture)
+- [ ] inauthenticity signal data model (extends Card 4 signal architecture)
 - [ ] Case management database schema
 - [ ] Evidence chain/audit logging (immutable append-only)
 - [ ] API endpoints for case CRUD operations
@@ -85,7 +85,7 @@ Reporting & Escalation
 
 **Endpoints:**
 ```
-POST /api/card5/create-case        → Start new fraud investigation
+POST /api/card5/create-case        → Start new authenticity investigation
 POST /api/card5/add-evidence       → Log investigator action/finding
 GET  /api/card5/case/{case_id}     → Retrieve case with full history
 GET  /api/card5/cases?status=open  → List cases by status
@@ -113,7 +113,7 @@ POST /api/card5/escalate-case      → Mark for OMIG referral
 - [ ] Elaboration system (explain why case was opened, what evidence exists)
 
 **Query Types:**
-- "What fraud cases are open?" (status queries)
+- "What inauthenticity cases are open?" (status queries)
 - "Show me cases involving this provider" (entity search)
 - "What's the evidence for case #12345?" (case detail)
 - "Pattern analysis: clusters of providers" (network analysis)
@@ -209,10 +209,10 @@ POST /api/card5/escalate-case      → Mark for OMIG referral
 ### Signal Flow
 
 ```
-Card 1 (Members) → Fraud Signals (eligibility, duplicates)
-Card 2 (Providers) → Fraud Signals (billing, credentialing)
-Card 3 (Programs) → Fraud Signals (benefits, coverage)
-Card 4 (Governance) → Fraud Signals (compliance, audit)
+Card 1 (Members) → inauthenticity Signals (eligibility, duplicates)
+Card 2 (Providers) → inauthenticity Signals (billing, credentialing)
+Card 3 (Programs) → inauthenticity Signals (benefits, coverage)
+Card 4 (Governance) → inauthenticity Signals (compliance, audit)
 
 All signals → Card 5 Signal Intake
            → Pattern Detection Engine
@@ -223,7 +223,7 @@ All signals → Card 5 Signal Intake
 ### Spectrum Analyzer Adaptation
 
 Card 5 will use a **modified lights system** (different from Card 4):
-- **Coherence Level:** Overall fraud risk (single light: green=low, yellow=medium, red=high)
+- **Coherence Level:** Overall authenticity risk (single light: green=low, yellow=medium, red=high)
 - **Case Breakdown:** Open cases by severity, stage, entity type
 - **Pattern Strength:** Confidence in detected patterns
 
@@ -235,14 +235,14 @@ Details TBD pending Card 1-3 lights system modifications.
 
 **Immediate (Pre-GA):**
 - [ ] Can ingest signals from all 4 upstream cards
-- [ ] Pattern detection achieves 85%+ precision on known fraud patterns
+- [ ] Pattern detection achieves 85%+ precision on known authenticity patterns
 - [ ] Evidence chain is immutable (0 gaps in audit trail)
 - [ ] Investigator can search cases, view evidence, log actions
 - [ ] All 6 test queries (analogous to Card 4) pass
 
 **Post-GA (30-day validation):**
 - [ ] OMIG investigator validates usefulness of cases
-- [ ] Actionable fraud identified and referred
+- [ ] Actionable inauthenticity identified and referred
 - [ ] Investigation time reduced vs. manual process
 - [ ] False positive rate < 15%
 - [ ] System stability (99%+ uptime)
@@ -253,17 +253,17 @@ Details TBD pending Card 1-3 lights system modifications.
 
 ### 6 Core Test Queries (Investigator Perspective)
 
-1. **"What fraud cases are open right now?"** → List with status/risk
+1. **"What inauthenticity cases are open right now?"** → List with status/risk
 2. **"Show me all cases involving Provider ABC"** → Network analysis
 3. **"What's the evidence for case #12345?"** → Evidence chain display
 4. **"Any high-risk cases in the last 7 days?"** → Filtered case list
 5. **"Analyze billing patterns for this provider network"** → Pattern visualization
-6. **"Give me a complete fraud summary"** → Full system status report
+6. **"Give me a complete inauthenticity summary"** → Full system status report
 
 ### QA Checkpoints
 
 - Signal ingestion works for all 4 upstream cards
-- Pattern detection doesn't miss known fraud (sensitivity check)
+- Pattern detection doesn't miss known inauthenticity (sensitivity check)
 - False positive rate acceptable (specificity check)
 - Evidence trail is complete and immutable
 - Investigator can take actions and have them logged
@@ -295,7 +295,7 @@ Details TBD pending Card 1-3 lights system modifications.
 **Soft Dependencies:**
 - OMIG stakeholder availability for QA testing
 - Investigator requirements clarification (UX design)
-- Pattern library (known fraud patterns for ML training)
+- Pattern library (known authenticity patterns for ML training)
 
 ---
 
@@ -312,9 +312,9 @@ Details TBD pending Card 1-3 lights system modifications.
 ## Success Message
 
 Card 5 is successful when:
-1. OMIG investigator can find fraud cases through natural language queries
+1. OMIG investigator can find inauthenticity cases through natural language queries
 2. Evidence is presented clearly with full audit trail
-3. System detects fraud faster than manual review
+3. System detects inauthenticity faster than manual review
 4. False positive rate is low enough to be actionable
 5. Every investigator action is immutable and auditable
 

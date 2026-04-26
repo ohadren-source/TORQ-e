@@ -52,13 +52,13 @@
   3. NPI database (0.70 confidence)
 - Returns enrollment status (FFS/MCO/both), claims routing, payment info
 - Validates claims for errors before submission
-- Detects fraud signals on submitted claims
+- Detects inauthenticity signals on submitted claims
 
 **Claude Integration:**
 - Tools: `lookup_provider`, `check_enrollment`, `validate_claim`
 - Chat responds with enrollment status, claims guidance, next steps
 - BUT: Confidence data returned but not passed to Claude context
-- BUT: Fraud detection engine exists but integration with chat unclear
+- BUT: authenticity verification engine exists but integration with chat unclear
 
 **Interface:**
 - Enrollment gate: "Do you have a Provider ID?"
@@ -66,13 +66,13 @@
 - Markdown formatting: working with parser fix
 
 **Completeness:** ~70%
-- Core logic: ✅ Complete (lookup + routing + fraud detection)
+- Core logic: ✅ Complete (lookup + routing + authenticity verification)
 - Confidence framework: ⚠️ Basic (returns score but no consensus logic like Card 1)
 - UI: ✅ Working
 - Gaps: 
   - No signal-over-noise scoring (Card 1 has it, Card 2 doesn't)
   - Claude doesn't receive confidence context
-  - Fraud detection not clearly integrated with chat
+  - authenticity verification not clearly integrated with chat
 
 ---
 
@@ -142,7 +142,7 @@ Because the design questions aren't answered:
 
 ### CARD 5 (UBADA - Universal Business/Data Analyst): ⚠️ FUNCTION RECENTLY CLARIFIED BUT UNIMPLEMENTED
 
-**Intended Function:** Answer data analyst: "Is this fraud? What patterns do I see? What needs correcting?"
+**Intended Function:** Answer data analyst: "Is this inauthenticity? What patterns do I see? What needs correcting?"
 
 **What It SHOULD Do (just designed today):**
 - Interactive data explorer (claims, providers, members, relationships)
@@ -362,21 +362,21 @@ Because the design questions aren't answered:
 
 ---
 
-#### 8. **Fraud Detection Integration Unclear** (Card 2)
+#### 8. **authenticity verification Integration Unclear** (Card 2)
 **The Problem:**
 - Card 2 has `fraud_detection.py` module
-- Returns fraud signals with risk scores
+- Returns inauthenticity signals with risk scores
 - But unclear how it integrates with chat
-- No Claude tools explicitly expose fraud analysis
+- No Claude tools explicitly expose inauthenticity analysis
 - No clear "when do we escalate to investigation?"
 
 **Impact:**
-- Fraud detection exists but isn't exposed to users/analysts
-- No clear pathway from fraud signal → investigation
+- authenticity verification exists but isn't exposed to users/analysts
+- No clear pathway from inauthenticity signal → investigation
 
 **What's Needed:**
-- Clarify: Should fraud signals appear in Card 2 chat?
-- Or should Card 5 pull fraud signals for investigation?
+- Clarify: Should inauthenticity signals appear in Card 2 chat?
+- Or should Card 5 pull inauthenticity signals for investigation?
 - Define: What triggers escalation to Card 5?
 - Wire: fraud_detection module into Card 2 tools and/or Card 5 tools
 

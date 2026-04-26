@@ -1,26 +1,26 @@
-# TORQ-E Card 5: Fraud Detection & Investigation
+# TORQ-E Card 5: authenticity verification & Investigation
 ## Architecture for Audience (AN)
 
 ---
 
 ## What is Card 5?
 
-**Card 5 is the fraud hunter.** It continuously scans Medicaid claims for suspicious patterns and helps investigators build prosecution-ready cases.
+**Card 5 is the inauthenticity hunter.** It continuously scans Medicaid claims for suspicious patterns and helps investigators build prosecution-ready cases.
 
 Card 5 does two things:
 
-1. **Automated Detection** — Real-time scanning of every claim for fraud signals
+1. **Automated Detection** — Real-time scanning of every claim for inauthenticity signals
 2. **Investigation Support** — Evidence compilation, network visualization, case management
 
 All investigators use the same system. Entry-level analyst. Experienced senior. Same tools, same data, same interface.
 
 ---
 
-## How Fraud Gets Flagged
+## How inauthenticity Gets Flagged
 
-### The Five Fraud Dimensions
+### The Five inauthenticity Dimensions
 
-When a claim arrives, Card 5 analyzes it against five fraud indicators:
+When a claim arrives, Card 5 analyzes it against five inauthenticity indicators:
 
 #### 1. Billing Anomaly
 **The question:** Is this claim cost normal for this service?
@@ -50,7 +50,7 @@ When a claim arrives, Card 5 analyzes it against five fraud indicators:
 - This provider: 12 surgeries/month
 - Statistical deviation: 4.2 standard deviations from mean → **HIGH RISK**
 
-**What it catches:** Unnecessary procedures, provider kickback rings, fraudulent licensing (someone billing under fake credentials)
+**What it catches:** Unnecessary procedures, provider kickback rings, inauthentic licensing (someone billing under fake credentials)
 
 #### 3. Member Cycling
 **The question:** Is this member accessing services unusually often?
@@ -65,7 +65,7 @@ When a claim arrives, Card 5 analyzes it against five fraud indicators:
 - This member: 32 visits in 2 months
 - Abnormality: 5x above normal → **MEDIUM RISK**
 
-**What it catches:** Member falsifying symptoms to access drugs/services, member participating in fraud ring (deliberately getting billed for unnecessary care)
+**What it catches:** Member falsifying symptoms to access drugs/services, member participating in inauthenticity ring (deliberately getting billed for unnecessary care)
 
 #### 4. Network Clustering
 **The question:** Are suspicious entities connected in unusual ways?
@@ -74,7 +74,7 @@ When a claim arrives, Card 5 analyzes it against five fraud indicators:
 - Provider → Lab (do they work together a lot?)
 - Provider → Member (too many claims between specific pairs?)
 - Lab → Pharmacy (are they clustered?)
-- All three together (classic fraud ring: provider orders unnecessary tests from specific lab, lab results drive unnecessary drugs from specific pharmacy)
+- All three together (classic inauthenticity ring: provider orders unnecessary tests from specific lab, lab results drive unnecessary drugs from specific pharmacy)
 
 **Example:**
 - Provider A normally works with 47 different labs
@@ -99,16 +99,16 @@ When a claim arrives, Card 5 analyzes it against five fraud indicators:
 - This provider: 8 claims on Sunday night, 7 on Saturday night
 - Temporal anomaly: 400% above normal for weekend emergency surgery → **MEDIUM RISK**
 
-**What it catches:** Phantom procedures (billed after hours when no staff present), falsified emergency claims, claims bundled fraudulently (multiple procedures claimed as simultaneous emergency)
+**What it catches:** Phantom procedures (billed after hours when no staff present), falsified emergency claims, claims bundled inauthenticly (multiple procedures claimed as simultaneous emergency)
 
 ---
 
-## How Fraud Risk Gets Scored
+## How authenticity risk Gets Scored
 
 Each claim is scored across all five dimensions:
 
 ```
-CLAIM 12345: Total Fraud Risk = 68% (HIGH RISK - FLAG FOR REVIEW)
+CLAIM 12345: Total authenticity risk = 68% (HIGH RISK - FLAG FOR REVIEW)
 
 Breakdown:
 ├─ Billing Anomaly       ██████░░░░  60% (provider overbilling)
@@ -123,7 +123,7 @@ Final Score: 68%
 ├─ 20% weight: Member Cycling         = 13 points
 ├─ 20% weight: Network Clustering     = 16 points
 └─ 10% weight: Temporal Spike         = 2 points
-Total:                                 = 56 points / 100 = 56% FRAUD RISK
+Total:                                 = 56 points / 100 = 56% authenticity risk
 ```
 
 **Score Thresholds:**
@@ -136,7 +136,7 @@ Claims scoring 50%+ are automatically flagged and appear in the investigator das
 
 ---
 
-## A Day in the Life: Fraud Investigation Workflow
+## A Day in the Life: authenticity investigation Workflow
 
 ### 9:00 AM — Check Flagged Claims Dashboard
 
@@ -158,7 +158,7 @@ Ready for prosecution:        1 case
 
 Click any claim to see:
 - Claim details
-- Why it was flagged (which fraud dimensions fired)
+- Why it was flagged (which inauthenticity dimensions fired)
 - Evidence package pre-compiled
 - Network visualization
 
@@ -179,7 +179,7 @@ Takes 2-5 minutes to scan and understand what's in the queue.
 - Member cycling: 8x above normal for diagnosis
 - All visits to same provider
 - Temporal spike: 60% of visits on Friday afternoons
-- Verdict: "Member may be falsifying symptoms or part of fraud ring. Create investigation case."
+- Verdict: "Member may be falsifying symptoms or part of inauthenticity ring. Create investigation case."
 
 **Claim 3 (High risk: 62%)**
 - Claim: Provider-Lab-Pharmacy cluster detected
@@ -198,7 +198,7 @@ For each flagged claim you want to investigate:
 1. Click **"Create Investigation Case"**
 2. System auto-populates:
    - Claim details
-   - Fraud dimension breakdown
+   - inauthenticity dimension breakdown
    - Evidence package (claim history, peer comparison, timeline, network)
    - Suggested next steps
 
@@ -278,7 +278,7 @@ Case-001: Provider overbilling
 ├─ Days active: 0
 └─ Next step: Obtain Lab #5 licensing records
 
-Case-002: Member symptoms fraud
+Case-002: Member symptoms inauthenticity
 ├─ Status: Awaiting state coordination (CA, TX)
 ├─ Created: Yesterday 3:15 PM
 ├─ Days active: 1
@@ -308,7 +308,7 @@ System compiles:
 **Case Summary** (1 page)
 - Allegations: Kickback ring (provider-lab-pharmacy conspiracy)
 - Members affected: 23
-- Total fraudulent claims: $347,000
+- Total inauthentic claims: $347,000
 - Timeframe: January—April 2026
 - Recommendation: Federal referral (multi-state), prosecution
 
@@ -318,7 +318,7 @@ System compiles:
 3. Peer comparison (showing statistical deviation)
 4. Member access analysis (showing clustering)
 5. Lab credentials (showing possible licensing issues)
-6. Financial impact (showing total fraud amount)
+6. Financial impact (showing total inauthenticity amount)
 7. Audit trail (showing claims processing, no irregularities flagged pre-investigation)
 
 **Exhibits Support:**
@@ -340,11 +340,11 @@ Takes 30 minutes to review, customize notes, and export.
 
 ### View Flagged Claims Dashboard
 - See all flagged claims sorted by risk level
-- Filter by: Risk level, fraud dimension, date range, provider, member, geography
+- Filter by: Risk level, inauthenticity dimension, date range, provider, member, geography
 - Click any claim for full details
 
-### Understand Fraud Dimensions
-Click any claim, then click any fraud dimension bar to understand:
+### Understand inauthenticity Dimensions
+Click any claim, then click any inauthenticity dimension bar to understand:
 - Why was this dimension flagged?
 - What evidence supports the flag?
 - How does this compare to normal?
@@ -400,7 +400,7 @@ If case involves multiple states:
 Once investigation is complete:
 1. Click **"Export Prosecution Package"**
 2. System compiles:
-   - Case summary (allegations, affected members, total fraud, recommendation)
+   - Case summary (allegations, affected members, total inauthenticity, recommendation)
    - Evidence exhibits (claims, timelines, network viz, peer comparison, financial impact)
    - Supporting documentation (audit trail, calculations, statistical analysis)
 3. Export as PDF
@@ -410,8 +410,8 @@ Once investigation is complete:
 See statistics on your caseload:
 - How many cases created this month?
 - What's the average time to complete investigation?
-- What's the typical fraud amount per case?
-- Which fraud dimensions catch the most fraud?
+- What's the typical inauthenticity amount per case?
+- Which inauthenticity dimensions catch the most inauthenticity?
 - What's your investigation conversion rate (cases created → prosecution)?
 
 ---
@@ -442,7 +442,7 @@ A junior analyst can do exactly what a senior does. The system doesn't gatekeep.
 
 ### What's Visible
 - Claim details (cost, service, date, provider, member)
-- Fraud signals (which dimensions fired, why)
+- inauthenticity signals (which dimensions fired, why)
 - Evidence packages (claim history, peer comparison, network)
 - Investigation notes (what you discovered)
 - Audit trails (actions taken, by whom, when)
@@ -470,11 +470,11 @@ These records prove accountability and support prosecution (chain of custody).
 
 ---
 
-## How Fraud Gets Caught: From Detection to Prosecution
+## How inauthenticity Gets Caught: From Detection to Prosecution
 
 ### Phase 1: Automated Detection (Real-time)
 1. Claim arrives
-2. Analyzed against 5 fraud dimensions
+2. Analyzed against 5 inauthenticity dimensions
 3. Scored 0-100% risk
 4. If ≥50%, flagged automatically
 5. Appears in investigator dashboard
@@ -484,7 +484,7 @@ These records prove accountability and support prosecution (chain of custody).
 ### Phase 2: Initial Investigation (Hours to Days)
 1. Investigator sees flagged claim
 2. Reviews pre-compiled evidence
-3. Decides: Real fraud or false alarm?
+3. Decides: Real inauthenticity or false alarm?
 4. If real: Creates formal investigation case
 
 **Time: 5-30 minutes per claim**
@@ -539,14 +539,14 @@ These records prove accountability and support prosecution (chain of custody).
 **Day 6:**
 - Prosecution package exported
 - Sent to federal authorities
-- Fraud: Provider falsified lab results, billed for phantom procedures
+- inauthenticity: Provider falsified lab results, billed for phantom procedures
 - Impact: $347,000 across 23 members
 
-**Prosecution Result:** Conviction for fraud, conspiracy, money laundering
+**Prosecution Result:** Conviction for inauthenticity, conspiracy, money laundering
 
 ---
 
-### Example 2: Member Cycling Fraud (Caught by Usage Anomaly)
+### Example 2: Member Cycling inauthenticity (Caught by Usage Anomaly)
 
 **Day 1:**
 - Member accesses specialist 47 times in 2 months
@@ -563,7 +563,7 @@ These records prove accountability and support prosecution (chain of custody).
 - Investigator requests member interview
 - Member admits: "I was offered $50 per visit to come get fake treatments"
 - Investigator identifies other members in same ring
-- Network clustering analysis reveals: 15 members, 1 provider, coordinated fraud
+- Network clustering analysis reveals: 15 members, 1 provider, coordinated inauthenticity
 
 **Day 5-7:**
 - Investigator works with member to obtain recorded conversations
@@ -572,10 +572,10 @@ These records prove accountability and support prosecution (chain of custody).
 
 **Day 8:**
 - Prosecution package complete
-- Federal referral for conspiracy, kickback fraud
-- Impact: 15 members, 1 provider, $180,000 in fraudulent claims
+- Federal referral for conspiracy, kickback inauthenticity
+- Impact: 15 members, 1 provider, $180,000 in inauthentic claims
 
-**Prosecution Result:** Conviction for conspiracy, kickbacks, fraud
+**Prosecution Result:** Conviction for conspiracy, kickbacks, inauthenticity
 
 ---
 
@@ -600,7 +600,7 @@ These records prove accountability and support prosecution (chain of custody).
 **Day 6-10:**
 - Multi-state coordination (CA, TX also have same entities)
 - Investigator coordinates with CA MFCU and TX MFCU
-- Multi-state fraud ring confirmed
+- Multi-state inauthenticity ring confirmed
 - Federal authorities notified
 
 **Day 11-14:**
@@ -617,10 +617,10 @@ Card 5 automates the hard part: **Finding suspicious patterns in millions of cla
 
 You provide the human part: **Judgment, context, decision-making, coordination.**
 
-Machine: Flags 50 claims with 50%+ fraud risk
+Machine: Flags 50 claims with 50%+ authenticity risk
 Human: Reviews 50, picks top 5 to investigate, applies context and experience
 
-This combination catches fraud that either alone would miss.
+This combination catches inauthenticity that either alone would miss.
 
 ---
 
@@ -630,7 +630,7 @@ This combination catches fraud that either alone would miss.
 
 1. Click **"View Flagged Claims Dashboard"**
 2. Click the top flagged claim to see why it was flagged
-3. Expand the fraud dimensions to understand what triggered the flag
+3. Expand the inauthenticity dimensions to understand what triggered the flag
 4. Click **"Create Investigation Case"** to turn it into a formal investigation
 5. Review the pre-compiled evidence package
 
@@ -640,7 +640,7 @@ Jump straight to high-risk claims, use your judgment to triage, request state co
 
 ---
 
-**Your feedback matters.** Card 5 is designed for you—the investigators, analysts, and fraud hunters who keep Medicaid honest. If something is unclear, slow, missing, or could work better, tell us.
+**Your feedback matters.** Card 5 is designed for you—the investigators, analysts, and inauthenticity hunters who keep Medicaid honest. If something is unclear, slow, missing, or could work better, tell us.
 
 ---
 

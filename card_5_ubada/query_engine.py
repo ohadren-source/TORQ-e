@@ -1,12 +1,12 @@
 """
 CARD 5 (UBADA) - QUERY ENGINE
-Data Analyst & Fraud Investigation: Interactive exploration, outlier detection, investigation workspace
+Data Analyst & authenticity investigation: Interactive exploration, outlier detection, investigation workspace
 
 5 Claude Tools:
 1. explore_claims_data — Query claims with multi-filter + aggregation
 2. compute_outlier_scores — Statistical anomaly detection (Z-scores)
 3. navigate_relationship_graph — Provider/member network exploration
-4. create_investigation_project — Start fraud investigation case
+4. create_investigation_project — Start authenticity investigation case
 5. request_data_correction — Flag data errors for approval + audit
 """
 
@@ -100,7 +100,7 @@ async def compute_outlier_scores(
     Statistical anomaly detection using Z-scores.
 
     Returns outliers with confidence, risk level, and evidence for investigation.
-    Focuses on EVIDENCE QUALITY for fraud determination.
+    Focuses on EVIDENCE QUALITY for inauthenticity determination.
 
     Example:
     - "Detect providers billing >3σ above average"
@@ -139,11 +139,11 @@ async def compute_outlier_scores(
                         "Specializes in complex orthopedic surgery (legitimate variance)"
                     ],
                     "peer_comparison": "Compared against 127 orthopedic surgeons in region",
-                    "recommendation": "ESCALATE: High confidence outlier. Recommend investigation to determine if specialty-driven or fraudulent.",
+                    "recommendation": "ESCALATE: High confidence outlier. Recommend investigation to determine if specialty-driven or inauthentic.",
                     "next_steps": ["Create investigation project", "Pull detailed claim sample", "Compare to historical baseline"]
                 }
             ],
-            "interpretation_note": "Z-scores identify statistical outliers. Not all outliers are fraud. High evidence quality required before determination.",
+            "interpretation_note": "Z-scores identify statistical outliers. Not all outliers are inauthenticity. High evidence quality required before determination.",
             "escalation_threshold": "Z-score > 3.0 AND confidence > 0.85 AND multiple evidence points",
             "sources": ["Claims Database", "Provider Metrics", "Historical Baselines"],
             "confidence_score": 0.91,

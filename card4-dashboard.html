@@ -181,8 +181,8 @@
             font-weight: 600;
         }
 
-        /* FRAUD SIGNALS SECTION */
-        .fraud-section {
+        /* inauthenticity SIGNALS SECTION */
+        .inauthenticity-section {
             background: white;
             border-radius: 8px;
             padding: 24px;
@@ -591,11 +591,11 @@
             <button class="action-btn secondary" onclick="refreshMetrics()">↻ Refresh Metrics</button>
         </div>
 
-        <!-- FRAUD SIGNALS SECTION -->
-        <div class="fraud-section">
+        <!-- inauthenticity SIGNALS SECTION -->
+        <div class="inauthenticity-section">
             <div class="section-title">
                 <span>⚠️</span>
-                Fraud Signals & Anomalies
+                inauthenticity Signals & Anomalies
             </div>
 
             <div class="signal-item high-risk">
@@ -744,7 +744,7 @@
                     <select id="issueType" required>
                         <option value="">Select...</option>
                         <option value="data_quality">Data Quality Issue</option>
-                        <option value="fraud_suspicion">Fraud Suspicion</option>
+                        <option value="fraud_suspicion">inauthenticity Suspicion</option>
                         <option value="compliance_gap">Compliance Gap</option>
                         <option value="system_error">System Error</option>
                     </select>
@@ -842,8 +842,8 @@
         }
 
         function detectFraudSignals() {
-            alert('Detecting fraud signals...');
-            // In production, call /api/card4/fraud-signals
+            alert('Detecting inauthenticity signals...');
+            // In production, call /api/card4/inauthenticity-signals
         }
 
         function assessDataQuality() {

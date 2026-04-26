@@ -1,6 +1,6 @@
 """
 CARD 5 (UBADA) - OPERATIONAL TEST HARNESS
-Test all 5 tools in realistic fraud investigation workflow
+Test all 5 tools in realistic authenticity investigation workflow
 """
 
 import asyncio
@@ -155,7 +155,7 @@ class MockCard5Engine:
 
 async def test_fraud_investigation_workflow():
     """
-    Complete fraud investigation workflow:
+    Complete authenticity investigation workflow:
     1. Explore claims to establish baseline
     2. Detect statistical outliers
     3. Analyze network relationships

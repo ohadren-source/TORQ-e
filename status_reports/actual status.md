@@ -16,7 +16,7 @@ Card 4 (USHI) - Government Stakeholder
 Added: get_public_data_schema() dependency function
 Updated all endpoints to query real government data:
 /metrics: Real aggregate metrics from public repositories
-/fraud-signals: Fraud detection from real data sources
+/inauthenticity-signals: authenticity verification from real data sources
 /data-quality: Data consistency analysis from real sources
 /governance-log: Audit trail with real data references
 /flag-issue: Governance flags tied to real data sources
@@ -26,7 +26,7 @@ Card	Status	Real Data Wiring
 2 (UPID) - Provider System	✅ Complete	Routes pass schema to provider_lookup, claims_routing, fraud_detection
 3 (WHUP) - Plan Network Management	✅ Complete	Routes pass schema to real plan source discovery functions
 4 (USHI) - Government Stakeholder	✅ Complete	Routes pass schema to query_engine real data functions
-5 (UBADA) - Fraud Investigation	✅ Ready	Backend already queries real data
+5 (UBADA) - authenticity investigation	✅ Ready	Backend already queries real data
 Architecture Pattern (Consistent Across All Cards)
 main.py startup → data_crawler.py 
     ↓
@@ -133,11 +133,11 @@ https://health.data.ny.gov - Health Data NY Portal (searchable Medicaid datasets
 https://www.health.ny.gov/health_care/managed_care/reports/ - Managed Care Reports
 Card 4: Government Stakeholder Governance
 https://ohipdocs.health.ny.gov/ohipdocs/web/ - OHIP (Eligibility Forms, Notices, Policy Documents, Governance Rules)
-https://omig.ny.gov/ - OMIG (Fraud Investigation, Exclusions, Case Tracking, Annual Reports)
+https://omig.ny.gov/ - OMIG (authenticity investigation, Exclusions, Case Tracking, Annual Reports)
 https://its.ny.gov/ - ITS (System Performance, Infrastructure Metrics)
 https://www.health.ny.gov/health_care/medicaid/reference/ - Medicaid Reference Materials
-Card 5: Data Analyst & Fraud Investigation
-https://omig.ny.gov/ - OMIG Primary (Fraud Cases, Investigations, Medicaid Exclusions, Annual Reports)
+Card 5: Data Analyst & authenticity investigation
+https://omig.ny.gov/ - OMIG Primary (inauthenticity cases, Investigations, Medicaid Exclusions, Annual Reports)
 https://ohipdocs.health.ny.gov/ohipdocs/web/ - Policy Violations & Regulatory Data
 https://health.data.ny.gov - Analytics, Trends, Historical Data
 https://www.health.ny.gov/health_care/medicaid/publications/ - Historical Patterns & Compliance Data
@@ -146,7 +146,7 @@ Repo	Cards	Contains
 eMedNY	1, 2	Member enrollment, provider enrollment, FFS/MCO status
 Health Data NY	3, 5	Searchable Medicaid datasets, enrollment trends, analytics
 OHIP Docs	4, 5	Policy documents, eligibility rules, governance frameworks
-OMIG	4, 5	Fraud investigations, exclusion lists, compliance findings, annual metrics
+OMIG	4, 5	authenticity investigations, exclusion lists, compliance findings, annual metrics
 ITS	4	System uptime, performance metrics, infrastructure status
 MCO Directory	3, 4	Plan names, networks, adequacy metrics, contact info
 Should I update the data_crawler.py to target these specific, authoritative URLs for each card? This would make the discovery much more precise and valuable.
@@ -166,7 +166,7 @@ data_crawler.py crawls ALL 9 URLs:
   → eMedNY (member, provider)
   → MCO Directory & reports (plans)
   → OHIP (governance, policy)
-  → OMIG (fraud, exclusions)
+  → OMIG (inauthenticity, exclusions)
   → ITS (system metrics)
   → Health Data NY (analytics)
 
@@ -177,7 +177,7 @@ Each card searches the unified schema for what it needs:
   • Card 2 looks for provider data sources
   • Card 3 looks for plan/MCO data sources
   • Card 4 looks for governance/policy data sources
-  • Card 5 looks for fraud/investigation data sources
+  • Card 5 looks for inauthenticity/investigation data sources
 The crawler discovers everything, the schema contains everything, and cards are smart enough to find what's relevant to them.
 
 This is cleaner and more flexible - no hard-coded card-to-repo mappings. Just one unified data discovery process feeding one unified schema.
@@ -197,7 +197,7 @@ eMedNY (member/provider data)
 Health Data NY (analytics across all domains)
 MCO Directory & Reports (plan data)
 OHIP Docs (governance, policy, eligibility rules)
-OMIG (fraud investigations, exclusions, case tracking)
+OMIG (authenticity investigations, exclusions, case tracking)
 ITS (system performance metrics)
 Health.NY.gov Medicaid Reference & Publications (historical patterns, compliance)
 The unified public_data_schema.json will contain all discovered sources, and each card searches it for what's relevant:
@@ -212,7 +212,7 @@ Card Query Phase (at runtime):
   • Card 2: searches schema for provider/claims data sources  
   • Card 3: searches schema for plan/MCO data sources
   • Card 4: searches schema for governance/policy data sources
-  • Card 5: searches schema for fraud/investigation data sources
+  • Card 5: searches schema for inauthenticity/investigation data sources
 All cards now: ✅ Accept public_data_schema via dependency injection ✅ Have helper classes wired to use the schema ✅ Will query real data from discovered sources ✅ Return confidence scores based on actual source quality
 
 Ready for Railway deployment testing!

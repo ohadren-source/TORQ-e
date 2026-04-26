@@ -59,17 +59,17 @@ User Query: "What's the status of my claims processing?"
 Expected Response:
 - Concise: "Processing healthy. Average claim decision: 5-7 business days"
 - Clarity Light: 🟢 GREEN (NORMAL)
-- Sources: [Claims Processing Dashboard | Fraud Detection Engine]
+- Sources: [Claims Processing Dashboard | authenticity verification Engine]
 - Elaborate Button: Breakdown of claims by status (pending, approved, paid), average processing times
 ```
 
-**Test 3: Fraud Detection Check**
+**Test 3: authenticity verification Check**
 ```
-User Query: "Does this claim have any fraud signals?"
+User Query: "Does this claim have any inauthenticity signals?"
 Expected Response:
-- Concise: "No fraud signals detected. Claim is safe to submit."
+- Concise: "No inauthenticity signals detected. Claim is safe to submit."
 - Clarity Light: 🟢 GREEN (CLEAR)
-- Sources: [Fraud Detection Engine v2.1 | Claims History Analysis]
+- Sources: [authenticity verification Engine v2.1 | Claims History Analysis]
 - Elaborate Button: Explains what was scanned (duplicate check, coding anomalies, member history, provider patterns)
 ```
 
@@ -169,10 +169,4 @@ Elements tab: Clarity light has correct class (clarity-light green/yellow/red)
 3. ✅ Source citations with working links
 4. ✅ Elaborate button that toggles details
 5. ✅ No console errors
-6. ✅ Session context recognized (Cards 1-2)
-7. ✅ Smooth message flow and scrolling
-
----
-
-**Ready to test. Deploy to Railway first, then run these 9 inquiries sequentially.**
-
+6. ✅ S

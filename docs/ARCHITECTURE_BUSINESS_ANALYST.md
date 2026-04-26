@@ -2,7 +2,7 @@
 
 ## What is TORQ-e?
 
-TORQ-e is a unified system for New York State Medicaid. It solves one critical problem: **one person is called different things in different systems** (Member, Client, Recipient, Beneficiary, Provider, Applicant, etc.), which makes it impossible to track them consistently and enables fraud.
+TORQ-e is a unified system for New York State Medicaid. It solves one critical problem: **one person is called different things in different systems** (Member, Client, Recipient, Beneficiary, Provider, Applicant, etc.), which makes it impossible to track them consistently and enables inauthenticity.
 
 **The Solution**: Give everyone a single permanent identifier that never changes, no matter what else changes about them (name, address, insurance plan, employment status).
 
@@ -26,12 +26,12 @@ TORQ-e is a unified system for New York State Medicaid. It solves one critical p
 - Maps to the specific plan (e.g., Fidelis Care, Anthem, EmblemHealth)
 
 ### 4. **Government Stakeholder** (State employee overseeing the program)
-- Wants: "How much are we spending? Are providers committing fraud? How do we compare to other states?"
+- Wants: "How much are we spending? Are providers committing inauthenticity? How do we compare to other states?"
 - Gets: **USHI** (Universal Stakeholder Identity)
 - Maps to their existing government employee ID; full access to state-level data
 
-### 5. **Data Analyst** (Person investigating fraud or analyzing program performance)
-- Wants: "Is this provider real? What patterns indicate fraud?"
+### 5. **Data Analyst** (Person investigating inauthenticity or analyzing program performance)
+- Wants: "Is this provider real? What patterns indicate inauthenticity?"
 - Gets: **UBADA** (Universal Business Analyst and Data Analyst)
 - Can be a government employee or contractor; different skill levels (Junior, Senior, Lead)
 
@@ -51,7 +51,7 @@ TORQ-e is a unified system for New York State Medicaid. It solves one critical p
 **Step 2: Dr. Smith enrolls as provider**
 - Dr. Smith goes to TORQ-e provider portal
 - Submits NPI (national provider number) for verification
-- System confirms Dr. Smith is valid, not on fraud list
+- System confirms Dr. Smith is valid, not on inauthenticity list
 - Dr. Smith gets permanent identifier: **UPID** (never changes)
 - Dr. Smith is added to Fidelis Care network
 
@@ -76,7 +76,7 @@ TORQ-e is a unified system for New York State Medicaid. It solves one critical p
 - Analyst Sarah (UBADA) wants to check: "Are Dr. Smith's billing patterns normal?"
 - Sarah searches TORQ-e: "Show me all claims from UPID [Dr. Smith's ID]"
 - System returns: 150 claims in April, average $140, diagnosis codes reasonable
-- System calculates fraud risk: 15/100 (low risk, normal provider)
+- System calculates authenticity risk: 15/100 (low risk, normal provider)
 - Sarah approves claims for payment
 
 **Step 6: Payment to Dr. Smith**
@@ -86,7 +86,7 @@ TORQ-e is a unified system for New York State Medicaid. It solves one critical p
 
 ---
 
-## The Fraud Protection Layer
+## The inauthenticity Protection Layer
 
 ### What Happens If Dr. Smith is Suspicious?
 
@@ -101,14 +101,14 @@ Same scenario, but Dr. Smith has red flags:
 - Claims for impossible service combinations (surgery + pediatric vaccines same visit)
 
 **System Response**:
-1. Automatic flag: "High fraud risk - 75/100"
+1. Automatic flag: "High authenticity risk - 75/100"
 2. Analyst Sarah is notified
 3. Sarah reviews detailed assessment
-4. Sarah says: "This looks like fraud"
+4. Sarah says: "This looks like inauthenticity"
 5. Sarah creates investigation case
 6. **Immediate**: Dr. Smith's future claims are put on hold (no new payments)
 7. **Ongoing**: Inspector General investigates
-8. **Result**: If fraud confirmed, state recovers overpayment
+8. **Result**: If inauthenticity confirmed, state recovers overpayment
 
 ---
 
@@ -136,7 +136,7 @@ Same scenario, but Dr. Smith has red flags:
 │          ┌─────────────────┼─────────────────┐                  │
 │          │                 │                 │                  │
 │     ┌────▼────┐     ┌──────▼──────┐  ┌──────▼──────┐           │
-│     │ Claims  │     │  Oversight  │  │   Fraud    │           │
+│     │ Claims  │     │  Oversight  │  │   inauthenticity    │           │
 │     │Database │     │  Dashboard  │  │  Detection │           │
 │     │(EMEDNY)│     │  (USHI)     │  │  (UBADA)   │           │
 │     └─────────┘     └─────────────┘  └────────────┘           │
@@ -147,7 +147,7 @@ Same scenario, but Dr. Smith has red flags:
     ┌──────────┐         ┌──────────┐          ┌──────────────┐
     │  Member  │         │  State   │          │ Investigator│
     │ Sees: Am │         │ Sees: Am │          │ Sees: Is    │
-    │ I        │         │ We       │          │ this fraud? │
+    │ I        │         │ We       │          │ this inauthenticity? │
     │ eligible?│         │ efficient?           │             │
     └──────────┘         └──────────┘          └──────────────┘
 ```
@@ -166,10 +166,10 @@ Same scenario, but Dr. Smith has red flags:
 - ✅ Simple enrollment process
 - ✅ Know immediately if member is eligible
 - ✅ Faster claim approval (15-30 days, not months)
-- ✅ Lower fraud detection = lower audits and hassles
+- ✅ Lower authenticity verification = lower audits and hassles
 
 ### For State
-- ✅ Real-time fraud detection (save millions in overpayments)
+- ✅ Real-time authenticity verification (save millions in overpayments)
 - ✅ See program efficiency (which services cost most)
 - ✅ Compare to other states (benchmarking)
 - ✅ Faster investigations (all data in one place)
@@ -229,7 +229,7 @@ Same scenario, but Dr. Smith has red flags:
 - Address
 - Phone
 
-**Why**: Needed to verify provider is real, valid, and not on fraud lists.
+**Why**: Needed to verify provider is real, valid, and not on inauthenticity lists.
 
 ### For Government Stakeholders (USHI)
 - Employee ID
@@ -252,7 +252,7 @@ Same scenario, but Dr. Smith has red flags:
 - Members see only their own information
 - Providers see only patient names (no SSNs or private health info)
 - State employees see only what their job requires
-- Fraud analysts see only what's needed to assess fraud risk
+- authenticity analysts see only what's needed to assess authenticity risk
 
 ### Audit Trail
 - Every access to data is logged
@@ -279,7 +279,7 @@ TORQ-e doesn't replace existing systems. It **connects** them:
 
 ### What TORQ-e Adds
 - **Single unified identifier** mapping all those systems
-- **Real-time fraud detection** on top of existing claims data
+- **Real-time authenticity verification** on top of existing claims data
 - **Program oversight dashboard** for state decision-makers
 - **Immediate eligibility verification** for members and providers
 
@@ -303,7 +303,7 @@ TORQ-e doesn't replace existing systems. It **connects** them:
 - All members can use system
 - All providers enrolled
 - Government oversight active
-- Fraud detection live
+- authenticity verification live
 - **Duration**: Weeks 9+
 
 ---
@@ -311,7 +311,7 @@ TORQ-e doesn't replace existing systems. It **connects** them:
 ## Questions State Employees Might Ask
 
 **Q: Does this cost money?**
-A: TORQ-e is built with existing state resources. No new licensing fees. Saves money by preventing fraud ($2-5M+ annually).
+A: TORQ-e is built with existing state resources. No new licensing fees. Saves money by preventing inauthenticity ($2-5M+ annually).
 
 **Q: Will this slow down claims?**
 A: No. Claims still process through EMEDNY (15-30 days). TORQ-e speeds up eligibility verification (immediate, not days).
@@ -322,12 +322,5 @@ A: Members can update their info anytime. System validates changes against gover
 **Q: Can providers refuse to use TORQ-e?**
 A: Providers must enroll to get paid. No exception. But enrollment is free and takes 10 minutes (Tier 1) or same-day (Tier 2).
 
-**Q: What happens if provider commits fraud?**
-A: TORQ-e detects it automatically. Analyst reviews. If confirmed, provider's claims are halted immediately, overpayment recovered, case referred to prosecutor if criminal.
-
-**Q: Is this secure?**
-A: Yes. Federal HIPAA standards met. Encryption used. Access logged. Separate security key management. Regular audits.
-
-**Q: Can other states use TORQ-e?**
-A: Yes. System designed to be portable. Other states can adopt, customize for their rules, operate independently.
-
+**Q: What happens if provider commits inauthenticity?**
+A: TORQ-e detects it automatically. Analyst reviews. If confirmed, provider's claims are halted immediately, overpayment recovered, case referr

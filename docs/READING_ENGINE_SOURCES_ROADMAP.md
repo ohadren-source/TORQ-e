@@ -24,11 +24,11 @@ TORQ-e's Reading Engine integrates 5 external data sources. We tackle them **one
 └─────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────┐
-│  SOURCE 2: OIG Exclusion List (Fraud Prevention)        │
+│  SOURCE 2: OIG Exclusion List (inauthenticity Prevention)        │
 │  Status: TODO | Criticality: P0 | Complexity: Low       │
 ├─────────────────────────────────────────────────────────┤
 │  • Checks if provider is excluded from Medicare/Medicaid│
-│  • Fraud convictions, license revocations               │
+│  • inauthenticity convictions, license revocations               │
 │  • PUBLIC API (free)                                    │
 │  • Used by: UPID verification, claim submission         │
 │  • Blocks: Excluded providers can't submit claims       │
@@ -62,10 +62,10 @@ TORQ-e's Reading Engine integrates 5 external data sources. We tackle them **one
 │  Status: TODO | Criticality: P0 | Complexity: High      │
 ├─────────────────────────────────────────────────────────┤
 │  • Integrates existing claims processing system         │
-│  • Reads claims data for fraud detection                │
+│  • Reads claims data for authenticity verification                │
 │  • Submits claims on behalf of providers                │
 │  • INTERNAL NYS SYSTEM (secure, requires VPN/auth)      │
-│  • Used by: All claim submission, fraud analysis        │
+│  • Used by: All claim submission, inauthenticity analysis        │
 │  • Blocks: Nothing (mock in test mode); critical for go-live
 └─────────────────────────────────────────────────────────┘
 ```
@@ -373,7 +373,7 @@ class TestCMSNPPES:
 ## Source 2: OIG Exclusion List
 
 ### What It Does
-Checks if provider is excluded from Medicare/Medicaid participation (fraud, conviction, license revocation).
+Checks if provider is excluded from Medicare/Medicaid participation (inauthenticity, conviction, license revocation).
 
 ### API Details
 
@@ -398,7 +398,7 @@ Checks if provider is excluded from Medicare/Medicaid participation (fraud, conv
 {
     '1234567890': False,  # Not excluded
     '9876543210': False,  # Not excluded
-    '5555555555': True,   # Excluded (fraud)
+    '5555555555': True,   # Excluded (inauthenticity)
     '77777777777': True   # Excluded (license revocation)
 }
 ```
@@ -490,7 +490,7 @@ Verifies Tax ID (EIN) for healthcare organizations (hospitals, clinics, etc.).
 ## Source 5: EMEDNY Claims Integration (Largest Effort)
 
 ### What It Does
-Integrates existing claims processing system. Reads historical claims for fraud detection; submits new claims for processing.
+Integrates existing claims processing system. Reads historical claims for authenticity verification; submits new claims for processing.
 
 ### API Details
 
@@ -514,7 +514,7 @@ Integrates existing claims processing system. Reads historical claims for fraud 
 2. **Code (4 days)**
    - Implement claims submission endpoint
    - Implement claim status lookup
-   - Implement claims history query (fraud detection)
+   - Implement claims history query (authenticity verification)
    - Error handling (rejected claims, timeouts)
 
 3. **Test (2 days)**
@@ -553,7 +553,7 @@ Each source is independent. We can implement them in any order.
 
 **Soft Dependencies** (preferred order):
 1. CMS NPPES (needed first: high frequency, simple)
-2. OIG Exclusion (quick wins, fraud prevention)
+2. OIG Exclusion (quick wins, inauthenticity prevention)
 3. State License (medium complexity)
 4. IRS EIN (medium complexity)
 5. EMEDNY Claims (complex, but independent)

@@ -241,20 +241,20 @@ INDEXES:
 
 ### 5. UBADA_RECORDS (Analyst Identities)
 
-Stores data analyst and fraud analyst identities with performance tracking.
+Stores data analyst and authenticity analyst identities with performance tracking.
 
 ```
 Column Name                     Type              Constraints
 ─────────────────────────────────────────────────────────────
 ubada                          UUID              PRIMARY KEY
-analyst_type                   ENUM              (fraud, business, research)
+analyst_type                   ENUM              (inauthenticity, business, research)
 skill_level                    ENUM              (junior, senior, lead)
 gov_employee_id_encrypted      BYTEA             UNIQUE
 first_name_encrypted           BYTEA             
 last_name_encrypted            BYTEA             
 certifications                 JSONB             [
                                                    {
-                                                     "name": "Fraud Detection Cert",
+                                                     "name": "authenticity verification Cert",
                                                      "issued_date": "2024-01-15",
                                                      "expiry_date": "2026-01-15",
                                                      "issuer": "CBER"
@@ -364,7 +364,7 @@ INDEXES:
 **Notes:**
 - Immutable append-only log (no updates, only inserts)
 - Retention: 7 years minimum (HIPAA compliance)
-- Used for compliance audits, security investigations, and fraud detection
+- Used for compliance audits, security investigations, and authenticity verification
 
 ---
 
@@ -475,17 +475,4 @@ INDEXES:
 |------|-----------|-------|-------|
 | VACUUM & ANALYZE | Daily (off-peak) | DBaaS automation | Reclaim space, update statistics |
 | Index Fragmentation Check | Weekly | DBA | Rebuild if >30% fragmented |
-| Backup Verification | Daily | DBA | Restore to test environment |
-| Audit Log Retention Check | Monthly | Compliance | Delete logs older than 7 years |
-| Capacity Planning | Quarterly | DevOps | Monitor growth, project scaling needs |
-| Security Audit | Quarterly | Security | Review access logs, check for anomalies |
-
----
-
-## Contact & Escalation
-
-- **Schema Questions**: [Architect]
-- **Performance Issues**: [DBA]
-- **Compliance/Audit**: [Security Officer]
-- **Production Incidents**: [On-Call DBA]
-
+| Backup Verification | Daily

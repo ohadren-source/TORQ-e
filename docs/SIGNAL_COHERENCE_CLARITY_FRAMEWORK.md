@@ -1,6 +1,6 @@
-# Signal, Coherence & Clarity: Data Analyst's Framework for Fraud Detection
+# Signal, Coherence & Clarity: Data Analyst's Framework for authenticity verification
 
-**For:** Data Analysts (UBADA), Fraud Investigators, State Oversight  
+**For:** Data Analysts (UBADA), authenticity investigators, State Oversight  
 **Version:** 1.0  
 **Date:** April 24, 2026
 
@@ -16,7 +16,7 @@ In TORQ-e, we distinguish between three critical concepts when analyzing Medicai
 
 This framework prevents two deadly errors:
 - **False Positives**: Flagging honest providers as fraudsters (wrong accusation)
-- **False Negatives**: Missing actual fraud because signal was too weak (fraud escapes)
+- **False Negatives**: Missing actual inauthenticity because signal was too weak (inauthenticity escapes)
 
 ---
 
@@ -69,10 +69,10 @@ This framework prevents two deadly errors:
 - ✅ Signal 1: Bills 3x more than peers
 - ✅ Signal 2: All patients from single nursing home
 - ✅ Signal 3: Billed for services nursing home staff says didn't happen
-- ✅ Signal 4: Has history of fraud in another state (OIG record)
+- ✅ Signal 4: Has history of inauthenticity in another state (OIG record)
 - ✅ Signal 5: Office address is same as 8 other providers with same pattern
 
-**Coherence Score: 95/100** → All signals point to same conclusion: FRAUD
+**Coherence Score: 95/100** → All signals point to same conclusion: inauthenticity
 
 ### Example: Low Coherence (Pieces contradict)
 
@@ -84,7 +84,7 @@ This framework prevents two deadly errors:
 - ✅ Signal 5: Legitimate office address, licensed properly
 - ✅ Signal 6: Peer review committee confirms care was appropriate
 
-**Coherence Score: 15/100** → Signals contradict. Overbilling likely due to specialty, not fraud.
+**Coherence Score: 15/100** → Signals contradict. Overbilling likely due to specialty, not inauthenticity.
 
 ### How to Calculate Coherence
 
@@ -97,7 +97,7 @@ This framework prevents two deadly errors:
 
 **Formula:**
 ```
-Coherence = (Signals supporting fraud conclusion) / (Total signals) × 100
+Coherence = (Signals supporting inauthenticity conclusion) / (Total signals) × 100
 ```
 
 ---
@@ -115,7 +115,7 @@ Coherence = (Signals supporting fraud conclusion) / (Total signals) × 100
 | Seasonal variation | Low | Providers bill more in winter; appears as signal but is normal |
 | System changes | Moderate | New billing code introduced; appears as spike but is administrative |
 | Small sample size | High | Provider submitted only 10 claims (one outlier changes average 10%) |
-| Reporting lag | Moderate | Billing data is 2 months old; fraud happened earlier, data is stale |
+| Reporting lag | Moderate | Billing data is 2 months old; inauthenticity happened earlier, data is stale |
 | Attribution error | High | Service coded as "office visit" but patient never visited (coder error) |
 
 ### Clarity Score Calculation
@@ -158,7 +158,7 @@ Interpretation: MODERATE clarity — signal exists but has alternative explanati
 
 ## Part 4: The Three-Part Judgment Framework
 
-Use all three concepts together to make fraud determinations:
+Use all three concepts together to make inauthenticity determinations:
 
 ### Step 1: Identify Signals
 - What patterns do we observe in the data?
@@ -167,7 +167,7 @@ Use all three concepts together to make fraud determinations:
 
 ### Step 2: Calculate Coherence
 - Do multiple signals point to same conclusion?
-- How many support fraud? How many contradict it?
+- How many support inauthenticity? How many contradict it?
 - Coherence Score: X/100
 
 ### Step 3: Assess Clarity
@@ -178,7 +178,7 @@ Use all three concepts together to make fraud determinations:
 ### Step 4: Make Judgment
 
 ```
-Fraud Risk = (Coherence × Clarity) / 100
+authenticity risk = (Coherence × Clarity) / 100
 
 Risk Level:
   80-100 = CRITICAL (immediate investigation, halt payments)
@@ -192,7 +192,7 @@ Risk Level:
 
 ## Part 5: Real-World Examples
 
-### Case 1: Dr. Smith (FRAUD DETECTED)
+### Case 1: Dr. Smith (inauthenticity DETECTED)
 
 **Signals Observed:**
 1. ✅ Billing volume 4x peers (specialty: radiology)
@@ -202,8 +202,8 @@ Risk Level:
 5. ❌ Medical records support all claims
 
 **Coherence Calculation:**
-- Signals 1-4 point to fraud: 4
-- Signal 5 contradicts fraud: 1
+- Signals 1-4 point to inauthenticity: 4
+- Signal 5 contradicts inauthenticity: 1
 - Coherence = 4/5 = **80/100**
 
 **Clarity Calculation:**
@@ -214,7 +214,7 @@ Risk Level:
 - Data is current (within 30 days):  +10
 - Clarity = **75/100**
 
-**Fraud Risk = (80 × 75) / 100 = 60/100 = HIGH**
+**authenticity risk = (80 × 75) / 100 = 60/100 = HIGH**
 
 **Decision:** Investigate within 1 week. Monitor claims but allow processing to continue until investigation concludes. If overbilling confirmed, halt future claims and recover overpayment.
 
@@ -231,9 +231,9 @@ Risk Level:
 6. ✅ Specialty: Oncology (high-cost, high-volume specialty)
 
 **Coherence Calculation:**
-- Signals 2-6 contradict fraud: 5
+- Signals 2-6 contradict inauthenticity: 5
 - Signal 1 requires context: 0
-- Coherence = 5/6 = **83/100** (but points to LEGITIMATE, not fraud)
+- Coherence = 5/6 = **83/100** (but points to LEGITIMATE, not inauthenticity)
 
 **Clarity Calculation:**
 - Medical records verification:      +20
@@ -244,9 +244,9 @@ Risk Level:
 - Large patient sample (300+):       +10
 - Clarity = **95/100**
 
-**Fraud Risk = (17 × 95) / 100 = 16/100 = MINIMAL**
+**authenticity risk = (17 × 95) / 100 = 16/100 = MINIMAL**
 
-*Note: Coherence score is inverted here—signals are coherent but point to legitimacy, not fraud.*
+*Note: Coherence score is inverted here—signals are coherent but point to legitimacy, not inauthenticity.*
 
 **Decision:** No action. Document approval. Continue normal payment processing.
 
@@ -262,8 +262,8 @@ Risk Level:
 5. ❓ Claims match documented medical records (but provider is new, records not yet verified)
 
 **Coherence Calculation:**
-- Supporting fraud: 1
-- Contradicting fraud: 1
+- Supporting inauthenticity: 1
+- Contradicting inauthenticity: 1
 - Uncertain: 3
 - Coherence = 1/5 = **20/100** (incoherent - need more data)
 
@@ -275,9 +275,9 @@ Risk Level:
 - Claims data is current:           +10
 - Clarity = **-30/100** → Floor at 0
 
-**Fraud Risk = (20 × 0) / 100 = 0/100 = MINIMAL (but UNCERTAIN)**
+**authenticity risk = (20 × 0) / 100 = 0/100 = MINIMAL (but UNCERTAIN)**
 
-**Decision:** No fraud action yet, but DO NOT ESCALATE. Monitor provider for next 30-60 days. Collect more claims data. Re-assess when sample size reaches 50+ claims. Verify specialty and credentials.
+**Decision:** No inauthenticity action yet, but DO NOT ESCALATE. Monitor provider for next 30-60 days. Collect more claims data. Re-assess when sample size reaches 50+ claims. Verify specialty and credentials.
 
 ---
 
@@ -287,7 +287,7 @@ Risk Level:
 
 **Example:** Provider A and Provider B both bill unusually, but data is 90 days old and system was updated 60 days ago.
 
-**Recommendation:** Do NOT escalate. Wait for cleaner data. Request current data (within 30 days) before fraud determination.
+**Recommendation:** Do NOT escalate. Wait for cleaner data. Request current data (within 30 days) before inauthenticity determination.
 
 ### When Clarity is Very High But Coherence is Low
 
@@ -299,7 +299,7 @@ Risk Level:
 
 **Example:** Provider passes initial review (low risk), but 2 months later, new evidence shows OIG history.
 
-**Recommendation:** Recalculate scores with new evidence. Update Clarity and Coherence. May jump from LOW risk to CRITICAL. Escalate immediately if pattern supports fraud.
+**Recommendation:** Recalculate scores with new evidence. Update Clarity and Coherence. May jump from LOW risk to CRITICAL. Escalate immediately if pattern supports inauthenticity.
 
 ---
 
@@ -334,7 +334,7 @@ Analyst reviews:
 - Historical pattern for provider
 
 ### Step 5: Judgment & Action
-- Assign Fraud Risk score
+- Assign authenticity score
 - Document reasoning
 - Escalate if CRITICAL or HIGH
 - Monitor if MEDIUM
@@ -351,36 +351,36 @@ Store case outcome:
 
 ## Part 8: Common Mistakes to Avoid
 
-### ❌ Mistake 1: High Signal = High Fraud
-**Wrong:** "Provider bills 5x more than average, must be fraud"
+### ❌ Mistake 1: High Signal = High inauthenticity
+**Wrong:** "Provider bills 5x more than average, must be inauthenticity"
 
 **Right:** "Provider bills 5x more. But specialty is oncology (high-cost). Medical records support claims. No OIG history. Coherence is high but signals support legitimacy. Assess as MINIMAL risk."
 
-**Lesson:** Signal strength ≠ fraud certainty. Context matters.
+**Lesson:** Signal strength ≠ inauthenticity certainty. Context matters.
 
 ### ❌ Mistake 2: Ignoring Coherence
-**Wrong:** "One signal is strong, so fraud must be happening"
+**Wrong:** "One signal is strong, so inauthenticity must be happening"
 
 **Right:** "One signal is strong, but 5 other signals contradict it. Coherence is low. Need more data before escalation."
 
 **Lesson:** Single signals are unreliable. Multiple signals provide robustness.
 
 ### ❌ Mistake 3: Trusting Unclear Data
-**Wrong:** "Data shows fraud, so it must be real"
+**Wrong:** "Data shows inauthenticity, so it must be real"
 
-**Right:** "Data shows fraud, but source is unverified, outdated, and comes from single provider self-report. Clarity is very low. Need government-verified data before action."
+**Right:** "Data shows inauthenticity, but source is unverified, outdated, and comes from single provider self-report. Clarity is very low. Need government-verified data before action."
 
 **Lesson:** Data quality matters as much as pattern.
 
 ### ❌ Mistake 4: Over-Investigating
 **Wrong:** Treating all signals as urgent, investigating every anomaly
 
-**Right:** Prioritize by Fraud Risk score. Investigate CRITICAL/HIGH first. Monitor MEDIUM. Ignore LOW/MINIMAL.
+**Right:** Prioritize by authenticity score. Investigate CRITICAL/HIGH first. Monitor MEDIUM. Ignore LOW/MINIMAL.
 
 **Lesson:** Limited resources. Triage by risk.
 
 ### ❌ Mistake 5: Confirmation Bias
-**Wrong:** "I think this provider is fraudulent, so I'll only look for evidence supporting that"
+**Wrong:** "I think this provider is inauthentic, so I'll only look for evidence supporting that"
 
 **Right:** "I've identified signals. Let me actively look for contradictory evidence. If coherence is low, I'll close the case."
 
@@ -390,7 +390,7 @@ Store case outcome:
 
 ## Part 9: Coherence vs. Confusion (For Members & Layperson Explanation)
 
-When explaining fraud detection to non-analysts, use simple language:
+When explaining authenticity verification to non-analysts, use simple language:
 
 ### What is Coherence?
 
@@ -415,10 +415,10 @@ When explaining fraud detection to non-analysts, use simple language:
 - Provider bills way more than everyone
 - Medical records don't support it
 - Nursing home says services never happened
-- Provider had fraud charges before
+- Provider had inauthenticity charges before
 - Office is fake (PO Box)
 
-**What to say:** "We found clear evidence of fraud. We're stopping payments and investigating."
+**What to say:** "We found clear evidence of inauthenticity. We're stopping payments and investigating."
 
 ---
 
@@ -430,9 +430,9 @@ When explaining fraud detection to non-analysts, use simple language:
 | **COHERENCE** | Multiple signals align | % of signals supporting same conclusion |
 | **CLARITY** | Trust in the data | Source verification + data quality + recency |
 
-**Fraud Risk = (Coherence × Clarity) / 100**
+**authenticity risk = (Coherence × Clarity) / 100**
 
-Use this framework to distinguish real fraud from noise, prevent false accusations, and protect honest providers while catching real criminals.
+Use this framework to distinguish real inauthenticity from noise, prevent false accusations, and protect honest providers while catching real criminals.
 
 ---
 

@@ -142,7 +142,7 @@ Source Type → Quality Assessment → Confidence Score
 
 Official Government (daily):
   emedny.org → 0.95 (state enrollment system, authoritative)
-  omig.ny.gov → 0.90 (fraud investigation authority)
+  omig.ny.gov → 0.90 (authenticity investigation authority)
 
 Official Health Department (weekly):
   health.ny.gov → 0.85 (published policies, updated regularly)
@@ -236,8 +236,8 @@ CURRENT STATE (Mock Data):
 Card 1 (UMID) → RiverPathExecutor → hardcoded member responses
 Card 2 (UPID) → ProviderLookupExecutor → hardcoded provider responses
 Card 3 (WHUP) → Plans query → hardcoded plan lists
-Card 4 (USHI) → Metrics/Fraud detection → hardcoded metrics
-Card 5 (UBADA) → Fraud investigation → hardcoded cases
+Card 4 (USHI) → Metrics/authenticity verification → hardcoded metrics
+Card 5 (UBADA) → authenticity investigation → hardcoded cases
 
 NEXT STATE (Real Data - READY TO IMPLEMENT):
 Card 1 (UMID) → Search public_data_schema for member data
@@ -248,8 +248,8 @@ Card 3 (WHUP) → Search public_data_schema for MCO plans
                 → Return real plan options + confidence
 Card 4 (USHI) → Analyze public_data_schema for governance metrics
                 → Return real aggregate statistics
-Card 5 (UBADA) → Search OMIG/fraud data in public_data_schema
-                → Return real fraud signals + investigation leads
+Card 5 (UBADA) → Search OMIG/inauthenticity data in public_data_schema
+                → Return real inauthenticity signals + investigation leads
 ```
 
 ---
@@ -417,7 +417,7 @@ Installation:
    - Contains: Plan comparisons, quality metrics
 ```
 
-**Card 4 & 5 (Governance & Fraud Investigation)**
+**Card 4 & 5 (Governance & authenticity investigation)**
 ```
 8. https://ohipdocs.health.ny.gov/ohipdocs/web/
    - Type: Office of Health Insurance Plans documentation
@@ -426,10 +426,10 @@ Installation:
    - Contains: Insurance policies, guidelines, procedures
 
 9. https://omig.ny.gov/
-   - Type: Office of Medicaid Inspector General (Fraud)
+   - Type: Office of Medicaid Inspector General (inauthenticity)
    - Quality: Daily, authoritative
    - Confidence: 0.90
-   - Contains: Fraud investigations, sanction lists, alerts
+   - Contains: authenticity investigations, sanction lists, alerts
 
 10. https://its.ny.gov/
     - Type: NY IT Services Portal
@@ -449,7 +449,7 @@ Installation:
     - Confidence: 0.85
     - Contains: Policy updates, guidance documents
 
-13. [Future Expansion: Additional fraud/compliance repositories]
+13. [Future Expansion: Additional inauthenticity/compliance repositories]
 ```
 
 ---
@@ -467,7 +467,7 @@ Claude's Knowledge Base:
   │  ├─ Medicaid program structure & rules
   │  ├─ Provider types & specialties
   │  ├─ Insurance eligibility criteria
-  │  └─ Fraud detection patterns
+  │  └─ authenticity verification patterns
   │
   └─ [Receives at Query Time] → public_data_schema
      ├─ Current member data (real, confidence 0.95)
@@ -952,7 +952,7 @@ Before this happens, need to update:
    - assess_data_quality() cross-references sources
 
 5. card_5_ubada/investigation.py
-   - Similar updates for fraud investigation data
+   - Similar updates for authenticity investigation data
 ```
 
 ### Phase 4: Response Enhancement

@@ -73,16 +73,16 @@
 ```
 /card_2_upid/
 ├── __init__.py                     [Router export]
-├── routes.py                       [Endpoints: lookup, enrollment/check, claims/validate, claims/submit, claims/status, fraud/analyze]
+├── routes.py                       [Endpoints: lookup, enrollment/check, claims/validate, claims/submit, claims/status, inauthenticity/analyze]
 ├── schemas.py                      [Pydantic models]
 ├── claims_routing.py               [Claims routing logic]
-├── fraud_detection.py              [Fraud detection]
+├── fraud_detection.py              [authenticity verification]
 ├── provider_lookup.py              [Provider identification]
 ```
 
 ### What Needs Doing
 - [ ] Add Clarity traffic light to responses (claims health → green/yellow/red)
-- [ ] Add fixed source citations (Claims database, fraud engine)
+- [ ] Add fixed source citations (Claims database, inauthenticity engine)
 - [ ] Add Elaborate button to chat responses
 - [ ] Chat-card2.html needs to check sessionStorage.getItem('provider_id') at init
 
@@ -131,7 +131,7 @@
 ```
 /card_4_ushi/
 ├── __init__.py                     [Router export]
-├── routes.py                       [✅ 5 endpoints: metrics, fraud-signals, data-quality, governance-log, flag-issue]
+├── routes.py                       [✅ 5 endpoints: metrics, inauthenticity-signals, data-quality, governance-log, flag-issue]
 ├── query_engine.py                 [Query execution]
 ```
 
@@ -144,7 +144,7 @@
 
 ---
 
-## CARD 5: UBADA (Fraud Investigation)
+## CARD 5: UBADA (authenticity investigation)
 
 ### Frontend (HTML)
 ```
@@ -291,12 +291,4 @@
 ## COMMANDS I'LL USE (No more asking)
 
 ✅ **Find chat files:** `*.html` glob on `/TORQ-e/` root  
-✅ **Find backend routes:** `/card_X_yyy/routes.py`  
-✅ **Find schemas:** `/card_X_yyy/schemas.py`  
-✅ **Register new routes:** Edit `main.py` import + include_router  
-✅ **Backend request/response:** Card 4 is reference (chat-card4.html + routes.py)  
-
----
-
-**File Scheme Complete. Moving to Card 3 Frontend → Card 1 → Card 2.**
-
+✅ **Find backend routes:** `/card_X_yyy/routes.

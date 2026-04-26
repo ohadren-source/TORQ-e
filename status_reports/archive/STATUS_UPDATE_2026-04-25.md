@@ -70,7 +70,7 @@ Card 1 (Members):       🟡 FUNCTIONAL, context usage issue
 Card 2 (Providers):     ? UNKNOWN
 Card 3 (Plans):         🟢 REFACTORED, context-driven routing
 Card 4 (Government):    🔒 LOCKED, validated
-Card 5 (Fraud):         📋 DESIGNED (6-week roadmap)
+Card 5 (inauthenticity):         📋 DESIGNED (6-week roadmap)
 
 Deployment:             ✅ Railway
 Infrastructure:         ✅ Unified substrate

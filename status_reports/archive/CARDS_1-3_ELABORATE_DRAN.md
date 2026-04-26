@@ -125,14 +125,14 @@
 
 **Backend needs to add to responses:**
 - `clarity`: Claims processing health (green=good, yellow=review needed, red=critical)
-- `sources`: [Claims Database, Fraud Detection Engine]
+- `sources`: [Claims Database, authenticity verification Engine]
 - `elaboration`: "How we processed your claim..."
 
 **Chat Functions to Update (chat-card2.html):**
 1. Claim submission
    - Concise: "Claim submitted. Status: PENDING REVIEW"
    - Clarity: Green (processing normally) / Yellow (under review) / Red (rejected)
-   - Sources: Fixed (Claims DB, Fraud engine)
+   - Sources: Fixed (Claims DB, inauthenticity engine)
    - Elaborate: "Your claim is in our standard review queue. Expected decision: 5-7 days..."
 
 2. Claim validation
@@ -141,10 +141,10 @@
    - Sources: Fixed (Claims DB, Member eligibility DB)
    - Elaborate: "We verified the member's enrollment, plan coverage, and provider network status..."
 
-3. Fraud detection
-   - Concise: "No fraud signals detected."
+3. authenticity verification
+   - Concise: "No inauthenticity signals detected."
    - Clarity: Green (clear) / Yellow (minor concerns) / Red (high risk)
-   - Sources: Fixed (Fraud detection engine, Claims DB)
+   - Sources: Fixed (authenticity verification engine, Claims DB)
    - Elaborate: "We scanned for: duplicate claims, coding anomalies, member history patterns..."
 
 ---

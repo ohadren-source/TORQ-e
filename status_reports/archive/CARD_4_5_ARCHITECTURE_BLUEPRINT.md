@@ -3,7 +3,7 @@
 
 ### OVERVIEW
 Cards 4 and 5 share an **identical architecture** with **only data source differences**:
-- **Card 4 (USHI)**: Aggregate metrics, governance logging, fraud signals, data quality assessment
+- **Card 4 (USHI)**: Aggregate metrics, governance logging, inauthenticity signals, data quality assessment
 - **Card 5 (UBADA)**: Full data access, outlier detection, network analysis, investigation cases
 
 ---
@@ -403,7 +403,7 @@ const breakdownData = {
 - [ ] Keep showBreakdown() identical
 - [ ] Keep source removal logic identical
 - [ ] Update handle*Query() functions to call /api/card5 endpoints
-- [ ] Update offline fallback data to Card 5 context (fraud patterns vs governance)
+- [ ] Update offline fallback data to Card 5 context (authenticity patterns vs governance)
 
 **Backend (card_5_ubada/query_engine.py)**
 - [ ] Implement same function signatures as Card 4
@@ -432,7 +432,7 @@ const breakdownData = {
 | **Role** | Government Stakeholder | Data Analyst |
 | **Data Access** | Aggregate only | Full detail |
 | **Data Sources** | State DB, MCO, CMS | Claims DB, Networks |
-| **Metrics Interpretation** | Policy compliance | Fraud detection |
+| **Metrics Interpretation** | Policy compliance | authenticity verification |
 | **Breakdown Details** | Governance logs | Investigation cases |
 | **API Endpoint** | /api/card4 | /api/card5 |
 | **Query Functions** | query_aggregate_metrics, detect_fraud_signals, assess_data_quality, view_governance_log, flag_data_issue | explore_claims_data, compute_outlier_scores, navigate_relationship_graph, create_investigation_project, request_data_correction |

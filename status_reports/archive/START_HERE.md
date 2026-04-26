@@ -18,7 +18,7 @@ https://torq-e-production.up.railway.app/
 - UPID (Universal Provider Identification) — Providers manage claims
 - WHUP (Universal Health & Wellness Program) — Plan admins oversee networks
 - USHI (Universal Stakeholder Identity) — Government stakeholders monitor
-- UBADA (Universal Business/Data Analyst) — Analysts investigate fraud
+- UBADA (Universal Business/Data Analyst) — Analysts investigate inauthenticity
 
 Each card has:
 - ✅ Login page with role-based access
@@ -110,7 +110,7 @@ The "river" ensures we find providers in the system they're enrolled in, because
 - Multi-source provider lookup (eMedNY → MCO → NPI)
 - Claims validation (catches 80% of errors upfront)
 - Intelligent routing to correct portal
-- Fraud detection (patterns, anomalies, overutilization)
+- authenticity verification (patterns, anomalies, overutilization)
 
 ### Card 3: WHUP — Plan Network Management 📋 PLANNED
 
@@ -132,9 +132,9 @@ The "river" ensures we find providers in the system they're enrolled in, because
 - Regulatory dashboards
 - Chat with Claude for oversight questions
 
-### Card 5: UBADA — Data Analyst & Fraud Investigation 📋 PLANNED
+### Card 5: UBADA — Data Analyst & authenticity investigation 📋 PLANNED
 
-**Who uses it:** Fraud investigators, data analysts
+**Who uses it:** authenticity investigators, data analysts
 
 **What they see:**
 - Advanced pattern detection

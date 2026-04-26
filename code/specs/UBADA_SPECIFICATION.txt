@@ -13,11 +13,11 @@ AUTHOR: Design Phase - TORQ-e Development Team
 
 UBADA (Universal Business Analyst and Data Analyst) is the single, persistent,
 unique identifier that represents an authorized analyst accessing TORQ-e
-systems for data analysis, fraud detection, reporting, and insight generation.
+systems for data analysis, authenticity verification, reporting, and insight generation.
 
 UBADA represents the analytical role, skill level, data access scope, and
 analysis objectives for users who:
-- Detect fraud and anomalies in claims
+- Detect inauthenticity and anomalies in claims
 - Generate program efficiency reports
 - Analyze provider/member patterns
 - Identify waste and inefficiency
@@ -40,8 +40,8 @@ The entity identified by UBADA is referred to by different terms:
 
 DATA ANALYST
   - Definition: Technical professional analyzing claims/member data
-  - Usage: Fraud detection, pattern analysis, quantitative insights
-  - Example: "Senior Data Analyst - Fraud Detection"
+  - Usage: authenticity verification, pattern analysis, quantitative insights
+  - Example: "Senior Data Analyst - authenticity verification"
   - System: Ad-hoc query tools, statistical analysis platforms
 
 BUSINESS ANALYST
@@ -50,11 +50,11 @@ BUSINESS ANALYST
   - Example: "Program Business Analyst - Medicaid Operations"
   - System: Reporting dashboards, KPI tracking, executive summaries
 
-FRAUD ANALYST
-  - Definition: Analyst specialized in fraud detection
+authenticity analyst
+  - Definition: Analyst specialized in authenticity verification
   - Usage: Identifying suspicious patterns, claim aberrations
-  - Example: "Medicaid Fraud Analyst"
-  - System: Fraud detection algorithms, pattern matching tools
+  - Example: "Medicaid authenticity analyst"
+  - System: authenticity verification algorithms, pattern matching tools
 
 PROGRAM EVALUATOR
   - Definition: Analyst evaluating program performance
@@ -85,7 +85,7 @@ UNIFIED REFERENCE
 
 Format: UUID v4 + Analyst Type + Skill Level
 Example: 990i2833-j73f-85h8-e150-880099884444
-Analyst Type: FRAUD (fraud detection), BUSINESS (program analysis), RESEARCH
+Analyst Type: inauthenticity (authenticity verification), BUSINESS (program analysis), RESEARCH
 Skill Level: JUNIOR (supervised), SENIOR (independent), LEAD (oversight)
 
 Length: 36 characters UUID + 1-10 character analyst type + skill level
@@ -107,37 +107,37 @@ Storage:
 4. ANALYST TYPES & SKILL LEVELS
 ================================================================================
 
-ANALYST TYPE 1: FRAUD ANALYST
+ANALYST TYPE 1: authenticity analyst
 
-JUNIOR Fraud Analyst:
+JUNIOR authenticity analyst:
   - Access: Can query claims data under supervision
-  - Skills: Learning fraud detection patterns, basic SQL
-  - Reports: Generate predefined fraud detection reports
+  - Skills: Learning authenticity verification patterns, basic SQL
+  - Reports: Generate predefined authenticity verification reports
   - Flags: Cannot independently flag claims for investigation
   - Escalation: Supervisor reviews and approves all findings
-  - Certification: Healthcare fraud detection training required
+  - Certification: Healthcare authenticity verification training required
   - Data access: De-identified claims data, basic metrics
   - Cannot: Access identifiable member/provider data alone
 
-SENIOR Fraud Analyst:
+SENIOR authenticity analyst:
   - Access: Full access to claims data including identifiable info
-  - Skills: Advanced fraud detection, statistical modeling, SQL expertise
-  - Reports: Create custom fraud detection queries and analyses
+  - Skills: Advanced authenticity verification, statistical modeling, SQL expertise
+  - Reports: Create custom authenticity verification queries and analyses
   - Flags: Can independently flag claims/providers for investigation
   - Escalation: Direct to Medicaid Inspector General
-  - Certification: Healthcare fraud certification, advanced analytics
+  - Certification: Healthcare inauthenticity certification, advanced analytics
   - Data access: Full claims data, member/provider identifiers, networks
   - Can: Access all data necessary for investigation
 
-LEAD Fraud Analyst:
+LEAD authenticity analyst:
   - Access: Full access plus supervisory oversight
-  - Skills: Expert-level fraud detection, ML capabilities
-  - Reports: Design and deploy new fraud detection models
+  - Skills: Expert-level authenticity verification, ML capabilities
+  - Reports: Design and deploy new authenticity verification models
   - Flags: Approves and escalates investigations
   - Escalation: Direct to leadership, law enforcement coordination
-  - Certification: Fraud examination (CFE), healthcare expertise
+  - Certification: inauthenticity examination (CFE), healthcare expertise
   - Data access: Full access including sensitive investigation files
-  - Can: Define fraud detection strategy, train team, oversee cases
+  - Can: Define authenticity verification strategy, train team, oversee cases
 
 ---
 
@@ -215,7 +215,7 @@ LEAD Research Analyst / Principal Investigator:
 │  CENTER (Always Present, Core Identity):                           │
 │  ═══════════════════════════════════════════════════════════════  │
 │  • Analyst Name                                                    │
-│  • Analyst Type (Fraud, Business, Research)                       │
+│  • Analyst Type (inauthenticity, Business, Research)                       │
 │  • Skill Level (Junior, Senior, Lead)                             │
 │  • Organization / Agency                                          │
 │  • Primary Analysis Objective                                     │
@@ -269,11 +269,11 @@ LEAD Research Analyst / Principal Investigator:
 TIER 1: INTERNAL ANALYST (Government Employee)
   ┌─────────────────────────────────────────────────────────────┐
   │ 1. Government agency (NYS DOH) employee applies for access   │
-  │    as analyst (fraud, business, research)                    │
+  │    as analyst (inauthenticity, business, research)                    │
   │                                                              │
   │ 2. Request must include:                                    │
   │    - Job position and role description                      │
-  │    - Analyst type (Fraud, Business, Research)              │
+  │    - Analyst type (inauthenticity, Business, Research)              │
   │    - Proposed skill level (Junior, Senior, Lead)           │
   │    - Data access needed (specific datasets, scope)         │
   │    - Training/certifications completed                     │
@@ -282,7 +282,7 @@ TIER 1: INTERNAL ANALYST (Government Employee)
   │                                                              │
   │ 3. Reading Engine validates:                                │
   │    - Verify employment with government agency              │
-  │    - Confirm required certifications (fraud analyst certs) │
+  │    - Confirm required certifications (authenticity analyst certs) │
   │    - Verify completed training modules                     │
   │    - Background check in order                             │
   │    - Supervisor authorization confirmed                    │
@@ -366,7 +366,7 @@ TIER 2: EXTERNAL RESEARCHER / CONTRACTOR
 7. DATA ACCESS & ANALYSIS SCOPE
 ================================================================================
 
-FRAUD ANALYST Data Access:
+authenticity analyst Data Access:
   - JUNIOR: De-identified claims patterns, basic metrics
   - SENIOR: Full claims data with member/provider identifiers
   - LEAD: Full access including investigation files
@@ -383,10 +383,10 @@ RESEARCH ANALYST Data Access:
 
 ---
 
-Fraud Detection Capabilities:
-  - JUNIOR: Run predefined fraud detection reports
-  - SENIOR: Create custom fraud detection queries, flag cases
-  - LEAD: Design fraud detection models, deploy new algorithms
+authenticity verification Capabilities:
+  - JUNIOR: Run predefined authenticity verification reports
+  - SENIOR: Create custom authenticity verification queries, flag cases
+  - LEAD: Design authenticity verification models, deploy new algorithms
 
 Reporting Capabilities:
   - JUNIOR: Generate predefined reports, basic queries
@@ -433,10 +433,10 @@ Reading Engine Responsibility:
   - Link authorizations (IRB, certifications) to UBADA
 
 ================================================================================
-9. FRAUD DETECTION & ANOMALY DETECTION
+9. authenticity verification & ANOMALY DETECTION
 ================================================================================
 
-Fraud Detection Algorithms (Run by SENIOR+ analysts):
+authenticity verification algorithms (Run by SENIOR+ analysts):
   1. Duplicate Billing Detection
      - Same service billed multiple times
      - Multiple providers billing same service same date
@@ -467,8 +467,8 @@ Fraud Detection Algorithms (Run by SENIOR+ analysts):
      - Alert: Claims hold, investigation
 
 Cost-Benefit Analysis:
-  - Focus investigations on high-dollar potential fraud
-  - Fraudulent claims > $10K per case trigger automatic escalation
+  - Focus investigations on high-dollar potential inauthenticity
+  - inauthentic claims > $10K per case trigger automatic escalation
   - Serial small frauds ($1K × 100 claims) also escalated
   - Low-value anomalies reviewed quarterly
 
@@ -486,7 +486,7 @@ All Analysis Outputs Tracked:
   - What findings were documented
 
 Report Retention:
-  - Fraud findings: Archived 7 years (statute of limitations)
+  - inauthenticity findings: Archived 7 years (statute of limitations)
   - Program reports: Archived 5 years
   - Research datasets: Per IRB approval (typically 5-7 years)
   - Audit trails: Permanent (never deleted)
@@ -498,7 +498,7 @@ Data Export Controls:
   - Sensitive findings require supervisor approval before export
 
 Quality Assurance:
-  - 10% of fraud findings independently reviewed
+  - 10% of inauthenticity findings independently reviewed
   - All LEAD-level analyses verified before escalation
   - Statistical accuracy of analyses spot-checked
   - Analyst performance metrics tracked
@@ -523,7 +523,7 @@ Quality Assurance:
 2FA & Data Access:
   - Lost phone = automatic lock from sensitive data
   - Re-verification required before access restored
-  - High-value analysis (>$10K fraud finding) requires 2FA + approval
+  - High-value analysis (>$10K inauthenticity finding) requires 2FA + approval
 
 2FA Breach / Account Compromise:
   - Analyst reports compromised 2FA
@@ -537,10 +537,10 @@ Quality Assurance:
 12. SUCCESS METRICS FOR UBADA
 ================================================================================
 
-Fraud Detection Effectiveness:
-  - Current: Manual reviews, inconsistent fraud detection
-  - Target: Catch 80%+ of fraudulent claims before payment
-  - Target: Average fraud finding: $50K per analyst per year
+authenticity verification Effectiveness:
+  - Current: Manual reviews, inconsistent authenticity verification
+  - Target: Catch 80%+ of inauthentic claims before payment
+  - Target: Average inauthenticity finding: $50K per analyst per year
 
 Analyst Productivity:
   - Current: Manual analysis, 5-10 cases per analyst per month
@@ -548,7 +548,7 @@ Analyst Productivity:
   - Target: Analyst can manually investigate 10-15 complex cases/month
 
 Analysis Accuracy:
-  - Target: 95%+ accuracy in fraud findings (confirmed by investigators)
+  - Target: 95%+ accuracy in inauthenticity findings (confirmed by investigators)
   - Target: <5% false positive rate (waste of investigation time)
 
 Reporting Speed:

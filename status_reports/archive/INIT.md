@@ -14,7 +14,7 @@ Documents with these names are **load-bearing**. They govern everything. Do not 
 
 - `TORQ_E_ARCHITECTURAL_PROTOCOL.md` — The Constitution
 - `CLAUDESHANNON_PLUS_PLUS_CONFIDENCE_FRAMEWORK.md` — How we weigh data
-- `SIGNAL_COHERENCE_CLARITY_FRAMEWORK.md` — How we detect fraud
+- `SIGNAL_COHERENCE_CLARITY_FRAMEWORK.md` — How we detect inauthenticity
 - `LEYLAW.md` — The philosophy (if it exists)
 - `BOOL++.md` — The logic architecture (if it exists)
 - `THE_INFRASTRUCTURE_OF_ERASURE.md` — The diagnosis

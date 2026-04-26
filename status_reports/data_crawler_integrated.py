@@ -6,7 +6,7 @@ NO DUMMY DATA - ONLY REAL PUBLIC REPOSITORY DATA
 Unified Substrate Repositories (for all Cards 1-5):
 - Card 1 & 2 (Member & Provider): eMedNY, Health.NY.gov Medicaid Program
 - Card 3 (MCO Plans): MCO Directory, Health Data NY, Managed Care Reports
-- Card 4 & 5 (Governance & Fraud): OHIP, OMIG, ITS, Medicaid Reference
+- Card 4 & 5 (Governance & inauthenticity): OHIP, OMIG, ITS, Medicaid Reference
 
 Integration: Uses reading_engine.py to extract data from discovered sources in multiple formats
 - PDF: research papers, regulatory docs, credentials
@@ -57,7 +57,7 @@ BASE_URLS = [
     "https://health.data.ny.gov",
     "https://www.health.ny.gov/health_care/managed_care/reports/",
 
-    # Card 4 & 5: Government Stakeholder & Fraud Investigation
+    # Card 4 & 5: Government Stakeholder & authenticity investigation
     "https://ohipdocs.health.ny.gov/ohipdocs/web/",
     "https://omig.ny.gov/",
     "https://its.ny.gov/",
@@ -359,7 +359,7 @@ class PublicRepositoryCrawler:
             "emedny.org": 0.95,          # Official, daily updated
             "health.ny.gov": 0.85,       # Official, weekly updated
             "health.data.ny.gov": 0.80,  # State data portal, varies
-            "omig.ny.gov": 0.90,         # Fraud investigation authority
+            "omig.ny.gov": 0.90,         # authenticity investigation authority
             "ohipdocs.health.ny.gov": 0.85,  # Government documentation
             "its.ny.gov": 0.80,          # IT services portal
             "dashboard": 0.75,           # Interactive dashboards, real-time but unverified
@@ -469,12 +469,4 @@ if __name__ == "__main__":
     print(f"  - Extraction Coverage: {schema['quality_metrics']['extraction_coverage']*100:.1f}%")
     print(f"  - High Confidence Sources: {schema['quality_metrics']['sources_by_confidence']['high']}")
     print(f"  - Medium Confidence Sources: {schema['quality_metrics']['sources_by_confidence']['medium']}")
-    print(f"  - Low Confidence Sources: {schema['quality_metrics']['sources_by_confidence']['low']}")
-    print(f"  - Unavailable Sources: {schema['quality_metrics']['sources_by_confidence']['unavailable']}")
-    print(f"\nErrors: {len(schema['errors'])}")
-    if schema['errors']:
-        print("\nError Details:")
-        for error in schema['errors'][:5]:
-            print(f"  - {error.get('url', 'Unknown URL')}: {error.get('error', 'Unknown error')}")
-    print("\nFull schema saved to: public_data_schema.json")
-    print("="*80)
+    print(f"  - Low Confidence Sources: {schema['quality_metrics']

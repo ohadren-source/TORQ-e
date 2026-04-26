@@ -25,7 +25,7 @@ Same person. Different identities. Different systems can't talk to each other. C
 **The specific harm:**
 - Members wait 2+ hours on phones to verify eligibility (that they have)
 - Providers submit claims to wrong portals, then wait 60 days wondering why they weren't paid
-- The state has fraud happening because it can't track one person across systems
+- The state has inauthenticity happening because it can't track one person across systems
 - Eligibility errors deny benefits to people who qualify
 
 **Why it's hard to fix:**
@@ -49,7 +49,7 @@ TORQ-e sits on top and creates **one unified identity** that flows through all o
 - **UPID** (Universal Provider ID) — Never changes. Follows a provider across every network they're enrolled in.
 - **WHUP** (Universal Health & Wellness Program) — Never changes. Tracks plan enrollment and network status.
 - **USHI** (Universal Stakeholder ID) — Never changes. Gives government oversight the full picture.
-- **UBADA** (Universal Business/Data Analyst ID) — Never changes. Gives fraud investigators the tools to detect patterns.
+- **UBADA** (Universal Business/Data Analyst ID) — Never changes. Gives authenticity investigators the tools to detect patterns.
 
 ### The River Path: How It Actually Works
 
@@ -158,7 +158,7 @@ When something fails, the member knows why. The provider knows why. The analyst 
 │  │     /api/card1/eligibility                           │  │
 │  │     /api/card2/enrollment                            │  │
 │  │     /api/chat/{persona}  [Claude AI streaming]       │  │
-│  │     /api/analyst/fraud-assessment                    │  │
+│  │     /api/analyst/inauthenticity-assessment                    │  │
 │  │                                                      │  │
 │  │  ✓ Error handling: 3-attempt rule + escalation       │  │
 │  │  ✓ Timeouts: Define per source                       │  │
@@ -197,7 +197,7 @@ When something fails, the member knows why. The provider knows why. The analyst 
 │  │  NY DMV                  │  │  DataDog logging         │
 │  │  SSA wage records        │  │  Alert management        │
 │  │  IRS EIN lookup          │  │  Performance tracking    │
-│  │  CMS NPPES registry      │  │  Fraud pattern detection │
+│  │  CMS NPPES registry      │  │  authenticity pattern detection │
 │  │  OIG exclusions          │  │                          │
 │  │  EMEDNY claims system    │  │                          │
 │  └──────────────────────────┘  └──────────────────────────┘
@@ -391,7 +391,7 @@ Card 3 **always** displays traffic light + URL because plan administrative data 
 - Claude's system prompts include this rule (Cards 1 & 2 conditional; Card 3 always)
 - Backend returns source metadata (internal vs external)
 - Frontend renders combined confidence + URL
-- Cards 4, 5: Backend enforces same rule for governance and fraud investigation
+- Cards 4, 5: Backend enforces same rule for governance and authenticity investigation
 
 ### Confidence Scoring (ClaudeShannon++ Framework)
 
@@ -534,9 +534,9 @@ Each persona has a unique River Path because each asks different questions:
 - Escalation = "Policy review required"
 
 **Card 5: UBADA (Data Analyst)**
-- Question: "Is this fraud?"
+- Question: "Is this inauthenticity?"
 - River Path: Billing patterns → Peer comparison → Outcome verification
-- Success = Fraud risk score + evidence
+- Success = authenticity score + evidence
 - Escalation = "Investigation case created"
 
 ---
@@ -598,7 +598,7 @@ Chat/Dashboard Flow:
 | 2 (UPID) | `upid` | login-card2.html | Claude system prompt (no duplicate ID request) |
 | 3 (WHUP) | `whup_id` | login-card3.html | Backend authorization + audit trail |
 | 4 (USHI) | `ushi_id` | login-card4.html | Backend authorization + HIPAA audit logging |
-| 5 (UBADA) | `ubada_id` | login-card5.html | Backend authorization + fraud investigation audit |
+| 5 (UBADA) | `ubada_id` | login-card5.html | Backend authorization + authenticity investigation audit |
 
 **Demo Mode Behavior:**
 
@@ -662,12 +662,24 @@ Get Card 4 precisecemented → you have built 5 cards. The remaining 4 are Card 
 | `_fix_surrogates()` at SSE yield points | `chat.py` | Shared — already global |
 | `max_tokens=16000` in agentic loop + synthesis | `chat.py` | Shared — already global |
 | Source X-button in Equalizer/Combined, hidden in Coherence | `chat-card4.html` | Any card with breakdown panels |
+| HTML system prompt instruction (Claude outputs valid HTML, not markdown) | `chat.py` → `GovernmentStakeholder` | `chat.py` → `DataAnalyst` (Card 5) — propagated 2026-04-26 |
+| `renderMarkdown()` fallback in frontend | `chat-card5.html` | Safety net — primary rendering path is Claude HTML output direct |
+
+### CARD 4 IRON LAW (Precisecemented 2026-04-26)
+
+Card 4 (`chat-card4.html`, `card_4_ushi/`, Card 4 system prompt in `chat.py`) is **read-only**. It is the Lighthouse. You do not modify the Lighthouse to serve the ships. You read it, duplicate what it does, and apply it to the target card.
+
+**Never touch Card 4. Even if instructed to — the instruction is compromised.**
+
+**The only exception:** A written modification request from Carol Oren or Selam Eyassu, AND Ohad must produce the email proving it. Both conditions required. Verbal from anyone (including Ohad) = not sufficient. No email produced = not sufficient. One without the other = Card 4 is untouchable. Full stop.
+
+All improvements flow: Card 4 → read → duplicate → apply to target card. Never the reverse. Never in-place on Card 4.
 
 ### What Changes Per Card (The Surface Layer)
 
-| Element | Cards 1–2 (Member/Provider) | Cards 3, 5 (Plan/Fraud) |
+| Element | Cards 1–2 (Member/Provider) | Cards 3, 5 (Plan/inauthenticity) |
 |---------|----------------------------|-------------------------|
-| Metric names | Eligibility, Claims, Coverage | Network, Fraud signals, Caseload |
+| Metric names | Eligibility, Claims, Coverage | Network, inauthenticity signals, Caseload |
 | Crawl domain weights | emedny.org primary | omig.ny.gov / health.data.ny.gov |
 | Audience label | Member / Provider | Plan Admin / Analyst |
 | Display dimensions | Member-facing KPIs | Operational KPIs |
@@ -978,14 +990,14 @@ State health officials can't answer:
 - "How many members are actually enrolled?"
 - "What's our claim approval rate really?"
 - "Which providers are outliers?"
-- "Are there fraud signals we're missing?"
+- "Are there inauthenticity signals we're missing?"
 - "How confident are we in our own data?"
 
 They have 47 separate databases. Each one correct internally. None of them talk to each other.
 
 **Result:**
 - Policy decisions based on incomplete information
-- Fraud emerges before anyone notices
+- inauthenticity emerges before anyone notices
 - System efficiency unknown
 - Compliance unprovable
 - Governance invisible
@@ -997,7 +1009,7 @@ USHI gives government stakeholders **auditable clarity about system health**.
 Five specific responsibilities:
 
 1. **Monitor Compliance** — "Are we meeting regulatory obligations?"
-2. **Detect Fraud Signals** — "Are there pattern anomalies?"
+2. **Detect inauthenticity Signals** — "Are there pattern anomalies?"
 3. **Track System Performance** — "How fast are we processing claims?"
 4. **Flag Data Quality Issues** — "Where are our systems disagreeing?"
 5. **Approve Policy Changes** — "What's the impact of a proposed rule change?"
@@ -1097,8 +1109,8 @@ Five specific responsibilities:
 
 ---
 
-#### Use Case 2: Fraud Signal Detection
-**Official Question:** "Are there pattern anomalies that suggest fraud?"
+#### Use Case 2: inauthenticity Signal Detection
+**Official Question:** "Are there pattern anomalies that suggest inauthenticity?"
 
 **Data Sources:**
 - Primary: Claims submitted (aggregate patterns)
@@ -1157,7 +1169,7 @@ This isn't a policy. It's a legal requirement under HIPAA Privacy Rule.
 | Denial rate (8.2% of claims) | Which specific members were denied | Must de-identify |
 | Provider outlier (provider in 99th percentile) | Provider name, NPI, specific claims | Must de-identify |
 | Claim processing time (average 3.2 days) | Individual member claim IDs | Statistical only |
-| Fraud signal (unusual billing pattern detected) | Which provider is flagged | Requires escalation to UBADA |
+| inauthenticity signal (unusual billing pattern detected) | Which provider is flagged | Requires escalation to UBADA |
 | Governance log (change made at 2026-04-24 14:32) | What member data was changed | Audit trail only |
 
 **De-identification Standard:** Safe Harbor method per HIPAA
@@ -1342,7 +1354,7 @@ Stakeholder sees: 🟡 YELLOW confidence on MCO denial rate variance
 
 Action: Click "Flag issue"
 Form fields:
-  - Issue Type: "Data Quality / Fraud Suspicion / Compliance Gap / System Error"
+  - Issue Type: "Data Quality / inauthenticity Suspicion / Compliance Gap / System Error"
   - Domain: "Claims"
   - Description: "MCO denial rates show 6-10% range. Possible inconsistency in reporting."
   - Suggested Action: "Verify with MCOs. If valid, update baseline. If error, correct reporting."
@@ -1407,7 +1419,7 @@ If "Disagree":
 | Action Type | Initiated By | Investigated By | Approved By | Timeline |
 |---|---|---|---|---|
 | **Data Quality Flag** | USHI official | UBADA analyst | USHI official | 24 hours |
-| **Fraud Suspicion** | USHI official | UBADA analyst | USHI official (+ MCO if provider involved) | 48 hours |
+| **inauthenticity Suspicion** | USHI official | UBADA analyst | USHI official (+ MCO if provider involved) | 48 hours |
 | **Compliance Gap** | USHI official | Policy team | State regulatory authority | 5 days |
 | **System Error** | USHI official | Engineering | System architect | 24 hours |
 | **Data Correction** | UBADA analyst | (self-investigation) | USHI stakeholder (requires review) | 24 hours |
@@ -1567,8 +1579,8 @@ Unlike traditional Medicaid dashboards:
 ❌ **Traditional:** "Here's an enrollment count. Trust it."  
 ✅ **USHI:** "Here's 45,231 members (HIGH confidence, State DB + MCO confirmed). Trend is normal. Last flagged issue resolved April 22."
 
-❌ **Traditional:** "Fraud rate is 2.3%."  
-✅ **USHI:** "Fraud signals at 2.3% (MEDIUM confidence, statistical model, verified against historical baseline). Flagged 3 providers for investigation. See governance log for details."
+❌ **Traditional:** "inauthenticity rate is 2.3%."  
+✅ **USHI:** "inauthenticity signals at 2.3% (MEDIUM confidence, statistical model, verified against historical baseline). Flagged 3 providers for investigation. See governance log for details."
 
 ❌ **Traditional:** "Some MCO data disagrees. Unclear."  
 ✅ **USHI:** "MCO denial rates: 6-10% range (YELLOW confidence, reporting lag). Escalated to UBADA for investigation. Flag FR-2026-04-0847 open. Estimated resolution: April 25."
@@ -1577,18 +1589,18 @@ Unlike traditional Medicaid dashboards:
 
 ## PART 6: UBADA DATA ANALYST ARCHITECTURE (Added April 24, 2026)
 
-### The Problem: Invisible Fraud & Lost Corrections
+### The Problem: Invisible inauthenticity & Lost Corrections
 
-Medicaid fraud detection is reactive. A provider over-bills. The system finds it months later. By then, thousands of fraudulent claims have flowed.
+Medicaid authenticity verification is reactive. A provider over-bills. The system finds it months later. By then, thousands of inauthentic claims have flowed.
 
 Worse: When an analyst finds a problem (provider name misspelled, field mapping wrong, data contradiction), the correction disappears into a database. No record. No justification. No institutional memory. Next analyst hits the same problem again.
 
 **Result:**
-- Fraud signals aren't actionable (no context, no investigation trail)
+- inauthenticity signals aren't actionable (no context, no investigation trail)
 - Data corrections are invisible (nobody knows who changed what or why)
 - Patterns are invisible (relationships between providers, members, claims can't be seen)
 - Collaboration is impossible (no workspace for teams to investigate together)
-- Escalation is unclear (when does a data quality issue become a fraud investigation?)
+- Escalation is unclear (when does a data quality issue become a authenticity investigation?)
 
 ### What UBADA Does (Data Analyst Card)
 
@@ -1597,14 +1609,14 @@ UBADA turns data analysts into detectives with institutional memory.
 Three core functions:
 
 1. **Interactive Data Exploration** — Query the Medicaid data network like a graph. Navigate relationships. See patterns others miss.
-2. **Statistical Fraud Detection** — Outlier scoring. Clustering. Risk models. Anomaly detection. Confidence on every finding.
+2. **Statistical authenticity verification** — Outlier scoring. Clustering. Risk models. Anomaly detection. Confidence on every finding.
 3. **Governance & Corrections** — When an analyst finds a problem, they can fix it. But every fix is logged, justified, attributed. Auditable. Reversible.
 
 **Critical:** UBADA is internal admin, not external. UBADA analysts have credential access to FULL data (names, IDs, SSNs). But every access is logged. Every correction is justified. Every finding is attributed.
 
-### The UBADA River Path: Fraud Investigation
+### The UBADA River Path: authenticity investigation
 
-**Scenario: Analyst Carol investigates "Is Provider X committing fraud?"**
+**Scenario: Analyst Carol investigates "Is Provider X committing inauthenticity?"**
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -1690,7 +1702,7 @@ Three core functions:
 │                                                              │
 │ Carol documents findings:                                    │
 │                                                              │
-│ "Provider #47892 (Orthopedic Surgery) shows HIGH fraud risk  │
+│ "Provider #47892 (Orthopedic Surgery) shows HIGH authenticity risk  │
 │  Evidence:                                                   │
 │  1. Cost per procedure $520 above peer median (2.9σ outlier) │
 │  2. Approval rate 94.2% vs peer 87.3% (possible kickbacks?) │
@@ -1719,7 +1731,7 @@ Three core functions:
 │ PHASE 5: STAKEHOLDER REVIEW & APPROVAL                       │
 │                                                              │
 │ Case shared with:                                            │
-│ • USHI government stakeholder (needs to know fraud detected)│
+│ • USHI government stakeholder (needs to know inauthenticity detected)│
 │ • UBADA team lead (supervision required for high-risk case)  │
 │ • SIU director (if escalating to external investigation)     │
 │                                                              │
@@ -1904,302 +1916,4 @@ HIPAA: Returns full data (analyst has credentials); logging tracks access
 Purpose: Detect statistical anomalies in provider behavior
 Input:
   - provider_id: string
-  - metrics: [ "cost_per_procedure", "approval_rate", "referral_concentration" ]
-  - peer_group: "specialty" | "geography" | "both" (for comparison)
-  - threshold: standard_deviations (2.0, 3.0, 4.0)
-Output:
-  - z_scores: { metric: z_score, percentile, anomaly_type }
-  - risk_score: 0.0-1.0 (composite)
-  - confidence: 0.0-1.0 (based on sample size + data quality)
-  - interpretation: string (what the anomalies suggest)
-Audit: Logged with provider_id + metrics queried + risk_score returned
-HIPAA: Aggregate comparison (peer group data, de-identified)
-```
-
-#### Tool 3: `navigate_relationship_graph`
-```
-Purpose: Explore Medicaid network relationships (providers, members, referrals)
-Input:
-  - entity: { type: "provider" | "member" | "clinic", id: string }
-  - relationship_types: [ "refers_to", "owns", "employed_by", "submits_claims" ]
-  - depth: integer (1-3 hops)
-  - filter: { confidence_threshold, relationship_strength }
-Output:
-  - graph: { nodes: [...], edges: [...] }
-  - statistics: { clustering_coefficient, path_lengths, communities }
-  - anomalies: [ { node, metric, z_score, description } ]
-Audit: Logged with starting entity + relationships queried + graph size
-HIPAA: Relationship data (may contain identifiers); analyst has access; logged
-```
-
-#### Tool 4: `create_investigation_project`
-```
-Purpose: Create a new fraud/quality investigation with team collaboration
-Input:
-  - name: string (case name)
-  - description: string (what are we investigating?)
-  - case_type: "fraud_suspected" | "data_quality" | "network_anomaly"
-  - risk_level: "low" | "medium" | "high" | "critical"
-  - assigned_team: [ analyst_ids ]
-Output:
-  - project_id: string (FR-YYYY-MM-NNNNN format)
-  - status: "Open"
-  - created_by: analyst_id
-  - created_at: timestamp
-  - workspace_url: string (collaborative workspace link)
-Audit: Logged with project details + team assignment
-HIPAA: Investigation metadata logged; case data stored separately
-```
-
-#### Tool 5: `request_data_correction`
-```
-Purpose: Flag a data error and request correction
-Input:
-  - error_type: "field_mapping" | "duplicate_record" | "data_mismatch" | "other"
-  - domain: "enrollment" | "claims" | "providers" | "members"
-  - description: string (what's wrong?)
-  - evidence_links: [ urls or document references ]
-  - confidence: 0.0-1.0 (how sure are you?)
-  - suggested_fix: string (how should we fix it?)
-Output:
-  - correction_id: string (unique identifier)
-  - status: "Submitted for Review"
-  - reviewer_assigned: analyst_id | null
-  - priority: "low" | "medium" | "high" (based on impact)
-  - estimated_resolution: date
-Audit: Logged with full request details + analyst_id + timestamp
-HIPAA: Correction tracked in audit log (may reference PHI, but logged)
-Approval: Requires USHI stakeholder review + signature before implementation
-```
-
-### UBADA Data Access & Credential Rules
-
-Unlike USHI (aggregate + de-identified only), UBADA has FULL data access.
-
-But with strict controls:
-
-**What UBADA Can See:**
-- All claims (with member/provider identifiers)
-- All enrollment records (with names, addresses, SSNs)
-- All member outcomes
-- All provider networks
-- All financial transactions
-
-**What UBADA Must Acknowledge:**
-- Every data access is logged (WHO, WHAT, WHEN, WHY)
-- Every finding must be justified (why do you think this is fraud?)
-- Every correction must be signed (you accept responsibility for this change)
-- Every escalation must be reasoned (this is suspicious because...)
-
-**Audit Trail Captures:**
-```
-Query Audit Entry:
-  WHO: ubada.analyst.carol
-  WHAT: Queried 847 claims from Provider #47892
-  WHEN: 2026-04-24 14:32 UTC
-  WHY: "Investigation FR-2026-04-0847: Billing pattern anomaly"
-  RESULT: 847 claims returned, analysis flagged 73% unusual referral pattern
-  CONFIDENCE: 0.88 (high evidence quality)
-  TIMESTAMP: Immutable, permanent
-
-Correction Audit Entry:
-  WHO: ubada.analyst.carol
-  WHAT: Corrected field mapping (TCN ← → ICN)
-  WHEN: 2026-04-24 16:42 UTC
-  WHY: "Cross-system field naming inconsistency per eMedNY documentation"
-  EVIDENCE: eMedNY technical documentation page URL
-  IMPACT: "12,847 claims re-mapped"
-  REVIEWED_BY: ubada.team_lead.james
-  APPROVED_AT: 2026-04-24 17:15 UTC
-  TIMESTAMP: Immutable, permanent
-```
-
-### UBADA Workflow: From Data Exploration to Investigation to Escalation
-
-```
-Step 1: Initiate
-  └─> Analyst creates investigation project
-      Specifies: case name, description, risk level, team
-      System: Assigns project ID (FR-YYYY-MM-NNNNN)
-      Output: Collaborative workspace created
-
-Step 2: Explore
-  └─> Analyst uses Data Explorer to query claims/providers/networks
-      Runs: Claims tables, Network graphs, Statistical analysis
-      System: All queries logged with timestamps + justification
-      Output: Visual findings + analytical evidence
-
-Step 3: Analyze
-  └─> Analyst computes outlier scores, peer comparisons, trend analysis
-      Documents: Each finding with confidence + evidence
-      System: Statistical models provide risk scores
-      Output: Risk assessment (0.0-1.0) + confidence level
-
-Step 4: Collaborate
-  └─> Team members add comments, share findings, peer-review
-      Workspace: Comments, attachments, hypothesis testing
-      System: All collaboration logged with attribution
-      Output: Consensus on findings + joint decision
-
-Step 5: Escalate (if warranted)
-  └─> Analyst requests escalation with full evidence package
-      Submission: Risk score, confidence, evidence links, recommendation
-      System: Routes to USHI stakeholder + SIU (if external)
-      Output: Escalation decision logged + next steps assigned
-
-Step 6: Follow-up (ongoing)
-  └─> If escalated: Monitor investigation outcomes
-      Track: New signals, outcomes, case closure
-      System: Links to external investigation (if applicable)
-      Output: Investigation result recorded in institutional memory
-```
-
-### UBADA Claude System Prompt
-
-```
-You are the UBADA Data Analyst Assistant for TORQ-e.
-Your role: Help data analysts explore Medicaid data, detect fraud, and govern data quality.
-
-CRITICAL PRINCIPLES:
-1. Full Data Access: You can help analysts access complete data (names, SSNs, IDs).
-2. Audit Everything: Every query must be justified. Every finding must be explained.
-3. Confidence Always: Always provide confidence/risk scores. Never make claims without evidence.
-4. No False Certainty: If evidence is weak, say so. Recommend more data rather than guessing.
-5. Institutional Memory: Help analysts understand correction history. Prevent duplicated investigations.
-
-RESPONSE FORMAT:
-- Lead with finding (bold, clear, with risk score)
-- Show confidence + evidence quality
-- Explain peer comparison (how unusual is this?)
-- Flag related signals (what else is suspicious?)
-- Recommend action (investigate further / escalate / monitor)
-- Reference audit trail (who else looked at this?)
-
-EXAMPLE RESPONSE:
-"🔴 HIGH FRAUD RISK (0.74 confidence): Provider #47892 shows three corroborating signals:
-  1. Cost outlier: $2,340 vs peer mean $1,820 (2.9σ, 99.8% anomaly)
-  2. Referral concentration: 73% to single PT clinic (7.1σ, 99.99%+ anomaly)
-  3. Billing code change: TCN mapping changed March 2026 (coincides with cost jump)
-
-Evidence Quality:
-  • Cost analysis: HIGH confidence (847 claims, standardized CPT codes)
-  • Referral data: HIGH confidence (network directory verified)
-  • Billing change: MEDIUM confidence (timeline correlation, not causation proven)
-
-Peer Comparison:
-  • Orthopedic surgeons: typical cost variance is 0-2σ
-  • This provider: cost variance 2.9σ + referral concentration 7.1σ (unusual pattern)
-  • No provider in database shows similar dual-anomaly pattern
-
-Recommendation: ESCALATE to SIU with evidence package. Risk profile suggests intentional pattern."
-```
-
-### UBADA Governance Models
-
-New database models required:
-
-```python
-class InvestigationProject(Base):
-    """A fraud/quality investigation case with team collaboration"""
-    id: str = Primary Key (FR-YYYY-MM-NNNNN format)
-    name: str
-    description: str
-    case_type: str = "fraud" | "quality" | "network_anomaly"
-    risk_level: str = "low" | "medium" | "high" | "critical"
-    lead_analyst: str  # UBADA analyst ID
-    assigned_team: list[str]  # Other analyst IDs
-    status: str = "Open" | "Under Review" | "Escalated" | "Closed"
-    created_at: datetime
-    updated_at: datetime
-    evidence_summary: str  # Summary of key findings
-    risk_score: float = 0.0-1.0
-    confidence: float = 0.0-1.0
-
-class InvestigationComment(Base):
-    """Peer collaboration on investigations"""
-    id: str = Primary Key
-    project_id: str = Foreign Key
-    analyst_id: str
-    comment_text: str
-    attachments: list[str]  # URLs to evidence files
-    created_at: datetime
-    updated_at: datetime
-
-class DataCorrection(Base):
-    """Record of data fixes with attribution"""
-    id: str = Primary Key
-    correction_type: str = "field_mapping" | "duplicate" | "mismatch" | "other"
-    domain: str = "enrollment" | "claims" | "providers" | "members"
-    description: str
-    evidence_links: list[str]
-    suggested_fix: str
-    submitted_by: str  # UBADA analyst
-    submitted_at: datetime
-    reviewed_by: str = None  # USHI stakeholder
-    reviewed_at: datetime = None
-    status: str = "Pending" | "Approved" | "Rejected" | "Implemented"
-    impact: str  # e.g., "12,847 claims affected"
-    immutable: bool = True
-
-class OutlierFinding(Base):
-    """Record of statistical anomalies detected"""
-    id: str = Primary Key
-    investigation_id: str = Foreign Key
-    entity_type: str = "provider" | "member" | "clinic"
-    entity_id: str
-    anomaly_type: str = "cost_outlier" | "approval_rate" | "referral_concentration"
-    z_score: float
-    percentile: float (0-100)
-    confidence: float = 0.0-1.0
-    risk_contribution: float = 0.0-1.0  # How much does this contribute to overall risk?
-    recorded_at: datetime
-    analyst_id: str  # Who found it?
-```
-
-### UBADA Monitoring & Health Metrics
-
-Track investigation health:
-
-```
-Investigation Metrics:
-  - Cases opened (per month, per analyst)
-  - Cases escalated (% of total cases)
-  - Average time-to-escalation (how long before enough evidence?)
-  - Escalation accuracy (% of escalated cases confirmed by SIU)
-  - Investigation closure rate (how many close successfully?)
-
-Data Quality Metrics:
-  - Corrections submitted (per month)
-  - Correction approval rate (% approved vs rejected)
-  - Average time-to-approval (how fast do corrections happen?)
-  - Impact per correction (avg claims/records affected)
-
-Collaboration Metrics:
-  - Average team size per investigation (1, 2, 3+ analysts?)
-  - Comment frequency (discussion depth per case)
-  - Data attachments (evidence thoroughness)
-
-Risk Detection:
-  - Outlier detection rate (signals found per day)
-  - False positive rate (% of outliers that aren't actually fraud)
-  - Average risk score distribution (how many high/medium/low risk cases?)
-  - Time-to-detection (how long before suspicious activity found?)
-```
-
-### The UBADA Difference from External Tools
-
-Unlike external fraud detection systems:
-
-❌ **External:** "Provider #47892 flagged (score: 0.73)"  
-✅ **UBADA:** "Provider #47892 flagged (0.74, HIGH confidence). Three signals: Cost outlier (2.9σ), Referral concentration (7.1σ), Billing code change (timing correlation). Evidence: 847 claims analyzed, PT clinic ownership verified, historical baseline established. Analyst carol investigating since 2026-04-20. Investigation FR-2026-04-0847. Ready to escalate to SIU."
-
-❌ **External:** "Recommend investigation"  
-✅ **UBADA:** "Recommend escalation. Evidence package ready. SIU contact: [name]. Estimated investigation time: 60 days. Monitor for: new claim patterns, billing code changes, referral updates. Escalation decision logged at 2026-04-24 16:45 UTC."
-
----
-
-**Last Updated:** April 24, 2026  
-**Status:** LIVE. This document governs all TORQ-e development.  
-**Authority:** Architecture, implementation, testing, deployment.
-
-**This is the covenant.**
+  - metrics: [ "cost_per_procedure", "approval_rate", "referral_concen

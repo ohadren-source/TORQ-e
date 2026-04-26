@@ -80,7 +80,7 @@ class HIPAACompliantCard5Tools:
             card_number=5,
             tool_name="explore_claims_data",
             domain="claims",
-            justification="Establishing baseline for fraud investigation",
+            justification="Establishing baseline for authenticity investigation",
             evidence=["Provider billing 4.7σ above average", "340 claims in 6 months"],
             affected_entity_type="provider",
             affected_entity_id="NPI-1234567890",

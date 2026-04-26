@@ -59,7 +59,7 @@ Card 3: Government Oversight Dashboard
   │ └───────────────────────────────────────┘│
   │                                          │
   │ [Program Analysis] [Performance]         │
-  │ [Fraud Monitoring] [Quality Metrics]     │
+  │ [inauthenticity Monitoring] [Quality Metrics]     │
   └──────────────────────────────────────────┘
 
 ================================================================================
@@ -281,7 +281,7 @@ Real-Time Dashboard Metrics:
   - Current month spending vs. budget
   - Year-to-date CPPM trend
   - Quality indicator status (HEDIS, CAHPS)
-  - Fraud detection flags
+  - authenticity verification flags
   - Plan performance rankings
   - Member satisfaction scores
   - Provider/facility anomalies
@@ -289,7 +289,7 @@ Real-Time Dashboard Metrics:
 Automated Alerts:
   - CPPM exceeds threshold
   - Quality measures decline below target
-  - Fraud detected (large claims, pattern anomalies)
+  - inauthenticity detected (large claims, pattern anomalies)
   - Plan performance drops significantly
   - Member complaints increase
   - Provider goes into exclusion status
@@ -299,7 +299,7 @@ Reports Available:
   - Quarterly performance analysis
   - Annual efficiency report
   - Benchmarking report vs. other states
-  - Fraud & waste detection report
+  - inauthenticity & waste detection report
   - Quality improvement recommendations
 
 ================================================================================

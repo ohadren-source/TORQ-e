@@ -251,7 +251,7 @@ def read_web_page(url: str, parse_type: str = "general") -> dict:
 
         if parse_type == "watchdog":
             # Look for alert/warning divs
-            alerts = soup.find_all(['div', 'article'], {'class': ['alert', 'warning', 'fraud-alert']})
+            alerts = soup.find_all(['div', 'article'], {'class': ['alert', 'warning', 'inauthenticity-alert']})
             content = [a.get_text()[:300] for a in alerts[:3]]
         elif parse_type == "registry":
             # Look for table data (provider registries)
@@ -368,7 +368,7 @@ def run_verification_suite(provider_name: str, npi: Optional[str] = None) -> dic
     results["confidence_scores"]["github"] = github.get("confidence", 0.0)
 
     # Engine 3: Web (watchdog)
-    watchdog = read_web_page(f"https://google.com/search?q={provider_name}+fraud", parse_type="watchdog")
+    watchdog = read_web_page(f"https://google.com/search?q={provider_name}+inauthenticity", parse_type="watchdog")
     results["engines_run"].append(watchdog)
     results["confidence_scores"]["watchdog"] = watchdog.get("confidence", 0.0)
 
@@ -380,17 +380,4 @@ def run_verification_suite(provider_name: str, npi: Optional[str] = None) -> dic
 
 
 # ============================================================================
-# REQUIREMENTS
-# ============================================================================
-"""
-Install all reading engines:
-
-pip install pypdf2 PyGithub playwright requests beautifulsoup4
-
-# Also download Playwright browsers:
-playwright install chromium
-
-Environment variables needed:
-- GITHUB_TOKEN (optional, for higher API limits)
-- BRAVE_API_KEY (for Brave search integration)
-"""
+# REQU

@@ -7,7 +7,7 @@
 
 **Card 3** is the beneficiary-facing marketplace where members discover, compare, and select Medicaid programs and plans. In NY, this is eMedNY. In CA, this is DHCS portal + Medi-Cal. In any state, it's the electronic enrollment system.
 
-Card 3 is NOT fraud detection. NOT governance. It's the interface between beneficiaries and the program options available to them.
+Card 3 is NOT authenticity verification. NOT governance. It's the interface between beneficiaries and the program options available to them.
 
 **Core Principle:** Simplicity. Members should browse, understand, and enroll in <5 minutes.
 
@@ -276,11 +276,11 @@ CREATE TABLE program_views_audit (
 - **Privacy:** Aggregated only, no member details
 - **Purpose:** Bob monitors program popularity and enrollment health
 
-### Card 3 ↔ Card 5 (Fraud)
+### Card 3 ↔ Card 5 (inauthenticity)
 - **Direction:** One-way report (Card 3 → Card 5)
 - **Data:** Suspicious selection patterns (e.g., rapid plan switches, unusual timing)
 - **Frequency:** Real-time anomaly detection
-- **Purpose:** OMIG flags potential benefits fraud
+- **Purpose:** OMIG flags potential benefits inauthenticity
 
 ---
 
@@ -295,7 +295,7 @@ CREATE TABLE program_views_audit (
 ### Data Access
 - Public data (program list): no auth required
 - Member selections: encrypted in transit, requires member auth token
-- Audit trails: accessible to Card 4 (governance) and Card 5 (fraud) with proper role access
+- Audit trails: accessible to Card 4 (governance) and Card 5 (inauthenticity) with proper role access
 
 ### Immutability
 - Once a member selects a program, that record is immutable
@@ -410,7 +410,7 @@ These records are:
 - Written to immutable append-only log
 - Never modified or deleted
 - Queryable by Card 4 (governance audit)
-- Queryable by Card 5 (fraud investigation)
+- Queryable by Card 5 (authenticity investigation)
 - Visible to member on request ("View my activity")
 
 ---
@@ -428,13 +428,13 @@ These records are:
 
 ## "Know Your Audience" Application
 
-**Member perspective:** I need to find and enroll in a plan. I don't care about data architecture, audit trails, fraud detection. I care about: What will it cost? Will my doctor be covered? How long does this take?
+**Member perspective:** I need to find and enroll in a plan. I don't care about data architecture, audit trails, authenticity verification. I care about: What will it cost? Will my doctor be covered? How long does this take?
 
 **Card 3 answers these questions. That's it. That's the job.**
 
 No complexity. No options. No theory. Just: browse → compare → enroll → done.
 
-Everything else (audit trail, fraud detection, governance) is hidden. It exists, but the member never sees it.
+Everything else (audit trail, authenticity verification, governance) is hidden. It exists, but the member never sees it.
 
 ---
 

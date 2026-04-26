@@ -425,7 +425,7 @@
             <img src="/static/branding/logo/TdST.png" alt="TORQ-e Logo" class="logo">
             <div>
                 <h1>TORQ-e Provider Claims Portal</h1>
-                <p>Manage claims, verify enrollment, and detect fraud patterns</p>
+                <p>Manage claims, verify enrollment, and detect authenticity patterns</p>
             </div>
         </div>
         <div class="header-right">
@@ -444,7 +444,7 @@
                     • Validate claims before submission<br>
                     • Submit claims with auto-routing<br>
                     • Track claim payment status<br>
-                    • Analyze claim for fraud patterns<br>
+                    • Analyze claim for authenticity patterns<br>
                     • Check MCO and FFS participation<br><br>
                     What do you need help with?
                 </div>
@@ -496,7 +496,7 @@
                     • "What's my claims processing health?"<br>
                     • "Validate this member"<br>
                     • "Check enrollment status"<br>
-                    • "Analyze claim for fraud"<br><br>
+                    • "Analyze claim for inauthenticity"<br><br>
                     What can I help with?
                 </div>`;
                 messagesDiv.appendChild(welcomeMsg);
@@ -600,99 +600,4 @@
                                 const data = JSON.parse(line.slice(6));
                                 if (data.text) {
                                     fullText += data.text;
-                                    // Show streaming progress with raw text
-                                    bubble.textContent = fullText;
-                                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                                }
-                            } catch (e) {
-                                // Skip malformed lines
-                            }
-                        }
-                    }
-                }
-
-                // After streaming is complete, parse markdown and render as HTML
-                const parsedHtml = md.render(fullText);
-                const sanitized = DOMPurify.sanitize(parsedHtml);
-                bubble.innerHTML = sanitized;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-                conversationHistory.push({ role: 'assistant', content: fullText });
-
-            } catch (error) {
-                console.error('Claude API error:', error);
-                bubble.textContent = `❌ Error: ${error.message}. Make sure the backend is running and ANTHROPIC_API_KEY is configured.`;
-            }
-        }
-
-        // Send message
-        sendBtn.addEventListener('click', sendMessage);
-        inputText.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        async function sendMessage() {
-            const message = inputText.value.trim();
-            if (!message && attachedFiles.length === 0) return;
-
-            // Add user message to chat
-            if (message) {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'message user';
-                userDiv.innerHTML = `<div class="message-bubble">${escapeHtml(message)}</div>`;
-                messagesDiv.appendChild(userDiv);
-                conversationHistory.push({ role: 'user', content: message });
-            }
-
-            // Show attached files
-            if (attachedFiles.length > 0) {
-                const filesDiv = document.createElement('div');
-                filesDiv.className = 'message assistant';
-                filesDiv.innerHTML = `<div class="message-bubble">
-                    📎 Received ${attachedFiles.length} file(s): ${attachedFiles.map(f => f.name).join(', ')}
-                </div>`;
-                messagesDiv.appendChild(filesDiv);
-            }
-
-            inputText.value = '';
-            inputText.style.height = 'auto';
-            attachedFiles = [];
-            renderAttachedFiles();
-            sendBtn.disabled = true;
-
-            // Scroll to bottom
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            // Create assistant message bubble for streaming response
-            const assistantDiv = document.createElement('div');
-            assistantDiv.className = 'message assistant';
-            assistantDiv.id = 'streaming-response';
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-            bubble.textContent = '⏳ Analyzing claim...';
-            assistantDiv.appendChild(bubble);
-            messagesDiv.appendChild(assistantDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            // Call Claude API
-            await callClaudeAPI(message, bubble);
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Back to landing
-        window.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'h') {
-                window.location.href = 'landing.html';
-            }
-        });
-    </script>
-</body>
-</html>
+                                    // Sh
