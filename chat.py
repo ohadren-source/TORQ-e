@@ -569,7 +569,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             # If no tool calls, task is complete - stream the response
             if not tool_calls:
                 if assistant_message:
-                    yield f"data: {json.dumps({'text': assistant_message})}\n\n"
+                    yield f"data: {json.dumps({'text': _fix_surrogates(assistant_message)})}\n\n"
                     return
                 else:
                     # Claude returned no text and no tool calls — break and force synthesis
@@ -614,7 +614,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
         # Loop exhausted — force a final synthesis response from Claude
         final_response = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=4096,
+            max_tokens=16000,
             system=system_prompt,
             messages=messages
         )
@@ -623,7 +623,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             if hasattr(block, "text"):
                 final_text += block.text
         logger.info(f"[Synthesis] stop_reason={final_response.stop_reason}, text={len(final_text)} chars")
-        payload = json.dumps({"text": final_text})
+        payload = json.dumps({"text": _fix_surrogates(final_text)})
         yield "data: " + payload + "\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
@@ -962,17 +962,3 @@ Full-fidelity data access (names, SSNs, NPIs allowed). Every query logged immuta
 - request_data_correction: Flag errors with evidence, approval workflow"""
 
     return base_instruction
-
-
-# ============================================================================
-# Health Check
-# ============================================================================
-
-@router.get("/health")
-async def chat_health():
-    """Health check endpoint"""
-    has_api_key = bool(settings.anthropic_api_key)
-    return {
-        "status": "healthy" if has_api_key else "degraded",
-        "claude_api_configured": has_api_key
-    }
