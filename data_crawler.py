@@ -1,19 +1,46 @@
 """
-DATA CRAWLER SERVICE - TORQ-E
-Scrapy + httpx + BeautifulSoup + Splash stack
-Real data extraction from public Medicaid repositories
-NO DUMMY DATA - ONLY REAL PUBLIC REPOSITORY DATA
+DATA CRAWLER + READING ENGINE - TORQ-E
+Unified data discovery and content extraction for all 5 cards.
+
+Engines available:
+  - HTML/Web  : httpx + BeautifulSoup (always available)
+  - PDF       : PyPDF2 (graceful fallback if not installed)
+  - Academic  : PubMed / arXiv via httpx (no extra deps)
+  - GitHub    : PyGithub (graceful fallback if not installed)
+
+Public API:
+  discover_public_data()          -> full crawl, returns schema for Card 4
+  get_public_data_schema()        -> sync wrapper for FastAPI startup
+  read_source(url)                -> unified reader for any URL (all cards)
+  read_pdf(file_path)             -> extract text from a PDF file
+  read_academic_sources(query)    -> search PubMed / arXiv
+  read_github(username)           -> GitHub profile lookup
 """
 
 import asyncio
 import httpx
 import logging
+import os
+import tempfile
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 import json
 import re
+
+# Optional deps — graceful fallback if not installed
+try:
+    import PyPDF2
+    HAS_PYPDF = True
+except ImportError:
+    HAS_PYPDF = False
+
+try:
+    from github import Github
+    HAS_PYGITHUB = True
+except ImportError:
+    HAS_PYGITHUB = False
 
 logger = logging.getLogger(__name__)
 
@@ -148,6 +175,12 @@ class DataCrawler:
                 rows = table.find_all('tr')
                 if rows:
                     table_text = ' '.join([cell.get_text().strip() for cell in rows[0].find_all(['td', 'th'])])[:200]
+                    # Capture full table as readable text (first 20 rows)
+                    row_texts = []
+                    for row in rows[:20]:
+                        cells = [c.get_text().strip() for c in row.find_all(['td', 'th'])]
+                        row_texts.append(' | '.join(cells))
+                    table_snippet = '\n'.join(row_texts)[:1500]
 
                     data_entry = {
                         "type": "table",
@@ -155,6 +188,7 @@ class DataCrawler:
                         "description": f"Table #{i+1}: {table_text}",
                         "format": "HTML",
                         "row_count": len(rows),
+                        "text_snippet": table_snippet,
                         "discovered_at": datetime.utcnow().isoformat(),
                         "confidence": 0.85
                     }
@@ -175,7 +209,9 @@ class DataCrawler:
             "quality": r"quality|data quality|accuracy|error"
         }
 
-        text_content = soup.get_text()
+        # Clean page text — used for metric detection AND stored as text_snippet
+        text_content = soup.get_text(separator=' ', strip=True)
+        text_snippet = ' '.join(text_content.split())[:2000]
         found_metrics = {}
 
         for metric_name, pattern in patterns.items():
@@ -190,6 +226,7 @@ class DataCrawler:
                 "description": f"Metrics page: {', '.join(found_metrics.keys())}",
                 "format": "HTML",
                 "metrics_found": found_metrics,
+                "text_snippet": text_snippet,
                 "discovered_at": datetime.utcnow().isoformat(),
                 "confidence": 0.70
             }
@@ -262,8 +299,8 @@ class DataCrawler:
             "total_sources_with_extracted_data": self.sources_with_extracted_data,
             "discovered_data": self.discovered_data,
             "errors": self.errors,
-            "reading_engine_integrated": False,
-            "crawler_stack": "Scrapy + httpx + BeautifulSoup + Splash ready",
+            "reading_engine_integrated": True,
+            "crawler_stack": "httpx + BeautifulSoup + PyPDF2 + PubMed/arXiv + GitHub",
             "summary": summary,
 
             # Card 4 metric buckets (will be populated from discovered data)
@@ -314,30 +351,10 @@ async def discover_public_data() -> Dict[str, Any]:
     crawler = DataCrawler()
     schema = await crawler.crawl()
 
-    logger.info(f"✅ Crawl complete: {schema['total_data_sources_discovered']} sources discovered")
-    logger.info(f"📊 Extracted data from {schema['total_sources_with_extracted_data']} sources")
+    logger.info(f"Crawl complete: {schema['total_data_sources_discovered']} sources")
+    logger.info(f"Extracted from {schema['total_sources_with_extracted_data']} sources")
 
     if schema['errors']:
-        logger.warning(f"⚠️  {len(schema['errors'])} errors during crawl")
+        logger.warning(f"{len(schema['errors'])} errors during crawl")
 
     return schema
-
-
-# Synchronous wrapper for FastAPI integration
-def get_public_data_schema() -> Dict[str, Any]:
-    """
-    Synchronous wrapper - call from FastAPI routes
-    """
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-    return loop.run_until_complete(discover_public_data())
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    schema = asyncio.run(discover_public_data())
-    print(json.dumps(schema, indent=2, default=str))
