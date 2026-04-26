@@ -497,7 +497,7 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             # Get response from Claude
             response = client.messages.create(
                 model="claude-sonnet-4-6",
-                max_tokens=1024,
+                max_tokens=4096,
                 system=system_prompt,
                 tools=tools if tools else None,
                 messages=messages,
@@ -570,6 +570,20 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             tool_call_count += 1
             # Loop continues - next iteration gets Claude's response WITH tool results
+
+        # Loop exhausted — force a final synthesis response from Claude
+        final_response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4096,
+            system=system_prompt,
+            messages=messages
+        )
+        final_text = ""
+        for block in final_response.content:
+            if hasattr(block, "text"):
+                final_text += block.text
+        payload = json.dumps({"text": final_text})
+        yield "data: " + payload + "\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
