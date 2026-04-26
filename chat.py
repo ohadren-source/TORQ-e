@@ -469,8 +469,8 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     if not settings.anthropic_api_key:
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
 
-    # Extended timeout for agentic loop with tool execution (15 minutes for data queries + synthesis)
-    client = anthropic.Anthropic(
+    # Async client required — sync client blocks the event loop inside async generators
+    client = anthropic.AsyncAnthropic(
         api_key=settings.anthropic_api_key,
         timeout=900.0  # 15 minutes - allows time for data discovery, multiple tool calls, and synthesis
     )
@@ -488,50 +488,57 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     messages = [{"role": "user", "content": chat_msg.message}]
 
     async def generate_response():
-        """Generator that yields SSE-formatted text and handles agentic loop"""
+        """Async generator that yields SSE-formatted text and handles agentic loop"""
         nonlocal messages
         tool_call_count = 0
         max_tool_calls = 5
 
         while tool_call_count < max_tool_calls:
-            # Get response from Claude
-            response = client.messages.create(
+            # Collect full response using async streaming
+            assistant_message = ""
+            tool_calls = []
+            partial_json_buffers = {}  # track partial JSON per tool call index
+
+            async with client.messages.stream(
                 model="claude-sonnet-4-6",
                 max_tokens=1024,
                 system=system_prompt,
-                tools=tools if tools else None,
+                tools=tools if tools else [],
                 messages=messages,
-                stream=True
-            )
+            ) as stream:
+                async for event in stream:
+                    if event.type == "content_block_start":
+                        if hasattr(event.content_block, "type"):
+                            if event.content_block.type == "tool_use":
+                                idx = len(tool_calls)
+                                tool_calls.append({
+                                    "id": event.content_block.id,
+                                    "name": event.content_block.name,
+                                    "input": {}
+                                })
+                                partial_json_buffers[idx] = ""
 
-            # Collect full response before processing
-            assistant_message = ""
-            tool_calls = []
+                    elif event.type == "content_block_delta":
+                        if hasattr(event.delta, "type"):
+                            if event.delta.type == "text_delta":
+                                assistant_message += event.delta.text
+                            elif event.delta.type == "input_json_delta":
+                                if tool_calls and event.delta.partial_json:
+                                    idx = len(tool_calls) - 1
+                                    partial_json_buffers[idx] = partial_json_buffers.get(idx, "") + event.delta.partial_json
 
-            for event in response:
-                if event.type == "content_block_start":
-                    if hasattr(event.content_block, "type"):
-                        if event.content_block.type == "tool_use":
-                            tool_calls.append({
-                                "id": event.content_block.id,
-                                "name": event.content_block.name,
-                                "input": {}
-                            })
-
-                elif event.type == "content_block_delta":
-                    if hasattr(event.delta, "type"):
-                        if event.delta.type == "text_delta":
-                            assistant_message += event.delta.text
-                        elif event.delta.type == "input_json_delta":
-                            if tool_calls and event.delta.partial_json:
+                    elif event.type == "content_block_stop":
+                        # Finalize tool input JSON now that the block is complete
+                        if tool_calls:
+                            idx = len(tool_calls) - 1
+                            buf = partial_json_buffers.get(idx, "")
+                            if buf:
                                 try:
-                                    parsed = json.loads(event.delta.partial_json)
-                                    tool_calls[-1]["input"].update(parsed)
+                                    tool_calls[idx]["input"] = json.loads(buf)
                                 except json.JSONDecodeError:
-                                    # Partial JSON is incomplete - skip this chunk and wait for next one
                                     pass
 
-            # If no tool calls, task is complete - stream the response
+            # If no tool calls, task is complete - yield the response
             if not tool_calls:
                 yield f"data: {json.dumps({'text': assistant_message})}\n\n"
                 return
@@ -570,6 +577,9 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
 
             tool_call_count += 1
             # Loop continues - next iteration gets Claude's response WITH tool results
+
+        # If max tool calls reached without a final text response, yield a fallback
+        yield f"data: {json.dumps({'text': 'Analysis complete. Maximum tool iterations reached.'})}\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
