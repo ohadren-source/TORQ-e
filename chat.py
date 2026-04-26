@@ -16,6 +16,7 @@ from card_1_umid import routes as card1_routes
 from card_2_upid import routes as card2_routes
 from card_4_ushi import query_engine as card4_engine
 from card_5_ubada import query_engine as card5_engine
+from about_face import about_face
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -526,9 +527,11 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                         if event.delta.type == "text_delta":
                             assistant_message += event.delta.text
                             # Only yield text if NO tool calls will follow
-                            # (system prompt should prevent planning text anyway)
+                            # Filter through ABOUT_FACE to remove meta-speak
                             if not tool_calls:
-                                yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
+                                filtered_text = about_face(event.delta.text)
+                                if filtered_text:  # Only yield if text remains after filtering
+                                    yield f"data: {json.dumps({'text': filtered_text})}\n\n"
                         elif event.delta.type == "input_json_delta":
                             # Accumulate JSON input for tool use
                             if tool_calls:
@@ -580,11 +583,13 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
                 stream=True
             )
 
-            # Stream the final synthesis
+            # Stream the final synthesis (filtered through ABOUT_FACE)
             for event in response:
                 if event.type == "content_block_delta":
                     if hasattr(event.delta, "type") and event.delta.type == "text_delta":
-                        yield f"data: {json.dumps({'text': event.delta.text})}\n\n"
+                        filtered_text = about_face(event.delta.text)
+                        if filtered_text:  # Only yield if text remains after filtering
+                            yield f"data: {json.dumps({'text': filtered_text})}\n\n"
 
     return StreamingResponse(generate_response(), media_type="text/event-stream")
 
@@ -766,7 +771,6 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 - For ANY question about governance actions or audit trail → call view_governance_log with optional filters
 - For flagging a data or compliance issue → call flag_data_issue with full justification and evidence
 - WAIT for all tool results, extract confidence_metadata and source data, then format response with confidence lights and source citations
-- NEVER describe what you'll do — execute tools FIRST, summarize findings AFTER
 - TOOL FAILURE HANDLING (CRITICAL):
   * If a tool returns an error or null data → acknowledge it explicitly: "Tool X failed: [error reason]"
   * Always report BOTH successes AND failures in your response
