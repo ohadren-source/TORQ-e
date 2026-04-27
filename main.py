@@ -91,6 +91,33 @@ app.include_router(chat_router)
 app.include_router(governance_router)
 app.include_router(source_router)
 
+# =========================================================================
+# HELLO-CLAUDE: dead-simple Claude endpoint. No tools. No streaming. No cards.
+# Used to break curses. If this works, Claude API is reachable. If not, it's not.
+# =========================================================================
+from fastapi import Request as _HelloRequest
+from pydantic import BaseModel as _HelloBaseModel
+import anthropic as _hello_anthropic
+
+class _HelloMsg(_HelloBaseModel):
+    message: str
+
+@app.post("/api/hello-claude")
+async def hello_claude(payload: _HelloMsg):
+    if not settings.anthropic_api_key:
+        return {"error": "ANTHROPIC_API_KEY not set"}
+    try:
+        client = _hello_anthropic.Anthropic(api_key=settings.anthropic_api_key)
+        resp = client.messages.create(
+            model="claude-sonnet-4-5-20250929",
+            max_tokens=1024,
+            messages=[{"role": "user", "content": payload.message}]
+        )
+        text = resp.content[0].text if resp.content else ""
+        return {"text": text}
+    except Exception as e:
+        return {"error": str(e)}
+
 # Mount static files (HTML, CSS, images, etc.)
 # Serve from the project root directory where landing.html, login-*.html, etc. are located
 static_dir = os.path.dirname(os.path.abspath(__file__))

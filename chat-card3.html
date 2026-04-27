@@ -477,6 +477,10 @@
 
         sendBtn.addEventListener('click', sendMessage);
 
+        // ============================================================
+        // HELLO-CLAUDE MODE — basic bitch direct Claude. No tools, no stream.
+        // Original streaming sendMessage commented out below for restore.
+        // ============================================================
         async function sendMessage() {
             const message = inputText.value.trim();
             if (!message) return;
@@ -486,7 +490,44 @@
             inputText.style.height = 'auto';
             sendBtn.disabled = true;
 
-            // Add assistant bubble with placeholder
+            const assistDiv = document.createElement('div');
+            assistDiv.className = 'message assistant';
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = 'Thinking...';
+            assistDiv.appendChild(bubble);
+            messagesDiv.appendChild(assistDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const response = await fetch('/api/hello-claude', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                const data = await response.json();
+                if (data.error) {
+                    bubble.textContent = 'Error: ' + data.error;
+                } else {
+                    bubble.textContent = data.text || 'No response.';
+                }
+            } catch (error) {
+                bubble.textContent = 'Fetch error: ' + error.message;
+            } finally {
+                sendBtn.disabled = false;
+                inputText.focus();
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+
+        /* ORIGINAL STREAMING sendMessage — commented for hello-claude curse-break test
+        async function sendMessage_ORIGINAL() {
+            const message = inputText.value.trim();
+            if (!message) return;
+            addMessage(message, 'user');
+            inputText.value = '';
+            inputText.style.height = 'auto';
+            sendBtn.disabled = true;
             const assistDiv = document.createElement('div');
             assistDiv.className = 'message assistant';
             const bubble = document.createElement('div');
@@ -495,7 +536,6 @@
             assistDiv.appendChild(bubble);
             messagesDiv.appendChild(assistDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
             try {
                 const response = await fetch('/api/chat/stream', {
                     method: 'POST',
@@ -507,15 +547,12 @@
                         sessionId:  sessionStorage.getItem('sessionId') || 'session-' + Date.now()
                     })
                 });
-
                 if (!response.ok) throw new Error('API error: ' + response.status);
-
                 const reader  = response.body.getReader();
                 const decoder = new TextDecoder();
                 let fullText   = '';
                 let lineBuffer = '';
                 let firstChunk = true;
-
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -544,7 +581,6 @@
                     } catch(e) {}
                 }
                 bubble.textContent = fullText || 'No response received.';
-
             } catch (error) {
                 bubble.textContent = 'Error: ' + error.message;
             } finally {
@@ -552,6 +588,7 @@
                 inputText.focus();
             }
         }
+        */
 
         function addMessage(text, role) {
             const messageDiv = document.createElement('div');
