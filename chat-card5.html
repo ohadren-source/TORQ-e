@@ -500,19 +500,6 @@
         }
 
         async function processAnalystQuery(query) {
-            const q = query.toLowerCase();
-            if (q.includes('npi') || q.includes('provider') || q.includes('authenticity') || q.includes('inauthentic') || q.includes('shell') || q.includes('real')) {
-                return await fetchauthenticityAssessment(query);
-            }
-            if (q.includes('data quality') || q.includes('qa') || q.includes('quality check') || q.includes('validate') || q.includes('checklist')) {
-                return generateQAChecklist();
-            }
-            if (q.includes('pattern') || q.includes('billing') || q.includes('waste') || q.includes('abuse') || q.includes('anomal')) {
-                return generateauthenticityPatterns();
-            }
-            if (q.includes('outlier') || q.includes('detection') || q.includes('claims')) {
-                return await fetchOutlierDetection(query);
-            }
             return await elaborateAnalystInline(query);
         }
 
