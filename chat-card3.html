@@ -373,8 +373,10 @@
         fetch('/torq-header.html')
             .then(r => r.text())
             .then(html => {
-                document.getElementById('header-container').innerHTML = html;
-                initTorqHeader();
+                const container = document.getElementById('header-container');
+                const frag = document.createRange().createContextualFragment(html);
+                container.appendChild(frag);
+                if (typeof initTorqHeader === 'function') initTorqHeader();
             })
             .catch(e => console.log('Header not found:', e));
     </script>

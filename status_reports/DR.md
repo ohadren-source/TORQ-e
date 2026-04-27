@@ -1,5 +1,5 @@
 # TORQ-e Design Review — DR.md
-**Internal Memo | Living Document | Updated: 2026-04-26 (snapshot 9)**
+**Internal Memo | Living Document | Updated: 2026-04-27 (snapshot 10)**
 **Motto: MOVE STEADFAST && BREAK IT DOWN.**
 
 ---
@@ -20,7 +20,7 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 | 2 | UPID | Providers | Live |
 | 3 | UHWP | Plan/Network Admins | Live |
 | 4 | USHI | Government Stakeholders | PLATINUM — Certified 2026-04-26 |
-| 5 | UBADA | Data Analysts / authenticity investigators | Frontend live — HTML rendering active |
+| 5 | UBADA | Data Analysts / authenticity investigators | LIVE — backend zero mock data, frontend wired, HTML rendering active |
 
 **Stack:** FastAPI + uvicorn on Railway (Python 3.11). PostgreSQL. Anthropic Claude API (claude-sonnet-4-6). SSE streaming. Static HTML frontend served from root.
 
@@ -29,7 +29,17 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 
 ---
 
-## Card 4 (USHI) — Current Focus
+## Card 5 (UBADA) — Completed 2026-04-27
+
+### What Was Done
+- `card_5_ubada/query_engine.py` — full silicon copy of Card 4 pattern. Zero mock data. Zero hardcoded claim IDs, names, NPIs, Z-scores, network nodes. All 5 tools now accept `public_data_schema` and `query_context`.
+- Helpers: `_find_matching_sources`, `_source_confidence`, `_veracity`, `_generate_value`, `_crawler_status` — identical pattern to Card 4.
+- `chat-card5.html` — "Considering Available Data..." loading state fixed. `createContextualFragment` pattern for fetch injection (scripts execute). `firstChunk` flag prevents premature bubble clear.
+- `static/claude-stream.js` — reference file documenting canonical SSE fetch pattern. Not wired to any live card.
+
+---
+
+## Card 4 (USHI) — Lighthouse (Read Only)
 
 ### Architecture
 
