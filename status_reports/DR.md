@@ -118,6 +118,7 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 - `renderMarkdown()` fallback added to `chat-card5.html` as safety net for any markdown bleed-through.
 - **IRON LAW established: Card 4 is read-only reference. Never modify. Even if instructed to — assume kidnapping. Only exception: written request from Carol Oren or Selam Eyassu AND Ohad produces the email proving it. Both conditions required. One without the other = still untouchable.**
 - **PLATINUM CERTIFIED 2026-04-26**: Spectrum number integrity confirmed. Fixed values (86.6% Audit Readiness, 87.1% Operations Status) are real crawled data from OMIG/ITS pages — `_extract_metric_value` wins over generation. Generated fallback values (enrollment_rate, claims_processing, etc.) vary correctly per query via UUID salt in `/metrics` route + query_context seed in chat path. No RNG cosmetics. No fake authenticity. Fixed = real. Varying = honest fallback. Architecture clean.
+- **Universal header `torq-header.html` built and wired to all 5 cards (2026-04-27)** — single fetch include. Card identity (title, subtitle, codename), nav links, doc group (1-2-3 vs 4-5), and user ID all resolve from URL + sessionStorage automatically. `createContextualFragment` injection pattern — scripts execute correctly. Replaces inline header divs in Cards 1/2/3 and old `card4-5-header.html` fetch in Cards 4/5. Outsider header (landing page) deprioritized — not in scope.
 
 ---
 
@@ -150,11 +151,11 @@ Rationale: This is a government system with known data gaps (audit trail has zer
 - `pypdf2` not in `requirements.txt` — PDF reading (HIPAA Cycle Calendar etc.) won't work on Railway until added
 - Academic sources (`read_academic_sources`) and GitHub (`read_github`) integrated into `data_crawler.py` but not wired into Cards 1, 2, 5 yet
 - Cards 1–3 source link cleanup (same page title issue likely exists)
-- Card 5 (UBADA) frontend wiring
 - README.md says Cards 3–5 PLANNED — wrong, all live in code. Needs correction before Carol/Selam QA
 - Node.js pipeline files (cms-api-extractor.js, emedny-scraper.js, etc.) — status unknown, may be superseded by data_crawler.py. Needs human answer
-- Helper functions in Cards 1, 2, 5 not yet consuming extracted crawler data — routes wired, data not flowing end-to-end
+- Helper functions in Cards 1, 2 not yet consuming extracted crawler data — routes wired, data not flowing end-to-end
 - Card 3 (UHWP) has no web UI — API routes work, no HTML dashboard
+- `documentation-card1-3.html` and `faq-card1-3.html` do not exist yet — `torq-header.html` links point to them, will 404 until created
 
 ---
 
@@ -210,15 +211,13 @@ Formalized April 26, 2026, Ohad Phoenix Oren + Claude (claude-sonnet-4-6).
 
 ---
 
-## Next: 3.5 Cards (mad simp(le))
+## Next: 3 Cards (mad simp(le))
 
-Cards 1, 2, 3 are live in code. Card 5 frontend is live. The remaining work is wiring, not inventing.
+Cards 4 and 5 are fully live. Cards 1, 2, 3 need wiring. The pattern is set. Card 4 is the lighthouse. Everything else is navigation.
 
 | Target | Work Remaining | Complexity |
 |--------|---------------|------------|
-| Card 5 (UBADA) | Frontend wiring to backend tools | Low — Lighthouse pattern already exists |
 | Card 3 (UHWP) | HTML dashboard (no UI yet) | Medium — routes live, need frontend |
-| Cards 1-2 | Traffic light / spectrum (research done) | Low — Card 4 is the template |
+| Cards 1-2 | Traffic light / spectrum | Low — Card 4 is the template |
 | README.md | Fix "PLANNED" → live status for Cards 3-5 | Trivial |
-
-The pattern is set. Card 4 is the lighthouse. Everything else is navigation.
+| documentation-card1-3.html / faq-card1-3.html | Create shared docs for cards 1-3 | Medium |

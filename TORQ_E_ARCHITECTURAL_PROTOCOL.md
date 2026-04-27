@@ -655,7 +655,8 @@ Get Card 4 precisecemented → you have built 5 cards. The remaining 4 are Card 
 |---------|---------------|---------------|
 | SSE line buffering (`lineBuffer` accumulator) | `chat-card4.html` | All card chat frontends |
 | Domain-based confidence scoring (`_source_confidence`) | `query_engine.py` | All card query engines |
-| `METRIC_ALIASES` keyword map | `query_engine.py` | All card query engines |
+| `METRIC_ALIASES` / `TOPIC_ALIASES` keyword map | `query_engine.py` | All card query engines |
+| `_find_matching_sources`, `_veracity`, `_crawler_status`, `_generate_value` helpers | `card_4_ushi/query_engine.py` | `card_5_ubada/query_engine.py` — propagated 2026-04-27 |
 | `pageTitle()` URL → readable name | `chat-card4.html` | All card frontends |
 | Background crawl on startup (`asyncio.create_task`) | `main.py` | Shared — already global |
 | Spectrum Analyzer thresholds (≥65 green, 50–64 yellow, <50 red) | `chat-card4.html` | Cards 3, 4, 5 (governance/data views) |
@@ -664,6 +665,9 @@ Get Card 4 precisecemented → you have built 5 cards. The remaining 4 are Card 
 | Source X-button in Equalizer/Combined, hidden in Coherence | `chat-card4.html` | Any card with breakdown panels |
 | HTML system prompt instruction (Claude outputs valid HTML, not markdown) | `chat.py` → `GovernmentStakeholder` | `chat.py` → `DataAnalyst` (Card 5) — propagated 2026-04-26 |
 | `renderMarkdown()` fallback in frontend | `chat-card5.html` | Safety net — primary rendering path is Claude HTML output direct |
+| `firstChunk` flag — placeholder text persists until first stream token | `chat-card5.html` | All card frontends that show loading state |
+| `createContextualFragment` fetch injection — scripts execute inside fetched HTML | `torq-header.html` wiring | All card header fetch patterns |
+| Universal header (`torq-header.html`) — single file, all 5 cards | `torq-header.html` | Cards 1–5 — wired 2026-04-27 |
 
 ### CARD 4 IRON LAW (Precisecemented 2026-04-26)
 
@@ -684,6 +688,9 @@ All improvements flow: Card 4 → read → duplicate → apply to target card. N
 | Audience label | Member / Provider | Plan Admin / Analyst |
 | Display dimensions | Member-facing KPIs | Operational KPIs |
 | Session ID key | `umid` / `upid` | `whup_id` / `ubada_id` |
+| Header title | "TORQ-e Member Portal" / "TORQ-e Provider Claims Portal" | "TORQ-e Plan Network Management" / "TORQ-e Analyst Workbench" |
+| Header doc group | `123` → `documentation-card1-3.html` | `45` → `documentation-card4-5.html` |
+| Header codename (far right) | UMID / UPID | WHUP / UBADA |
 
 ### Engineering Rule
 
