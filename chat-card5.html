@@ -441,8 +441,7 @@
         function renderMarkdown(text) {
             // Tables
             text = text.replace(/^\|(.+)\|$/gm, function(match) { return match; });
-            const tableRegex = /((?:^\|.+\|
-)+)/gm;
+            const tableRegex = /((?:^\|.+\|\r?\n)+)/gm;
             text = text.replace(tableRegex, function(block) {
                 const rows = block.trim().split('\n');
                 let html = '<table class="md-table">';
