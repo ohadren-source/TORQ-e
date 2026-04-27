@@ -404,7 +404,11 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script>
+        const md = window.markdownit({ html: false, linkify: true, typographer: true });
+
         const username = sessionStorage.getItem('username') || 'Member';
         const _userNameEl = document.getElementById('userName');
         if (_userNameEl) _userNameEl.textContent = username;
@@ -534,7 +538,7 @@
                                 if (data.text) {
                                     if (firstChunk) { bubble.textContent = ''; firstChunk = false; }
                                     fullText += data.text;
-                                    bubble.innerHTML = fullText;
+                                    bubble.textContent = fullText;
                                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
                                 }
                             } catch(e) {}
@@ -547,7 +551,13 @@
                         if (data.text) fullText += data.text;
                     } catch(e) {}
                 }
-                bubble.innerHTML = fullText || 'No response received.';
+                // End-of-stream: render markdown to HTML, sanitize. Silicon copy of Card 5.
+                if (fullText) {
+                    const isHtml = /<[a-z][\s\S]*>/i.test(fullText);
+                    bubble.innerHTML = DOMPurify.sanitize(isHtml ? fullText : md.render(fullText));
+                } else {
+                    bubble.textContent = 'No response received.';
+                }
 
             } catch (error) {
                 bubble.textContent = 'Error: ' + error.message;
