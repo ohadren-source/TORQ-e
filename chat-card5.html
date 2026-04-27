@@ -421,15 +421,17 @@
         async function sendMessage() {
             const message = inputText.value.trim();
             if (!message) return;
+
             addMessage(message, 'user');
             inputText.value = '';
             inputText.style.height = 'auto';
             sendBtn.disabled = true;
+
             try {
                 const response = await processAnalystQuery(message);
                 addMessage(response, 'assistant');
             } catch (error) {
-                addMessage('Error: ' + error.message, 'assistant');
+                addMessage(`Error: ${error.message}. Is the Card 5 API running?`, 'assistant');
             } finally {
                 sendBtn.disabled = false;
                 inputText.focus();
@@ -716,7 +718,6 @@
         }
 
         async function elaborateAnalystInline(query) {
-            sendBtn.disabled = true;
             const thinkingId = 'thinking-' + Date.now();
             const thinkingDiv = document.createElement('div');
             thinkingDiv.className = 'message assistant';
@@ -767,12 +768,10 @@
                 }
 
                 document.getElementById(thinkingId).remove();
-                sendBtn.disabled = false;
                 return fullText || '<strong>&#x26A0;</strong> Claude completed but returned no text.';
 
             } catch (error) {
                 document.getElementById(thinkingId).remove();
-                sendBtn.disabled = false;
                 return '<strong>&#x26A0; Error</strong><br>' + error.message;
             }
         }
