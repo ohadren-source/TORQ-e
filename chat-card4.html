@@ -709,13 +709,11 @@
 
     <script>
         // Load standardized header
-        fetch('card4-5-header.html')
+        fetch('/torq-header.html')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('header-container').innerHTML = html;
-                const username = sessionStorage.getItem('username') || 'Analyst';
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) userNameEl.textContent = username;
+                initTorqHeader();
             })
             .catch(error => console.log('Header not found (development mode):', error));
 

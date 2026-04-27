@@ -1,0 +1,292 @@
+<!--
+TORQ-e Universal Header — all 5 cards
+Fetch-inject into any card via:
+
+    <div id="header-container"></div>
+    <script>
+        fetch('/torq-header.html')
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+                initTorqHeader();
+            });
+    </script>
+
+The header reads card number from the URL automatically.
+User ID is read from sessionStorage key 'torqUserId'.
+-->
+
+<style>
+    .torq-header {
+        background: linear-gradient(135deg, #2d6a4f 0%, #1e5631 100%);
+        color: white;
+        padding: 0 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        min-height: 64px;
+    }
+
+    /* LEFT: home + globe + title block */
+    .torq-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 10px 0;
+    }
+
+    .torq-home-btn {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .torq-home-btn:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .torq-globe {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        opacity: 0.92;
+    }
+
+    .torq-title-block {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .torq-title-block .torq-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: white;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .torq-title-block .torq-subtitle {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.72);
+        font-weight: 400;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    /* CENTER-RIGHT: nav links */
+    .torq-header-nav {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0 24px;
+    }
+
+    .torq-header-nav a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 14px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .torq-header-nav a:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.14);
+    }
+
+    .torq-header-nav a.torq-active {
+        color: #74c69d;
+        border-bottom: 2px solid #74c69d;
+        padding-bottom: 6px;
+    }
+
+    /* Help dropdown */
+    .torq-help-wrap {
+        position: relative;
+    }
+
+    .torq-help-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: white;
+        color: #333;
+        border-radius: 6px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+        min-width: 210px;
+        z-index: 200;
+        overflow: hidden;
+    }
+
+    .torq-help-menu a {
+        display: block;
+        padding: 12px 16px;
+        color: #333 !important;
+        text-decoration: none;
+        font-size: 13px;
+        border-bottom: 1px solid #eee;
+        transition: background 0.15s;
+    }
+
+    .torq-help-menu a:last-child { border-bottom: none; }
+    .torq-help-menu a:hover { background: #f5f5f5; }
+
+    /* FAR RIGHT: user identity */
+    .torq-header-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 8px 0;
+    }
+
+    .torq-user-id {
+        font-size: 13px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 0.3px;
+    }
+
+    .torq-card-label {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.65);
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+        .torq-header {
+            flex-wrap: wrap;
+            padding: 10px 16px;
+            gap: 8px;
+        }
+        .torq-header-nav {
+            order: 3;
+            width: 100%;
+            margin: 0;
+            flex-wrap: wrap;
+        }
+        .torq-title-block .torq-subtitle { display: none; }
+    }
+</style>
+
+<header class="torq-header">
+
+    <!-- LEFT -->
+    <div class="torq-header-left">
+        <a href="/" class="torq-home-btn">← Home</a>
+        <img src="/static/branding/logo/TdST.png" alt="TORQ-e" class="torq-globe">
+        <div class="torq-title-block">
+            <span class="torq-title"  id="torq-card-title">TORQ-e</span>
+            <span class="torq-subtitle" id="torq-card-subtitle"></span>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="torq-header-nav" id="torq-nav">
+        <a href="#" id="torq-nav-tutorial">Tutorial</a>
+        <a href="#" id="torq-nav-docs">Documentation</a>
+        <a href="#" id="torq-nav-faq">FAQ</a>
+        <div class="torq-help-wrap">
+            <a href="#" id="torq-nav-help" onclick="torqToggleHelp(event)">Help ▼</a>
+            <div class="torq-help-menu" id="torq-help-menu">
+                <a href="mailto:support@torq-e.health">📧 Email Support</a>
+                <a href="#" onclick="alert('Chat support coming soon'); return false;">💬 Chat Support</a>
+                <a href="#" id="torq-help-troubleshoot">🔧 Troubleshooting</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- RIGHT -->
+    <div class="torq-header-right">
+        <span class="torq-user-id"  id="torq-user-id">[USER_ID]</span>
+        <span class="torq-card-label" id="torq-card-label">Card —</span>
+    </div>
+
+</header>
+
+<script>
+(function() {
+    // ── Card registry ─────────────────────────────────────────────────────────
+    var CARDS = {
+        1: { title: 'TORQ-e Member Portal',                     subtitle: 'Check coverage, recertification & benefits',                        code: 'UMID',  group: '123' },
+        2: { title: 'TORQ-e Provider Claims Portal',            subtitle: 'Submit claims, validate coverage & detect inauthenticity',           code: 'UPID',  group: '123' },
+        3: { title: 'TORQ-e Plan Network Management',           subtitle: 'Manage provider networks and plan operations',                       code: 'WHUP',  group: '123' },
+        4: { title: 'TORQ-e Government Stakeholder Operations', subtitle: 'Compliance monitoring, performance metrics & regulatory reporting',   code: 'USHI',  group: '45'  },
+        5: { title: 'TORQ-e Analyst Workbench',                 subtitle: 'Authenticity investigation, data quality & pattern analysis',        code: 'UBADA', group: '45'  }
+    };
+
+    // Doc/tutorial/faq links per group
+    var DOC_LINKS = {
+        '123': { tutorial: 'tutorial-card1.html',   docs: 'documentation-card1-3.html', faq: 'faq-card1-3.html',   trouble: 'documentation-card1-3.html#troubleshooting' },
+        '45':  { tutorial: 'tutorial-card4-5.html', docs: 'documentation-card4-5.html', faq: 'faq-card4-5.html',   trouble: 'documentation-card4-5.html#troubleshooting'  }
+    };
+
+    window.initTorqHeader = function() {
+        // Detect card number from pathname (chat-card1.html, tutorial-card3.html, etc.)
+        var match = window.location.pathname.match(/card(\d)/);
+        var cardNum = match ? parseInt(match[1], 10) : null;
+        var card = cardNum ? CARDS[cardNum] : null;
+
+        // Populate title + subtitle
+        if (card) {
+            document.getElementById('torq-card-title').textContent   = card.title;
+            document.getElementById('torq-card-subtitle').textContent = card.subtitle;
+            document.getElementById('torq-card-label').textContent    = 'Card ' + cardNum + ': ' + card.code;
+
+            // Wire nav links
+            var links = DOC_LINKS[card.group];
+            document.getElementById('torq-nav-tutorial').href = links.tutorial;
+            document.getElementById('torq-nav-docs').href     = links.docs;
+            document.getElementById('torq-nav-faq').href      = links.faq;
+            document.getElementById('torq-help-troubleshoot').href = links.trouble;
+
+            // Highlight active page
+            var page = window.location.pathname.split('/').pop().replace('.html', '');
+            ['torq-nav-tutorial','torq-nav-docs','torq-nav-faq'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el && el.href && el.href.includes(page)) el.classList.add('torq-active');
+            });
+        }
+
+        // User ID from sessionStorage
+        var userId = sessionStorage.getItem('torqUserId') || sessionStorage.getItem('userId') || '[USER_ID]';
+        document.getElementById('torq-user-id').textContent = userId;
+    };
+
+    window.torqToggleHelp = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var menu = document.getElementById('torq-help-menu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+
+    // Close help menu on outside click
+    document.addEventListener('click', function(e) {
+        var menu = document.getElementById('torq-help-menu');
+        if (menu && !menu.contains(e.target) && e.target.id !== 'torq-nav-help') {
+            menu.style.display = 'none';
+        }
+    });
+})();
+</script>

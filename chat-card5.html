@@ -386,13 +386,11 @@
     <script>
         const md = window.markdownit({ html: false, linkify: true, typographer: true });
 
-        fetch('card4-5-header.html')
+        fetch('/torq-header.html')
             .then(r => r.text())
             .then(html => {
                 document.getElementById('header-container').innerHTML = html;
-                const username = sessionStorage.getItem('username') || 'Analyst';
-                const userNameEl = document.getElementById('userName');
-                if (userNameEl) userNameEl.textContent = username;
+                initTorqHeader();
             })
             .catch(e => console.log('Header not found:', e));
 

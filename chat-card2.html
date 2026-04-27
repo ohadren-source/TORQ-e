@@ -419,20 +419,16 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <a href="landing.html" class="home-link">← Home</a>
-        <div class="header-left">
-            <img src="/static/branding/logo/TdST.png" alt="TORQ-e Logo" class="logo">
-            <div>
-                <h1>TORQ-e Provider Claims Portal</h1>
-                <p>Manage claims, verify enrollment, and detect authenticity patterns</p>
-            </div>
-        </div>
-        <div class="header-right">
-            <strong id="userName">Welcome</strong>
-            <small>Card 2: UPID</small>
-        </div>
-    </div>
+    <div id="header-container"></div>
+    <script>
+        fetch('/torq-header.html')
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById('header-container').innerHTML = html;
+                initTorqHeader();
+            })
+            .catch(e => console.log('Header not found:', e));
+    </script>
 
     <div class="chat-container">
         <div class="messages" id="messages">
