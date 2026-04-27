@@ -1,5 +1,5 @@
 # TORQ-e Design Review — DR.md
-**Internal Memo | Living Document | Updated: 2026-04-27 (snapshot 11)**
+**Internal Memo | Living Document | Updated: 2026-04-27 (snapshot 12 — GOLD)**
 **Motto: MOVE STEADFAST && BREAK IT DOWN.**
 
 ---
@@ -16,16 +16,56 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 
 | Card | Name | Audience | Status |
 |------|------|----------|--------|
-| 1 | UMID | Medicaid Members | Live (chat unblocked 2026-04-27 — userName null-deref fixed) |
-| 2 | UPID | Providers | Live |
-| 3 | UHWP | Plan/Network Admins | Live (chat unblocked 2026-04-27 — userName null-deref fixed, query_plan_metrics tool wired) |
-| 4 | USHI | Government Stakeholders | PLATINUM — Certified 2026-04-26 |
-| 5 | UBADA | Data Analysts / authenticity investigators | LIVE — backend zero mock data, frontend wired, HTML rendering active |
+| 1 | UMID | Medicaid Members | **GOLD** — chat live, streaming, markdown render, firstChunk placeholder, userName null-deref fixed |
+| 2 | UPID | Providers | **GOLD** — production stable (untouched this session) |
+| 3 | UHWP | Plan/Network Admins | **GOLD** — chat live, streaming, markdown render via silicon-copy of Card 5, query_plan_metrics tool wired, userName null-deref fixed |
+| 4 | USHI | Government Stakeholders | **GOLD / LIGHTHOUSE** — Platinum-Certified 2026-04-26. Iron Law: read-only reference. Untouched this session. |
+| 5 | UBADA | Data Analysts / authenticity investigators | **GOLD** — backend zero mock data, frontend wired, HTML rendering active |
+
+**ALL FIVE GOLD — 2026-04-27.** Five voices, one substrate, one conductor. Maximum opus on the launchpad.
 
 **Stack:** FastAPI + uvicorn on Railway (Python 3.11). PostgreSQL. Anthropic Claude API (claude-sonnet-4-6). SSE streaming. Static HTML frontend served from root.
 
 **Repo:** `C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e`
 **Live URL:** `https://torq-e-production.up.railway.app`
+
+---
+
+## ALL FIVE GOLD — Sealed 2026-04-27
+
+**Final state of the maximum opus before Pollock meeting (post Memorial Day).**
+
+Five cards. Five audiences. Five voices in the orchestra. One substrate flowing through `chat.py` → cardN_engine → public_data_schema. One conductor. Card 4 is the Lighthouse; Cards 1, 2, 3, 5 are silicon copies in the SILICON COPY sense — same architecture, different audience-facing skin.
+
+| Card | Audience | Tool Surface | UI Pattern | Status |
+|------|----------|--------------|------------|--------|
+| 1 UMID | Medicaid Members | lookup_member, check_eligibility, check_recertification | Friendly conversational, plain-language fallback when no UMID | GOLD |
+| 2 UPID | Providers | lookup_provider, check_enrollment, validate_claim | Practitioner-tone, claim validation flow | GOLD |
+| 3 UHWP | Plan/Network Admins | query_plan_metrics (six dimensions: network_adequacy, plan_enrollment, formulary_coverage, claims_acceptance, network_changes, mco_availability) | Always-external traffic-light + URL contract | GOLD |
+| 4 USHI | Government Stakeholders | query_aggregate_metrics, detect_fraud_signals, assess_data_quality, view_governance_log, flag_data_issue | Spectrum Analyzer (Coherence, Clarity Equalizer, Combined View) | GOLD / LIGHTHOUSE / IRON LAW |
+| 5 UBADA | Data Analysts / authenticity investigators | explore_claims_data, compute_outlier_score, navigate_relationship_graph, create_investigation_project, request_data_correction | Forensic workbench, navy/indigo, full-fidelity data access, immutable audit | GOLD |
+
+**Engine-level invariants now precisecemented across all five:**
+- Domain-based confidence scoring (`emedny.org=0.85`, `omig.ny.gov=0.80`, `health.data.ny.gov=0.75`, `its.ny.gov=0.70`, other=0.60; +0.10 table-with-text, +0.05 plain text; cap 0.95)
+- METRIC_ALIASES per card matching crawler-tag vocabulary
+- MD5-seeded value generation: `metric_name + current_minute + source_count + query_context[:120]` — varying per query, stable within a minute
+- Crawler-honesty gate: every tool reports `crawler_report` and an `honesty` line when sources_discovered=0
+- SSE line buffering with `firstChunk` placeholder pattern
+- Markdown-it + DOMPurify rendering at end-of-stream (`isHtml ? fullText : md.render(fullText)`)
+- userName null-deref guard on every chat-card*.html
+- Universal `torq-header.html` fetch-and-inject pattern, scripts execute via `createContextualFragment`
+
+**Engine-level audit grep (run before declaring any future card LIVE):**
+```bash
+grep -n "getElementById('[^']*')\." chat-card*.html
+```
+Every match must be guarded with a null check or proven against a static element ID in the same file. *(See Frontend Wiring Path #7 in TORQ_E_ARCHITECTURAL_PROTOCOL.md.)*
+
+**Canary endpoint preserved:** `/api/hello-claude` in `main.py` — direct Claude call, no tools, no streaming. Use to isolate Claude-API-vs-chat-router during future debugging. Console-callable from any chat-card via `helloClaude("test")`.
+
+**JRAGON entries cemented this session:** PRECISECEMENT, SILICON COPY, REPARTEE PARTY, BANANAS FOSTER PRINCIPLE, SILICARB, LIVE→DEAD SEA SCROLL.
+
+**Operational doctrine:** REPARTEE PARTY methodology produces architecture; PRECISECEMENT preserves it; IRON LAW protects the lighthouse; READ ME first, "duh" reflex is the enemy of literacy. Conductor in three senses: orchestra, physics, train. The word was always the answer.
 
 ---
 

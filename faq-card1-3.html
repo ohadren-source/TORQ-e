@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-e Cards 1, 2 & 3 FAQ</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 32px; margin-bottom: 8px; color: #2d6a4f; }
+        .subtitle { color: #666; margin-bottom: 24px; font-size: 14px; }
+        .search-box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .search-box input { width: 100%; padding: 12px 16px; font-size: 14px; border: 2px solid #e0e0e0; border-radius: 4px; transition: border-color 0.2s; }
+        .search-box input:focus { outline: none; border-color: #2d6a4f; }
+        .search-results { font-size: 13px; color: #666; margin-top: 8px; }
+        .faq-category { background: white; padding: 24px; margin-bottom: 20px; border-radius: 8px; border-left: 4px solid #2d6a4f; }
+        .faq-category h2 { font-size: 18px; color: #2d6a4f; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; }
+        details { margin-bottom: 12px; padding: 12px; background: #f9f9f9; border-radius: 4px; cursor: pointer; }
+        details[open] { background: #fff; border: 1px solid #2d6a4f; }
+        summary { font-weight: 600; color: #2d6a4f; padding: 4px 0; }
+        details p { margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; line-height: 1.6; color: #444; }
+        .card-tag { display: inline-block; padding: 2px 8px; margin-left: 8px; font-size: 11px; font-weight: 600; border-radius: 3px; vertical-align: middle; }
+        .card-tag.c1 { background: #d4edda; color: #155724; }
+        .card-tag.c2 { background: #d1ecf1; color: #0c5460; }
+        .card-tag.c3 { background: #fff3cd; color: #856404; }
+        .no-results { text-align: center; padding: 40px 20px; color: #999; }
+        footer { text-align: center; padding: 40px 20px; color: #999; font-size: 13px; }
+        #header-container { min-height: 60px; }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <script>
+        fetch('/torq-header.html')
+            .then(r => r.text())
+            .then(html => {
+                const container = document.getElementById('header-container');
+                const frag = document.createRange().createContextualFragment(html);
+                container.appendChild(frag);
+                if (typeof initTorqHeader === 'function') initTorqHeader();
+            })
+            .catch(e => console.log('Header not found:', e));
+    </script>
+
+    <div class="container">
+        <h1>TORQ-e Cards 1, 2 &amp; 3 FAQ</h1>
+        <p class="subtitle">Member, Provider, and Plan Administrator — searchable answers</p>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search FAQ... (e.g., 'recertification', 'NPI', 'network adequacy')">
+            <div class="search-results"><span id="result-count"></span></div>
+        </div>
+
+        <div id="faq-container"></div>
+        <div id="no-results" class="no-results" style="display: none;">
+            <p>No FAQ items match your search. Try different keywords or contact support.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>TORQ-e v1.0 | FAQ last updated 2026-04-27 | Cards 1 (UMID), 2 (UPID), 3 (UHWP)</p>
+    </footer>
+
+    <script>
+        const faqData = [
+            {
+                category: "Cards 1, 2 &amp; 3 — Who Uses What",
+                items: [
+                    { card: 'c1', q: "What is Card 1 (UMID) for?", a: "Card 1 is the Member Portal. Medicaid members use it to check eligibility, see recertification deadlines, report income changes, and upload supporting documents. UMID = Universal Member ID, the identifier that follows a member across every state and federal system." },
+                    { card: 'c2', q: "What is Card 2 (UPID) for?", a: "Card 2 is the Provider Portal. Providers use it to look up their enrollment status, check MCO panel affiliations, validate claims before submission, and route claims to the correct payer. UPID = Universal Provider ID." },
+                    { card: 'c3', q: "What is Card 3 (UHWP) for?", a: "Card 3 is the Plan/Network Administrator Dashboard. Plan admins use it to monitor network adequacy, plan enrollment trends, formulary coverage, claims acceptance rates, network changes, and MCO availability across regions. UHWP = Universal Health &amp; Wellness Program tracking." },
+                    { card: 'c1', q: "Can one person use multiple cards?", a: "Your role determines your access. A member sees Card 1. A provider sees Card 2. A plan admin sees Card 3. If you need access to multiple cards (e.g., a provider who also administers a plan), contact your administrator." }
+                ]
+            },
+            {
+                category: "Card 1 — Members",
+                items: [
+                    { card: 'c1', q: "How often does Medicaid check my eligibility?", a: "Annual recertification (every 12 months) is the regular cycle. You'll get a notice 60–90 days before your renewal date. The state may also check between cycles if your income changes (via SSA/IRS data matching), if you report a life change, or if you sign up for related benefits like SNAP or CHIP." },
+                    { card: 'c1', q: "What's my UMID and how do I find it?", a: "Your UMID is on your Medicaid card or any letter from the state. It's the unique identifier that follows you across every Medicaid-related system in New York and federally. Card 1 uses your UMID to look up your eligibility, coverage dates, and recertification deadline." },
+                    { card: 'c1', q: "What if my income changes?", a: "Report income changes promptly via Card 1's chat or call 1-800-541-2831. Medicaid is required to give you at least 10 days' notice before reducing or ending benefits, so reporting early protects your coverage continuity." },
+                    { card: 'c1', q: "Why does Card 1 sometimes say 'system having trouble pulling your account'?", a: "When you visit Card 1 without being logged in (no UMID in session), the personalized lookup can't run. The chat falls back to general guidance. To get account-specific answers, log in via Card 1's home page." }
+                ]
+            },
+            {
+                category: "Card 2 — Providers",
+                items: [
+                    { card: 'c2', q: "What's an NPI and why does Card 2 ask for it?", a: "NPI = National Provider Identifier, a 10-digit number CMS issues to every healthcare provider. Card 2 uses your NPI to look up your enrollment in NY Medicaid (FFS via eMedNY) and your panel affiliations with each MCO." },
+                    { card: 'c2', q: "I'm enrolled in eMedNY but not seeing claims pay — why?", a: "Card 2's claim validator checks for the most common causes: wrong claim portal (FFS vs MCO), missing prior authorization, NPI/Tax ID mismatch, expired credentialing, or invalid procedure/diagnosis code. Use validate_claim before submission to catch these before they're rejected." },
+                    { card: 'c2', q: "How do I know which payer to submit a claim to?", a: "Ask Card 2 for your enrollment status — it returns FFS status plus every MCO panel where you're active. Submit Medicaid managed-care claims to the MCO; submit fee-for-service claims to eMedNY." },
+                    { card: 'c2', q: "What does the confidence score on a provider lookup mean?", a: "Card 2 returns a confidence score (0.0–1.0) reflecting how solid the underlying data is. 0.90+ = credentials valid, FFS active, multiple MCO panels confirmed. 0.50 or below = something's stale or conflicting; check the caveats field." }
+                ]
+            },
+            {
+                category: "Card 3 — Plan / Network Administrators",
+                items: [
+                    { card: 'c3', q: "Why does Card 3 always show traffic-light + URL?", a: "Plan administrative data is always external to NY state systems — it lives in MCO systems, plan databases, and federal registries. Card 3's contract is to render every claim with a confidence light (🟢/🟡/🔴) and a live URL the user can click to verify. Internal-vs-external transparency is the rule." },
+                    { card: 'c3', q: "What are the six dimensions Card 3 tracks?", a: "Network Adequacy, Plan Enrollment, Formulary Coverage, Claims Acceptance, Network Changes, MCO Availability. The dashboard pulls each from public repositories (eMedNY, health.data.ny.gov, OMIG, ITS) and scores them with confidence based on source domain plus data freshness." },
+                    { card: 'c3', q: "Why are some metrics yellow even when sources look fine?", a: "Yellow means 50–64% confidence — the signal is partial. Either the source is older, the metric extraction is inferred from related data, or fewer than expected sources matched. Yellow doesn't mean broken; it means 'review before reporting.'" },
+                    { card: 'c3', q: "Can Card 3 show MCO-specific data?", a: "Yes — ask for a specific MCO by name and Card 3 will filter the sources. The query engine searches discovered sources by description and URL keyword. If the MCO isn't represented in the public repositories, Card 3 will report that honestly rather than fabricate." }
+                ]
+            },
+            {
+                category: "Data Sources &amp; Confidence",
+                items: [
+                    { card: 'c1', q: "Where does TORQ-e get its data?", a: "Cards 1, 2, 3 query real public repositories: eMedNY (provider enrollment + claims), health.data.ny.gov (plan data), OMIG (audit/compliance/PERM), ITS (system stability), plus federal sources (CMS NPPES, SSA, IRS). No mock data. Every claim cites a live URL." },
+                    { card: 'c1', q: "What does the confidence score actually mean?", a: "Confidence is a domain-based score: emedny.org 0.85, omig.ny.gov 0.80, health.data.ny.gov 0.75, its.ny.gov 0.70, other 0.60 — with bonuses for structured tables (+0.10) or extracted text (+0.05). Cap is 0.95. Higher score = more authoritative source for this claim." },
+                    { card: 'c1', q: "What does 'crawler honesty' mean in TORQ-e responses?", a: "If the background crawler hasn't found data for a metric, the system says so plainly — it doesn't fabricate. Honesty fields name where the gap is (\"the issue is in the crawler, not in query logic\") so you know when to retry vs. when to escalate." }
+                ]
+            },
+            {
+                category: "Privacy &amp; HIPAA",
+                items: [
+                    { card: 'c1', q: "Is my data secure?", a: "Yes. All requests use TLS 1.3. Member PII (SSN, DOB, address) is never logged in plain text. Cards 1 and 2 use minimum-necessary principle — they only fetch the fields needed to answer your question. Card 3 is aggregate-only at the plan level (no individual member records)." },
+                    { card: 'c1', q: "Can other people see my chat history?", a: "Your chat sessions on Card 1 are tied to your session only. Conversation history is not shared with other members. Internal audit logs record that a query happened (for HIPAA-required logging) but not the contents of personal questions." },
+                    { card: 'c2', q: "Why does Card 2 sometimes ask me to escalate to Card 5?", a: "Card 5 (UBADA) is for forensic investigation of suspected inauthentic billing patterns. If Card 2 sees a signal worth investigating, it recommends escalation rather than making a determination itself. Cards 2 and 3 don't make fraud calls — they flag." }
+                ]
+            },
+            {
+                category: "Troubleshooting",
+                items: [
+                    { card: 'c1', q: "The chat button does nothing when I click it.", a: "Try a hard refresh (Ctrl+Shift+R or Cmd+Shift+R). If the button is grayed out, type a character first to enable it. If it stays unresponsive, the page may be loading from cache — try in a private/incognito window." },
+                    { card: 'c1', q: "I see 'Considering Available Data...' for a long time and then nothing.", a: "Background crawler may still be initializing (takes ~30s after deploy). Wait a moment and ask again. If the issue persists after a minute, the Anthropic API may be having a hiccup — try again or contact support." },
+                    { card: 'c1', q: "The response shows raw markdown like **bold** or | tables |.", a: "This means the markdown renderer didn't load. Hard refresh to fetch the markdown-it CDN. If the issue persists in incognito, contact support — markdown-it should always load." },
+                    { card: 'c1', q: "I'm seeing weird placeholder text like 'Welcome back, UMID' or 'I recognize your UMID: UMID'.", a: "This is a session-data artifact from a test login. Clear your browser's session storage for this domain, or visit Card 1 in incognito mode for a clean session." }
+                ]
+            }
+        ];
+
+        function renderFaq(filter = '') {
+            const container = document.getElementById('faq-container');
+            const noResults = document.getElementById('no-results');
+            const resultCount = document.getElementById('result-count');
+            container.innerHTML = '';
+            const lowerFilter = filter.toLowerCase().trim();
+            let totalShown = 0;
+
+            faqData.forEach(cat => {
+                const matchingItems = cat.items.filter(item => {
+                    if (!lowerFilter) return true;
+                    return (item.q + ' ' + item.a).toLowerCase().includes(lowerFilter);
+                });
+                if (matchingItems.length === 0) return;
+
+                const catDiv = document.createElement('div');
+                catDiv.className = 'faq-category';
+                catDiv.innerHTML = `<h2>${cat.category}</h2>` + matchingItems.map(it => `
+                    <details>
+                        <summary>${it.q}<span class="card-tag ${it.card}">${it.card.toUpperCase()}</span></summary>
+                        <p>${it.a}</p>
+                    </details>
+                `).join('');
+                container.appendChild(catDiv);
+                totalShown += matchingItems.length;
+            });
+
+            if (totalShown === 0 && lowerFilter) {
+                noResults.style.display = 'block';
+                resultCount.textContent = 'No matches';
+            } else {
+                noResults.style.display = 'none';
+                resultCount.textContent = lowerFilter ? `${totalShown} match${totalShown === 1 ? '' : 'es'}` : '';
+            }
+        }
+
+        document.getElementById('search-input').addEventListener('input', e => renderFaq(e.target.value));
+        renderFaq();
+    </script>
+</body>
+</html>

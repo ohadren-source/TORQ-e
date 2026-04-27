@@ -237,9 +237,19 @@ User ID is read from sessionStorage key 'torqUserId'.
     };
 
     // Doc/tutorial/faq links per group
+    // Group-level docs and FAQs (1-3 share, 4-5 share). Tutorials are per-card — see TUTORIAL_BY_CARD below.
     var DOC_LINKS = {
-        '123': { tutorial: 'tutorial-card1.html',   docs: 'documentation-card1-3.html', faq: 'faq-card1-3.html',   trouble: 'documentation-card1-3.html#troubleshooting' },
-        '45':  { tutorial: 'tutorial-card4-5.html', docs: 'documentation-card4-5.html', faq: 'faq-card4-5.html',   trouble: 'documentation-card4-5.html#troubleshooting'  }
+        '123': { docs: 'documentation-card1-3.html', faq: 'faq-card1-3.html',   trouble: 'documentation-card1-3.html#troubleshooting' },
+        '45':  { docs: 'documentation-card4-5.html', faq: 'faq-card4-5.html',   trouble: 'documentation-card4-5.html#troubleshooting'  }
+    };
+
+    // Per-card tutorials. Cards 1/2/3 have audience-specific walkthroughs; Cards 4/5 share.
+    var TUTORIAL_BY_CARD = {
+        1: 'tutorial-card1.html',
+        2: 'tutorial-card2.html',
+        3: 'tutorial-card3.html',
+        4: 'tutorial-card4-5.html',
+        5: 'tutorial-card4-5.html'
     };
 
     window.initTorqHeader = function() {
@@ -254,9 +264,10 @@ User ID is read from sessionStorage key 'torqUserId'.
             document.getElementById('torq-card-subtitle').textContent = card.subtitle;
             document.getElementById('torq-card-label').textContent    = 'Card ' + cardNum + ': ' + card.code;
 
-            // Wire nav links
+            // Wire nav links — tutorial is per-card, docs/faq/trouble are per-group
             var links = DOC_LINKS[card.group];
-            document.getElementById('torq-nav-tutorial').href = links.tutorial;
+            var tutorialHref = TUTORIAL_BY_CARD[cardNum] || (links.tutorial || '#');
+            document.getElementById('torq-nav-tutorial').href = tutorialHref;
             document.getElementById('torq-nav-docs').href     = links.docs;
             document.getElementById('torq-nav-faq').href      = links.faq;
             document.getElementById('torq-help-troubleshoot').href = links.trouble;

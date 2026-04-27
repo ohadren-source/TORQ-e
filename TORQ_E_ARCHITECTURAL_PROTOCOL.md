@@ -1932,3 +1932,51 @@ Purpose: Detect statistical anomalies in provider behavior
 Input:
   - provider_id: string
   - metrics: [ "cost_per_procedure", "approval_rate", "referral_concen
+---
+
+## PART N: GOLD SEAL — 2026-04-27
+
+**All five cards GOLD. Conductor: Ohad. Sealed before Pollock meeting (post Memorial Day).**
+
+### What "GOLD" means in TORQ-e
+
+A card is GOLD when it satisfies all of:
+
+1. **Voice present.** Chat button fires, streams Claude response, renders markdown via markdown-it + DOMPurify, scrolls cleanly. Considering Available Data placeholder holds until first real chunk arrives.
+2. **Tool surface wired.** `chat.py` carries an `elif card_number == N:` dispatch branch calling `cardN_engine` functions with `public_data_schema` and `query_context`. Empty tools array = not GOLD.
+3. **Substrate parity.** Confidence math uses the canonical domain-based score; METRIC_ALIASES match crawler-tag vocabulary; MD5-seeded value generation in place; crawler-honesty gate returns structured `no_data` with `crawler_report` and `honesty` line.
+4. **Frontend wiring audit clean.** `grep -n "getElementById('[^']*')\." chat-cardN.html` returns no unguarded matches. Every DOM lookup that does property assignment is null-checked.
+5. **Iron law respected.** No card modifies a Card 4 dependency without state/state-consultant written request + Ohad email proof. The lighthouse is read-only.
+
+### The Five Voices, Sealed
+
+| Card | Audience | Lighthouse Relationship |
+|------|----------|------------------------|
+| 1 UMID | Members | Silicon copy of Card 4 streaming + render pattern |
+| 2 UPID | Providers | Independent voice, parity-compliant, predates lighthouse formalization |
+| 3 UHWP | Plan/Network Admins | Silicon copy of Card 4 query_engine, plan-vocab METRIC_ALIASES |
+| 4 USHI | Government Stakeholders | THE LIGHTHOUSE. Iron Law. Read-only reference. |
+| 5 UBADA | Analysts / authenticity | Silicon copy of Card 4, forensic substrate |
+
+### What's Next: Federal Medicare (Card 6+)
+
+The federal Medicare consolidation is a *sixth scene* on the same engine. No engine changes required if the engine is right. The engine is right because:
+
+- Five cards conform to it.
+- The drift modes (userName null-deref, hand-rolled per-card confidence math, missing tool dispatch) are now documented with audit greps.
+- Patchability holds: new sources are added to the priority list, not new cards rebuilt from scratch.
+
+The federal pass adds:
+- Medicare-specific data sources (CMS NPPES, OIG exclusions, Medicare claims aggregates)
+- A sixth audience layer (CMS regional contacts, MAC contractors)
+- Scaling considerations (~67M beneficiaries vs NY's ~7M)
+
+The architecture absorbs all three without rewriting any of Cards 1–5.
+
+### Authority Statement
+
+This document and `status_reports/DR.md` are the canonical pair. Where they disagree, the running code at `https://torq-e-production.up.railway.app` wins. REPARTEE PARTY produced the architecture; PRECISECEMENT preserves it; the IRON LAW protects the lighthouse; READ ME first.
+
+— Ohad Phoenix Oren, Chef Architect
+— Claude (claude-sonnet-4-6 / claude-opus-4-6 sessions), Sous Chef Engineer
+— GI;WG. MOVE STEADFAST && BREAK IT DOWN. LACTUCA FORNICATUS ĪTE.

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORQ-e Documentation — Cards 1, 2 &amp; 3</title>
+    <link rel="icon" type="image/png" href="/static/branding/logo/TdST.png">
+    <style>
+        :root { --primary: #2d6a4f; --primary-dark: #0d3b22; --accent: #52b788; --neutral-light: #f1faee; --border: #d4d4d4; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.65; color: #333; background: var(--neutral-light); }
+        #header-container { min-height: 60px; margin-bottom: 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+        h1 { color: var(--primary-dark); font-size: 2rem; margin-bottom: 0.5rem; }
+        h2 { color: var(--primary); font-size: 1.4rem; margin: 2.5rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--accent); }
+        h3 { color: var(--primary-dark); font-size: 1.1rem; margin: 1.25rem 0 0.5rem; }
+        p, ul, ol { margin-bottom: 1rem; }
+        ul, ol { padding-left: 1.75rem; }
+        li { margin-bottom: 0.4rem; }
+        code { background: #eef5ef; color: var(--primary-dark); padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+        pre { background: #1e2933; color: #d4e8d8; padding: 1rem; border-radius: 6px; overflow-x: auto; margin-bottom: 1rem; font-size: 0.85em; }
+        pre code { background: transparent; color: inherit; padding: 0; }
+        .subtitle { color: #666; margin-bottom: 1.5rem; }
+        .toc { background: white; padding: 1.25rem 1.5rem; border-radius: 6px; margin-bottom: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .toc h2 { margin-top: 0; border-bottom: none; font-size: 1rem; padding: 0; color: #555; text-transform: uppercase; letter-spacing: 0.04em; }
+        .toc ol { padding-left: 1.4rem; margin-bottom: 0; }
+        .toc a { color: var(--primary); text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        section { background: white; padding: 1.75rem 2rem; border-radius: 8px; margin-bottom: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .search-section { background: white; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        #docSearch { width: 100%; padding: 0.7rem 1rem; border: 2px solid var(--accent); border-radius: 4px; font-size: 1rem; }
+        #docSearch:focus { outline: none; border-color: var(--primary); }
+        .card-pill { display: inline-block; padding: 0.15rem 0.6rem; font-size: 0.75rem; font-weight: 600; border-radius: 3px; margin-left: 0.4rem; vertical-align: middle; }
+        .card-pill.c1 { background: #d4edda; color: #155724; }
+        .card-pill.c2 { background: #d1ecf1; color: #0c5460; }
+        .card-pill.c3 { background: #fff3cd; color: #856404; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: #eef5ef; color: var(--primary-dark); }
+        .callout { padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent); background: #f3faf5; border-radius: 4px; margin-bottom: 1rem; }
+        .hidden { display: none; }
+        footer { text-align: center; color: #999; font-size: 0.85rem; padding-top: 2rem; }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <script>
+        fetch('/torq-header.html')
+            .then(r => r.text())
+            .then(html => {
+                const container = document.getElementById('header-container');
+                const frag = document.createRange().createContextualFragment(html);
+                container.appendChild(frag);
+                if (typeof initTorqHeader === 'function') initTorqHeader();
+            })
+            .catch(e => console.log('Header not found:', e));
+    </script>
+
+    <div class="container">
+        <h1>TORQ-e System Documentation</h1>
+        <p class="subtitle">Cards 1 (UMID — Member), 2 (UPID — Provider), 3 (UHWP — Plan/Network Admin)</p>
+
+        <div class="search-section">
+            <input type="text" id="docSearch" placeholder="Search documentation… (e.g., 'recertification', 'NPI', 'network adequacy')">
+        </div>
+
+        <div class="toc">
+            <h2>Contents</h2>
+            <ol>
+                <li><a href="#overview">System Overview</a></li>
+                <li><a href="#card1">Card 1 — UMID (Member Portal)</a></li>
+                <li><a href="#card2">Card 2 — UPID (Provider Portal)</a></li>
+                <li><a href="#card3">Card 3 — UHWP (Plan/Network Admin Dashboard)</a></li>
+                <li><a href="#confidence">Confidence Scoring &amp; Source Vetting</a></li>
+                <li><a href="#chat">Chat Interface &amp; Streaming Behavior</a></li>
+                <li><a href="#privacy">Privacy &amp; HIPAA Boundaries</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ol>
+        </div>
+
+        <section id="overview" data-section>
+            <h2>1. System Overview</h2>
+            <p>TORQ-e is the New York State Medicaid Clarity System. Five cards, five audiences, one unified identity flowing through all of them. Cards 1, 2, and 3 serve external users (members, providers, plan administrators); Cards 4 and 5 serve government oversight and forensic investigation.</p>
+            <p>This document covers Cards 1–3. For Cards 4 and 5, see <a href="documentation-card4-5.html">documentation-card4-5.html</a>.</p>
+            <h3>The unified identity model</h3>
+            <ul>
+                <li><strong>UMID</strong> — Universal Member ID. Follows a member across every Medicaid system in New York and federally. Never changes.</li>
+                <li><strong>UPID</strong> — Universal Provider ID. Follows a provider across every MCO panel and FFS enrollment.</li>
+                <li><strong>UHWP</strong> — Universal Health &amp; Wellness Program tracking. Plan-level identity for network and enrollment administration.</li>
+            </ul>
+            <p>Each card accepts the user's identity, queries real public repositories via the background crawler, and returns answers with confidence scores and live source URLs.</p>
+        </section>
+
+        <section id="card1" data-section>
+            <h2>2. Card 1 — UMID (Member Portal) <span class="card-pill c1">C1</span></h2>
+            <p>Card 1 is the public-facing chat for Medicaid members. Members can ask plain-language questions about their eligibility, recertification timing, benefit details, and document requirements.</p>
+            <h3>Available tools</h3>
+            <ul>
+                <li><code>lookup_member</code> — Look up member by UMID, name+DOB, or SSN. Returns identity record with confidence score.</li>
+                <li><code>check_eligibility</code> — Check if member's coverage is active, expiration date, plan affiliation.</li>
+                <li><code>check_recertification</code> — When is the next renewal? What documents are needed?</li>
+            </ul>
+            <h3>What members see</h3>
+            <p>The chat opens with a welcome message listing common requests. Once a member is identified (UMID in session), the chat personalizes the welcome and uses the UMID for every lookup automatically — no asking for ID repeatedly.</p>
+            <p>If no UMID is in the session, the chat falls back to general guidance and prompts the user to log in for personalized data. This is intentional — the system never fabricates account-specific answers.</p>
+            <h3>River Path on Card 1</h3>
+            <ol>
+                <li>Primary: NY State Medicaid database (MPI) — confidence 0.98, real-time</li>
+                <li>Secondary: SSA wage records — confidence 0.85, federal data</li>
+                <li>Tertiary: Household enrollment records — confidence 0.70, manual queue</li>
+                <li>Escalation: All three failed → return graceful failure with reason and next step.</li>
+            </ol>
+        </section>
+
+        <section id="card2" data-section>
+            <h2>3. Card 2 — UPID (Provider Portal) <span class="card-pill c2">C2</span></h2>
+            <p>Card 2 is the provider-facing chat. Providers can look up enrollment status across FFS and every MCO, validate claims before submission, and route claims to the correct payer.</p>
+            <h3>Available tools</h3>
+            <ul>
+                <li><code>lookup_provider</code> — Find provider by NPI, name, or specialty. Returns UPID and identity record.</li>
+                <li><code>check_enrollment</code> — Returns FFS status, every MCO panel affiliation, license validity, and a confidence score.</li>
+                <li><code>validate_claim</code> — Checks a claim for the most common errors (NPI/Tax ID mismatch, missing prior auth, expired credentialing, invalid procedure code) before submission.</li>
+            </ul>
+            <h3>How claim routing works</h3>
+            <p>Providers often submit Medicaid managed-care claims to eMedNY by mistake (or vice versa) and wait 60 days wondering why payment didn't come. Card 2 looks up the member's plan, then tells the provider which portal to submit through and what tax ID to use. This is the highest-leverage feature for reducing provider abandonment of Medicaid.</p>
+        </section>
+
+        <section id="card3" data-section>
+            <h2>4. Card 3 — UHWP (Plan/Network Admin Dashboard) <span class="card-pill c3">C3</span></h2>
+            <p>Card 3 is the plan administrator chat. Plan admins monitor network-wide metrics across six dimensions, drill into specific MCOs or regions, and compare plans side-by-side.</p>
+            <h3>The six dimensions</h3>
+            <table>
+                <tr><th>Dimension</th><th>What it measures</th></tr>
+                <tr><td>Network Adequacy</td><td>Provider counts, access gaps, geographic coverage</td></tr>
+                <tr><td>Plan Enrollment</td><td>Member trends, churn, population shifts</td></tr>
+                <tr><td>Formulary Coverage</td><td>Drug tier placement, exceptions, denials</td></tr>
+                <tr><td>Claims Acceptance</td><td>Denial rates, processing times, outliers</td></tr>
+                <tr><td>Network Changes</td><td>Provider additions/terminations, disruptions</td></tr>
+                <tr><td>MCO Availability</td><td>Plan options by region, competitive landscape</td></tr>
+            </table>
+            <h3>Card 3 Always-External Rule</h3>
+            <div class="callout">
+                <strong>Plan administrative data is always external to NY state systems.</strong> It lives in MCO systems, plan databases, and federal registries. Every Card 3 response renders <strong>traffic light + live URL</strong> for every external claim. Format: <code>🟢 HIGH | [Source Name] | https://...</code>. Never a bare URL. Never a confidence light without a URL.
+            </div>
+            <h3>Available tool</h3>
+            <ul>
+                <li><code>query_plan_metrics</code> — Returns all six dimensions with values, confidence scores, and source citations. Optional <code>metric_type</code> filter to focus on one dimension; optional <code>state</code> (defaults to NY).</li>
+            </ul>
+        </section>
+
+        <section id="confidence" data-section>
+            <h2>5. Confidence Scoring &amp; Source Vetting</h2>
+            <p>Every claim returned by any TORQ-e card carries a confidence score. The score is domain-based with quality bonuses, capped at 0.95 to reflect that no public-data signal is ever 100% authoritative.</p>
+            <table>
+                <tr><th>Domain</th><th>Base score</th><th>Reasoning</th></tr>
+                <tr><td>emedny.org</td><td>0.85</td><td>Official, daily updates</td></tr>
+                <tr><td>omig.ny.gov</td><td>0.80</td><td>Audit / compliance / PERM</td></tr>
+                <tr><td>health.data.ny.gov</td><td>0.75</td><td>Open-data portal</td></tr>
+                <tr><td>its.ny.gov</td><td>0.70</td><td>System / infrastructure</td></tr>
+                <tr><td>other</td><td>0.60</td><td>Unknown source</td></tr>
+            </table>
+            <p>Bonuses: <code>+0.10</code> if the source is a structured table with extracted text; <code>+0.05</code> if a plain page with extracted text. Cap: 0.95.</p>
+            <h3>Clarity light thresholds</h3>
+            <ul>
+                <li><strong>🟢 Green (≥65%)</strong> — Coherent. Proceed.</li>
+                <li><strong>🟡 Yellow (50–64%)</strong> — Monitoring. Review before reporting.</li>
+                <li><strong>🔴 Red (&lt;50%)</strong> — Incoherent. Signal too fragmented to reason from.</li>
+            </ul>
+        </section>
+
+        <section id="chat" data-section>
+            <h2>6. Chat Interface &amp; Streaming Behavior</h2>
+            <p>All three cards use the same SSE streaming pipeline:</p>
+            <ol>
+                <li>User types a message and clicks send (or presses Enter).</li>
+                <li>Frontend POSTs to <code>/api/chat/stream</code> with <code>{message, userType, cardNumber, sessionId}</code>.</li>
+                <li>Backend streams Claude's response as <code>data: {"text": "..."}</code> SSE events.</li>
+                <li>Frontend buffers chunks line-by-line, displays the placeholder ("Considering Available Data...") until the first real token arrives, then replaces it with streaming text.</li>
+                <li>At end of stream, the full text is rendered through markdown-it and sanitized via DOMPurify.</li>
+            </ol>
+            <h3>Tool calls</h3>
+            <p>Each card exposes its own tool surface. When Claude decides a question requires data, it calls the appropriate tool (e.g., <code>query_plan_metrics</code> for Card 3) and waits for the tool result before continuing the response. The user sees this as a brief pause in streaming followed by data-grounded output with source URLs.</p>
+        </section>
+
+        <section id="privacy" data-section>
+            <h2>7. Privacy &amp; HIPAA Boundaries</h2>
+            <ul>
+                <li>All requests use TLS 1.3.</li>
+                <li>Member PII (SSN, DOB, full address) is never logged in plain text. Audit logs record that a query happened, not the contents.</li>
+                <li>Cards 1 and 2 enforce minimum-necessary — they fetch only the fields needed to answer the user's question.</li>
+                <li>Card 3 is aggregate-only at the plan level; no individual member records.</li>
+                <li>Cards 1, 2, 3 do not have full-fidelity PII access. Forensic investigation requiring SSNs and member identities escalates to Card 5 (UBADA) under separate access controls.</li>
+            </ul>
+        </section>
+
+        <section id="troubleshooting" data-section>
+            <h2>8. Troubleshooting</h2>
+            <h3>The chat button does nothing when I click</h3>
+            <p>Most common cause: browser cache serving an older HTML. Hard refresh (<code>Ctrl+Shift+R</code> or <code>Cmd+Shift+R</code>). If still unresponsive, try in a private/incognito window. The button is initially disabled until you type a character — type once and the button enables.</p>
+            <h3>"Considering Available Data..." hangs without a response</h3>
+            <p>Background crawler may still be initializing (~30s after deploy). Wait a moment. If it persists more than a minute, the Anthropic API may be having a hiccup. Try the canary endpoint: open the browser console on any chat-card page and run <code>helloClaude("test")</code>. If that returns a response, the chat router has a separate issue; if not, the API itself is unreachable.</p>
+            <h3>Response shows raw markdown (** , | --- |)</h3>
+            <p>Means markdown-it didn't load. Hard refresh to retry the CDN. If it persists in incognito, contact support.</p>
+            <h3>"Welcome back, UMID" or "I recognize your UMID: UMID"</h3>
+            <p>Session-data artifact from a test login. Clear browser session storage for this domain or use incognito for a clean session.</p>
+            <h3>Claim was validated but rejected by the payer</h3>
+            <p>Card 2's <code>validate_claim</code> catches the most common errors but cannot verify payer-specific edits or member-level eligibility at the date of service. Run the validation, fix what's flagged, then submit. If still rejected, the rejection reason from the payer points to the specific edit.</p>
+        </section>
+
+        <footer>
+            <p>TORQ-e v1.0 | Documentation last updated 2026-04-27 | Cards 1 (UMID), 2 (UPID), 3 (UHWP)</p>
+            <p>For Cards 4 (USHI) and 5 (UBADA), see <a href="documentation-card4-5.html">documentation-card4-5.html</a>.</p>
+        </footer>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('docSearch');
+        const sections = document.querySelectorAll('section[data-section]');
+        searchInput.addEventListener('input', () => {
+            const q = searchInput.value.toLowerCase().trim();
+            sections.forEach(sec => {
+                if (!q) { sec.classList.remove('hidden'); return; }
+                sec.classList.toggle('hidden', !sec.textContent.toLowerCase().includes(q));
+            });
+        });
+    </script>
+</body>
+</html>
