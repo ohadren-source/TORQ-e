@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from config import settings
 from card_1_umid import routes as card1_routes
 from card_2_upid import routes as card2_routes
+from card_3_uhwp import query_engine as card3_engine
 from card_4_ushi import query_engine as card4_engine
 from card_5_ubada import query_engine as card5_engine
 
@@ -131,7 +132,20 @@ CARD_2_TOOLS = [
     }
 ]
 
-CARD_3_TOOLS = []  # Plan Admin tools - pending implementation
+CARD_3_TOOLS = [
+    {
+        "name": "query_plan_metrics",
+        "description": "Query plan / network administration metrics across 6 dimensions: network_adequacy, plan_enrollment, formulary_coverage, claims_acceptance, network_changes, mco_availability. Returns percentages with confidence scores (0.0-1.0) and source citations with live URLs. Card 3 rule: plan administrative data is ALWAYS external — every response MUST be rendered as traffic light + live URL combined. HIPAA-compliant, de-identified, aggregate-only. No individual records.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "metric_type": {"type": "string", "description": "Optional: specific plan metric to focus on (network_adequacy, plan_enrollment, formulary_coverage, claims_acceptance, network_changes, mco_availability). If omitted, returns all six."},
+                "state":       {"type": "string", "description": "Optional: state abbreviation (e.g., 'NY'). Defaults to NY."}
+            },
+            "required": []
+        }
+    }
+]
 
 CARD_4_TOOLS = [
     {
@@ -316,6 +330,18 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "validate_claim":
                 result = await card2_routes.validate_claim(tool_input.get("claim_data"))
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+
+        elif card_number == 3:
+            # Card 3 (UHWP - Plan / Network Administrator) tools
+            # Silicon copy of Card 4 dispatch — same shape, plan-vocab substrate
+            if tool_name == "query_plan_metrics":
+                result = await card3_engine.query_plan_metrics(
+                    metric_type=tool_input.get("metric_type"),
+                    state=tool_input.get("state"),
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
+                )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
         elif card_number == 4:
