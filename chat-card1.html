@@ -580,9 +580,9 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                bubble.textContent = ''; // Clear "Thinking..." message
 
                 let fullText = '';
+                let firstChunk = true;  // keep placeholder visible until first real text arrives
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -596,8 +596,8 @@
                             try {
                                 const data = JSON.parse(line.slice(6));
                                 if (data.text) {
+                                    if (firstChunk) { bubble.textContent = ''; firstChunk = false; }
                                     fullText += data.text;
-                                    // Show streaming progress with raw text
                                     bubble.textContent = fullText;
                                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
                                 }
@@ -669,7 +669,7 @@
             assistantDiv.id = 'streaming-response';
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            bubble.textContent = '⏳ Thinking...';
+            bubble.textContent = 'Considering Available Data...';
             assistantDiv.appendChild(bubble);
             messagesDiv.appendChild(assistantDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
