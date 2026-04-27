@@ -381,7 +381,11 @@
         </div>
     </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script>
+        const md = window.markdownit({ html: false, linkify: true, typographer: true });
+
         fetch('card4-5-header.html')
             .then(r => r.text())
             .then(html => {
@@ -390,12 +394,12 @@
                 const userNameEl = document.getElementById('userName');
                 if (userNameEl) userNameEl.textContent = username;
             })
-            .catch(e => console.log('Header not found (development mode):', e));
+            .catch(e => console.log('Header not found:', e));
 
         const inputText = document.getElementById('inputText');
         const sendBtn = document.getElementById('sendBtn');
         const messagesDiv = document.getElementById('messages');
-        const API_BASE = 'https://torq-e-production.up.railway.app/api/card5';
+        let conversationHistory = [];
 
         inputText.addEventListener('input', () => {
             inputText.style.height = 'auto';
@@ -411,6 +415,12 @@
 
         sendBtn.addEventListener('click', sendMessage);
 
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+
         function askSuggested(text) {
             inputText.value = text;
             inputText.focus();
@@ -418,361 +428,92 @@
             inputText.style.height = (inputText.scrollHeight) + 'px';
         }
 
+        async function callClaudeAPI(message, bubble) {
+            try {
+                const response = await fetch('/api/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        userType: 'DataAnalyst',
+                        cardNumber: 5,
+                        sessionId: sessionStorage.getItem('sessionId') || 'session-' + Date.now()
+                    })
+                });
+
+                if (!response.ok) throw new Error('API error: ' + response.status);
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                bubble.textContent = '';
+
+                let fullText = '';
+                let lineBuffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    const combined = lineBuffer + chunk;
+                    const lines = combined.split('\n');
+                    lineBuffer = lines.pop();
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.text) {
+                                    fullText += data.text;
+                                    bubble.textContent = fullText;
+                                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                }
+                if (lineBuffer.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(lineBuffer.slice(6));
+                        if (data.text) fullText += data.text;
+                    } catch(e) {}
+                }
+
+                bubble.innerHTML = DOMPurify.sanitize(md.render(fullText));
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                conversationHistory.push({ role: 'assistant', content: fullText });
+
+            } catch (error) {
+                bubble.textContent = 'Error: ' + error.message;
+            }
+        }
+
         async function sendMessage() {
             const message = inputText.value.trim();
             if (!message) return;
 
-            addMessage(message, 'user');
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.innerHTML = '<div class="message-bubble">' + escapeHtml(message) + '</div>';
+            messagesDiv.appendChild(userDiv);
+            conversationHistory.push({ role: 'user', content: message });
+
             inputText.value = '';
             inputText.style.height = 'auto';
             sendBtn.disabled = true;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            try {
-                const response = await processAnalystQuery(message);
-                addMessage(response, 'assistant');
-            } catch (error) {
-                addMessage(`Error: ${error.message}. Is the Card 5 API running?`, 'assistant');
-            } finally {
-                sendBtn.disabled = false;
-                inputText.focus();
-            }
-        }
-
-        function renderMarkdown(text) {
-            // Tables
-            text = text.replace(/^\|(.+)\|$/gm, function(match) { return match; });
-            const tableRegex = /((?:^\|.+\|\r?\n)+)/gm;
-            text = text.replace(tableRegex, function(block) {
-                const rows = block.trim().split('\n');
-                let html = '<table class="md-table">';
-                rows.forEach(function(row, i) {
-                    if (/^\|[-| :]+\|$/.test(row)) return;
-                    const cells = row.replace(/^\||\|$/g, '').split('|');
-                    const tag = (i === 0) ? 'th' : 'td';
-                    html += '<tr>' + cells.map(c => '<' + tag + '>' + c.trim() + '</' + tag + '>').join('') + '</tr>';
-                });
-                html += '</table>';
-                return html;
-            });
-            // Code blocks
-            text = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-            // Inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // Headers
-            text = text.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
-            text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-            text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-            text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-            // Bold
-            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            // Italic
-            text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-            // HR
-            text = text.replace(/^---+$/gm, '<hr>');
-            // Blockquote
-            text = text.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
-            // Unordered list
-            text = text.replace(/((?:^[*-] .+
-?)+)/gm, function(block) {
-                const items = block.trim().split('\n').map(l => '<li>' + l.replace(/^[*-] /, '') + '</li>').join('');
-                return '<ul>' + items + '</ul>';
-            });
-            // Ordered list
-            text = text.replace(/((?:^\d+\. .+
-?)+)/gm, function(block) {
-                const items = block.trim().split('\n').map(l => '<li>' + l.replace(/^\d+\. /, '') + '</li>').join('');
-                return '<ol>' + items + '</ol>';
-            });
-            // Paragraphs — double newline → <br><br>
-            text = text.replace(/\n\n/g, '<br><br>');
-            text = text.replace(/\n/g, '<br>');
-            return text;
-        }
-
-        function addMessage(text, role) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ' + role;
+            const assistantDiv = document.createElement('div');
+            assistantDiv.className = 'message assistant';
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            bubble.innerHTML = role === 'assistant' ? renderMarkdown(text) : text;
-            messageDiv.appendChild(bubble);
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        async function processAnalystQuery(query) {
-            return await elaborateAnalystInline(query);
-        }
-
-        async function fetchauthenticityAssessment(query) {
-            try {
-                const response = await fetch(API_BASE + '/explore-claims', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, analysis_type: 'authenticity_assessment' })
-                });
-                if (!response.ok) throw new Error('API returned ' + response.status);
-                const result = await response.json();
-                return renderauthenticityCard(result, query);
-            } catch (error) {
-                return renderauthenticityCard(null, query);
-            }
-        }
-
-        function renderauthenticityCard(result, query) {
-            const score = result && result.authenticity_risk_score != null ? result.authenticity_risk_score : null;
-            const riskLevel = score != null
-                ? (score >= 86 ? 'critical' : score >= 61 ? 'high' : score >= 31 ? 'medium' : 'low')
-                : 'pending';
-            const riskLabel = {
-                critical: 'CRITICAL RISK',
-                high: 'HIGH RISK',
-                medium: 'MEDIUM RISK',
-                low: 'LOW RISK',
-                pending: 'ANALYSIS PENDING'
-            }[riskLevel];
-
-            const redFlags = result && result.red_flags ? result.red_flags : [
-                'Address verification pending',
-                'Billing volume not yet cross-referenced',
-                'Network status unconfirmed'
-            ];
-            const greenFlags = result && result.green_flags ? result.green_flags : [
-                'NPI format valid',
-                'Query logged to audit trail'
-            ];
-            const actionLabel = {
-                critical: 'Immediate action required',
-                high: 'Flag for investigation',
-                medium: 'Request documentation',
-                low: 'Monitor — no action required',
-                pending: 'Connect Railway backend for live scores'
-            }[riskLevel];
-
-            let html = '<div class="authenticity-card">';
-            html += '<div class="authenticity-card-header"><h3>&#x1F6A8; Provider authenticity risk Assessment</h3>';
-            html += '<span class="risk-badge ' + riskLevel + '">' + riskLabel + '</span></div>';
-            html += '<div class="authenticity-card-body">';
-
-            html += '<div class="risk-score-display">';
-            html += '<div class="risk-score-circle ' + riskLevel + '">' + (score != null ? score : '?') + '</div>';
-            html += '<div class="risk-score-meta">';
-            html += '<div class="risk-label">authenticity score</div>';
-            html += '<div class="risk-value">' + (score != null ? score + ' / 100' : 'Live API unavailable') + '</div>';
-            html += '<div class="risk-status">' + actionLabel + '</div>';
-            html += '</div></div>';
-
-            html += '<div class="flags-section red-flags"><h4>&#x2718; Red Flags Detected</h4>';
-            redFlags.forEach(f => {
-                html += '<div class="flag-item red"><span class="flag-icon">&#x2717;</span>' + f + '</div>';
-            });
-            html += '</div>';
-
-            html += '<div class="flags-section green-flags"><h4>&#x2714; Green Flags</h4>';
-            greenFlags.forEach(f => {
-                html += '<div class="flag-item green"><span class="flag-icon">&#x2713;</span>' + f + '</div>';
-            });
-            html += '</div>';
-
-            html += '<div class="action-buttons">';
-            html += '<button class="action-btn danger" onclick="elaborateAnalyst(\'authenticity\')">&#x1F6A8; Flag for Investigation</button>';
-            html += '<button class="action-btn primary" onclick="elaborateAnalyst(\'authenticity\')">&#x1F4DD; Request Documentation</button>';
-            html += '<button class="action-btn secondary" onclick="elaborateAnalyst(\'authenticity\')">&#x1F4CA; Full Claude Analysis</button>';
-            html += '</div></div></div>';
-            return html;
-        }
-
-        function generateQAChecklist() {
-            let html = '<div class="qa-checklist">';
-            html += '<div class="qa-checklist-header">&#x2714; Data Quality Pre-Analysis Checklist</div>';
-            const steps = [
-                { title: 'Step 1: Completeness Check', checks: ['Count total records vs expected volume', 'Missing values by field (&lt;2% acceptable)', 'Identify null/blank fields', 'Check for truncated data'] },
-                { title: 'Step 2: Accuracy Check', checks: ['Valid date formats (YYYY-MM-DD)', 'Logical date ranges (service date &lt; claim date)', 'Valid ZIP codes and addresses', 'Valid CPT/HCPCS procedure codes', 'Valid ICD-10 diagnosis codes', 'Provider IDs exist (NPI lookup)', 'Member IDs exist (UMID lookup)'] },
-                { title: 'Step 3: Consistency Check', checks: ['No duplicate claims (same claim submitted twice)', 'Beneficiary demographic consistency (name/DOB match)', 'Units match service type', 'Dates align with plan rules'] },
-                { title: 'Step 4: Outlier Check', checks: ['Unusually high charges (&gt;$50K claim = verify)', 'Unusual service combinations', 'Provider billing unusual volume', 'Member with unusual utilization patterns'] }
-            ];
-            steps.forEach(step => {
-                html += '<div class="qa-step"><div class="qa-step-title">' + step.title + '</div>';
-                step.checks.forEach(check => {
-                    html += '<div class="qa-check-item"><div class="check-box"></div>' + check + '</div>';
-                });
-                html += '</div>';
-            });
-            html += '</div>';
-            html += '<br><button class="action-btn primary" onclick="elaborateAnalyst(\'quality\')">&#x1F4CA; Run Automated QA via Claude</button>';
-            return html;
-        }
-
-        function generateauthenticityPatterns() {
-            const patterns = [
-                { title: 'Duplicate Billing', desc: 'Same service billed 2+ times. Emergency room visit billed 3 times.', threshold: '&lt;1% acceptable, &gt;2% = investigate' },
-                { title: 'Billing Outside Hours', desc: 'Services billed at 2AM by a clinic with listed business hours.', threshold: 'Claims outside facility hours = automatic flag' },
-                { title: 'Unusual Code Combinations', desc: 'Services never billed together appearing on same claim.', threshold: 'Rule-based: incompatible codes = flag' },
-                { title: 'Unbundling', desc: 'Bundled service billed as 10 separate line items to inflate payment.', threshold: 'Code combinations reviewed quarterly' },
-                { title: 'Upcoding', desc: 'Higher-cost service billed instead of what was actually provided.', threshold: 'Compare documentation to diagnosis codes' },
-                { title: 'Sudden Volume Spike', desc: 'Provider goes from 10 claims/month to 500 with no change in practice size.', threshold: 'Volume increase &gt;300% = investigate' },
-                { title: 'Shell Provider', desc: 'Address is PO Box or residential. No physical facility found at listed address.', threshold: 'Address verification + site visit trigger' }
-            ];
-            let html = '<strong>&#x26A0; authenticity / Waste / Abuse Pattern Reference</strong><br><br>';
-            html += '<div class="pattern-grid">';
-            patterns.forEach(p => {
-                html += '<div class="pattern-card">';
-                html += '<div class="pattern-card-title">' + p.title + '</div>';
-                html += '<div class="pattern-card-desc">' + p.desc + '</div>';
-                html += '<div class="pattern-card-threshold">Threshold: ' + p.threshold + '</div>';
-                html += '</div>';
-            });
-            html += '</div>';
-            html += '<br><div style="font-size:11px;color:#666;padding:8px;background:#f5f5f5;border-radius:4px;">Risk thresholds: Low 0&ndash;30 &nbsp;|&nbsp; Medium 31&ndash;60 &nbsp;|&nbsp; High 61&ndash;85 &nbsp;|&nbsp; Critical 86&ndash;100</div>';
-            html += '<br><button class="action-btn primary" onclick="elaborateAnalyst(\'patterns\')">&#x1F4CA; Run Pattern Detection via Claude</button>';
-            return html;
-        }
-
-        async function fetchOutlierDetection(query) {
-            try {
-                const response = await fetch(API_BASE + '/outlier-detection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
-                });
-                if (!response.ok) throw new Error('API returned ' + response.status);
-                const result = await response.json();
-                return '<strong>&#x1F4C8; Outlier Detection Results</strong><br><br><pre style="font-size:11px;white-space:pre-wrap;">' + JSON.stringify(result, null, 2) + '</pre>';
-            } catch(e) {
-                return await elaborateAnalystInline(query);
-            }
-        }
-
-        async function elaborateAnalyst(type) {
-            const thinkingId = 'thinking-' + Date.now();
-            const thinkingDiv = document.createElement('div');
-            thinkingDiv.className = 'message assistant';
-            thinkingDiv.id = thinkingId;
-            thinkingDiv.innerHTML = '<div class="message-bubble" style="color:#999;font-style:italic;">&#x23F3; Step 1 of 2: Crawling public repositories (OMIG, eMedNY, Health Data NY)&hellip;</div>';
-            messagesDiv.appendChild(thinkingDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            sendBtn.disabled = true;
-
-            const typeLabels = {
-                authenticity: 'authenticity risk assessment and provider verification using OMIG and eMedNY public data',
-                quality: 'data quality validation procedures and completeness checks for Medicaid claims data',
-                patterns: 'billing pattern anomalies, authenticity indicators, and waste/abuse detection thresholds',
-                default: 'analyst workbench capabilities for authenticity verification and data quality analysis'
-            };
-
-            try {
-                document.getElementById(thinkingId).querySelector('.message-bubble').innerHTML =
-                    '&#x23F3; Step 2 of 2: Claude analyzing sources for ' + (typeLabels[type] || 'analyst query') + '&hellip;';
-
-                const chatResponse = await fetch('https://torq-e-production.up.railway.app/api/chat/stream', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: 'Use your authenticity verification and data analysis tools to provide a detailed analysis of: ' + (typeLabels[type] || 'analyst request') + '. Call explore_claims_data or compute_outlier_scores. Report what public OMIG, eMedNY, and NYS Health repositories show, including authenticity patterns, data quality indicators, and confidence levels.',
-                        userType: 'DataAnalyst',
-                        cardNumber: 5
-                    })
-                });
-
-                if (!chatResponse.ok) throw new Error('Claude API returned ' + chatResponse.status);
-
-                const reader = chatResponse.body.getReader();
-                const decoder = new TextDecoder();
-                let fullText = '';
-                let lineBuffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    const combined = lineBuffer + chunk;
-                    const lines = combined.split('\n');
-                    lineBuffer = lines.pop();
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            try {
-                                const data = JSON.parse(line.slice(6));
-                                if (data.text) fullText += data.text;
-                            } catch(e) {}
-                        }
-                    }
-                }
-                if (lineBuffer.startsWith('data: ')) {
-                    try {
-                        const data = JSON.parse(lineBuffer.slice(6));
-                        if (data.text) fullText += data.text;
-                    } catch(e) {}
-                }
-
-                document.getElementById(thinkingId).remove();
-                addMessage(fullText || '<strong>&#x26A0;</strong> Claude completed analysis but returned no text.', 'assistant');
-
-            } catch (error) {
-                document.getElementById(thinkingId).remove();
-                addMessage('<strong>&#x26A0; Analysis Error</strong><br>' + error.message, 'assistant');
-            } finally {
-                sendBtn.disabled = false;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-        }
-
-        async function elaborateAnalystInline(query) {
-            const thinkingId = 'thinking-' + Date.now();
-            const thinkingDiv = document.createElement('div');
-            thinkingDiv.className = 'message assistant';
-            thinkingDiv.id = thinkingId;
-            thinkingDiv.innerHTML = '<div class="message-bubble" style="color:#999;font-style:italic;">&#x23F3; Analyzing via Claude&hellip;</div>';
-            messagesDiv.appendChild(thinkingDiv);
+            bubble.textContent = 'Analyzing...';
+            assistantDiv.appendChild(bubble);
+            messagesDiv.appendChild(assistantDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            try {
-                const chatResponse = await fetch('https://torq-e-production.up.railway.app/api/chat/stream', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: query,
-                        userType: 'DataAnalyst',
-                        cardNumber: 5
-                    })
-                });
+            await callClaudeAPI(message, bubble);
 
-                if (!chatResponse.ok) throw new Error('Claude API returned ' + chatResponse.status);
-
-                const reader = chatResponse.body.getReader();
-                const decoder = new TextDecoder();
-                let fullText = '';
-                let lineBuffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    const combined = lineBuffer + chunk;
-                    const lines = combined.split('\n');
-                    lineBuffer = lines.pop();
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            try {
-                                const data = JSON.parse(line.slice(6));
-                                if (data.text) fullText += data.text;
-                            } catch(e) {}
-                        }
-                    }
-                }
-                if (lineBuffer.startsWith('data: ')) {
-                    try {
-                        const data = JSON.parse(lineBuffer.slice(6));
-                        if (data.text) fullText += data.text;
-                    } catch(e) {}
-                }
-
-                document.getElementById(thinkingId).remove();
-                return fullText || '<strong>&#x26A0;</strong> Claude completed but returned no text.';
-
-            } catch (error) {
-                document.getElementById(thinkingId).remove();
-                return '<strong>&#x26A0; Error</strong><br>' + error.message;
-            }
+            sendBtn.disabled = false;
+            inputText.focus();
         }
     </script>
 </body>
