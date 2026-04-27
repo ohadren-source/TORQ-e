@@ -497,15 +497,14 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             try {
-                const userId = sessionStorage.getItem('whup') || 'WHUP-DEMO';
                 const response = await fetch('/api/chat/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message:     message,
-                        userType:    'PlanAdmin',
-                        cardNumber:  3,
-                        whup:        userId
+                        message:    message,
+                        userType:   'PlanAdmin',
+                        cardNumber: 3,
+                        sessionId:  sessionStorage.getItem('sessionId') || 'session-' + Date.now()
                     })
                 });
 
