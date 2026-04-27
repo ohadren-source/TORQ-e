@@ -406,7 +406,8 @@
 
     <script>
         const username = sessionStorage.getItem('username') || 'Member';
-        document.getElementById('userName').textContent = username;
+        const _userNameEl = document.getElementById('userName');
+        if (_userNameEl) _userNameEl.textContent = username;
 
         const messagesDiv = document.getElementById('messages');
         const inputText = document.getElementById('inputText');
