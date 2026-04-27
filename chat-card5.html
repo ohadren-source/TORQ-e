@@ -477,7 +477,10 @@
                     } catch(e) {}
                 }
 
-                bubble.innerHTML = DOMPurify.sanitize(md.render(fullText));
+                // If Claude returned HTML directly, sanitize and render as-is
+                // Otherwise run through markdown-it
+                const isHtml = /<[a-z][\s\S]*>/i.test(fullText);
+                bubble.innerHTML = DOMPurify.sanitize(isHtml ? fullText : md.render(fullText));
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 conversationHistory.push({ role: 'assistant', content: fullText });
 
