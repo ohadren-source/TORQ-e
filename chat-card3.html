@@ -479,8 +479,9 @@
         sendBtn.addEventListener('click', sendMessage);
 
         // ============================================================
-        // HELLO-CLAUDE MODE — basic bitch direct Claude. No tools, no stream.
-        // Original streaming sendMessage commented out below for restore.
+        // STREAMING sendMessage — restored. Goes through chat.py with cardNumber: 3
+        // and the query_plan_metrics tool. Curse broken via userName getElementById fix.
+        // helloClaude() preserved below as canary for isolating Claude API issues.
         // ============================================================
         async function sendMessage() {
             const message = inputText.value.trim();
@@ -495,25 +496,61 @@
             assistDiv.className = 'message assistant';
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            bubble.textContent = 'Thinking...';
+            bubble.textContent = 'Considering Available Data...';
             assistDiv.appendChild(bubble);
             messagesDiv.appendChild(assistDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             try {
-                const response = await fetch('/api/hello-claude', {
+                const response = await fetch('/api/chat/stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({
+                        message:    message,
+                        userType:   'PlanAdmin',
+                        cardNumber: 3,
+                        sessionId:  sessionStorage.getItem('sessionId') || 'session-' + Date.now()
+                    })
                 });
-                const data = await response.json();
-                if (data.error) {
-                    bubble.textContent = 'Error: ' + data.error;
-                } else {
-                    bubble.textContent = data.text || 'No response.';
+                if (!response.ok) throw new Error('API error: ' + response.status);
+
+                const reader  = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText   = '';
+                let lineBuffer = '';
+                let firstChunk = true;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk    = decoder.decode(value, { stream: true });
+                    const combined = lineBuffer + chunk;
+                    const lines    = combined.split('\n');
+                    lineBuffer     = lines.pop();
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.text) {
+                                    if (firstChunk) { bubble.textContent = ''; firstChunk = false; }
+                                    fullText += data.text;
+                                    bubble.innerHTML = fullText;
+                                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                                }
+                            } catch(e) {}
+                        }
+                    }
                 }
+                if (lineBuffer.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(lineBuffer.slice(6));
+                        if (data.text) fullText += data.text;
+                    } catch(e) {}
+                }
+                bubble.innerHTML = fullText || 'No response received.';
+
             } catch (error) {
-                bubble.textContent = 'Fetch error: ' + error.message;
+                bubble.textContent = 'Error: ' + error.message;
             } finally {
                 sendBtn.disabled = false;
                 inputText.focus();
@@ -521,7 +558,18 @@
             }
         }
 
-        /* ORIGINAL STREAMING sendMessage — commented for hello-claude curse-break test
+        // Canary: dead-simple direct Claude call. Use to isolate API issues.
+        // Wire to a debug button or call from console: helloClaude("hi")
+        async function helloClaude(message) {
+            const response = await fetch('/api/hello-claude', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            return await response.json();
+        }
+
+        /* ORIGINAL STREAMING sendMessage — preserved for reference
         async function sendMessage_ORIGINAL() {
             const message = inputText.value.trim();
             if (!message) return;

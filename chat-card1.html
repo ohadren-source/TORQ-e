@@ -478,7 +478,8 @@
         const username = sessionStorage.getItem('username') || 'Member';
         const cardNumber = sessionStorage.getItem('cardNumber');
         const umid = sessionStorage.getItem('umid');
-        document.getElementById('userName').textContent = username;
+        const _userNameEl = document.getElementById('userName');
+        if (_userNameEl) _userNameEl.textContent = username;
 
         // SESSION CONTEXT CHECK: If user is logged in with UMID, use it automatically
         window.addEventListener('load', () => {

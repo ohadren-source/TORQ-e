@@ -440,6 +440,14 @@ Every River Path implementation must be tested for:
 4. **Data Mismatch Path** — Sources disagree, system escalates
 5. **All Fail Path** — All 3 attempts fail, system acknowledges why
 6. **Edge Cases** — Missing fields, malformed data, old data
+7. **Frontend Wiring Path** — Click the button. If nothing visibly happens, do NOT assume the backend is broken. Audit the page's `<script>` blocks for early `getElementById(id).property = value` against missing IDs. A null-deref three lines into a script block aborts every line below it — including `addEventListener` calls. The server is innocent until proven guilty by direct curl. *(Added 2026-04-27, Etta James Patch — see DR.md.)*
+
+**Frontend Audit Pattern (run before declaring any card LIVE):**
+```bash
+# Every match must be either guarded with a null check
+# or proven against a static element ID present in the same HTML file.
+grep -n "getElementById('[^']*')\." chat-card*.html
+```
 
 Example test:
 ```python

@@ -1,5 +1,5 @@
 # TORQ-e Design Review — DR.md
-**Internal Memo | Living Document | Updated: 2026-04-27 (snapshot 10)**
+**Internal Memo | Living Document | Updated: 2026-04-27 (snapshot 11)**
 **Motto: MOVE STEADFAST && BREAK IT DOWN.**
 
 ---
@@ -16,9 +16,9 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 
 | Card | Name | Audience | Status |
 |------|------|----------|--------|
-| 1 | UMID | Medicaid Members | Live |
+| 1 | UMID | Medicaid Members | Live (chat unblocked 2026-04-27 — userName null-deref fixed) |
 | 2 | UPID | Providers | Live |
-| 3 | UHWP | Plan/Network Admins | Live |
+| 3 | UHWP | Plan/Network Admins | Live (chat unblocked 2026-04-27 — userName null-deref fixed, query_plan_metrics tool wired) |
 | 4 | USHI | Government Stakeholders | PLATINUM — Certified 2026-04-26 |
 | 5 | UBADA | Data Analysts / authenticity investigators | LIVE — backend zero mock data, frontend wired, HTML rendering active |
 
@@ -26,6 +26,44 @@ Evolving polaroid of system state. If the instance dies, a new one picks up here
 
 **Repo:** `C:\Users\ohado\Documents\3_6_Nife.pi\TORQ-e`
 **Live URL:** `https://torq-e-production.up.railway.app`
+
+---
+
+## Cards 1 & 3 — Chat Unblocked 2026-04-27 (Etta James Patch)
+
+### Symptom
+Cards 1 and 3 chat buttons did nothing. Click → no message bubble, no network request, no error visible. Pages rendered. Welcome text displayed. Backend (`/api/chat/stream`, Anthropic API) verified working via direct curl. Cards 2, 4, 5 streaming fine.
+
+### Root Cause
+`document.getElementById('userName').textContent = username;` near top of second `<script>` block in both `chat-card1.html` and `chat-card3.html`. No element with `id="userName"` exists in those files. `getElementById` returned `null`, `.textContent =` threw `TypeError: Cannot set properties of null`, and the *entire script block aborted three lines in* — before `sendBtn.addEventListener('click', sendMessage)` could register. Click had no handler. No code ran.
+
+Card 2 didn't have the line. Card 4 didn't have the line. Card 5 was rebuilt clean today. The bug class was confined to two files written by the same drift-bot session.
+
+### Fix
+One-line null-check in both files:
+```js
+const _userNameEl = document.getElementById('userName');
+if (_userNameEl) _userNameEl.textContent = username;
+```
+
+### Verification Path (the breakthrough)
+1. Direct backend test: `curl -X POST /api/hello-claude` returned Claude text → backend, API key, network all clean.
+2. Live HTML inspected via `curl /chat-card3.html` → my edits present, file intact on server.
+3. `<script>` tag count: Card 3 had 2 blocks; Card 4 had 1. Read first 3 lines of Card 3's second block. Found the null-deref.
+4. Pattern grep across all chat-card*.html → Card 1 had identical bug.
+
+### Lesson Cemented
+**Silent JS errors in HTML script blocks abort everything below them.** A `getElementById` call against a missing ID is a chat-blocker disguised as cosmetic UI code. Audit pattern for all future cards:
+```bash
+grep -n "getElementById('[^']*')\." chat-card*.html
+```
+Every match must either be guarded with a null check or proven against the static HTML in the same file.
+
+### Adjunct Artifacts Shipped This Session
+- `card_3_uhwp/query_engine.py` — silicon copy of `card_4_ushi/query_engine.py`. Plan-vocab METRIC_ALIASES, identical `_source_confidence`, `_get_metric_value`, `_extract_metric_value`, `_generate_metric_value`, `_calculate_overall_confidence`, `_find_matching_sources` helpers. Crawler-honesty gate preserved. MD5-seeded value generation preserved.
+- `chat.py`: `from card_3_uhwp import query_engine as card3_engine`; `CARD_3_TOOLS` populated with `query_plan_metrics`; `elif card_number == 3:` dispatch branch added. **Card 4 path byte-identical.** Iron law respected.
+- `main.py`: `/api/hello-claude` endpoint preserved as canary. Direct Claude call, no tools, no streaming. Use to isolate Claude API issues from chat-router issues in future debugging.
+- `chat-card3.html`: streaming `sendMessage` restored to `/api/chat/stream` after curse-break confirmed; `helloClaude(message)` preserved as a console-callable canary.
 
 ---
 
