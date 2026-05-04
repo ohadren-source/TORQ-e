@@ -132,6 +132,52 @@
             text-decoration: underline;
         }
 
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .disclaimer strong {
+            color: #d32f2f;
+        }
+
+        .disclaimer a {
+            color: #1e5631;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .disclaimer a:hover {
+            text-decoration: underline;
+        }
+
+        .disclaimer ul {
+            list-style: none;
+            margin-top: 12px;
+            padding: 0;
+        }
+
+        .disclaimer li {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .disclaimer li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #1e5631;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -177,6 +223,17 @@
         </div>
 
         <div class="content">
+            <div class="disclaimer">
+                <strong>⚠️ Important:</strong> This portal provides <strong>informational guidance only</strong>. It is <strong>not</strong> an official Medicaid system of record.
+                <br><br>
+                For your actual coverage status, eligibility determination, recertification, and benefits:
+                <ul>
+                    <li><a href="https://www.nystateofhealth.ny.gov" target="_blank">New York State of Health (NYSoH)</a></li>
+                    <li>Your local Department of Social Services (LDSS)</li>
+                    <li>Your health plan directly</li>
+                </ul>
+            </div>
+
             <div class="section">
                 <h2>What is TORQ-e for Members?</h2>
                 <p>

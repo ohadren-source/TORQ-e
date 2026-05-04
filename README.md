@@ -18,6 +18,30 @@ TORQ-E is a unified identity system that transforms Medicaid enrollment, eligibi
 
 ---
 
+## ⚠️ Important: Platform Positioning
+
+**TORQ-e is a knowledge and guidance layer, not a replacement for official Medicaid systems of record.**
+
+### What TORQ-e Does:
+- Provides informational answers based on official policies and public data
+- Offers confidence scores and source transparency for all responses
+- Helps users understand Medicaid rules and navigate options
+- Connects users to official systems for transactional actions
+
+### What TORQ-e Does NOT Do:
+- Make official eligibility determinations (that's NYSoH/LDSS's job)
+- Process claims or benefit applications (that's eMedNY/MCO's job)
+- Provide definitive coverage status (users must verify with official systems)
+- Replace official member or provider portals
+
+### For Official Actions, Use:
+- **Members:** [New York State of Health (NYSoH)](https://www.nystateofhealth.ny.gov) or your Local Department of Social Services (LDSS)
+- **Providers:** [eMedNY](https://www.emedny.org) for enrollment and [eMedNY ePACES](https://www.emedny.org/) for real-time claim validation
+- **Plan Admins:** [Health Data Portal](https://health.data.ny.gov) and individual MCO systems
+- **Government:** Governance log and audit trail via Card 4 and 5
+
+---
+
 ## Quick Start
 
 ### Prerequisites
