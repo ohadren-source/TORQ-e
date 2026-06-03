@@ -35,9 +35,97 @@ SUBSTRATE_REPOS = {
     "data_ny":      "https://health.data.ny.gov/"
 }
 
+# Provider type keywords for classification
+PROVIDER_TYPE_KEYWORDS = {
+    "mco": ["managed care", "mco", "health plan", "insurance", "fidelis", "wellcare", "ambetter", "aetna", "empire", "molina"],
+    "hospital": ["hospital", "medical center", "health system", "facility", "inpatient"],
+    "pharmacy": ["pharmacy", "pharmacist", "drug store", "apothecary"],
+    "lab": ["laboratory", "lab", "pathology", "diagnostic"],
+    "solo_provider": ["physician", "doctor", "md", "do", "practitioner", "nurse", "therapist", "specialist"]
+}
+
 # ============================================================================
 # SHARED HELPERS (silicon copy of Card 4 pattern)
 # ============================================================================
+
+def _detect_provider_type(focus_entity: str, query_context: str = "") -> str:
+    """
+    Detect provider type from entity name or context.
+    Returns: 'mco', 'hospital', 'pharmacy', 'lab', 'solo_provider', or 'unknown'
+    """
+    combined = (focus_entity + " " + query_context).lower()
+    
+    for ptype, keywords in PROVIDER_TYPE_KEYWORDS.items():
+        if any(kw in combined for kw in keywords):
+            return ptype
+    
+    return "unknown"
+
+
+def _get_peer_group_context(provider_type: str) -> Dict:
+    """
+    Return peer group context and outlier thresholds by provider type.
+    MCOs and hospitals have different metrics than solo providers.
+    """
+    contexts = {
+        "mco": {
+            "peer_group": "Managed Care Organizations (MCOs)",
+            "typical_volume": "High (millions of claims annually)",
+            "typical_billing": "High (aggregate across entire membership)",
+            "typical_facility_concentration": "80-95% (centralized operations)",
+            "volume_threshold_sigma": 1.5,  # MCOs naturally have high volume
+            "billing_threshold_sigma": 1.5,  # MCOs naturally have high billing
+            "note": "MCO metrics are not comparable to solo provider metrics. Outlier thresholds adjusted for organizational scale."
+        },
+        "hospital": {
+            "peer_group": "Hospital Systems",
+            "typical_volume": "High (inpatient + outpatient)",
+            "typical_billing": "High (facility + professional fees)",
+            "typical_facility_concentration": "70-90% (primary facility)",
+            "volume_threshold_sigma": 2.0,
+            "billing_threshold_sigma": 2.0,
+            "note": "Hospital metrics reflect facility-based operations. Compare to other hospitals, not solo providers."
+        },
+        "pharmacy": {
+            "peer_group": "Pharmacies",
+            "typical_volume": "Medium (prescription volume)",
+            "typical_billing": "Medium (per-prescription)",
+            "typical_facility_concentration": "95%+ (single location)",
+            "volume_threshold_sigma": 2.5,
+            "billing_threshold_sigma": 2.5,
+            "note": "Pharmacies naturally have high facility concentration. Not an anomaly."
+        },
+        "lab": {
+            "peer_group": "Laboratories",
+            "typical_volume": "Medium (test volume)",
+            "typical_billing": "Medium (per-test)",
+            "typical_facility_concentration": "90%+ (centralized lab)",
+            "volume_threshold_sigma": 2.5,
+            "billing_threshold_sigma": 2.5,
+            "note": "Labs naturally have high facility concentration. Not an anomaly."
+        },
+        "solo_provider": {
+            "peer_group": "Solo Practitioners (Physicians, Therapists, etc.)",
+            "typical_volume": "Low-Medium (individual practice)",
+            "typical_billing": "Low-Medium (per-visit)",
+            "typical_facility_concentration": "40-60% (distributed across facilities)",
+            "volume_threshold_sigma": 3.0,
+            "billing_threshold_sigma": 3.0,
+            "note": "Solo providers typically work across multiple facilities. High concentration is unusual."
+        },
+        "unknown": {
+            "peer_group": "Unknown Provider Type",
+            "typical_volume": "Unknown",
+            "typical_billing": "Unknown",
+            "typical_facility_concentration": "Unknown",
+            "volume_threshold_sigma": 3.0,
+            "billing_threshold_sigma": 3.0,
+            "note": "Provider type could not be determined. Using conservative thresholds."
+        }
+    }
+    
+    return contexts.get(provider_type, contexts["unknown"])
+
 
 def _source_confidence(source: Dict) -> float:
     """
@@ -291,7 +379,7 @@ async def explore_claims_data(
 
 
 # ============================================================================
-# TOOL 2: COMPUTE OUTLIER SCORES
+# TOOL 2: COMPUTE OUTLIER SCORES (WITH PROVIDER TYPE STRATIFICATION)
 # ============================================================================
 
 async def compute_outlier_scores(
@@ -303,7 +391,11 @@ async def compute_outlier_scores(
     query_context: str = ""
 ) -> Dict:
     """
-    Statistical anomaly detection using Z-scores.
+    Statistical anomaly detection using Z-scores WITH PROVIDER TYPE STRATIFICATION.
+
+    CRITICAL FIX: Detects provider type and adjusts outlier thresholds accordingly.
+    MCOs, hospitals, and solo providers have fundamentally different metrics.
+    Comparing an MCO to solo providers is a category error.
 
     Returns outlier context with confidence, risk framing, and evidence for investigation.
     NO MOCK ENTITY IDs, names, NPIs — values derived from crawled public data.
@@ -311,7 +403,7 @@ async def compute_outlier_scores(
 
     Returns:
     - Outlier context with Z-score ranges
-    - Peer comparison framing
+    - Peer comparison framing (STRATIFIED BY PROVIDER TYPE)
     - Risk levels (HIGH/MEDIUM/LOW)
     - Confidence in findings
     - Recommendation: escalate or monitor
@@ -324,6 +416,10 @@ async def compute_outlier_scores(
             "entity_type": entity_type,
             "metric": metric
         }
+
+    # DETECT PROVIDER TYPE
+    provider_type = _detect_provider_type(query_context)
+    peer_context = _get_peer_group_context(provider_type)
 
     crawler_report = _crawler_status(public_data_schema)
     matching_sources = _find_matching_sources(public_data_schema, "outlier")
@@ -343,16 +439,30 @@ async def compute_outlier_scores(
     # Deterministic outlier metrics seeded by entity_type + metric
     seed = f"outlier_{entity_type}_{metric}_{query_context[:60]}"
     outliers_detected = int(_generate_value(seed + "_count", 12, 60))
-    top_z_score = round(_generate_value(seed + "_zscore", threshold_sigma * 1.2, threshold_sigma * 3.5), 1)
+    
+    # ADJUST THRESHOLDS BASED ON PROVIDER TYPE
+    adjusted_threshold = peer_context.get("volume_threshold_sigma" if metric == "frequency" else "billing_threshold_sigma", threshold_sigma)
+    top_z_score = round(_generate_value(seed + "_zscore", adjusted_threshold * 1.2, adjusted_threshold * 3.5), 1)
     top_percentile = round(_generate_value(seed + "_pct", 96.0, 99.9), 1)
 
-    risk_level = "HIGH" if top_z_score >= 4.0 else ("MEDIUM" if top_z_score >= 2.5 else "LOW")
+    # RISK ASSESSMENT WITH PROVIDER TYPE CONTEXT
+    if provider_type in ["mco", "hospital", "pharmacy", "lab"]:
+        # Organizational providers: higher thresholds, different interpretation
+        risk_level = "HIGH" if top_z_score >= 5.0 else ("MEDIUM" if top_z_score >= 3.5 else "LOW")
+        interpretation = f"Outlier detected for {peer_context['peer_group']}. Note: {peer_context['note']}"
+    else:
+        # Solo providers: standard thresholds
+        risk_level = "HIGH" if top_z_score >= 4.0 else ("MEDIUM" if top_z_score >= 2.5 else "LOW")
+        interpretation = f"Outlier detected for {peer_context['peer_group']}. {peer_context['note']}"
 
     return {
         "status": "success",
         "entity_type": entity_type,
         "metric": metric,
         "threshold_sigma": threshold_sigma,
+        "provider_type_detected": provider_type,
+        "peer_group": peer_context["peer_group"],
+        "peer_context": peer_context,
         "outliers_detected_estimate": outliers_detected,
         "top_outlier_context": {
             "z_score": top_z_score,
@@ -360,19 +470,19 @@ async def compute_outlier_scores(
             "risk_level": risk_level,
             "confidence": avg_confidence,
             "evidence_framing": [
-                f"Billing {top_z_score} standard deviations above peer average for {entity_type}s",
+                f"Billing {top_z_score} standard deviations above peer average for {peer_context['peer_group']}",
                 f"Top {round(100 - top_percentile, 1)}% of peer group on {metric.replace('_', ' ')}",
                 "Pattern consistent with statistical anomaly — requires investigation to determine root cause",
-                "High specialty or volume practice may explain variance (investigate before conclusion)"
+                f"Provider type: {provider_type} — metrics compared to {peer_context['peer_group']}"
             ],
             "recommendation": (
-                "ESCALATE: High confidence outlier. Create investigation project for root cause determination."
+                f"ESCALATE: High confidence outlier for {peer_context['peer_group']}. Create investigation project for root cause determination."
                 if risk_level == "HIGH"
-                else "MONITOR: Outlier detected. Continue observation before escalation."
+                else f"MONITOR: Outlier detected for {peer_context['peer_group']}. Continue observation before escalation."
             )
         },
-        "interpretation_note": "Z-scores identify statistical outliers. Not all outliers are inauthenticity. High evidence quality required before determination.",
-        "escalation_threshold": "Z-score > 3.0 AND confidence > 0.85 AND multiple evidence points",
+        "interpretation_note": interpretation,
+        "escalation_threshold": f"Z-score > {adjusted_threshold} AND confidence > 0.85 AND multiple evidence points (adjusted for {provider_type})",
         "sources": sources_list,
         "confidence_score": avg_confidence,
         "veracity": _veracity(avg_confidence),
