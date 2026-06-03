@@ -394,7 +394,9 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     filter_by=tool_input.get("filter_by"),
                     aggregation=tool_input.get("aggregation"),
                     limit=tool_input.get("limit", 1000),
-                    db=None
+                    db=None,
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "compute_outlier_scores":
@@ -402,7 +404,9 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     entity_type=tool_input.get("entity_type", "provider"),
                     metric=tool_input.get("metric", "billing_amount"),
                     threshold_sigma=tool_input.get("threshold_sigma", 2.0),
-                    db=None
+                    db=None,
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "navigate_relationship_graph":
@@ -410,7 +414,9 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     focus_entity=tool_input.get("focus_entity"),
                     relationship_type=tool_input.get("relationship_type", "all"),
                     depth=tool_input.get("depth", 1),
-                    db=None
+                    db=None,
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "create_investigation_project":
@@ -421,7 +427,9 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     team_members=tool_input.get("team_members", []),
                     initial_findings=tool_input.get("initial_findings"),
                     severity=tool_input.get("severity", "MEDIUM"),
-                    db=None
+                    db=None,
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "request_data_correction":
@@ -434,7 +442,9 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     change_reason=tool_input.get("change_reason"),
                     evidence=tool_input.get("evidence", []),
                     proposed_by=tool_input.get("proposed_by"),
-                    db=None
+                    db=None,
+                    public_data_schema=public_data_schema,
+                    query_context=query_context
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
