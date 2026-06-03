@@ -250,10 +250,11 @@ CARD_5_TOOLS = [
     },
     {
         "name": "compute_outlier_scores",
-        "description": "Statistical anomaly detection using Z-scores with confidence scoring and risk levels.",
+        "description": "Statistical anomaly detection using Z-scores with confidence scoring and risk levels. Automatically detects provider type (MCO, hospital, etc.) and applies stratified thresholds.",
         "input_schema": {
             "type": "object",
             "properties": {
+                "focus_entity": {"type": "string", "description": "Provider NPI or name (optional, for MCO stratification)"},
                 "entity_type": {"type": "string", "enum": ["provider", "member", "claim_pattern"], "description": "Entity type"},
                 "metric": {"type": "string", "enum": ["billing_amount", "approval_rate", "processing_time", "frequency"], "description": "Metric to analyze"},
                 "threshold_sigma": {"type": "number", "description": "Standard deviation threshold (default 2.0)"}
@@ -419,6 +420,7 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
             elif tool_name == "compute_outlier_scores":
                 result = await card5_engine.compute_outlier_scores(
+                    focus_entity=tool_input.get("focus_entity"),
                     entity_type=tool_input.get("entity_type", "provider"),
                     metric=tool_input.get("metric", "billing_amount"),
                     threshold_sigma=tool_input.get("threshold_sigma", 2.0),
