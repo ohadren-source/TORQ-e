@@ -3,10 +3,11 @@ Card 5 (UBADA) - Data Analyst & authenticity investigation API Routes
 Expose 5 Claude tools for investigation and data correction
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Body
+from fastapi import APIRouter, HTTPException, Depends, Body, Request
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional, List, Dict
 import json
+import uuid
 
 from database import get_db
 from .query_engine import (
@@ -20,6 +21,17 @@ from .query_engine import (
 router = APIRouter(prefix="/api/card5", tags=["Card 5 - UBADA (Data Analyst)"])
 
 # ============================================================================
+# DEPENDENCY: Get public data schema from app.state
+# ============================================================================
+
+def get_public_data_schema(request: Request) -> Optional[Dict]:
+    """Retrieve public_data_schema from app.state for data source access."""
+    try:
+        return getattr(request.app.state, 'public_data_schema', None)
+    except:
+        return None
+
+# ============================================================================
 # TOOL 1: EXPLORE CLAIMS DATA
 # ============================================================================
 
@@ -28,7 +40,8 @@ async def explore_claims(
     filter_by: Optional[dict] = Body(None),
     aggregation: Optional[str] = Body(None),
     limit: int = Body(1000),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Interactive query interface for claims data with full access.
@@ -37,11 +50,14 @@ async def explore_claims(
     Every query creates immutable audit record.
     """
     try:
+        query_context = str(uuid.uuid4())
         result = await explore_claims_data(
             filter_by=filter_by,
             aggregation=aggregation,
             limit=limit,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema,
+            query_context=query_context
         )
 
         return {
@@ -64,7 +80,8 @@ async def detect_outliers(
     entity_type: str = Body("provider"),
     metric: str = Body("billing_amount"),
     threshold_sigma: float = Body(2.0),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Statistical anomaly detection for inauthenticity signal identification.
@@ -73,11 +90,14 @@ async def detect_outliers(
     Focus: Evidence quality for investigation recommendations.
     """
     try:
+        query_context = str(uuid.uuid4())
         result = await compute_outlier_scores(
             entity_type=entity_type,
             metric=metric,
             threshold_sigma=threshold_sigma,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema,
+            query_context=query_context
         )
 
         return {
@@ -100,7 +120,8 @@ async def explore_network(
     focus_entity: str = Body(...),
     relationship_type: str = Body("all"),
     depth: int = Body(1),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Explore provider/member networks for pattern analysis.
@@ -109,11 +130,14 @@ async def explore_network(
     Returns network topology and unusual pattern flags.
     """
     try:
+        query_context = str(uuid.uuid4())
         result = await navigate_relationship_graph(
             focus_entity=focus_entity,
             relationship_type=relationship_type,
             depth=depth,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema,
+            query_context=query_context
         )
 
         return {
@@ -139,7 +163,8 @@ async def create_investigation(
     team_members: List[str] = Body(...),
     initial_findings: str = Body(...),
     severity: str = Body("MEDIUM"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Create formal investigation project with team workspace.
@@ -148,6 +173,7 @@ async def create_investigation(
     Includes workflow tracking (OPEN → INVESTIGATING → RESOLVED/CLOSED).
     """
     try:
+        query_context = str(uuid.uuid4())
         result = await create_investigation_project(
             title=title,
             investigation_type=investigation_type,
@@ -155,7 +181,9 @@ async def create_investigation(
             team_members=team_members,
             initial_findings=initial_findings,
             severity=severity,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema,
+            query_context=query_context
         )
 
         return {
@@ -184,7 +212,8 @@ async def request_correction(
     change_reason: str = Body(...),
     evidence: List[str] = Body(...),
     proposed_by: str = Body(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
 ):
     """
     Request data correction with full audit trail.
@@ -193,6 +222,7 @@ async def request_correction(
     Once approved, creates immutable record of change with original value preserved.
     """
     try:
+        query_context = str(uuid.uuid4())
         result = await request_data_correction(
             domain=domain,
             entity_id=entity_id,
@@ -202,7 +232,9 @@ async def request_correction(
             change_reason=change_reason,
             evidence=evidence,
             proposed_by=proposed_by,
-            db=db
+            db=db,
+            public_data_schema=public_data_schema,
+            query_context=query_context
         )
 
         return {
