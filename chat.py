@@ -41,6 +41,24 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 # ============================================================================
+# Session Storage for Message History (keyed by sessionId)
+# ============================================================================
+# In production, this would be Redis or a database. For now, in-memory store.
+
+message_store: Dict[str, list] = {}
+
+def get_session_messages(session_id: Optional[str]) -> list:
+    """Retrieve conversation history for this session. If no session_id, return empty list."""
+    if not session_id:
+        return []
+    return message_store.get(session_id, [])
+
+def save_session_messages(session_id: Optional[str], messages: list) -> None:
+    """Save conversation history for this session."""
+    if session_id:
+        message_store[session_id] = messages
+
+# ============================================================================
 # Request/Response Models
 # ============================================================================
 
@@ -543,8 +561,10 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
     # Fix any surrogate pairs so emojis survive the Anthropic API (UTF-8 transport)
     system_prompt = _fix_surrogates(system_prompt)
 
-    # Initialize message history (in production, this would come from a database)
-    messages = [{"role": "user", "content": _fix_surrogates(chat_msg.message)}]
+    # Load previous conversation history for this session (or start fresh if no sessionId)
+    messages = get_session_messages(chat_msg.sessionId)
+    # Append the new user message to the conversation
+    messages.append({"role": "user", "content": _fix_surrogates(chat_msg.message)})
 
     async def generate_response():
         """Generator that yields SSE-formatted text and handles agentic loop"""
@@ -606,6 +626,11 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             # If no tool calls, task is complete - stream the response
             if not tool_calls:
                 if assistant_message:
+                    # Add Claude's final response to message history
+                    messages.append({"role": "assistant", "content": assistant_message})
+                    # Save conversation history for this session before returning
+                    save_session_messages(chat_msg.sessionId, messages)
+
                     yield f"data: {json.dumps({'text': _fix_surrogates(assistant_message)})}\n\n"
                     return
                 else:
@@ -660,6 +685,11 @@ async def chat_stream(request: Request, chat_msg: ChatMessage = Body(...)):
             if hasattr(block, "text"):
                 final_text += block.text
         logger.info(f"[Synthesis] stop_reason={final_response.stop_reason}, text={len(final_text)} chars")
+
+        # Add final synthesis response to message history and save
+        messages.append({"role": "assistant", "content": final_text})
+        save_session_messages(chat_msg.sessionId, messages)
+
         payload = json.dumps({"text": _fix_surrogates(final_text)})
         yield "data: " + payload + "\n\n"
 
@@ -720,6 +750,12 @@ NEVER imply that TORQ-e can provide definitive coverage status or process change
 ✓ **Be actionable** — Every answer should end with "here's what you do next"
 ✓ **Be honest about limits** — If you don't know, say so and direct them to call.
 
+**CONTEXT MAINTENANCE:**
+✓ **MAINTAIN CONTEXT across follow-up questions** — Remember the member/account from previous messages
+✓ **Reference previous lookups** — If asked a follow-up, say "Your account shows..." not "What account?"
+✓ **Continue from where you left off** — Don't re-ask for information you already have
+✓ **Reset only when asked** — Only clear context if member explicitly says "let's check a different account" or similar
+
 **DATA SOURCE RULE (CRITICAL):**
 For EVERY eligibility or benefits question, determine the data source:
 1. **Use lookup_member or check_eligibility tools FIRST** — these query the state database and return confidence_score
@@ -768,6 +804,13 @@ For EVERY eligibility or benefits question, determine the data source:
 ✓ **Be specific** — "FFS" vs "MCO" matters. Timelines matter. Requirements matter.
 ✓ **Be solution-focused** — Help them troubleshoot claims rejection and enrollment blockers.
 ✓ **Be direct** — Providers are busy. Get to the point.
+
+**CONTEXT MAINTENANCE:**
+✓ **MAINTAIN CONTEXT across follow-up questions** — Remember the provider/NPI from previous messages
+✓ **Name the provider in every response** — "Your enrollment (NPI 1234567890) shows..." not "It shows..."
+✓ **Reference previous findings** — If you looked up enrollment, use that in subsequent responses about the same provider
+✓ **Continue investigation** — Don't re-ask for NPI if already provided; use session context
+✓ **Reset only when asked** — Only clear provider context if asked to "check a different provider" or similar
 
 **DATA SOURCE RULE (CRITICAL):**
 For EVERY enrollment, claims, or verification question, determine the data source:
@@ -823,6 +866,12 @@ For EVERY enrollment, claims, or verification question, determine the data sourc
 ✓ **Be forward-looking** — Identify trends before they become problems.
 ✓ **Be executive-ready** — Dashboard-level summaries, drill-down on demand.
 
+**CONTEXT MAINTENANCE:**
+✓ **MAINTAIN CONTEXT across follow-up questions** — Remember the plan/network focus from previous messages
+✓ **Reference previous metrics** — If you queried enrollment trends, use that baseline in follow-ups
+✓ **Continue analysis** — Don't re-ask which plan; use session context for subsequent metric queries
+✓ **Reset only when asked** — Only clear plan context if asked to "check a different plan" or "switch focus"
+
 **DATA SOURCE RULE (Card 3 Always External):**
 Plan administrative data is ALWAYS external to state systems. You are querying MCO systems, network registries, and plan databases.
 - **ALWAYS show traffic light (🟢🟡🔴) + LIVE URL combined** for every response
@@ -867,6 +916,12 @@ Government Stakeholder Operations — Provide aggregate-only reporting, flag com
 ✓ **Be immutable** — Acknowledge that flags, approvals, and corrections create permanent audit records with full justification.
 ✓ **Be transparent** — Always cite data sources, confidence levels, and methodologies for every claim.
 ✓ **Be official** — Use regulatory language: "enrollee" not "member", "claims processing rate" not "speed", "attestation" not "confirmation".
+
+**CONTEXT MAINTENANCE:**
+✓ **MAINTAIN CONTEXT across follow-up questions** — Remember the domain/investigation focus from previous messages
+✓ **Reference previous findings** — If you flagged a data quality issue, use that context in follow-ups
+✓ **Continue governance actions** — Don't re-ask which domain; reference previous metric queries and flag status
+✓ **Reset only when asked** — Only clear domain context if asked to "review a different issue" or "shift focus"
 
 **HIPAA COMPLIANCE GUARDRAILS:**
 - NEVER attempt to query individual member records (no SSNs, names, DOBs, medical history)
