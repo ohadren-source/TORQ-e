@@ -733,6 +733,27 @@
             userRole: sessionStorage.getItem('user_role') || 'GOVERNANCE_ANALYST'
         };
 
+        // Generate UUID for persistent session IDs
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Initialize persistent sessionId for Card 4 (for message history)
+        function getOrCreateSessionId() {
+            let sessionId = sessionStorage.getItem('card4-sessionId');
+            if (!sessionId) {
+                sessionId = 'session-' + generateUUID();
+                sessionStorage.setItem('card4-sessionId', sessionId);
+            }
+            return sessionId;
+        }
+
+        const card4SessionId = getOrCreateSessionId();
+
         // Auto-resize textarea
         inputText.addEventListener('input', () => {
             inputText.style.height = 'auto';
@@ -1378,7 +1399,8 @@
                     body: JSON.stringify({
                         message: prompt,
                         userType: 'GovernmentStakeholder',
-                        cardNumber: 4
+                        cardNumber: 4,
+                        sessionId: card4SessionId
                     })
                 });
 

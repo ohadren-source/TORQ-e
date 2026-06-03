@@ -401,6 +401,26 @@
         const messagesDiv = document.getElementById('messages');
         let conversationHistory = [];
 
+        // Initialize or retrieve persistent sessionId (for message history)
+        function getOrCreateSessionId() {
+            let sessionId = sessionStorage.getItem('card5-sessionId');
+            if (!sessionId) {
+                sessionId = 'session-' + generateUUID();
+                sessionStorage.setItem('card5-sessionId', sessionId);
+            }
+            return sessionId;
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        const card5SessionId = getOrCreateSessionId();
+
         inputText.addEventListener('input', () => {
             inputText.style.height = 'auto';
             inputText.style.height = (inputText.scrollHeight) + 'px';
@@ -437,7 +457,7 @@
                         message: message,
                         userType: 'DataAnalyst',
                         cardNumber: 5,
-                        sessionId: sessionStorage.getItem('sessionId') || 'session-' + Date.now()
+                        sessionId: card5SessionId
                     })
                 });
 
