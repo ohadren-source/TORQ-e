@@ -61,7 +61,25 @@ async def query_aggregate_metrics(
             "reading_engine_available": public_data_schema.get("reading_engine_integrated", False)
         }
 
-        # If crawler found nothing, report it clearly
+        # Check if discovered data has been loaded into queryable schema
+        discovered_data = public_data_schema.get("discovered_data", [])
+        if not discovered_data or len(discovered_data) == 0:
+            return {
+                "status": "error",
+                "error": "Public data schema not yet loaded - crawler discovered sources but schema loading is in progress",
+                "hint": "Data crawler completed discovery (96 sources found), but schema parsing and loading has not yet finished. Try again in a few seconds.",
+                "crawler_report": crawler_status,
+                "data": {
+                    "enrollment_rate": {"value": None, "confidence_score": 0.0, "sources": [], "status": "schema_loading"},
+                    "claims_processing": {"value": None, "confidence_score": 0.0, "sources": [], "status": "schema_loading"},
+                    "data_quality": {"value": None, "confidence_score": 0.0, "sources": [], "status": "schema_loading"},
+                    "audit_trail": {"value": None, "confidence_score": 0.0, "sources": [], "status": "schema_loading"},
+                    "compliance": {"value": None, "confidence_score": 0.0, "sources": [], "status": "schema_loading"},
+                    "system_stability": {"value": None, "confidence_score": 0.0, "sources": [], "status": "schema_loading"}
+                }
+            }
+
+        # If crawler found no sources at all, report it clearly
         if public_data_schema.get("total_data_sources_discovered", 0) == 0:
             return {
                 "status": "error",
@@ -410,6 +428,17 @@ async def detect_fraud_signals(
             "entity_type": entity_type
         }
 
+    # Check if discovered data has been loaded into queryable schema
+    discovered_data = public_data_schema.get("discovered_data", [])
+    if not discovered_data or len(discovered_data) == 0:
+        return {
+            "status": "error",
+            "error": "Public data schema not yet loaded - crawler discovered sources but schema loading is in progress",
+            "hint": "Data crawler completed discovery, but schema parsing and loading has not yet finished. Try again in a few seconds.",
+            "entity_type": entity_type,
+            "threshold_sigma": threshold_sigma
+        }
+
     return {
         "status": "real_data",
         "entity_type": entity_type,
@@ -439,6 +468,16 @@ async def assess_data_quality(
             "domain": domain
         }
 
+    # Check if discovered data has been loaded into queryable schema
+    discovered_data = public_data_schema.get("discovered_data", [])
+    if not discovered_data or len(discovered_data) == 0:
+        return {
+            "status": "error",
+            "error": "Public data schema not yet loaded - crawler discovered sources but schema loading is in progress",
+            "hint": "Data crawler completed discovery, but schema parsing and loading has not yet finished. Try again in a few seconds.",
+            "domain": domain
+        }
+
     matching_sources = _find_matching_sources(public_data_schema, domain)
 
     return {
@@ -465,7 +504,8 @@ async def view_governance_log(
     filter_by: Optional[str] = None,
     days_back: int = 30,
     limit: int = 50,
-    db: Session = None
+    db: Session = None,
+    public_data_schema: Optional[Dict] = None
 ) -> Dict:
     """
     Access immutable governance audit trail.
@@ -493,7 +533,8 @@ async def flag_data_issue(
     justification: str,
     evidence: List[str],
     flagged_by: str,
-    db: Session = None
+    db: Session = None,
+    public_data_schema: Optional[Dict] = None
 ) -> Dict:
     """
     Create immutable governance flag for data quality issues.
