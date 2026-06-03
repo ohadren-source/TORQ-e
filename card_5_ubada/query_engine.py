@@ -5,18 +5,23 @@ Data Analyst & Authenticity Investigation: Interactive exploration, outlier dete
 NO MOCK DATA - ALL METRICS COME FROM PUBLIC REPOSITORIES + CRAWLED SCHEMA
 Silicon copy of Card 4 (USHI) pattern — different substrate (investigation vs. oversight)
 
-5 Claude Tools:
+6 Claude Tools:
 1. explore_claims_data     — Query claims with multi-filter + aggregation
 2. compute_outlier_scores  — Statistical anomaly detection (Z-scores)
 3. navigate_relationship_graph — Provider/member network exploration
 4. create_investigation_project — Start authenticity investigation case
 5. request_data_correction — Flag data errors for approval + audit
+6. orchestrate_data_query  — SMART: Context-aware query across all 9 NYS repos
 """
 
 from typing import Dict, Optional, List
 from datetime import datetime
 from sqlalchemy.orm import Session
 import json
+import asyncio
+
+# Import the new orchestrator
+from data_orchestrator import orchestrate_data_query
 
 # ============================================================================
 # CONFIGURATION
@@ -128,6 +133,72 @@ def _crawler_status(public_data_schema: Dict) -> Dict:
         "crawler_errors":               public_data_schema.get("errors", []),
         "reading_engine_available":     public_data_schema.get("reading_engine_integrated", False)
     }
+
+
+# ============================================================================
+# TOOL 0: ORCHESTRATE DATA QUERY (NEW - SMART CONTEXT-AWARE)
+# ============================================================================
+
+async def orchestrate_data_query_tool(
+    query: str,
+    context: Optional[Dict] = None,
+    card_number: int = 5,
+    public_data_schema: Optional[Dict] = None,
+    query_context: str = ""
+) -> Dict:
+    """
+    SMART DATA ORCHESTRATOR: Context-aware query across all 9 NYS public health repos.
+    
+    This tool:
+    1. Analyzes your query intent (what data do you need?)
+    2. Selects relevant repos from all 9 NYS sources based on context
+    3. Fetches from selected sources in parallel
+    4. Processes + refines data intelligently
+    5. Returns with clarity scores + source attribution
+    
+    Perfect for:
+    - Provider authenticity verification (uses NPPES + OMIG + enrollment data)
+    - Claims pattern analysis (uses health.data.ny.gov + emedNY)
+    - Fraud investigation (uses OMIG + outlier detection sources)
+    - Eligibility verification (uses emedNY + Medicaid.NY.Gov)
+    - Plan metrics (uses health.data.ny.gov + plan data)
+    
+    Returns:
+    - Primary intent detected
+    - Sources selected and queried
+    - Data with clarity scores (green/yellow/red)
+    - Overall confidence in findings
+    - Immutable audit trail entry
+    """
+    
+    if not context:
+        context = {}
+    
+    context["card_number"] = card_number
+    context["user_type"] = context.get("user_type", "DataAnalyst")
+    
+    try:
+        # Call the smart orchestrator
+        result = await orchestrate_data_query(
+            query=query,
+            context=context,
+            card_number=card_number
+        )
+        
+        # Add audit trail note
+        result["audit_note"] = "Query orchestrated across all 9 NYS public health repositories. All data sources and confidence scores logged immutably."
+        result["timestamp"] = datetime.utcnow().isoformat()
+        
+        return result
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "query": query,
+            "message": "Orchestrator encountered an error. Check that all 9 NYS repos are accessible.",
+            "timestamp": datetime.utcnow().isoformat()
+        }
 
 
 # ============================================================================
@@ -316,7 +387,7 @@ async def compute_outlier_scores(
 
 async def navigate_relationship_graph(
     focus_entity: str,              # provider NPI, member ID, or descriptive query
-    relationship_type: str = "all", # all, claims, referrals, co-billing, same_location
+    relationship_type: str = "all", # all, claims, referrals, co_billing, same_location
     depth: int = 1,                 # 1 = direct, 2 = one hop away
     db: Session = None,
     public_data_schema: Optional[Dict] = None,
@@ -562,3 +633,4 @@ async def request_data_correction(
         "message": f"Data correction {correction_id} proposed and awaiting approval review.",
         "timestamp": datetime.utcnow().isoformat()
     }
+
