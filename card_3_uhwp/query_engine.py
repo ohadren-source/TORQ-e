@@ -321,3 +321,105 @@ def _get_veracity_label(confidence: float) -> str:
         return f"MEDIUM ({confidence})"
     else:
         return f"LOW ({confidence})"
+
+
+# ============================================================================
+# TOOL 7: LIST MCO PLANS (REAL NAMES FROM CRAWLED DATA)
+# ============================================================================
+
+async def list_mco_plans(
+    state: Optional[str] = None,
+    db: Session = None,
+    public_data_schema: Optional[Dict] = None
+) -> Dict:
+    """
+    Extract and return REAL MCO plan names from discovered health.data.ny.gov sources.
+
+    Instead of fabricating Plans A-F, query the actual plan names that appear in
+    the crawled NY Health Data portal datasets.
+    """
+
+    if not public_data_schema:
+        return {
+            "status": "error",
+            "error": "Public data schema not loaded",
+            "plans": [],
+            "note": "Unable to retrieve MCO plan names"
+        }
+
+    # Check if discovered data has been loaded
+    discovered_data = public_data_schema.get("discovered_data", [])
+    if not discovered_data:
+        return {
+            "status": "error",
+            "error": "No discovered data available",
+            "plans": [],
+            "note": "Crawler has not yet loaded plan names from health.data.ny.gov. Try again in a few seconds."
+        }
+
+    # Extract MCO plan names from health.data.ny.gov sources
+    plan_names = _extract_mco_names_from_sources(discovered_data)
+
+    # If no real plan names found, be honest about it
+    if not plan_names:
+        return {
+            "status": "no_plan_names",
+            "error": "No MCO plan names found in crawled sources",
+            "plans": [],
+            "sources_searched": len(discovered_data),
+            "note": "Crawler found sources from health.data.ny.gov but plan-specific names were not extracted. Recommend visiting https://health.data.ny.gov directly or https://health.ny.gov/health_care/managed_care/ for official plan listings.",
+            "recommendation": "For real MCO plan names and comparisons, refer to: health.ny.gov/health_care/managed_care/ or health.data.ny.gov"
+        }
+
+    # Return real plan names found in the data
+    return {
+        "status": "success",
+        "plans": plan_names,
+        "total_plans": len(plan_names),
+        "state": state.upper() if state else "NY",
+        "data_source": "health.data.ny.gov Medicaid Managed Care datasets",
+        "note": "These are REAL plan names extracted from NY Health Data portal. Use these for accurate comparisons instead of synthetic labels.",
+        "confidence_score": 0.80
+    }
+
+
+def _extract_mco_names_from_sources(discovered_data: List[Dict]) -> List[str]:
+    """
+    Extract MCO plan names from the text content of discovered sources.
+    Looks for known NY MCO names in source descriptions and text snippets.
+    """
+
+    # Known NY MCOs (from public sources like OMIG, health.ny.gov)
+    KNOWN_NY_MCOS = [
+        "Healthfirst",
+        "MetroPlus Health",
+        "United Healthcare",
+        "UnitedHealthcare Community",
+        "Molina Healthcare",
+        "Fidelis Care",
+        "Centene",
+        "WellCare",
+        "Amerigroup",
+        "Empire HealthChoice",
+        "Oxford Health Plans",
+        "Aetna",
+        "Emblem Health",
+        "Eldercare",
+        "VNS Health"
+    ]
+
+    found_plans = set()
+
+    for source in discovered_data:
+        description = source.get("description", "").lower()
+        text_snippet = source.get("text_snippet", "").lower()
+        url = source.get("url", "").lower()
+
+        combined = description + " " + text_snippet + " " + url
+
+        # Search for known MCO names (case-insensitive)
+        for mco in KNOWN_NY_MCOS:
+            if mco.lower() in combined:
+                found_plans.add(mco)
+
+    return sorted(list(found_plans))

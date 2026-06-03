@@ -15,6 +15,7 @@ from .schemas import (
     PlanComparisonRequest, PlanComparisonResponse, PlanComparisonDetail,
     HealthCheckResponse
 )
+from . import query_engine as card3_engine
 
 router = APIRouter(prefix="/api/card3", tags=["Card 3 - Plan Network Management"])
 
@@ -380,6 +381,34 @@ async def compare_plans(
             timestamp=datetime.utcnow(),
             note=f"Plan comparison based on {len(plan_sources)} public repository source(s)"
         )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# MCO PLAN NAMES (Real names from crawled data, not synthetic labels)
+# ============================================================================
+
+@router.get("/mco-plans")
+async def get_mco_plan_names(
+    state: Optional[str] = Query("NY", description="State abbreviation (e.g., 'NY')"),
+    db: Session = Depends(get_db),
+    public_data_schema: Optional[Dict] = Depends(get_public_data_schema)
+):
+    """
+    Get REAL MCO plan names extracted from health.data.ny.gov crawled sources.
+    Instead of returning synthetic labels (Plans A-F), returns actual plan names.
+    """
+    try:
+        import uuid
+        query_context = str(uuid.uuid4())
+        result = await card3_engine.list_mco_plans(
+            state=state,
+            db=db,
+            public_data_schema=public_data_schema
+        )
+        return result
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

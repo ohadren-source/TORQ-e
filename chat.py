@@ -162,6 +162,17 @@ CARD_3_TOOLS = [
             },
             "required": []
         }
+    },
+    {
+        "name": "list_mco_plans",
+        "description": "Get REAL MCO plan names extracted from health.data.ny.gov crawled sources. Returns actual plan names instead of synthetic labels. Use this before comparing plans to get the real names available in your state.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "state": {"type": "string", "description": "State abbreviation (e.g., 'NY'). Defaults to NY."}
+            },
+            "required": []
+        }
     }
 ]
 
@@ -360,6 +371,12 @@ async def execute_tool(tool_name: str, tool_input: dict, card_number: int, publi
                     state=tool_input.get("state"),
                     public_data_schema=public_data_schema,
                     query_context=query_context
+                )
+                return _prepare_tool_result_for_claude(result, card_number, tool_name)
+            elif tool_name == "list_mco_plans":
+                result = await card3_engine.list_mco_plans(
+                    state=tool_input.get("state"),
+                    public_data_schema=public_data_schema
                 )
                 return _prepare_tool_result_for_claude(result, card_number, tool_name)
 
@@ -867,6 +884,7 @@ For EVERY enrollment, claims, or verification question, determine the data sourc
 ✓ **Be comparative** — How does this MCO compare to benchmarks?
 ✓ **Be forward-looking** — Identify trends before they become problems.
 ✓ **Be executive-ready** — Dashboard-level summaries, drill-down on demand.
+✓ **Be honest about data sources** — NO fabricated plan labels. Always use real MCO names from actual data.
 
 **CONTEXT MAINTENANCE:**
 ✓ **MAINTAIN CONTEXT across follow-up questions** — Remember the plan/network focus from previous messages
@@ -881,6 +899,18 @@ Plan administrative data is ALWAYS external to state systems. You are querying M
 - URL is actionable so plan admin can verify with the plan directly
 - Example: `🟢 HIGH | [Plan Name] Network System | https://plan-network-system.url`
 
+**CRITICAL: Get Real MCO Names Before Comparing Plans:**
+If asked to compare plans or list available plans:
+1. **FIRST:** Call list_mco_plans to get REAL MCO names from health.data.ny.gov crawled sources
+2. **THEN:** Use those real names in your comparison (e.g., "Healthfirst", "MetroPlus", "United Healthcare")
+3. **NEVER:** Fabricate synthetic labels (Plans A-F) or make up plan names
+4. If list_mco_plans returns no names or error, be honest: "The crawled data doesn't yet have specific plan names. I recommend visiting https://health.data.ny.gov or https://health.ny.gov/health_care/managed_care/ for the official MCO list."
+
+**TOOL USAGE MANDATORY:**
+- For listing available plans → FIRST call list_mco_plans with state
+- For plan metrics → THEN call query_plan_metrics for each real plan name
+- Always cite which plans are available before comparing metrics
+
 **WHEN RESPONDING:**
 - Lead with KPIs: network size, claim volume, denial rate, processing time
 - Use tables to compare regions/time periods
@@ -888,7 +918,8 @@ Plan administrative data is ALWAYS external to state systems. You are querying M
 - Always include combined confidence light + URL for data sources
 - Provide context: "This 5% increase is within normal variance but worth monitoring"
 - Suggest actions for improvement
-- Frame in business terms (costs, member retention, regulatory compliance)"""
+- Frame in business terms (costs, member retention, regulatory compliance)
+- **Always use REAL plan names** — never synthetic labels"""
 
     elif user_type == "GovernmentStakeholder":
         return """Format all responses as VALID, CLEAN HTML (NOT markdown):
