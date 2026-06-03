@@ -45,8 +45,8 @@ async def fetch_npi_details(npi: str) -> Optional[Dict]:
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            # Query NPI Registry API
-            url = f"{NPI_API_BASE}?number={npi}&format=json"
+            # Query NPI Registry API (version 2.1 required)
+            url = f"{NPI_API_BASE}?number={npi}&format=json&version=2.1"
             logger.info(f"[NPI Lookup] Querying {url}")
 
             response = await client.get(url)
@@ -61,23 +61,44 @@ async def fetch_npi_details(npi: str) -> Optional[Dict]:
 
             result = data["results"][0]
 
+            # Extract DBA names from other_names
+            dba_names = [
+                name.get("organization_name", "")
+                for name in result.get("other_names", [])
+                if name.get("type") == "Doing Business As"
+            ]
+
+            # Get primary address (LOCATION type if available, else first address)
+            primary_address = {}
+            for addr in result.get("addresses", []):
+                if addr.get("address_purpose") == "LOCATION":
+                    primary_address = addr
+                    break
+            if not primary_address and result.get("addresses"):
+                primary_address = result["addresses"][0]
+
+            # Map NPI status code to readable status (A=Active, I=Inactive, D=Deactivated)
+            status_map = {"A": "Active", "I": "Inactive", "D": "Deactivated"}
+            status = result.get("basic", {}).get("status")
+            status = status_map.get(status, status) if status else "Unknown"
+
             # Extract provider details
             provider_record = {
                 "npi": result.get("number"),
-                "name": result.get("basic", {}).get("legal_business_name"),
-                "dba_names": result.get("basic", {}).get("doing_business_as_name", []),
-                "provider_type": "Organization" if result.get("basic", {}).get("organization_subpart") is False else "Individual",
+                "name": result.get("basic", {}).get("organization_name"),
+                "dba_names": dba_names,
+                "provider_type": "Organization" if result.get("basic", {}).get("organizational_subpart") == "NO" else "Individual",
                 "organization_type": result.get("basic", {}).get("organization_name"),
-                "status": result.get("basic", {}).get("status"),
+                "status": status,
                 "enumeration_date": result.get("basic", {}).get("enumeration_date"),
-                "last_update": result.get("basic", {}).get("last_update_date"),
+                "last_update": result.get("basic", {}).get("last_updated"),
                 "address": {
-                    "street": result.get("basic", {}).get("first_line_business_address"),
-                    "city": result.get("basic", {}).get("business_address_city_name"),
-                    "state": result.get("basic", {}).get("business_address_state_code"),
-                    "zip": result.get("basic", {}).get("business_address_postal_code")
+                    "street": primary_address.get("address_1"),
+                    "city": primary_address.get("city"),
+                    "state": primary_address.get("state"),
+                    "zip": primary_address.get("postal_code")
                 },
-                "phone": result.get("basic", {}).get("business_phone_number"),
+                "phone": primary_address.get("telephone_number"),
                 "taxonomy": None,
                 "raw_result": result  # Keep raw for debugging
             }

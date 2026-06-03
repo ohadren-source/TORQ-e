@@ -19,6 +19,10 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 import json
 import asyncio
+import logging
+
+# Initialize logger
+logger = logging.getLogger(__name__)
 
 # Import the new orchestrator
 from data_orchestrator import orchestrate_data_query
@@ -404,6 +408,7 @@ async def explore_claims_data(
 # ============================================================================
 
 async def compute_outlier_scores(
+    focus_entity: Optional[str] = None,     # provider NPI or name (for NPI Registry lookup)
     entity_type: str = "provider",         # provider, member, claim_pattern
     metric: str = "billing_amount",        # billing_amount, approval_rate, processing_time, frequency
     threshold_sigma: float = 2.0,
@@ -439,7 +444,7 @@ async def compute_outlier_scores(
         }
 
     # DETECT PROVIDER TYPE (with NPI Registry API lookup)
-    provider_type, npi_record = await _detect_provider_type(query_context)
+    provider_type, npi_record = await _detect_provider_type(focus_entity or query_context, query_context)
     peer_context = _get_peer_group_context(provider_type)
 
     # If we got an NPI record, include provider name in analysis

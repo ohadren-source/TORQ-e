@@ -84,6 +84,7 @@ async def explore_claims(
 
 @router.post("/outlier-detection")
 async def detect_outliers(
+    focus_entity: Optional[str] = Body(None),  # provider NPI or name
     entity_type: str = Body("provider"),
     metric: str = Body("billing_amount"),
     threshold_sigma: float = Body(2.0),
@@ -99,6 +100,7 @@ async def detect_outliers(
     try:
         query_context = str(uuid.uuid4())
         result = await compute_outlier_scores(
+            focus_entity=focus_entity or query_context,
             entity_type=entity_type,
             metric=metric,
             threshold_sigma=threshold_sigma,
