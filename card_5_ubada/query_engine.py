@@ -23,6 +23,9 @@ import asyncio
 # Import the new orchestrator
 from data_orchestrator import orchestrate_data_query
 
+# Import NPI Registry lookups
+from npi_registry import get_provider_context, detect_provider_type_from_npi
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
@@ -48,18 +51,36 @@ PROVIDER_TYPE_KEYWORDS = {
 # SHARED HELPERS (silicon copy of Card 4 pattern)
 # ============================================================================
 
-def _detect_provider_type(focus_entity: str, query_context: str = "") -> str:
+async def _detect_provider_type(focus_entity: str, query_context: str = "") -> tuple[str, Optional[Dict]]:
     """
-    Detect provider type from entity name or context.
-    Returns: 'mco', 'hospital', 'pharmacy', 'lab', 'solo_provider', or 'unknown'
+    Detect provider type from entity (NPI or name).
+    First tries NPI Registry API lookup, then falls back to keyword matching.
+
+    Returns: (provider_type, npi_record)
+    - provider_type: 'mco', 'hospital', 'pharmacy', 'lab', 'solo_provider', or 'unknown'
+    - npi_record: Full NPI Registry record if lookup succeeded, else None
     """
+
+    # Try NPI Registry API if focus_entity looks like an NPI (10 digits)
+    if focus_entity.isdigit() and len(focus_entity) == 10:
+        provider_context = await get_provider_context(focus_entity)
+
+        if not provider_context.get("error"):
+            logger.info(f"[NPI Lookup Success] {focus_entity} -> {provider_context['name']} ({provider_context['provider_type']})")
+            return provider_context["provider_type"], provider_context["npi_record"]
+        else:
+            logger.warning(f"[NPI Lookup Failed] {focus_entity}: {provider_context.get('error')}")
+
+    # Fallback: keyword-based detection
     combined = (focus_entity + " " + query_context).lower()
-    
+
     for ptype, keywords in PROVIDER_TYPE_KEYWORDS.items():
         if any(kw in combined for kw in keywords):
-            return ptype
-    
-    return "unknown"
+            logger.info(f"[Keyword Match] {focus_entity} -> {ptype}")
+            return ptype, None
+
+    logger.warning(f"[Unknown Provider Type] {focus_entity}")
+    return "unknown", None
 
 
 def _get_peer_group_context(provider_type: str) -> Dict:
@@ -417,9 +438,18 @@ async def compute_outlier_scores(
             "metric": metric
         }
 
-    # DETECT PROVIDER TYPE
-    provider_type = _detect_provider_type(query_context)
+    # DETECT PROVIDER TYPE (with NPI Registry API lookup)
+    provider_type, npi_record = await _detect_provider_type(query_context)
     peer_context = _get_peer_group_context(provider_type)
+
+    # If we got an NPI record, include provider name in analysis
+    provider_name = npi_record.get("name") if npi_record else "Unknown Provider"
+    provider_info = {
+        "npi": query_context if query_context.isdigit() else None,
+        "name": provider_name,
+        "type": provider_type,
+        "npi_record": npi_record
+    }
 
     crawler_report = _crawler_status(public_data_schema)
     matching_sources = _find_matching_sources(public_data_schema, "outlier")
@@ -460,6 +490,7 @@ async def compute_outlier_scores(
         "entity_type": entity_type,
         "metric": metric,
         "threshold_sigma": threshold_sigma,
+        "provider": provider_info,
         "provider_type_detected": provider_type,
         "peer_group": peer_context["peer_group"],
         "peer_context": peer_context,
@@ -523,6 +554,16 @@ async def navigate_relationship_graph(
             "focus_entity": focus_entity
         }
 
+    # Detect provider type and get NPI details if applicable
+    provider_type, npi_record = await _detect_provider_type(focus_entity, query_context)
+    provider_name = npi_record.get("name") if npi_record else focus_entity
+    provider_info = {
+        "npi": focus_entity if focus_entity.isdigit() else None,
+        "name": provider_name,
+        "type": provider_type,
+        "npi_record": npi_record
+    }
+
     crawler_report = _crawler_status(public_data_schema)
     matching_sources = _find_matching_sources(public_data_schema, "network")
     provider_sources = _find_matching_sources(public_data_schema, "provider")
@@ -552,6 +593,7 @@ async def navigate_relationship_graph(
 
     return {
         "status": "success",
+        "provider": provider_info,
         "focus_entity": focus_entity,
         "relationship_type": relationship_type,
         "depth": depth,
