@@ -27,8 +27,15 @@ router = APIRouter(prefix="/api/card5", tags=["Card 5 - UBADA (Data Analyst)"])
 def get_public_data_schema(request: Request) -> Optional[Dict]:
     """Retrieve public_data_schema from app.state for data source access."""
     try:
-        return getattr(request.app.state, 'public_data_schema', None)
-    except:
+        schema = getattr(request.app.state, 'public_data_schema', None)
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"[CARD5] get_public_data_schema() called: schema is {'LOADED' if schema else 'NONE'}, has {len(schema.get('discovered_data', [])) if schema else 0} sources")
+        return schema
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"[CARD5] get_public_data_schema() exception: {e}")
         return None
 
 # ============================================================================
